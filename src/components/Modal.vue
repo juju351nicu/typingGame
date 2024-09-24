@@ -99,6 +99,9 @@ export default {
     },
   },
   methods: {
+    /**
+     * ゲームをリセットする
+     */
     restartGame() {
       this.$emit("restart-game");
     },
