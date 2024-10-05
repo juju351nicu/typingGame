@@ -52,7 +52,7 @@
   </div>
   <Modal
     :class="modalDisplayStatus ? 'open' : ''"
-    :isgameover="gameOver"
+    :isGameover="gameOver"
     :modes="config.modes"
     @restart-game="restartGame"
   />
@@ -64,6 +64,7 @@ export default {
   name: "App",
   data() {
     return {
+      /**　タイピング用単語 */
       words: words,
       currentWords: [],
       gameOver: false,
@@ -97,9 +98,7 @@ export default {
     Modal,
   },
   computed: {
-    /**
-     * 
-     */
+    /** 経過時間を取得る 00:00:00 */
     getTime() {
       let second = this.timer.second > 9 ? this.timer.second : `0${this.timer.second}`;
       let minute = this.timer.minute > 9 ? this.timer.minute : `0${this.timer.minute}`;
@@ -113,12 +112,11 @@ export default {
     this.setWordAnimationSpeed();
   },
   mounted() {
+    /** 単語をシャッフルする */
     this.shuffleWords();
   },
   methods: {
-    /**
-     * ボタンをクリックするとゲームがスタートする
-     */
+    /** ボタンをクリックするとゲームがスタートする  */
     play() {
       this.isGameStarted = true;
       this.startTimer();
@@ -131,16 +129,20 @@ export default {
         this.checkIsTopToBottom();
       }, this.config.currentAnimationSpeed);
     },
+    /**
+     * 出題された単語と入力した単語の値を判定する
+     */
     checkWordEquality() {
       if (this.gameOver) return;
-      var word = this.inputValue;
+      let word = this.inputValue;
       let wordIndex = this.currentWords.findIndex(
         (item) => item.characters.join("") == word
       );
+      //一致した場合
       if (wordIndex != -1) {
-        this.removeWord(wordIndex);
+        this.currentWords.splice(0, 1);
         this.inputValue = "";
-        this.increaseScore();
+        this.score++;
         this.checkGameCompleted();
       }
     },
@@ -173,6 +175,7 @@ export default {
         }
       });
     },
+    /** ゲームを終了する */
     gameFinish() {
       this.gameOver = true;
       this.clearInterval();
@@ -181,6 +184,7 @@ export default {
         this.modalDisplayToggle();
       }, 500);
     },
+    /** ゲームの時間・スコア・モードを保存する */
     saveGameScores() {
       let gameScores = JSON.parse(this.getLocalStorageData("gameScores")) || [];
       gameScores.push({
@@ -221,6 +225,10 @@ export default {
       this.shuffleWords();
       this.modalDisplayToggle();
     },
+    /**
+     * ローカルストレージからデータを取得する
+     * @param dataName ローカルストレージのキー
+     */
     getLocalStorageData(dataName) {
       return localStorage.getItem(dataName);
     },
@@ -235,9 +243,15 @@ export default {
     getCurrentWordTop(wordIndex) {
       return Number(this.currentWords[wordIndex].style.top.slice(0, -2));
     },
+    /**総単語数を取得する */
     getWordsLength() {
       this.words.length;
     },
+    /**
+     * ローカルストレージに保存する
+     * @param dataName ローカルストレージのKey名 「gameScores」
+     * @param data ゲームの時間・スコア・モードを保存
+     */
     setLocalStorageData(dataName, data) {
       localStorage.setItem(dataName, data);
     },
@@ -253,16 +267,10 @@ export default {
         this.selectedGameMode
       ];
     },
-    removeWord(wordIndex) {
-      this.currentWords.splice(wordIndex, 1);
-    },
     increasePositionTop(wordIndex) {
       this.currentWords[wordIndex].style.top = `${
         this.getCurrentWordTop(wordIndex) + 1
       }px`;
-    },
-    increaseScore() {
-      this.score++;
     },
     modalDisplayToggle() {
       this.modalDisplayStatus = !this.modalDisplayStatus;
@@ -294,6 +302,7 @@ export default {
         }
       }, 1000);
     },
+    /** ゲームのデータをリセットする */
     resetGameData() {
       this.currentWords = [];
       this.timer = {

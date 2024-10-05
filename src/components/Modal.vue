@@ -54,7 +54,7 @@
 <script>
 export default {
   name: "Modal",
-  props: ["isgameover", "modes"],
+  props: ["isGameover", "modes"],
   data() {
     return {
       gameScores: [],
@@ -86,7 +86,7 @@ export default {
     },
   },
   watch: {
-    isgameover: {
+    isGameover: {
       handler: function (status) {
         if (status) {
           this.getGameScores();
@@ -99,26 +99,29 @@ export default {
     },
   },
   methods: {
-    /**
-     * ゲームをリセットする
-     */
+    /** ゲームをリセットする */
     restartGame() {
       this.$emit("restart-game");
     },
+    /** ローカルストレージからゲームのスコアを取得する */
     getGameScores() {
       this.gameScores = JSON.parse(localStorage.getItem("gameScores")) || this.gameScores;
     },
+    /** スコアのスコアを昇順に取得する */
     sortGameScores() {
       this.gameScores.sort(
         (a, b) => b.mode.toString().localeCompare(a.mode) || b.score - a.score
       );
     },
+    /** ローカルストレージのゲームのスコアを削除する */
     resetGameScoreFromStorage() {
       localStorage.removeItem("gameScores");
     },
+    /** ゲームのEasyモード等のモード情報を取得する */
     getGameMode(index) {
       return this.modes[Number(index)];
     },
+    /** ゲームのデータを初期化する */
     resetModalData() {
       this.gameScores = [];
       this.currentListMode = "";
