@@ -17,18 +17,22 @@
           <h2>All Game Scores</h2>
           <div class="game-scores-container">
             <table class="game-scores">
-              <tr>
-                <th>No</th>
-                <th>Game Mode</th>
-                <th>Time</th>
-                <th>Score</th>
-              </tr>
-              <tr v-if="gameScores" v-for="(score, index) in listGameScores">
-                <td>{{ index + 1 }}</td>
-                <td>{{ getGameMode(score.mode) }}</td>
-                <td>{{ score.time }}</td>
-                <td>{{ score.score }}</td>
-              </tr>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Game Mode</th>
+                  <th>Time</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="gameScores" v-for="(score, index) in listGameScores">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ getGameMode(score.mode) }}</td>
+                  <td>{{ score.time }}</td>
+                  <td>{{ score.score }}</td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </template>
@@ -38,13 +42,10 @@
         <button class="btn" @click="restartGame">
           Play again <span class="btn-arrow">➔</span>
         </button>
-        <button
-          class="btn"
-          @click="
-            resetGameScoreFromStorage();
-            resetModalData();
-          "
-        >
+        <button class="btn" @click="
+          resetGameScoreFromStorage();
+        resetModalData();
+        ">
           Reset Scores<span class="btn-arrow">➔</span>
         </button>
       </div>
@@ -69,9 +70,8 @@ export default {
   computed: {
     getLastScoreDesc() {
       if (this.gameScores.length > 0) {
-        let desc = `You completed ${this.lastScore.score} words in ${
-          this.lastScore.time
-        } time in ${this.getGameMode(this.lastScore.mode)} mode.`;
+        let desc = `You completed ${this.lastScore.score} words in ${this.lastScore.time
+          } time in ${this.getGameMode(this.lastScore.mode)} mode.`;
         return desc;
       }
       return;
