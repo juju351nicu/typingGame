@@ -1,4 +1,5 @@
 <template>
+    <side-menu />
     <div class="game-board">
       <div class="words-board" ref="words_board">
         <template v-for="word in currentWords">
@@ -59,6 +60,7 @@
   </template>
   <script>
   import Modal from "../components/Modal.vue";
+  import SideMenu from "../components/SideMenu.vue";
   import { words } from "../assets/words.js";
   export default {
     name: "DashBoard",
@@ -96,6 +98,7 @@
     },
     components: {
       Modal,
+      SideMenu
     },
     computed: {
       /** 経過時間を取得る 00:00:00 */
