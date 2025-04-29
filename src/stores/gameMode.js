@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export const useCounterStore = defineStore("gameMode", {
+export const useGemeModeStore = defineStore("gameMode", {
   state: () => ({
     mode: 0,
   }),

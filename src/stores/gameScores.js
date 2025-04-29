@@ -1,19 +1,19 @@
 import { defineStore } from "pinia";
 
-export const useCounterStore = defineStore("gameScores", {
+export const useGameScoresStore = defineStore("gameScores", {
   state: () => ({
     scores: [],
   }),
   actions: {
-    saveGameScores(data) {
+    saveGameScoreList(data) {
       this.scores = data;
     },
-    resetGameScoreFromStorage() {
+    deleteGameScoreList() {
       this.scores = [];
     },
   },
   getters: {
-    getGameScores() {
+    getGameScoreList() {
       return this.scores;
     },
   },

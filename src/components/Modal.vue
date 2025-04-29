@@ -52,85 +52,95 @@
     </div>
   </div>
 </template>
-<script>
-export default {
-  name: "Modal",
-  props: ["isGameover", "modes"],
-  data() {
-    return {
-      gameScores: [],
-      lastScore: {
-        score: "",
-        mode: "",
-        time: "",
-      },
-      currentListMode: "",
-    };
-  },
-  computed: {
-    getLastScoreDesc() {
-      if (this.gameScores.length > 0) {
-        let desc = `You completed ${this.lastScore.score} words in ${this.lastScore.time
-          } time in ${this.getGameMode(this.lastScore.mode)} mode.`;
-        return desc;
-      }
-      return;
-    },
-    listGameScores() {
-      if (typeof this.currentListMode == "number") {
-        return this.gameScores.filter(
-          (gameScore) => gameScore.mode == this.currentListMode
-        );
-      }
-      return this.gameScores;
-    },
-  },
-  watch: {
-    isGameover: {
-      handler: function (status) {
-        if (status) {
-          this.getGameScores();
-          this.lastScore = this.gameScores[this.gameScores.length - 1];
-          this.sortGameScores();
-        } else {
-          this.resetModalData();
-        }
-      },
-    },
-  },
-  methods: {
-    /** ゲームをリセットする */
-    restartGame() {
-      this.$emit("restart-game");
-    },
-    /** ローカルストレージからゲームのスコアを取得する */
-    getGameScores() {
-      this.gameScores = JSON.parse(localStorage.getItem("gameScores")) || this.gameScores;
-    },
-    /** スコアのスコアを昇順に取得する */
-    sortGameScores() {
-      this.gameScores.sort(
-        (a, b) => b.mode.toString().localeCompare(a.mode) || b.score - a.score
-      );
-    },
-    /** ローカルストレージのゲームのスコアを削除する */
-    resetGameScoreFromStorage() {
-      localStorage.removeItem("gameScores");
-    },
-    /** ゲームのEasyモード等のモード情報を取得する */
-    getGameMode(index) {
-      return this.modes[Number(index)];
-    },
-    /** ゲームのデータを初期化する */
-    resetModalData() {
-      this.gameScores = [];
-      this.currentListMode = "";
-      this.lastScore = {
-        score: "",
-        mode: "",
-        time: "",
-      };
-    },
-  },
-};
+<script setup>
+import { useGameScoresStore } from "../stores/gameScores";
+import { computed, reactive, ref, watch } from "vue";
+
+//インポートした関数を呼び出してストアをインスタンス化して変数に代入
+const gameScoresStore = useGameScoresStore(); //setup() 内で useXxxxStore() を実行
+
+const props = defineProps({
+  isGameover: Boolean,
+  modes: Array
+})
+/** ゲームモード */
+const gemeMode = computed(() => {
+  return props.modes;
+});
+/** ゲームオーバーフラグ */
+const isGameOverFlag = computed(() => {
+  return props.isGameover;
+});
+const emit = defineEmits(["restart-game"]);
+/** ゲームをリセットする */
+const restartGame = (() => {
+  emit("restart-game");
+});
+
+/** ゲームのEasyモード等のモード情報を取得する */
+const getGameMode = ((index) => {
+  return gemeMode.value[Number(index)];
+});
+
+const gameScores = ref([]);
+
+const lastScore = reactive({
+  score: "",
+  mode: "",
+  time: "",
+});
+const getLastScoreDesc = computed(() => {
+  if (gameScores.value.length > 0) {
+    let desc = `You completed ${lastScore.score} words in ${lastScore.time
+      } time in ${getGameMode(lastScore.mode)} mode.`;
+    return desc;
+  }
+  return;
+});
+
+const currentListMode = ref("");
+const listGameScores = computed(() => {
+  if (typeof currentListMode.value == "number") {
+    return gameScores.value.filter(
+      (gameScore) => gameScore.mode == currentListMode.value
+    );
+  }
+  return gameScores.value;
+});
+
+watch(isGameOverFlag, (newValue, _oldValue) => {
+  if (newValue) {
+    getGameScores();
+    lastScore = gameScores.value[gameScores.value.length - 1];
+    sortGameScores();
+  } else {
+    resetModalData();
+  }
+});
+
+/** ローカルストレージからゲームのスコアを取得する */
+const getGameScores = (() => {
+  return gameScores.value = gameScoresStore.getGameScoreList();
+});
+/** スコアのスコアを昇順に取得する */
+const sortGameScores = (() => {
+  gameScores.value.sort(
+    (a, b) => b.mode.toString().localeCompare(a.mode) || b.score - a.score
+  );
+});
+/** ローカルストレージのゲームのスコアを削除する */
+const resetGameScoreFromStorage = (() => {
+  gameScoresStore.deleteGameScoreList();
+});
+
+/** ゲームのデータを初期化する */
+const resetModalData = (() => {
+  gameScores.value = [];
+  lastScore = {
+    score: "",
+    mode: "",
+    time: "",
+  };
+  currentListMode.value = "";
+});
 </script>

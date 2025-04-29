@@ -49,8 +49,17 @@
 import Modal from "../components/Modal.vue";
 import SideMenu from "../components/SideMenu.vue";
 import { words } from "../assets/words.js";
+import { useGameScoresStore } from "../stores/gameScores";
 export default {
   name: "DashBoard",
+  setup() {
+    //インポートした関数を呼び出してストアをインスタンス化して変数に代入
+    const store = useGameScoresStore(); //setup() 内で useXxxxStore() を実行
+    return {
+      //テンプレートで使用するストアのインスタンス全体を返すことができます
+      store,
+    };
+  },
   components: {
     Modal,
     SideMenu
