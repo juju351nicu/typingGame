@@ -1,4 +1,4 @@
-export const words = [
+export const wordsData = [
     "here",
     "home",
     "rush",

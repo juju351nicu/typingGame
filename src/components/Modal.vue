@@ -120,7 +120,7 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
 
 /** ローカルストレージからゲームのスコアを取得する */
 const getGameScores = (() => {
-  return gameScores.value = gameScoresStore.getGameScoreList();
+  return gameScores.value = gameScoresStore.getGameScoreList;
 });
 /** スコアのスコアを昇順に取得する */
 const sortGameScores = (() => {

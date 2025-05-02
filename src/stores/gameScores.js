@@ -19,6 +19,6 @@ export const useGameScoresStore = defineStore("gameScores", {
   },
   // SessionStorageに保存する場合
   persist: {
-    storage: localStorage,
+    storage: sessionStorage,
   },
 });

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export const useGemeModeStore = defineStore("gameMode", {
+export const useGameModeStore = defineStore("gameMode", {
   state: () => ({
     mode: 0,
   }),
@@ -16,6 +16,6 @@ export const useGemeModeStore = defineStore("gameMode", {
   },
   // SessionStorageに保存する場合
   persist: {
-    storage: localStorage,
+    storage: sessionStorage,
   },
 });

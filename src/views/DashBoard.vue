@@ -45,278 +45,275 @@
   <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameover="gameOver" :modes="config.modes"
     @restart-game="restartGame" />
 </template>
-<script>
+<script setup>
 import Modal from "../components/Modal.vue";
 import SideMenu from "../components/SideMenu.vue";
-import { words } from "../assets/words.js";
+import { wordsData } from "../assets/words.js";
 import { useGameScoresStore } from "../stores/gameScores";
-export default {
-  name: "DashBoard",
-  setup() {
-    //インポートした関数を呼び出してストアをインスタンス化して変数に代入
-    const store = useGameScoresStore(); //setup() 内で useXxxxStore() を実行
-    return {
-      //テンプレートで使用するストアのインスタンス全体を返すことができます
-      store,
-    };
-  },
-  components: {
-    Modal,
-    SideMenu
-  },
-  data() {
-    return {
-      /**　タイピング用単語 */
-      words: words,
-      currentWords: [],
-      gameOver: false,
-      isGameStarted: false,
-      wordIndex: 0,
-      inputValue: "",
-      selectedGameMode: 0,
-      score: 0,
-      modalDisplayStatus: false,
-      config: {
-        modes: ["Easy", "Normal", "Hard"],
-        wordStyleWidth: 200,
-        wordInsertionSpeeds: [4, 3, 2],
-        wordAnimationSpeeds: [60, 30, 15],
-        currentInsertionSpeed: 4,
-        currentAnimationSpeed: 60,
-      },
-      interval: {
-        insertion: null,
-        animation: null,
-        timer: null,
-      },
-      timer: {
-        second: 0,
-        minute: 0,
-        hour: 0,
-      },
-    };
-  },
+import { useGameModeStore } from "../stores/gameMode.js"
+import { computed, onMounted, reactive, ref, useTemplateRef } from "vue";
 
-  computed: {
-    /** 経過時間を取得る 00:00:00 */
-    getTime() {
-      let second = this.timer.second > 9 ? this.timer.second : `0${this.timer.second}`;
-      let minute = this.timer.minute > 9 ? this.timer.minute : `0${this.timer.minute}`;
-      let hour = this.timer.hour > 9 ? this.timer.hour : `0${this.timer.hour}`;
-      return `${hour}:${minute}:${second}`;
-    },
-  },
-  created() {
-    this.selectedGameMode =
-      Number(this.getLocalStorageData("gameMode")) || this.selectedGameMode;
-    this.setWordAnimationSpeed();
-  },
-  mounted() {
-    /** 単語をシャッフルする */
-    this.shuffleWords();
-  },
-  methods: {
-    /** ボタンをクリックするとゲームがスタートする  */
-    play() {
-      this.isGameStarted = true;
-      this.startTimer();
-      this.addWord();
-      this.interval.insertion = setInterval(() => {
-        this.addWord();
-      }, this.config.currentInsertionSpeed * 1000);
-      this.interval.animation = setInterval(() => {
-        this.wordsTopToBottom();
-        this.checkIsTopToBottom();
-      }, this.config.currentAnimationSpeed);
-    },
-    /**
-     * 出題された単語と入力した単語の値を判定する
-     */
-    checkWordEquality() {
-      if (this.gameOver) return;
-      let word = this.inputValue;
-      let wordIndex = this.currentWords.findIndex(
-        (item) => item.characters.join("") == word
-      );
-      //一致した場合
-      if (wordIndex != -1) {
-        this.currentWords.splice(0, 1);
-        this.inputValue = "";
-        this.score++;
-        this.checkGameCompleted();
+const gameScoresStore = useGameScoresStore();
+const gameModeStore = useGameModeStore();
+/**　タイピング用単語 */
+const typingWords = ref(wordsData);
+
+const isGameStarted = ref(false);
+
+let config = reactive({
+  modes: ["Easy", "Normal", "Hard"],
+  wordStyleWidth: 200,
+  wordInsertionSpeeds: [4, 3, 2],
+  wordAnimationSpeeds: [60, 30, 15],
+  currentInsertionSpeed: 4,
+  currentAnimationSpeed: 60,
+});
+
+const selectedGameMode = ref(Number(gameModeStore.getGameMode)) || ref(0);
+
+const setWordAnimationSpeed = (() => {
+  config.currentAnimationSpeed = config.wordAnimationSpeeds[
+    selectedGameMode.value
+  ];
+  config.currentInsertionSpeed = config.wordInsertionSpeeds[
+    selectedGameMode.value
+  ];
+});
+
+setWordAnimationSpeed();
+
+let timer = reactive({
+  second: 0,
+  minute: 0,
+  hour: 0,
+});
+/** 経過時間を取得る 00:00:00 */
+const getTime = computed(() => {
+  let second = timer.second > 9 ? timer.second : `0${timer.second}`;
+  let minute = timer.minute > 9 ? timer.minute : `0${timer.minute}`;
+  let hour = timer.hour > 9 ? timer.hour : `0${timer.hour}`;
+  return `${hour}:${minute}:${second}`;
+});
+
+onMounted(() => {
+  /** 単語をシャッフルする */
+  shuffleWords();
+});
+
+let interval = reactive({
+  insertion: null,
+  animation: null,
+  timer: null,
+});
+/** ボタンをクリックするとゲームがスタートする  */
+const play = (() => {
+  isGameStarted.value = true;
+  startTimer();
+  addWord();
+  interval.insertion = setInterval(() => {
+    addWord();
+  }, config.currentInsertionSpeed * 1000);
+  interval.animation = setInterval(() => {
+    wordsTopToBottom();
+    checkIsTopToBottom();
+  }, config.currentAnimationSpeed);
+});
+
+const currentWords = ref([]);
+const inputValue = ref("");
+const gameOver = ref(false);
+const score = ref(0);
+/**
+ * 出題された単語と入力した単語の値を判定する
+ */
+const checkWordEquality = (() => {
+  if (gameOver.value) {
+    return;
+  }
+  const word = inputValue.value;
+  const wordIndex = currentWords.value.findIndex(
+    (item) => item.characters.join("") == word
+  );
+  //一致した場合
+  if (wordIndex != -1) {
+    currentWords.value.splice(0, 1);
+    inputValue.value = "";
+    score.value++;
+    checkGameCompleted();
+  }
+});
+
+const checkCharacter = (() => {
+  if (gameOver.value) {
+    return;
+  }
+  const inputValueArray = inputValue.value.split("");
+  currentWords.value.forEach((word, wordIndex) => {
+    word.characters.forEach((character, characherIndex) => {
+      if (inputValueArray[characherIndex] == null) {
+        currentWords.value[wordIndex].classList[characherIndex] = "";
+      } else if (character == inputValueArray[characherIndex]) {
+        currentWords.value[wordIndex].classList[characherIndex] = "correct";
+      } else {
+        currentWords.value[wordIndex].classList[characherIndex] = "incorrect";
       }
-    },
-    checkCharacter() {
-      if (this.gameOver) return;
-      const inputValue = this.inputValue.split("");
-      this.currentWords.forEach((word, wordIndex) => {
-        word.characters.forEach((character, characherIndex) => {
-          if (inputValue[characherIndex] == null) {
-            this.currentWords[wordIndex].classList[characherIndex] = "";
-          } else if (character == inputValue[characherIndex]) {
-            this.currentWords[wordIndex].classList[characherIndex] = "correct";
-          } else {
-            this.currentWords[wordIndex].classList[characherIndex] = "incorrect";
-          }
-        });
-      });
-    },
-    checkGameCompleted() {
-      if (this.isAddedAllWords() && this.currentWords.length == 0) {
-        this.gameFinish();
-      }
-    },
-    checkIsTopToBottom() {
-      let wordsBoardTop = this.$refs.words_board.offsetHeight;
-      this.currentWords.forEach((_, index) => {
-        let wordPositionTop = this.getCurrentWordTop(index);
-        if (wordPositionTop > wordsBoardTop) {
-          this.gameFinish();
-        }
-      });
-    },
-    /** ゲームを終了する */
-    gameFinish() {
-      this.gameOver = true;
-      this.clearInterval();
-      this.saveGameScores();
-      setTimeout(() => {
-        this.modalDisplayToggle();
-      }, 500);
-    },
-    /** ゲームの時間・スコア・モードを保存する */
-    saveGameScores() {
-      let gameScores = JSON.parse(this.getLocalStorageData("gameScores2")) || [];
-      gameScores.push({
-        time: this.getTime,
-        score: this.score,
-        mode: this.selectedGameMode,
-      });
-      this.setLocalStorageData("gameScores2", JSON.stringify(gameScores));
-    },
-    addWord() {
-      if (!this.isAddedAllWords()) {
-        this.currentWords.push({
-          characters: this.words[this.wordIndex].split(""),
-          classList: [],
-          style: {
-            left: `${this.getRandomPosition()}px`,
-            top: "-30px",
-          },
-        });
-        this.wordIndex++;
-      }
-    },
-    wordsTopToBottom() {
-      this.currentWords.forEach((_, index) => {
-        this.increasePositionTop(index);
-      });
-    },
-    shuffleWords() {
-      for (let wordIndex = this.words.length - 1; wordIndex > 0; wordIndex--) {
-        const randomIndex = Math.floor(Math.random() * wordIndex);
-        const tempWord = this.words[wordIndex];
-        this.words[wordIndex] = this.words[randomIndex];
-        this.words[randomIndex] = tempWord;
-      }
-    },
-    restartGame() {
-      this.resetGameData();
-      this.shuffleWords();
-      this.modalDisplayToggle();
-    },
-    /**
-     * ローカルストレージからデータを取得する
-     * @param dataName ローカルストレージのキー
-     */
-    getLocalStorageData(dataName) {
-      return localStorage.getItem(dataName);
-    },
-    getWordsBoardWidth() {
-      return this.$refs.words_board.offsetWidth;
-    },
-    getRandomPosition() {
-      return Math.floor(
-        Math.random() * (this.getWordsBoardWidth() - this.config.wordStyleWidth)
-      );
-    },
-    getCurrentWordTop(wordIndex) {
-      return Number(this.currentWords[wordIndex].style.top.slice(0, -2));
-    },
-    /**総単語数を取得する */
-    getWordsLength() {
-      this.words.length;
-    },
-    /**
-     * ローカルストレージに保存する
-     * @param dataName ローカルストレージのKey名 「gameScores」
-     * @param data ゲームの時間・スコア・モードを保存
-     */
-    setLocalStorageData(dataName, data) {
-      localStorage.setItem(dataName, data);
-    },
-    setGameMode() {
-      this.setLocalStorageData("gameMode", this.selectedGameMode);
-      this.setWordAnimationSpeed();
-    },
-    setWordAnimationSpeed() {
-      this.config.currentAnimationSpeed = this.config.wordAnimationSpeeds[
-        this.selectedGameMode
-      ];
-      this.config.currentInsertionSpeed = this.config.wordInsertionSpeeds[
-        this.selectedGameMode
-      ];
-    },
-    increasePositionTop(wordIndex) {
-      this.currentWords[wordIndex].style.top = `${this.getCurrentWordTop(wordIndex) + 1
-        }px`;
-    },
-    modalDisplayToggle() {
-      this.modalDisplayStatus = !this.modalDisplayStatus;
-    },
-    isAddedAllWords() {
-      return this.words.length == this.wordIndex;
-    },
-    clearInterval() {
-      clearInterval(this.interval.animation);
-      clearInterval(this.interval.insertion);
-      clearInterval(this.interval.timer);
-    },
-    startTimer() {
-      this.interval.timer = setInterval(() => {
-        this.timer.second++;
-        if (this.timer.second === 60) {
-          this.timer.second = 0;
-          this.timer.minute++;
-        }
-        if (this.timer.minute === 60) {
-          this.timer.hour++;
-          this.timer.minute = 0;
-          this.timer.second = 0;
-        }
-        if (this.timer.hour === 24) {
-          this.timer.hour = 0;
-          this.timer.minute = 0;
-          this.timer.second = 0;
-        }
-      }, 1000);
-    },
-    /** ゲームのデータをリセットする */
-    resetGameData() {
-      this.currentWords = [];
-      this.timer = {
-        second: 0,
-        minute: 0,
-        hour: 0,
-      };
-      this.score = 0;
-      this.gameOver = false;
-      this.isGameStarted = false;
-      this.wordIndex = 0;
-      this.inputValue = "";
-    },
-  },
-};
+    });
+  });
+});
+/** ゲームを終了する */
+const gameFinish = (() => {
+  gameOver.value = true;
+  clearInterval();
+  saveGameScores();
+  setTimeout(() => {
+    modalDisplayToggle();
+  }, 500);
+});
+
+const checkGameCompleted = (() => {
+  if (isAddedAllWords() && currentWords.value.length == 0) {
+    gameFinish();
+  }
+});
+/** ゲームの時間・スコア・モードを保存する */
+const saveGameScores = (() => {
+  let gameScores = gameScoresStore.getGameScoreList || [];
+  gameScores.push({
+    time: getTime,
+    score: score,
+    mode: selectedGameMode,
+  });
+  gameScoresStore.saveGameScoreList(JSON.stringify(gameScores));
+});
+
+const wordsBoard = useTemplateRef("words_board");
+const checkIsTopToBottom = (() => {
+  let wordsBoardTop = wordsBoard.value.offsetHeight;
+  currentWords.value.forEach((_, index) => {
+    let wordPositionTop = getCurrentWordTop(index);
+    if (wordPositionTop > wordsBoardTop) {
+      gameFinish();
+    }
+  });
+});
+
+const wordIndex = ref(0);
+const addWord = (() => {
+  if (!isAddedAllWords()) {
+    currentWords.value.push({
+      characters: typingWords.value[wordIndex.value].split(""),
+      classList: [],
+      style: {
+        left: `${getRandomPosition()}px`,
+        top: "-30px",
+      },
+    });
+    wordIndex.value++;
+  }
+});
+
+const wordsTopToBottom = (() => {
+  currentWords.value.forEach((_, index) => {
+    increasePositionTop(index);
+  });
+});
+
+const shuffleWords = (() => {
+  for (let wordIndex = typingWords.value.length - 1; wordIndex > 0; wordIndex--) {
+    const randomIndex = Math.floor(Math.random() * wordIndex);
+    const tempWord = typingWords.value[wordIndex];
+    typingWords.value[wordIndex] = typingWords.value[randomIndex];
+    typingWords.value[randomIndex] = tempWord;
+  }
+});
+
+const restartGame = (() => {
+  resetGameData();
+  shuffleWords();
+  modalDisplayToggle();
+});
+
+const getWordsBoardWidth = (() => {
+  return wordsBoard.value.offsetWidth;
+});
+
+const getRandomPosition = (() => {
+  return Math.floor(
+    Math.random() * (getWordsBoardWidth() - config.wordStyleWidth)
+  );
+});
+
+const getCurrentWordTop = ((wordIndex) => {
+  return Number(currentWords.value[wordIndex].style.top.slice(0, -2));
+});
+
+/**総単語数を取得する */
+const getWordsLength = (() => {
+  typingWords.value.length;
+});
+
+const setGameMode = (() => {
+  gameModeStore.saveGameMode(selectedGameMode.value);
+  setWordAnimationSpeed();
+});
+
+
+const increasePositionTop = ((wordIndex) => {
+  currentWords.value[wordIndex].style.top = `${getCurrentWordTop(wordIndex) + 1
+    }px`;
+});
+
+const modalDisplayStatus = ref(false);
+
+const modalDisplayToggle = (() => {
+  modalDisplayStatus.value = !modalDisplayStatus.value;
+});
+
+
+const isAddedAllWords = (() => {
+  return typingWords.value.length == wordIndex.value;
+});
+
+const clearInterval = (() => {
+  interval.insertion = null;
+  interval.animation = null;
+  interval.timer = null;
+});
+
+const startTimer = (() => {
+  interval.timer = setInterval(() => {
+    timer.second++;
+    if (timer.second === 60) {
+      timer.second = 0;
+      timer.minute++;
+    }
+    if (timer.minute === 60) {
+      timer.hour++;
+      timer.minute = 0;
+      timer.second = 0;
+    }
+    if (timer.hour === 24) {
+      timer.hour = 0;
+      timer.minute = 0;
+      timer.second = 0;
+    }
+  }, 1000);
+});
+
+/** ゲームのデータをリセットする */
+const resetGameData = (() => {
+  currentWords.value = [];
+  timer = {
+    second: 0,
+    minute: 0,
+    hour: 0,
+  };
+  score.value = 0;
+  gameOver.value = false;
+  isGameStarted.value = false;
+  wordIndex.value = 0;
+  inputValue.value = "";
+});
 </script>
 <style>
 :root {
