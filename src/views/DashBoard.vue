@@ -186,13 +186,13 @@ export default {
     },
     /** ゲームの時間・スコア・モードを保存する */
     saveGameScores() {
-      let gameScores = JSON.parse(this.getLocalStorageData("gameScores")) || [];
+      let gameScores = JSON.parse(this.getLocalStorageData("gameScores2")) || [];
       gameScores.push({
         time: this.getTime,
         score: this.score,
         mode: this.selectedGameMode,
       });
-      this.setLocalStorageData("gameScores", JSON.stringify(gameScores));
+      this.setLocalStorageData("gameScores2", JSON.stringify(gameScores));
     },
     addWord() {
       if (!this.isAddedAllWords()) {

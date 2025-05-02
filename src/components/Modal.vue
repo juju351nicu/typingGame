@@ -84,7 +84,7 @@ const getGameMode = ((index) => {
 
 const gameScores = ref([]);
 
-const lastScore = reactive({
+let lastScore = reactive({
   score: "",
   mode: "",
   time: "",
