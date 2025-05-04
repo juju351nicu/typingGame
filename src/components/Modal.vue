@@ -144,3 +144,114 @@ const resetModalData = (() => {
   currentListMode.value = "";
 });
 </script>
+<style scoped>
+/* Modal */
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--black);
+  background-color: rgba(0, 0, 0, .5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all .3s ease-out;
+  color: var(--white);
+}
+
+.modal.open {
+  visibility: visible;
+  opacity: 1
+}
+
+.modal.open .modal-content {
+  transform: translateY(0)
+}
+
+.modal-content {
+  width: 80%;
+  max-width: 100rem;
+  max-height: 55rem;
+  margin: 2.5rem auto 0;
+  border-radius: .6rem;
+  background-color: var(--main-bg-color);
+  border: .6rem solid var(--white);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .75);
+  transition: all .3s ease-out;
+  transform: translateY(-100rem);
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center
+}
+
+.modal-title {
+  font-size: 2rem;
+  font-weight: 500
+}
+
+.modal-body {
+  padding: 2rem 1rem;
+  border-top: 1px solid var(--color-alto);
+  border-bottom: 1px solid var(--color-alto);
+  font-size: 2rem;
+  text-align: center
+}
+
+.modal-body p {
+  padding: 0 5rem 2rem;
+}
+
+.modal-footer {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  grid-gap: 2.5rem
+}
+
+.game-scores-container {
+  width: 100%;
+  max-width: 60rem;
+  max-height: 24rem;
+  overflow-y: auto;
+  box-shadow: var(--bs-lg);
+  margin: 1rem auto 0;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .75);
+}
+
+.game-scores {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.8rem;
+}
+
+.game-scores td,
+.game-scores th {
+  text-align: left;
+  padding: 1rem;
+}
+
+.game-scores tr:not(:last-child) td,
+th {
+  border-bottom: 1px solid var(--color-alto);
+}
+
+.modal .game-option {
+  justify-content: flex-end;
+  align-items: center;
+  max-width: 20rem;
+  margin-left: auto;
+  font-size: 1.5rem;
+}
+
+.modal .game-option select {
+  min-width: 15rem;
+  font-size: 1.5rem;
+}
+</style>
