@@ -62,16 +62,20 @@ const gameScoresStore = useGameScoresStore(); //setup() 内で useXxxxStore() �
 const props = defineProps({
   isGameover: Boolean,
   modes: Array
-})
+});
+
 /** ゲームモード */
 const gemeMode = computed(() => {
   return props.modes;
 });
+
 /** ゲームオーバーフラグ */
 const isGameOverFlag = computed(() => {
   return props.isGameover;
 });
+
 const emit = defineEmits(["restart-game"]);
+
 /** ゲームをリセットする */
 const restartGame = (() => {
   emit("restart-game");
@@ -82,23 +86,29 @@ const getGameMode = ((index) => {
   return gemeMode.value[Number(index)];
 });
 
+/** ゲームスコア */
 const gameScores = ref([]);
 
+/** 最後に取得したゲームスコア */
 let lastScore = reactive({
   score: "",
   mode: "",
   time: "",
 });
+
+/** ゲームが終了した際に表示するメッセージ */
 const getLastScoreDesc = computed(() => {
   if (gameScores.value.length > 0) {
     let desc = `You completed ${lastScore.score} words in ${lastScore.time
       } time in ${getGameMode(lastScore.mode)} mode.`;
     return desc;
   }
-  return;
+  return "";
 });
-
+/** 現在のゲーム難易度 */
 const currentListMode = ref("");
+
+/** 現在のゲーム難易度に該当するゲームスコアリストを取得する */
 const listGameScores = computed(() => {
   if (typeof currentListMode.value == "number") {
     return gameScores.value.filter(
@@ -108,6 +118,7 @@ const listGameScores = computed(() => {
   return gameScores.value;
 });
 
+/** ゲームオーバーフラグをウォッチにて判定する */
 watch(isGameOverFlag, (newValue, _oldValue) => {
   if (newValue) {
     getGameScores();
@@ -120,14 +131,16 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
 
 /** ローカルストレージからゲームのスコアを取得する */
 const getGameScores = (() => {
-  return gameScores.value = gameScoresStore.getGameScoreList;
+  return gameScores.value = gameScoresStore.getGameScoreList || [];
 });
+
 /** スコアのスコアを昇順に取得する */
 const sortGameScores = (() => {
-  gameScores.value.sort(
+  return gameScores.value.sort(
     (a, b) => b.mode.toString().localeCompare(a.mode) || b.score - a.score
   );
 });
+
 /** ローカルストレージのゲームのスコアを削除する */
 const resetGameScoreFromStorage = (() => {
   gameScoresStore.deleteGameScoreList();
@@ -146,7 +159,6 @@ const resetModalData = (() => {
 </script>
 <style scoped>
 /* Modal */
-
 .modal {
   position: fixed;
   top: 0;

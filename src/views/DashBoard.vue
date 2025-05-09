@@ -22,7 +22,7 @@
         </div>
         <div class="game-status-item">
           <label>Score</label>
-          <span>{{ score }}</span>
+          <span>{{ gameScore }}</span>
         </div>
       </div>
     </template>
@@ -37,12 +37,12 @@
           </select>
         </div>
         <div class="game-option">
-          <button class="btn" @click="play">Play<span class="btn-arrow">➔</span></button>
+          <button class="btn" @click="startGame">Play<span class="btn-arrow">➔</span></button>
         </div>
       </div>
     </template>
   </div>
-  <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameover="gameOver" :modes="config.modes"
+  <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="gameOver" :modes="config.modes"
     @restart-game="restartGame" />
 </template>
 <script setup>
@@ -53,13 +53,19 @@ import { useGameScoresStore } from "../stores/gameScores";
 import { useGameModeStore } from "../stores/gameMode.js"
 import { computed, onMounted, reactive, ref, useTemplateRef } from "vue";
 
+ /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
+
+ /** ゲームモードに関するストア情報 */
 const gameModeStore = useGameModeStore();
-/**　タイピング用単語 */
+
+/**　タイピング用単語リスト */
 const typingWords = ref(wordsData);
 
+/**　ゲームスタートフラグ */
 const isGameStarted = ref(false);
 
+/**　設定オブジェクト */
 let config = reactive({
   modes: ["Easy", "Normal", "Hard"],
   wordStyleWidth: 200,
@@ -69,8 +75,10 @@ let config = reactive({
   currentAnimationSpeed: 60,
 });
 
+ /** 選択されたゲームの難易度 */
 const selectedGameMode = ref(Number(gameModeStore.getGameMode)) || ref(0);
 
+ /** アニメーションの表示速度を設定する */
 const setWordAnimationSpeed = (() => {
   config.currentAnimationSpeed = config.wordAnimationSpeeds[
     selectedGameMode.value
@@ -82,12 +90,14 @@ const setWordAnimationSpeed = (() => {
 
 setWordAnimationSpeed();
 
+/** 経過時間 */
 let timer = reactive({
   second: 0,
   minute: 0,
   hour: 0,
 });
-/** 経過時間を取得る 00:00:00 */
+
+/** 経過時間を取得する 00:00:00 */
 const getTime = computed(() => {
   let second = timer.second > 9 ? timer.second : `0${timer.second}`;
   let minute = timer.minute > 9 ? timer.minute : `0${timer.minute}`;
@@ -100,13 +110,14 @@ onMounted(() => {
   shuffleWords();
 });
 
+ /** 単語を表示するインターバル */
 let interval = reactive({
   insertion: null,
   animation: null,
   timer: null,
 });
 /** ボタンをクリックするとゲームがスタートする  */
-const play = (() => {
+const startGame = (() => {
   isGameStarted.value = true;
   startTimer();
   addWord();
@@ -120,11 +131,14 @@ const play = (() => {
 });
 
 const currentWords = ref([]);
+ /** タイピングされている単語 */
 const inputValue = ref("");
+ /** ゲームオーバー判定フラグ */
 const gameOver = ref(false);
-const score = ref(0);
+ /** ゲームスコア */
+const gameScore = ref(0);
 /**
- * 出題された単語と入力した単語の値を判定する
+ * 出題された単語と入力した単語の値を比較判定する
  */
 const checkWordEquality = (() => {
   if (gameOver.value) {
@@ -138,11 +152,13 @@ const checkWordEquality = (() => {
   if (wordIndex != -1) {
     currentWords.value.splice(0, 1);
     inputValue.value = "";
-    score.value++;
+    gameScore.value++;
     checkGameCompleted();
   }
 });
-
+/**
+ * 入力された単語があっていた場合、CSSのクラスを設定する
+ */
 const checkCharacter = (() => {
   if (gameOver.value) {
     return;
@@ -160,6 +176,7 @@ const checkCharacter = (() => {
     });
   });
 });
+
 /** ゲームを終了する */
 const gameFinish = (() => {
   gameOver.value = true;
@@ -170,20 +187,24 @@ const gameFinish = (() => {
   }, 500);
 });
 
+/** ゲームが完了したかを判定する */
 const checkGameCompleted = (() => {
   if (isAddedAllWords() && currentWords.value.length == 0) {
     gameFinish();
   }
 });
+
+/** ゲームスコア */
+const gameScoreList = ref([]);
 /** ゲームの時間・スコア・モードを保存する */
 const saveGameScores = (() => {
-  let gameScores = gameScoresStore.getGameScoreList || [];
-  gameScores.push({
-    time: getTime,
-    score: score,
-    mode: selectedGameMode,
+  gameScoreList.value = gameScoresStore.getGameScoreList || [];
+  gameScoreList.value.push({
+    time: getTime.value,
+    score: gameScore.value,
+    mode: selectedGameMode.value,
   });
-  gameScoresStore.saveGameScoreList(JSON.stringify(gameScores));
+  gameScoresStore.saveGameScoreList(gameScoreList);
 });
 
 const wordsBoard = useTemplateRef("words_board");
@@ -218,8 +239,15 @@ const wordsTopToBottom = (() => {
   });
 });
 
+
+/**総単語数を取得する */
+const getWordsLength = (() => {
+  return typingWords.value.length;
+});
+
+/** 単語をシャッフルする */
 const shuffleWords = (() => {
-  for (let wordIndex = typingWords.value.length - 1; wordIndex > 0; wordIndex--) {
+  for (let wordIndex = getWordsLength - 1; wordIndex > 0; wordIndex--) {
     const randomIndex = Math.floor(Math.random() * wordIndex);
     const tempWord = typingWords.value[wordIndex];
     typingWords.value[wordIndex] = typingWords.value[randomIndex];
@@ -227,6 +255,7 @@ const shuffleWords = (() => {
   }
 });
 
+/** モーダルにてリセットボタン押下時、データをリセットする */
 const restartGame = (() => {
   resetGameData();
   shuffleWords();
@@ -243,21 +272,20 @@ const getRandomPosition = (() => {
   );
 });
 
-const getCurrentWordTop = ((wordIndex) => {
-  return Number(currentWords.value[wordIndex].style.top.slice(0, -2));
-});
-
-/**総単語数を取得する */
-const getWordsLength = (() => {
-  typingWords.value.length;
-});
-
 const setGameMode = (() => {
   gameModeStore.saveGameMode(selectedGameMode.value);
   setWordAnimationSpeed();
 });
 
+/**
+ * 
+ * @param wordIndex 
+ */
+ const getCurrentWordTop = ((wordIndex) => {
+  return Number(currentWords.value[wordIndex].style.top.slice(0, -2));
+});
 
+/** CSSにて単語の垂直位置を設定する */
 const increasePositionTop = ((wordIndex) => {
   currentWords.value[wordIndex].style.top = `${getCurrentWordTop(wordIndex) + 1
     }px`;
@@ -274,12 +302,14 @@ const isAddedAllWords = (() => {
   return typingWords.value.length == wordIndex.value;
 });
 
+/** 単語を表示するインターバルをクリアする */
 const clearInterval = (() => {
   interval.insertion = null;
   interval.animation = null;
   interval.timer = null;
 });
 
+/** タイマーをスタートする */
 const startTimer = (() => {
   interval.timer = setInterval(() => {
     timer.second++;
@@ -308,7 +338,7 @@ const resetGameData = (() => {
     minute: 0,
     hour: 0,
   };
-  score.value = 0;
+  gameScore.value = 0;
   gameOver.value = false;
   isGameStarted.value = false;
   wordIndex.value = 0;
