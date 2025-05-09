@@ -105,6 +105,7 @@ const getLastScoreDesc = computed(() => {
   }
   return "";
 });
+
 /** 現在のゲーム難易度 */
 const currentListMode = ref("");
 

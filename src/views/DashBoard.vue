@@ -56,7 +56,7 @@ import { computed, onMounted, reactive, ref, useTemplateRef } from "vue";
  /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
 
- /** ゲームモードに関するストア情報 */
+ /** ゲーム難易度に関するストア情報 */
 const gameModeStore = useGameModeStore();
 
 /**　タイピング用単語リスト */
@@ -116,30 +116,20 @@ let interval = reactive({
   animation: null,
   timer: null,
 });
-/** ボタンをクリックするとゲームがスタートする  */
-const startGame = (() => {
-  isGameStarted.value = true;
-  startTimer();
-  addWord();
-  interval.insertion = setInterval(() => {
-    addWord();
-  }, config.currentInsertionSpeed * 1000);
-  interval.animation = setInterval(() => {
-    wordsTopToBottom();
-    checkIsTopToBottom();
-  }, config.currentAnimationSpeed);
-});
 
+/** 現在表示している単語リスト */
 const currentWords = ref([]);
+
  /** タイピングされている単語 */
 const inputValue = ref("");
+
  /** ゲームオーバー判定フラグ */
 const gameOver = ref(false);
+
  /** ゲームスコア */
 const gameScore = ref(0);
-/**
- * 出題された単語と入力した単語の値を比較判定する
- */
+
+/** 出題された単語と入力した単語の値を比較判定する */
 const checkWordEquality = (() => {
   if (gameOver.value) {
     return;
@@ -156,9 +146,8 @@ const checkWordEquality = (() => {
     checkGameCompleted();
   }
 });
-/**
- * 入力された単語があっていた場合、CSSのクラスを設定する
- */
+
+/** 入力された単語があっていた場合、CSSのクラスを設定する */
 const checkCharacter = (() => {
   if (gameOver.value) {
     return;
@@ -183,7 +172,7 @@ const gameFinish = (() => {
   clearInterval();
   saveGameScores();
   setTimeout(() => {
-    modalDisplayToggle();
+    setModalDisplay();
   }, 500);
 });
 
@@ -196,6 +185,7 @@ const checkGameCompleted = (() => {
 
 /** ゲームスコア */
 const gameScoreList = ref([]);
+
 /** ゲームの時間・スコア・モードを保存する */
 const saveGameScores = (() => {
   gameScoreList.value = gameScoresStore.getGameScoreList || [];
@@ -207,18 +197,10 @@ const saveGameScores = (() => {
   gameScoresStore.saveGameScoreList(gameScoreList);
 });
 
-const wordsBoard = useTemplateRef("words_board");
-const checkIsTopToBottom = (() => {
-  let wordsBoardTop = wordsBoard.value.offsetHeight;
-  currentWords.value.forEach((_, index) => {
-    let wordPositionTop = getCurrentWordTop(index);
-    if (wordPositionTop > wordsBoardTop) {
-      gameFinish();
-    }
-  });
-});
 
 const wordIndex = ref(0);
+
+/** 表示するタイピングの単語を追加する */
 const addWord = (() => {
   if (!isAddedAllWords()) {
     currentWords.value.push({
@@ -239,8 +221,7 @@ const wordsTopToBottom = (() => {
   });
 });
 
-
-/**総単語数を取得する */
+/** 総単語数を取得する */
 const getWordsLength = (() => {
   return typingWords.value.length;
 });
@@ -259,9 +240,30 @@ const shuffleWords = (() => {
 const restartGame = (() => {
   resetGameData();
   shuffleWords();
-  modalDisplayToggle();
+  setModalDisplay();
 });
 
+/** 単語を表示するテンプレート要素 */
+const wordsBoard = useTemplateRef("words_board");
+
+/**
+ *  表示される単語のHTML要素の高さを比較判定する。
+ *  現在表示されている単語と「words_board」要素の縦幅を比較する。
+ * 「words_board」要素の縦幅を下回った場合、ゲームを終了する。
+ */
+const checkIsTopToBottom = (() => {
+  let wordsBoardTop = wordsBoard.value.offsetHeight;
+  currentWords.value.forEach((_, index) => {
+    // 現在表示されている単語の縦幅を取得する。
+    let wordPositionTop = getCurrentWordTop(index);
+    // 現在表示されている単語と「words_board」要素の縦幅を比較する。
+    if (wordPositionTop > wordsBoardTop) {
+      gameFinish();
+    }
+  });
+});
+
+/** 「words_board」要素の横幅を取得する */
 const getWordsBoardWidth = (() => {
   return wordsBoard.value.offsetWidth;
 });
@@ -272,6 +274,7 @@ const getRandomPosition = (() => {
   );
 });
 
+/** ゲームの難易度設定する */
 const setGameMode = (() => {
   gameModeStore.saveGameMode(selectedGameMode.value);
   setWordAnimationSpeed();
@@ -291,13 +294,15 @@ const increasePositionTop = ((wordIndex) => {
     }px`;
 });
 
+/** モーダル表示フラグ */
 const modalDisplayStatus = ref(false);
 
-const modalDisplayToggle = (() => {
+/**  モーダル表示有無を設定する */
+const setModalDisplay = (() => {
   modalDisplayStatus.value = !modalDisplayStatus.value;
 });
 
-
+/**  総単語数と入力完了した単語の数を比較判定する */
 const isAddedAllWords = (() => {
   return typingWords.value.length == wordIndex.value;
 });
@@ -328,6 +333,20 @@ const startTimer = (() => {
       timer.second = 0;
     }
   }, 1000);
+});
+
+/** ボタンをクリックするとゲームがスタートする  */
+const startGame = (() => {
+  isGameStarted.value = true;
+  startTimer();
+  addWord();
+  interval.insertion = setInterval(() => {
+    addWord();
+  }, config.currentInsertionSpeed * 1000);
+  interval.animation = setInterval(() => {
+    wordsTopToBottom();
+    checkIsTopToBottom();
+  }, config.currentAnimationSpeed);
 });
 
 /** ゲームのデータをリセットする */
