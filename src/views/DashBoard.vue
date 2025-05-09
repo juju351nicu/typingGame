@@ -129,24 +129,6 @@ const gameOver = ref(false);
  /** ゲームスコア */
 const gameScore = ref(0);
 
-/** 出題された単語と入力した単語の値を比較判定する */
-const checkWordEquality = (() => {
-  if (gameOver.value) {
-    return;
-  }
-  const word = inputValue.value;
-  const wordIndex = currentWords.value.findIndex(
-    (item) => item.characters.join("") == word
-  );
-  //一致した場合
-  if (wordIndex != -1) {
-    currentWords.value.splice(0, 1);
-    inputValue.value = "";
-    gameScore.value++;
-    checkGameCompleted();
-  }
-});
-
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
 const checkCharacter = (() => {
   if (gameOver.value) {
@@ -176,10 +158,21 @@ const gameFinish = (() => {
   }, 500);
 });
 
-/** ゲームが完了したかを判定する */
-const checkGameCompleted = (() => {
-  if (isAddedAllWords() && currentWords.value.length == 0) {
-    gameFinish();
+/** 出題された単語と入力した単語の値を比較判定する */
+const checkWordEquality = (() => {
+  if (gameOver.value) {
+    return;
+  }
+  const word = inputValue.value;
+  const index = currentWords.value.findIndex(
+    (item) => item.characters.join("") == word
+  );
+  //一致した場合
+  if (index != -1) {
+    currentWords.value.splice(0, 1);
+    inputValue.value = "";
+    gameScore.value++;
+    checkGameCompleted();
   }
 });
 
@@ -197,30 +190,6 @@ const saveGameScores = (() => {
   gameScoresStore.saveGameScoreList(gameScoreList);
 });
 
-
-const wordIndex = ref(0);
-
-/** 表示するタイピングの単語を追加する */
-const addWord = (() => {
-  if (!isAddedAllWords()) {
-    currentWords.value.push({
-      characters: typingWords.value[wordIndex.value].split(""),
-      classList: [],
-      style: {
-        left: `${getRandomPosition()}px`,
-        top: "-30px",
-      },
-    });
-    wordIndex.value++;
-  }
-});
-
-const wordsTopToBottom = (() => {
-  currentWords.value.forEach((_, index) => {
-    increasePositionTop(index);
-  });
-});
-
 /** 総単語数を取得する */
 const getWordsLength = (() => {
   return typingWords.value.length;
@@ -228,10 +197,10 @@ const getWordsLength = (() => {
 
 /** 単語をシャッフルする */
 const shuffleWords = (() => {
-  for (let wordIndex = getWordsLength - 1; wordIndex > 0; wordIndex--) {
-    const randomIndex = Math.floor(Math.random() * wordIndex);
-    const tempWord = typingWords.value[wordIndex];
-    typingWords.value[wordIndex] = typingWords.value[randomIndex];
+  for (let index = getWordsLength - 1; index > 0; index--) {
+    const randomIndex = Math.floor(Math.random() * index);
+    const tempWord = typingWords.value[index];
+    typingWords.value[index] = typingWords.value[randomIndex];
     typingWords.value[randomIndex] = tempWord;
   }
 });
@@ -263,17 +232,6 @@ const checkIsTopToBottom = (() => {
   });
 });
 
-/** 「words_board」要素の横幅を取得する */
-const getWordsBoardWidth = (() => {
-  return wordsBoard.value.offsetWidth;
-});
-
-const getRandomPosition = (() => {
-  return Math.floor(
-    Math.random() * (getWordsBoardWidth() - config.wordStyleWidth)
-  );
-});
-
 /** ゲームの難易度設定する */
 const setGameMode = (() => {
   gameModeStore.saveGameMode(selectedGameMode.value);
@@ -281,17 +239,29 @@ const setGameMode = (() => {
 });
 
 /**
- * 
- * @param wordIndex 
+ * 索引に該当する、現在表示されている単語の要素の上からの配置位置（距離）を取得する
+ * @param index 索引
  */
- const getCurrentWordTop = ((wordIndex) => {
-  return Number(currentWords.value[wordIndex].style.top.slice(0, -2));
+ const getCurrentWordTop = ((index) => {
+  return Number(currentWords.value[index].style.top.slice(0, -2));
 });
 
-/** CSSにて単語の垂直位置を設定する */
-const increasePositionTop = ((wordIndex) => {
-  currentWords.value[wordIndex].style.top = `${getCurrentWordTop(wordIndex) + 1
+/**
+ * 索引に該当する、単語の垂直位置を増加させる。
+ * @param index 索引
+ */
+const increasePositionTop = ((index) => {
+  currentWords.value[index].style.top = `${getCurrentWordTop(index) + 1
     }px`;
+});
+
+/**
+ * 現在表示している各単語の単語の垂直位置を増加させる。
+ */
+const wordsTopToBottom = (() => {
+  currentWords.value.forEach((_, index) => {
+    increasePositionTop(index);
+  });
 });
 
 /** モーダル表示フラグ */
@@ -302,9 +272,19 @@ const setModalDisplay = (() => {
   modalDisplayStatus.value = !modalDisplayStatus.value;
 });
 
+/** 現在表示されているの単語の索引 */
+const currentWordIndex = ref(0);
+
 /**  総単語数と入力完了した単語の数を比較判定する */
 const isAddedAllWords = (() => {
-  return typingWords.value.length == wordIndex.value;
+  return typingWords.value.length == currentWordIndex.value;
+});
+
+/** ゲームが完了したかを判定する */
+const checkGameCompleted = (() => {
+  if (isAddedAllWords() && currentWords.value.length == 0) {
+    gameFinish();
+  }
 });
 
 /** 単語を表示するインターバルをクリアする */
@@ -335,6 +315,33 @@ const startTimer = (() => {
   }, 1000);
 });
 
+/** 「words_board」要素の横幅を取得する */
+const getWordsBoardWidth = (() => {
+  return wordsBoard.value.offsetWidth;
+});
+
+/** 表示するタイピング単語の横位置を生成する */
+const getRandomPosition = (() => {
+  return Math.floor(
+    Math.random() * (getWordsBoardWidth() - config.wordStyleWidth)
+  );
+});
+
+/** 表示するタイピングの単語を追加する */
+const addWord = (() => {
+  if (!isAddedAllWords()) {
+    currentWords.value.push({
+      characters: typingWords.value[currentWordIndex.value].split(""),
+      classList: [],
+      style: {
+        left: `${getRandomPosition()}px`,
+        top: "-30px",
+      },
+    });
+    currentWordIndex.value++;
+  }
+});
+
 /** ボタンをクリックするとゲームがスタートする  */
 const startGame = (() => {
   isGameStarted.value = true;
@@ -360,7 +367,7 @@ const resetGameData = (() => {
   gameScore.value = 0;
   gameOver.value = false;
   isGameStarted.value = false;
-  wordIndex.value = 0;
+  currentWordIndex.value = 0;
   inputValue.value = "";
 });
 </script>
