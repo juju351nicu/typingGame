@@ -2,7 +2,12 @@ import { createRouter, createWebHistory } from "vue-router";
 import DashBoard from "../views/DashBoard.vue";
 import NotFound from "../views/NotFound.vue";
 const routes = [
-  { path: "/", name: "DashBoard", component: DashBoard },
+  {
+    /** トップページ */
+    path: "/",
+    name: "DashBoard",
+    component: DashBoard,
+  },
   {
     /** 存在しないURLにアクセスした場合 */
     path: "/:pathMatch(.*)*",
