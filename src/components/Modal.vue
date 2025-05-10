@@ -42,10 +42,7 @@
         <button class="btn" @click="restartGame">
           Play again <span class="btn-arrow">➔</span>
         </button>
-        <button class="btn" @click="
-          resetGameScoreFromStorage();
-        resetModalData();
-        ">
+        <button class="btn" @click="resetModalData">
           Reset Scores<span class="btn-arrow">➔</span>
         </button>
       </div>
@@ -126,7 +123,7 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
     lastScore = gameScores.value[gameScores.value.length - 1];
     sortGameScores();
   } else {
-    resetModalData();
+    initGameData();
   }
 });
 
@@ -142,13 +139,8 @@ const sortGameScores = (() => {
   );
 });
 
-/** ローカルストレージのゲームのスコアを削除する */
-const resetGameScoreFromStorage = (() => {
-  gameScoresStore.deleteGameScoreList();
-});
-
 /** ゲームのデータを初期化する */
-const resetModalData = (() => {
+const initGameData = (() => {
   gameScores.value = [];
   lastScore = {
     score: "",
@@ -156,6 +148,13 @@ const resetModalData = (() => {
     time: "",
   };
   currentListMode.value = "";
+});
+
+/** ゲームのデータを初期化する */
+const resetModalData = (() => {
+  // ローカルストレージのゲームのスコアを削除する 
+  gameScoresStore.deleteGameScoreList();
+  initGameData();
 });
 </script>
 <style scoped>
