@@ -41,6 +41,7 @@
         </div>
       </div>
     </template>
+    <Timer />
   </div>
   <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="gameOver" :modes="config.modes"
     @restart-game="restartGame" />
@@ -48,15 +49,16 @@
 <script setup>
 import Modal from "../components/Modal.vue";
 import SideMenu from "../components/SideMenu.vue";
+import Timer from "../components/Timer.vue";
 import { wordsData } from "../assets/words.js";
 import { useGameScoresStore } from "../stores/gameScores";
 import { useGameModeStore } from "../stores/gameMode.js"
 import { computed, onMounted, reactive, ref, useTemplateRef } from "vue";
 
- /** ゲームスコアに関するストア情報 */
+/** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
 
- /** ゲーム難易度に関するストア情報 */
+/** ゲーム難易度に関するストア情報 */
 const gameModeStore = useGameModeStore();
 
 /**　タイピング用単語リスト */
@@ -75,10 +77,10 @@ let config = reactive({
   currentAnimationSpeed: 60,
 });
 
- /** 選択されたゲームの難易度 */
+/** 選択されたゲームの難易度 */
 const selectedGameMode = ref(Number(gameModeStore.getGameMode)) || ref(0);
 
- /** アニメーションの表示速度を設定する */
+/** アニメーションの表示速度を設定する */
 const setWordAnimationSpeed = (() => {
   config.currentAnimationSpeed = config.wordAnimationSpeeds[
     selectedGameMode.value
@@ -110,7 +112,7 @@ onMounted(() => {
   shuffleWords();
 });
 
- /** 単語を表示するインターバル */
+/** 単語を表示するインターバル */
 let interval = reactive({
   insertion: null,
   animation: null,
@@ -120,13 +122,13 @@ let interval = reactive({
 /** 現在表示している単語リスト */
 const currentWords = ref([]);
 
- /** タイピングされている単語 */
+/** タイピングされている単語 */
 const inputValue = ref("");
 
- /** ゲームオーバー判定フラグ */
+/** ゲームオーバー判定フラグ */
 const gameOver = ref(false);
 
- /** ゲームスコア */
+/** ゲームスコア */
 const gameScore = ref(0);
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
@@ -242,7 +244,7 @@ const setGameMode = (() => {
  * 索引に該当する、現在表示されている単語の要素の上からの配置位置（距離）を取得する
  * @param index 索引
  */
- const getCurrentWordTop = ((index) => {
+const getCurrentWordTop = ((index) => {
   return Number(currentWords.value[index].style.top.slice(0, -2));
 });
 
