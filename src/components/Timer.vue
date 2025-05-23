@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <td colspan="2">
-                    <h1> {{ getTimeStr() }} </h1>
+                    <h1> {{ getTimeStr }} </h1>
                 </td>
             </tr>
         </thead>
@@ -22,7 +22,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref , computed} from "vue";
+import util from "../utils/util";
 /** 実行状態 */
 const status = ref("clear");
 /** 計測時間 */
@@ -33,6 +34,12 @@ const startTime = ref(null);
 const stopTime = ref(0);
 /** setInterval()の格納用 */
 const timer = ref(null);
+/**
+ * 
+ */
+const getTimeStr = computed(() => {
+  return util.getCountDownTime(accumTime.value);
+});
 /**
  * 
  */
@@ -71,28 +78,5 @@ const resetTimer = (() => {
     accumTime.value = 0;
     startTime.value = null;
     stopTime.value = 0;
-});
-/**
- * 計測時間を返却する。
- */
-const getTimeStr = (() => {
-    // this.time is milliseconds
-    // 1秒 = 1000ミリ秒
-    // 1分 = 60 * 1000ミリ秒
-    // 1時間 = 60 * 60 * 1000ミリ秒
-    const currentTime = accumTime.value;
-    let milliseconds = currentTime % 1000;
-    let seconds = Math.floor((currentTime / 1000) % 60);
-    let minutes = Math.floor((currentTime / (60 * 1000)) % 60);
-    let hours = Math.floor(currentTime / (60 * 60 * 1000));
-
-    let millisecondsMultiplyTen = Math.floor(milliseconds / 10);
-
-    millisecondsMultiplyTen = ("0" + millisecondsMultiplyTen).slice(-2);
-    seconds = ("0" + seconds).slice(-2);
-    minutes = ("0" + minutes).slice(-2);
-    hours = hours < 100 ? ("0" + hours).slice(-2) : hours;
-
-    return `${hours}:${minutes}:${seconds}.${millisecondsMultiplyTen}`;
 });
 </script>

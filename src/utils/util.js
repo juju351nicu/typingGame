@@ -188,6 +188,29 @@ const getStrPageList = (target, delimiter) => {
   }
   return strPageList;
 };
+/**
+ * 計測時間を返却する。
+ */
+const getCountDownTime = ((accumTime) => {
+  // this.time is milliseconds
+  // 1秒 = 1000ミリ秒
+  // 1分 = 60 * 1000ミリ秒
+  // 1時間 = 60 * 60 * 1000ミリ秒
+  const currentTime = accumTime;
+  let milliseconds = currentTime % 1000;
+  let seconds = Math.floor((currentTime / 1000) % 60);
+  let minutes = Math.floor((currentTime / (60 * 1000)) % 60);
+  let hours = Math.floor(currentTime / (60 * 60 * 1000));
+
+  let millisecondsMultiplyTen = Math.floor(milliseconds / 10);
+
+  millisecondsMultiplyTen = ("0" + millisecondsMultiplyTen).slice(-2);
+  seconds = ("0" + seconds).slice(-2);
+  minutes = ("0" + minutes).slice(-2);
+  hours = hours < 100 ? ("0" + hours).slice(-2) : hours;
+
+  return `${hours}:${minutes}:${seconds}.${millisecondsMultiplyTen}`;
+});
 export default {
   isEmpty,
   isLocalStorage,
@@ -205,4 +228,5 @@ export default {
   getStrPageList,
   uniqArrayBySet,
   replaceBlank,
+  getCountDownTime
 };
