@@ -17,7 +17,7 @@
       " />
       <div class="game-status">
         <Timer :accumTime="accumTime" @update:accumTime="$event => (accumTime = $event)"
-          :isGameOverFlag="isGameOverFlag" :isGameStartedFlag="isGameStartedFlag" />
+          :isGameStartedFlag="isGameStarted" :isGameOverFlag="isGameOver" />
         <div class="game-status-item">
           <label>Score</label>
           <span>{{ gameScore }}</span>
@@ -93,8 +93,6 @@ setWordAnimationSpeed();
 /** 経過時間 */
 const accumTime = ref(0);
 
-const isGameStartedFlag = ref(false);
-const isGameOverFlag = ref(false);
 onMounted(() => {
   /** 単語をシャッフルする */
   shuffleWords();
@@ -140,7 +138,6 @@ const checkCharacter = (() => {
 /** ゲームを終了する */
 const gameFinish = (() => {
   isGameOver.value = true;
-  isGameOverFlag.value = true;
   clearInterval();
   saveGameScores();
   setTimeout(() => {
@@ -314,7 +311,6 @@ const addWord = (() => {
 /** ボタンをクリックするとゲームがスタートする  */
 const startGame = (() => {
   isGameStarted.value = true;
-  isGameStartedFlag.value = true;
   addWord();
   interval.insertion = setInterval(() => {
     addWord();
