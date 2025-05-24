@@ -16,10 +16,8 @@
       checkCharacter();
       " />
       <div class="game-status">
-        <div class="game-status-item">
-          <label>Time</label>
-          <span>{{ getTime }}</span>
-        </div>
+        <Timer :accumTime="accumTime" @update:accumTime="$event => (accumTime = $event)"
+          :isGameOverFlag="isGameOverFlag" :isGameStartedFlag="isGameStartedFlag" />
         <div class="game-status-item">
           <label>Score</label>
           <span>{{ gameScore }}</span>
@@ -41,9 +39,8 @@
         </div>
       </div>
     </template>
-    <Timer />
   </div>
-  <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="gameOver" :modes="config.modes"
+  <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="isGameOver" :modes="config.modes"
     @restart-game="restartGame" />
 </template>
 <script setup>
@@ -53,7 +50,8 @@ import Timer from "../components/Timer.vue";
 import { wordsData } from "../assets/words.js";
 import { useGameScoresStore } from "../stores/gameScores";
 import { useGameModeStore } from "../stores/gameMode.js"
-import { computed, onMounted, reactive, ref, useTemplateRef } from "vue";
+import { onMounted, reactive, ref, useTemplateRef } from "vue";
+import util from "../utils/util.js";
 
 /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
@@ -78,7 +76,7 @@ let config = reactive({
 });
 
 /** 選択されたゲームの難易度 */
-const selectedGameMode = ref(Number(gameModeStore.getGameMode)) || ref(0);
+const selectedGameMode = ref(0);
 
 /** アニメーションの表示速度を設定する */
 const setWordAnimationSpeed = (() => {
@@ -93,20 +91,10 @@ const setWordAnimationSpeed = (() => {
 setWordAnimationSpeed();
 
 /** 経過時間 */
-let timer = reactive({
-  second: 0,
-  minute: 0,
-  hour: 0,
-});
+const accumTime = ref(0);
 
-/** 経過時間を取得する 00:00:00 */
-const getTime = computed(() => {
-  let second = timer.second > 9 ? timer.second : `0${timer.second}`;
-  let minute = timer.minute > 9 ? timer.minute : `0${timer.minute}`;
-  let hour = timer.hour > 9 ? timer.hour : `0${timer.hour}`;
-  return `${hour}:${minute}:${second}`;
-});
-
+const isGameStartedFlag = ref(false);
+const isGameOverFlag = ref(false);
 onMounted(() => {
   /** 単語をシャッフルする */
   shuffleWords();
@@ -116,7 +104,6 @@ onMounted(() => {
 let interval = reactive({
   insertion: null,
   animation: null,
-  timer: null,
 });
 
 /** 現在表示している単語リスト */
@@ -126,14 +113,14 @@ const currentWords = ref([]);
 const inputValue = ref("");
 
 /** ゲームオーバー判定フラグ */
-const gameOver = ref(false);
+const isGameOver = ref(false);
 
 /** ゲームスコア */
 const gameScore = ref(0);
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
 const checkCharacter = (() => {
-  if (gameOver.value) {
+  if (isGameOver.value) {
     return;
   }
   const inputValueArray = inputValue.value.split("");
@@ -152,7 +139,8 @@ const checkCharacter = (() => {
 
 /** ゲームを終了する */
 const gameFinish = (() => {
-  gameOver.value = true;
+  isGameOver.value = true;
+  isGameOverFlag.value = true;
   clearInterval();
   saveGameScores();
   setTimeout(() => {
@@ -162,7 +150,7 @@ const gameFinish = (() => {
 
 /** 出題された単語と入力した単語の値を比較判定する */
 const checkWordEquality = (() => {
-  if (gameOver.value) {
+  if (isGameOver.value) {
     return;
   }
   const word = inputValue.value;
@@ -183,9 +171,10 @@ const gameScoreList = ref([]);
 
 /** ゲームの時間・スコア・モードを保存する */
 const saveGameScores = (() => {
+  console.log('ゲームの時間・スコア・モードを保存する' + accumTime.value);
   gameScoreList.value = gameScoresStore.getGameScoreList || [];
   gameScoreList.value.push({
-    time: getTime.value,
+    time: util.getCountDownTime(accumTime.value),
     score: gameScore.value,
     mode: selectedGameMode.value,
   });
@@ -293,28 +282,6 @@ const checkGameCompleted = (() => {
 const clearInterval = (() => {
   interval.insertion = null;
   interval.animation = null;
-  interval.timer = null;
-});
-
-/** タイマーをスタートする */
-const startTimer = (() => {
-  interval.timer = setInterval(() => {
-    timer.second++;
-    if (timer.second === 60) {
-      timer.second = 0;
-      timer.minute++;
-    }
-    if (timer.minute === 60) {
-      timer.hour++;
-      timer.minute = 0;
-      timer.second = 0;
-    }
-    if (timer.hour === 24) {
-      timer.hour = 0;
-      timer.minute = 0;
-      timer.second = 0;
-    }
-  }, 1000);
 });
 
 /** 「words_board」要素の横幅を取得する */
@@ -347,7 +314,7 @@ const addWord = (() => {
 /** ボタンをクリックするとゲームがスタートする  */
 const startGame = (() => {
   isGameStarted.value = true;
-  startTimer();
+  isGameStartedFlag.value = true;
   addWord();
   interval.insertion = setInterval(() => {
     addWord();
@@ -361,13 +328,8 @@ const startGame = (() => {
 /** ゲームのデータをリセットする */
 const resetGameData = (() => {
   currentWords.value = [];
-  timer = {
-    second: 0,
-    minute: 0,
-    hour: 0,
-  };
   gameScore.value = 0;
-  gameOver.value = false;
+  isGameOver.value = false;
   isGameStarted.value = false;
   currentWordIndex.value = 0;
   inputValue.value = "";

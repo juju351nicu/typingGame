@@ -1,47 +1,56 @@
-<template>
-    <table>
-        <thead>
-            <tr>
-                <td colspan="2">
-                    <h1> {{ getTimeStr }} </h1>
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <button v-if="status !== 'start'" @click="startTimer()">スタート</button>
-                    <button v-else @click="stopTimer()">ストップ</button>
-                </td>
-                <td>
-                    <button @click="resetTimer()">リセット</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<template>Ï
+    <div class="game-status-item">
+        <label>タイマー</label>
+        <span>{{ getTimeStr }}</span>
+    </div>
 </template>
 
 <script setup>
-import { ref , computed} from "vue";
+import { defineProps, defineEmits, computed, ref, watch, onMounted } from "vue";
 import util from "../utils/util";
-/** 実行状態 */
-const status = ref("clear");
+
+
+const props = defineProps(["accumTime", "isGameStartedFlag", "isGameOverFlag"]);
+
+const emit = defineEmits(["update:accumTime"]);
+
 /** 計測時間 */
-const accumTime = ref(0);
-/** スタートを押した時刻 */
-const startTime = ref(null);
-/** ストップ時間 */
-const stopTime = ref(0);
-/** setInterval()の格納用 */
-const timer = ref(null);
+const accumTime = computed({
+    get: () => props.accumTime,
+    set: (value) => emit("update:accumTime", value)
+});
+
+/** ゲームスタートフラグ */
+const isGameStartedFlag = computed(() => {
+    return props.isGameStartedFlag;
+});
+
+/** ゲームオーバーフラグ */
+const isGameOverFlag = computed(() => {
+    return props.isGameOverFlag;
+});
+
 /**
- * 
+ * 00:00:00形式で計測時間を取得する
  */
 const getTimeStr = computed(() => {
-  return util.getCountDownTime(accumTime.value);
+    return util.getCountDownTime(accumTime.value);
 });
+
+/** 実行状態 */
+const status = ref("clear");
+
+/** スタートを押した時刻 */
+const startTime = ref(null);
+
+/** ストップ時間 */
+const stopTime = ref(0);
+
+/** setInterval()の格納用 */
+const timer = ref(null);
+
 /**
- * 
+ * タイマーの時間を計算する
  */
 const checkTime = () => {
     accumTime.value = Date.now() - startTime.value + stopTime.value;
@@ -51,12 +60,12 @@ const checkTime = () => {
  */
 const startTimer = (() => {
     status.value = "start";
-
     if (startTime.value === null) {
         startTime.value = Date.now();
     }
     timer.value = setInterval(checkTime, 10);
 });
+
 /**
  * ストップボタンを押下した際にインターバルをストップする。
  */
@@ -64,11 +73,11 @@ const stopTimer = (() => {
     if (timer.value) {
         clearInterval(timer.value);
     }
-
     status.value = "stop";
     startTime.value = null;
     stopTime.value = accumTime.value;
 });
+
 /**
  * リセットボタンを押下した際に各変数をクリアする。
  */
@@ -78,5 +87,19 @@ const resetTimer = (() => {
     accumTime.value = 0;
     startTime.value = null;
     stopTime.value = 0;
+});
+
+onMounted(() => {
+    if (isGameStartedFlag) {
+        startTimer();
+    }
+});
+
+/** ゲームオーバーフラグにてストップウォッチを止める */
+watch(isGameOverFlag, (newValue, _oldValue) => {
+    console.log('ゲームオーバーフラグをウォッチにて判定する:' + newValue);
+    if (newValue) {
+        stopTimer();
+    }
 });
 </script>

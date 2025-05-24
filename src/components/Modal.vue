@@ -51,13 +51,13 @@
 </template>
 <script setup>
 import { useGameScoresStore } from "../stores/gameScores";
-import { computed, reactive, ref, watch } from "vue";
+import {  defineProps, defineEmits, computed, reactive, ref, watch } from "vue";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore(); //setup() 内で useXxxxStore() を実行
 
 const props = defineProps({
-  isGameover: Boolean,
+  isGameOver: Boolean,
   modes: Array
 });
 
@@ -68,7 +68,7 @@ const gemeMode = computed(() => {
 
 /** ゲームオーバーフラグ */
 const isGameOverFlag = computed(() => {
-  return props.isGameover;
+  return props.isGameOver;
 });
 
 const emit = defineEmits(["restart-game"]);
@@ -118,13 +118,13 @@ const listGameScores = computed(() => {
 
 /** ゲームオーバーフラグをウォッチにて判定する */
 watch(isGameOverFlag, (newValue, _oldValue) => {
-  if (newValue) {
-    getGameScores();
-    lastScore = gameScores.value[gameScores.value.length - 1];
-    sortGameScores();
-  } else {
-    initGameData();
-  }
+    if (newValue) {
+      getGameScores();
+      lastScore = gameScores.value[gameScores.value.length - 1];
+      sortGameScores();
+    } else {
+      initGameData();
+    }
 });
 
 /** ローカルストレージからゲームのスコアを取得する */
