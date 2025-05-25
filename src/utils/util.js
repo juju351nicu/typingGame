@@ -12,6 +12,7 @@ const isEmpty = (target) => {
       target.length <= 0)
   );
 };
+
 /**
  * ブラウザがHTML5ローカルストレージをサポートしているかどうかを判断する
  */
@@ -24,6 +25,7 @@ const isLocalStorage = () => {
     console.log("error" + error);
   }
 };
+
 /**
  * ローカルストレージから値を取得する
  * @param {string} key キー
@@ -41,12 +43,14 @@ const getLocalStorage = (key) => {
 const setLocalStorage = (key, value) => {
   localStorage.setItem(key, value);
 };
+
 /**
  * ローカルストレージの値を削除する
  */
 const removeLocalStorage = () => {
   localStorage.removeItem("saveFolder");
 };
+
 /**
  * 指定したkeyに該当するcookieの値を取得する
  * @param {string} key 指定したkey
@@ -63,6 +67,7 @@ const getCookieValue = (key) => {
   }
   return "";
 };
+
 /**
  * 何のブラウザかをチェックする
  */
@@ -84,6 +89,7 @@ const checkBrowser = () => {
     console.log("そんなブラウザは知らん");
   }
 };
+
 /**
  * 値が正規表現とマッチしているかどうかをチェックする
  * 現状「整数」かどうかと値が「整数 - 整数」かどうかをチェックする
@@ -101,6 +107,7 @@ const checkByRegEx = (target, pattern) => {
   }
   return false;
 };
+
 /**
  * 文字列の中にあるスペースを削除して返却する
  * @param {string} target 文字列
@@ -109,6 +116,7 @@ const checkByRegEx = (target, pattern) => {
 const trimSpace = (target) => {
   return target.replace(/\s*/g, "");
 };
+
 /**
  * 全角英数字を半角に変換
  * @param {string} target 文字列
@@ -120,6 +128,7 @@ const toHalfWidth = (target) => {
   });
   return target;
 };
+
 /**
  * 引数に指定した複数の値の中から最大の値を 1 つ戻り値として返します。
  * @param {number} a 数値a
@@ -138,6 +147,7 @@ const aryMax = (a, b) => {
 const aryMin = (a, b) => {
   return Math.min(a, b);
 };
+
 /**
  * ページ番号が数値かどうかチェックする
  * @param {string} pageText 差し替えページ番号
@@ -154,6 +164,7 @@ const checkNumericPage = (pageText) => {
   }
   return true;
 };
+
 /**
  * 配列の重複を無くす。
  * @param {Array} array 配列
@@ -191,15 +202,15 @@ const getStrPageList = (target, delimiter) => {
 /**
  * 計測時間を返却する。
  */
-const getCountDownTime = ((accumTime) => {
+const getCountDownTime = (accumTime) => {
   // this.time is milliseconds
-  // 1秒 = 1000ミリ秒
-  // 1分 = 60 * 1000ミリ秒
-  // 1時間 = 60 * 60 * 1000ミリ秒
   const currentTime = accumTime;
   let milliseconds = currentTime % 1000;
+  // 1秒 = 1000ミリ秒
   let seconds = Math.floor((currentTime / 1000) % 60);
+  // 1分 = 60 * 1000ミリ秒
   let minutes = Math.floor((currentTime / (60 * 1000)) % 60);
+  // 1時間 = 60 * 60 * 1000ミリ秒
   let hours = Math.floor(currentTime / (60 * 60 * 1000));
 
   let millisecondsMultiplyTen = Math.floor(milliseconds / 10);
@@ -210,7 +221,8 @@ const getCountDownTime = ((accumTime) => {
   hours = hours < 100 ? ("0" + hours).slice(-2) : hours;
 
   return `${hours}:${minutes}:${seconds}.${millisecondsMultiplyTen}`;
-});
+};
+
 export default {
   isEmpty,
   isLocalStorage,
@@ -228,5 +240,5 @@ export default {
   getStrPageList,
   uniqArrayBySet,
   replaceBlank,
-  getCountDownTime
+  getCountDownTime,
 };
