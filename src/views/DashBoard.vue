@@ -17,7 +17,7 @@
       " />
       <div class="game-status">
         <Timer :accumTime="accumTime" @update:accumTime="$event => (accumTime = $event)"
-          :isGameStartedFlag="isGameStarted" :isGameOverFlag="isGameOver" />
+          :isGameStartedFlag="isGameStarted" :isGameOverFlag="isGameOver" :isRestTimerFlag="isRestTimer" />
         <div class="game-status-item">
           <label>Score</label>
           <span>{{ gameScore }}</span>
@@ -321,10 +321,14 @@ const startGame = (() => {
   }, config.currentAnimationSpeed);
 });
 
+/** リセットタイマーのフラグ */
+const isRestTimer = ref(false);
+
 /** ゲームのデータをリセットする */
 const resetGameData = (() => {
   currentWords.value = [];
   gameScore.value = 0;
+  isRestTimer.value = true;
   isGameOver.value = false;
   isGameStarted.value = false;
   currentWordIndex.value = 0;
