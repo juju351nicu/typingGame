@@ -5,8 +5,13 @@ export const useGameScoresStore = defineStore("gameScores", {
     scores: [],
   }),
   actions: {
+    /**
+     * 難易度・スコア・タイマーのオブジェクトを保存する。
+     * @param {*} data
+     */
     saveGameScoreList(data) {
-      this.scores = data;
+      this.scores = this.scores || [];
+      this.scores.push(data);
     },
     deleteGameScoreList() {
       this.scores = [];

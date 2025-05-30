@@ -1,47 +1,51 @@
 <template>
   <side-menu />
-  <div class="game-board">
-    <div class="words-board" ref="words_board">
-      <template v-for="word in currentWords">
-        <div class="word" :style="word.style">
-          <template v-for="(character, index) in word.characters">
-            <span :class="word.classList[index]">{{ character }} </span>
-          </template>
+  <v-container>
+    <div class="game-board">
+      <div class="words-board" ref="words_board">
+        <template v-for="word in currentWords">
+          <div class="word" :style="word.style">
+            <template v-for="(character, index) in word.characters">
+              <span :class="word.classList[index]">{{ character }} </span>
+            </template>
+          </div>
+        </template>
+      </div>
+      <template v-if="isGameStarted">
+        <input type="text" class="word-input" v-model="inputValue" @input="
+          checkWordEquality();
+        checkCharacter();
+        " />
+        <div class="game-status">
+          <Timer :accumTime="accumTime" @update:accumTime="$event => (accumTime = $event)"
+            :isGameStartedFlag="isGameStarted" :isGameOverFlag="isGameOver" :isRestTimerFlag="isRestTimer" />
+          <div class="game-status-item">
+            <label>Score</label>
+            <span>{{ gameScore }}</span>
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <div class="game-options">
+          <div class="game-option">
+            <label>Game Mode </label>
+            <select @change="setGameMode" v-model="selectedGameMode">
+              <option v-for="(gameMode, index) in config.modes" :value="index" :selected="index == selectedGameMode">
+                {{ gameMode }}
+              </option>
+            </select>
+          </div>
+          <div class="game-option">
+            <v-btn class="mt-2" color="success" @click="startGame" size="large" width="200px">
+              Play➔
+            </v-btn>
+          </div>
         </div>
       </template>
     </div>
-    <template v-if="isGameStarted">
-      <input type="text" class="word-input" v-model="inputValue" @input="
-        checkWordEquality();
-      checkCharacter();
-      " />
-      <div class="game-status">
-        <Timer :accumTime="accumTime" @update:accumTime="$event => (accumTime = $event)"
-          :isGameStartedFlag="isGameStarted" :isGameOverFlag="isGameOver" :isRestTimerFlag="isRestTimer" />
-        <div class="game-status-item">
-          <label>Score</label>
-          <span>{{ gameScore }}</span>
-        </div>
-      </div>
-    </template>
-    <template v-else>
-      <div class="game-options">
-        <div class="game-option">
-          <label>Game Mode </label>
-          <select @change="setGameMode" v-model="selectedGameMode">
-            <option v-for="(gameMode, index) in config.modes" :value="index" :selected="index == selectedGameMode">
-              {{ gameMode }}
-            </option>
-          </select>
-        </div>
-        <div class="game-option">
-          <button class="btn" @click="startGame">Play<span class="btn-arrow">➔</span></button>
-        </div>
-      </div>
-    </template>
-  </div>
-  <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="isGameOver" :modes="config.modes"
-    @restart-game="restartGame" />
+    <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="isGameOver" :modes="config.modes"
+      @restart-game="restartGame" />
+  </v-container>
 </template>
 <script setup>
 import Modal from "../components/Modal.vue";
@@ -163,19 +167,14 @@ const checkWordEquality = (() => {
   }
 });
 
-/** ゲームスコア */
-const gameScoreList = ref([]);
-
 /** ゲームの時間・スコア・モードを保存する */
 const saveGameScores = (() => {
-  console.log('ゲームの時間・スコア・モードを保存する' + accumTime.value);
-  gameScoreList.value = gameScoresStore.getGameScoreList || [];
-  gameScoreList.value.push({
+  const data = {
     time: util.getCountDownTime(accumTime.value),
     score: gameScore.value,
     mode: selectedGameMode.value,
-  });
-  gameScoresStore.saveGameScoreList(gameScoreList);
+  }
+  gameScoresStore.saveGameScoreList(data);
 });
 
 /** 総単語数を取得する */
@@ -424,6 +423,7 @@ body {
 }
 
 .game-status {
+  background-color: mediumpurple;
   display: flex;
   justify-content: space-evenly;
   color: var(--white);
@@ -431,12 +431,14 @@ body {
 }
 
 .game-status-item {
+  background-color: mediumpurple;
   display: flex;
   flex-direction: column;
   text-align: center;
 }
 
 .game-board label {
+  background-color: mediumpurple;
   font-weight: bold;
   font-size: 2.4rem;
   margin-bottom: .5rem;
@@ -453,6 +455,7 @@ body {
   flex-direction: column;
   grid-gap: 1.5rem;
   padding: 1.5rem 0;
+  background-color: mediumpurple;
 }
 
 .game-option {

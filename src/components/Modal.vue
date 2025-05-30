@@ -39,19 +39,19 @@
         <template v-else> There is no score information. </template>
       </div>
       <div class="modal-footer">
-        <button class="btn" @click="restartGame">
-          Play again <span class="btn-arrow">➔</span>
-        </button>
-        <button class="btn" @click="resetModalData">
-          Reset Scores<span class="btn-arrow">➔</span>
-        </button>
+        <v-btn class="mt-2" color="success" @click="restartGame" size="large" width="150px">
+          Play again ➔
+        </v-btn>
+        <v-btn class="mt-2" color="success" @click="resetModalData" size="large" width="150px">
+          Reset Scores
+        </v-btn>
       </div>
     </div>
   </div>
 </template>
 <script setup>
 import { useGameScoresStore } from "../stores/gameScores";
-import {  defineProps, defineEmits, computed, reactive, ref, watch } from "vue";
+import { defineProps, defineEmits, computed, reactive, ref, watch } from "vue";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore(); //setup() 内で useXxxxStore() を実行
@@ -118,13 +118,13 @@ const listGameScores = computed(() => {
 
 /** ゲームオーバーフラグをウォッチにて判定する */
 watch(isGameOverFlag, (newValue, _oldValue) => {
-    if (newValue) {
-      getGameScores();
-      lastScore = gameScores.value[gameScores.value.length - 1];
-      sortGameScores();
-    } else {
-      initGameData();
-    }
+  if (newValue) {
+    getGameScores();
+    lastScore = gameScores.value[gameScores.value.length - 1];
+    sortGameScores();
+  } else {
+    initGameData();
+  }
 });
 
 /** ローカルストレージからゲームのスコアを取得する */

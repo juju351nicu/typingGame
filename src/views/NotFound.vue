@@ -1,7 +1,9 @@
 <template>
     <h1>404: Not Found</h1>
     <p>ページが見つかりません。</p>
-    <button class="btn" @click="goHome()"> &laquo; トップページに戻る</button>
+    <v-btn class="mt-2" color="success" @click="goHome" size="large" width="150px">
+        &laquo; トップページに戻る
+    </v-btn>
 </template>
 
 <script setup>
