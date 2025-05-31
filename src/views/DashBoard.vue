@@ -12,10 +12,7 @@
         </template>
       </div>
       <template v-if="isGameStarted">
-        <input type="text" class="word-input" v-model="inputValue" @input="
-          checkWordEquality();
-        checkCharacter();
-        " />
+        <v-text-field v-model="inputValue"  width="90%" />
         <div class="game-status">
           <Timer :accumTime="accumTime" @update:accumTime="$event => (accumTime = $event)"
             :isGameStartedFlag="isGameStarted" :isGameOverFlag="isGameOver" :isRestTimerFlag="isRestTimer" />
@@ -54,7 +51,7 @@ import Timer from "../components/Timer.vue";
 import { wordsData } from "../assets/words.js";
 import { useGameScoresStore } from "../stores/gameScores";
 import { useGameModeStore } from "../stores/gameMode.js"
-import { onMounted, reactive, ref, useTemplateRef } from "vue";
+import { onMounted, reactive, ref, useTemplateRef, watch } from "vue";
 import util from "../utils/util.js";
 
 /** ゲームスコアに関するストア情報 */
@@ -121,11 +118,11 @@ const isGameOver = ref(false);
 const gameScore = ref(0);
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
-const checkCharacter = (() => {
+const checkCharacter = ((typeBox) => {
   if (isGameOver.value) {
     return;
   }
-  const inputValueArray = inputValue.value.split("");
+  const inputValueArray = typeBox.split("");
   currentWords.value.forEach((word, wordIndex) => {
     word.characters.forEach((character, characherIndex) => {
       if (inputValueArray[characherIndex] == null) {
@@ -150,11 +147,11 @@ const gameFinish = (() => {
 });
 
 /** 出題された単語と入力した単語の値を比較判定する */
-const checkWordEquality = (() => {
+const checkWordEquality = ((typeBox) => {
   if (isGameOver.value) {
     return;
   }
-  const word = inputValue.value;
+  const word = typeBox;
   const index = currentWords.value.findIndex(
     (item) => item.characters.join("") == word
   );
@@ -332,6 +329,13 @@ const resetGameData = (() => {
   isGameStarted.value = false;
   currentWordIndex.value = 0;
   inputValue.value = "";
+});
+
+
+/** 入力された単語をウォッチする */
+watch(inputValue, (newValue, _oldValue) => {
+  checkWordEquality(newValue);
+  checkCharacter(newValue);
 });
 </script>
 <style>
