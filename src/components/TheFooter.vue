@@ -1,5 +1,5 @@
 <template>
-    <v-footer class="d-flex align-center justify-center">
+    <v-footer class="d-flex align-center justify-center" color="deep-purple" dark>
         <router-link :to="'/'" class="text-reset">
             <p class="m-0 p-0">{{ copyRight.title }}</p>
         </router-link>

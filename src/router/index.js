@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import DashBoard from "../views/DashBoard.vue";
+import ScoreResults from "../views/ScoreResults.vue";
 import VuetifyList from "../views/VuetifyList.vue";
 import NotFound from "../views/NotFound.vue";
 const routes = [
@@ -9,7 +10,18 @@ const routes = [
     name: "DashBoard",
     component: DashBoard,
   },
-  { path: "/vuetify", name: "vuetify", component: VuetifyList },
+  {
+    /** スコア一覧 */
+    path: "/ScoreResults",
+    name: "ScoreResults",
+    component: ScoreResults,
+  },
+  {
+    /** VuetifyList */
+    path: "/vuetify",
+    name: "vuetify",
+    component: VuetifyList,
+  },
   {
     /** 存在しないURLにアクセスした場合 */
     path: "/:pathMatch(.*)*",

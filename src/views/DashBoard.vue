@@ -12,42 +12,53 @@
         </template>
       </div>
       <template v-if="isGameStarted">
-        <v-text-field v-model="inputValue"  width="90%" />
-        <div class="game-status">
-          <Timer :accumTime="accumTime" @update:accumTime="$event => (accumTime = $event)"
-            :isGameStartedFlag="isGameStarted" :isGameOverFlag="isGameOver" :isRestTimerFlag="isRestTimer" />
-          <div class="game-status-item">
-            <label>Score</label>
-            <span>{{ gameScore }}</span>
-          </div>
-        </div>
+        <v-container>
+          <v-row>
+            <v-col cols="12" sm="12" md="4">
+              <v-text-field v-model="inputValue" />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="6" sm="6" md="4">
+              <Timer :accumTime="accumTime" @update:accumTime="$event => (accumTime = $event)"
+                :isGameStartedFlag="isGameStarted" :isGameOverFlag="isGameOver" :isRestTimerFlag="isRestTimer" />
+            </v-col>
+            <v-col cols="6" sm="6" md="4">
+              <div class="game-status-item">
+                <label>Score</label>
+                <span>{{ gameScore }}</span>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
       </template>
       <template v-else>
-        <div class="game-options">
-          <div class="game-option">
-            <label>Game Mode </label>
-            <select @change="setGameMode" v-model="selectedGameMode">
-              <option v-for="(gameMode, index) in config.modes" :value="index" :selected="index == selectedGameMode">
-                {{ gameMode }}
-              </option>
-            </select>
-          </div>
-          <div class="game-option">
-            <v-btn class="mt-2" color="success" @click="startGame" size="large" width="200px">
-              Play➔
-            </v-btn>
-          </div>
-        </div>
+        <v-container>
+          <v-row>
+            <v-col cols="4" sm="6" md="4">
+              <v-select v-model="selectedOption" :items="options" :item-title="options.title"
+                :item-value="options.value" label="Game Mode" @update:modelValue="setGameMode" />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="4" sm="6" md="4">
+              <v-btn class="mt-2" color="success" @click="startGame" size="large" width="200px">
+                Play➔
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
       </template>
     </div>
-    <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="isGameOver" :modes="config.modes"
-      @restart-game="restartGame" />
+    <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="isGameOver" @restart-game="restartGame" />
   </v-container>
+  <TheFooter />
 </template>
 <script setup>
 import Modal from "../components/Modal.vue";
 import SideMenu from "../components/SideMenu.vue";
 import Timer from "../components/Timer.vue";
+import TheFooter from "../components/TheFooter.vue";
 import { wordsData } from "../assets/words.js";
 import { useGameScoresStore } from "../stores/gameScores";
 import { useGameModeStore } from "../stores/gameMode.js"
@@ -68,7 +79,6 @@ const isGameStarted = ref(false);
 
 /**　設定オブジェクト */
 let config = reactive({
-  modes: ["Easy", "Normal", "Hard"],
   wordStyleWidth: 200,
   wordInsertionSpeeds: [4, 3, 2],
   wordAnimationSpeeds: [60, 30, 15],
@@ -77,15 +87,20 @@ let config = reactive({
 });
 
 /** 選択されたゲームの難易度 */
-const selectedGameMode = ref(0);
+const selectedOption = ref(0);
 
+const options = [
+  { title: 'Easy', value: 0 },
+  { title: 'Normal', value: 1 },
+  { title: 'Hard', value: 2 }
+];
 /** アニメーションの表示速度を設定する */
 const setWordAnimationSpeed = (() => {
   config.currentAnimationSpeed = config.wordAnimationSpeeds[
-    selectedGameMode.value
+    selectedOption.value
   ];
   config.currentInsertionSpeed = config.wordInsertionSpeeds[
-    selectedGameMode.value
+    selectedOption.value
   ];
 });
 
@@ -169,7 +184,7 @@ const saveGameScores = (() => {
   const data = {
     time: util.getCountDownTime(accumTime.value),
     score: gameScore.value,
-    mode: selectedGameMode.value,
+    mode: selectedOption.value,
   }
   gameScoresStore.saveGameScoreList(data);
 });
@@ -217,8 +232,8 @@ const checkIsTopToBottom = (() => {
 });
 
 /** ゲームの難易度設定する */
-const setGameMode = (() => {
-  gameModeStore.saveGameMode(selectedGameMode.value);
+const setGameMode = ((newValue) => {
+  gameModeStore.saveGameMode(newValue);
   setWordAnimationSpeed();
 });
 

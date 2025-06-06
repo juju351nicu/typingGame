@@ -10,7 +10,7 @@
           <select v-model="currentListMode">
             <option disabled value="">List By Game Mode</option>
             <option value="">All</option>
-            <option v-for="(mode, index) in modes" :value="index">{{ mode }}</option>
+            <option v-for="(mode, index) in gemeModeList" :value="index">{{ mode }}</option>
           </select>
         </div>
         <template v-if="listGameScores.length > 0">
@@ -58,12 +58,11 @@ const gameScoresStore = useGameScoresStore(); //setup() 内で useXxxxStore() �
 
 const props = defineProps({
   isGameOver: Boolean,
-  modes: Array
 });
 
 /** ゲームモード */
-const gemeMode = computed(() => {
-  return props.modes;
+const gemeModeList = computed(() => {
+  return ["Easy", "Normal", "Hard"];
 });
 
 /** ゲームオーバーフラグ */
@@ -80,7 +79,7 @@ const restartGame = (() => {
 
 /** ゲームのEasyモード等のモード情報を取得する */
 const getGameMode = ((index) => {
-  return gemeMode.value[Number(index)];
+  return gemeModeList.value[Number(index)];
 });
 
 /** ゲームスコア */
