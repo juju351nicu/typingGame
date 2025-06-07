@@ -1,5 +1,5 @@
 <template>
-  <side-menu />
+  <SideMenu />
   <v-container>
     <div class="game-board">
       <div class="words-board" ref="words_board">
@@ -24,7 +24,7 @@
                 :isGameStartedFlag="isGameStarted" :isGameOverFlag="isGameOver" :isRestTimerFlag="isRestTimer" />
             </v-col>
             <v-col cols="6" sm="6" md="4">
-              <div class="game-status-item">
+              <div style="display: flex;">
                 <label>Score</label>
                 <span>{{ gameScore }}</span>
               </div>
@@ -94,17 +94,21 @@ const options = [
   { title: 'Normal', value: 1 },
   { title: 'Hard', value: 2 }
 ];
-/** アニメーションの表示速度を設定する */
-const setWordAnimationSpeed = (() => {
+
+/**
+ * アニメーションの表示速度を設定する
+ * @param selectedOption 選択したオプション値
+ */
+const setWordAnimationSpeed = ((selectedOption) => {
   config.currentAnimationSpeed = config.wordAnimationSpeeds[
-    selectedOption.value
+    selectedOption
   ];
   config.currentInsertionSpeed = config.wordInsertionSpeeds[
-    selectedOption.value
+    selectedOption
   ];
 });
 
-setWordAnimationSpeed();
+setWordAnimationSpeed(selectedOption.value);
 
 /** 経過時間 */
 const accumTime = ref(0);
@@ -234,7 +238,7 @@ const checkIsTopToBottom = (() => {
 /** ゲームの難易度設定する */
 const setGameMode = ((newValue) => {
   gameModeStore.saveGameMode(newValue);
-  setWordAnimationSpeed();
+  setWordAnimationSpeed(newValue);
 });
 
 /**
@@ -375,17 +379,8 @@ watch(inputValue, (newValue, _oldValue) => {
   box-sizing: border-box;
 }
 
-a {
-  text-decoration: none;
-  color: var(--black);
-}
-
 html {
   font-size: 10px;
-}
-
-body {
-  background-color: var(--main-bg-color);
 }
 
 .game-board {
@@ -421,41 +416,6 @@ body {
   font-size: 2rem;
 }
 
-.word-input {
-  width: 90%;
-  margin: 1.5rem auto 0;
-  height: 3.6rem;
-  font-size: 1.6rem;
-  padding: 1.5rem;
-  border: 1px solid var(--color-alto);
-  border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-}
-
-.word-input:focus {
-  outline: none;
-  border: 1px solid var(--color-malibu);
-  box-shadow: 0px 0px 8px var(--color-malibu);
-  -moz-box-shadow: 0px 0px 8px var(--color-malibu);
-  -webkit-box-shadow: 0px 0px 8px var(--color-malibu);
-}
-
-.game-status {
-  background-color: mediumpurple;
-  display: flex;
-  justify-content: space-evenly;
-  color: var(--white);
-  margin-top: 1.5rem;
-}
-
-.game-status-item {
-  background-color: mediumpurple;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-}
-
 .game-board label {
   background-color: mediumpurple;
   font-weight: bold;
@@ -468,35 +428,6 @@ body {
   font-size: 2rem;
 }
 
-.game-options {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  grid-gap: 1.5rem;
-  padding: 1.5rem 0;
-  background-color: mediumpurple;
-}
-
-.game-option {
-  display: flex;
-  flex-direction: column;
-}
-
-.game-option select {
-  font-size: 1.6rem;
-  padding: 1rem;
-  border: none;
-  outline: none;
-  border-radius: 4px;
-  background-color: transparent;
-  box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.5);
-  color: var(--white);
-}
-
-.game-option select option {
-  background-color: var(--main-bg-color);
-}
-
 .correct {
   color: var(--lime);
 }
@@ -504,40 +435,6 @@ body {
 .incorrect {
   color: var(--red);
 }
-
-.close {
-  cursor: pointer;
-  font-size: 3rem
-}
-
-.btn {
-  outline: none;
-  border: none;
-  text-align: center;
-  font-size: 1.5rem;
-  border-radius: .3rem;
-  transition: all .5s;
-  background-color: transparent;
-  color: var(--white);
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, .75);
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  min-width: 12rem;
-}
-
-.btn:hover .btn-arrow {
-  padding-left: 1rem
-}
-
-.btn-arrow {
-  width: 2.5rem;
-  transition: all .3s ease-in-out
-}
-
-
 
 ::-webkit-scrollbar {
   width: .8rem;

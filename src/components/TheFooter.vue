@@ -27,3 +27,9 @@ const copyRight = reactive({
 const inquiry = reactive({ title: "プライバシーポリシー", link: "#" });
 const privacyPolicy = reactive({ title: "お問い合わせ", link: "#" });
 </script>
+<style scoped>
+a {
+  text-decoration: none;
+  color: black;
+}
+</style>
