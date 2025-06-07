@@ -26,12 +26,12 @@ const links = ref([
   {
     href: '/',
     title: 'ダッシュボード',
-    icon: 'fa view-dashboard',
+    icon: 'mdi-home',
   },
   {
     href: '/ScoreResults',
     title: 'スコア一覧',
-    icon: 'fa fa-user',
+    icon: 'mdi-account',
   },
 ]);
 </script>

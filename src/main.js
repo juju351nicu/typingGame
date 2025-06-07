@@ -7,6 +7,7 @@ import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
 import router from './router';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+import '@mdi/font/css/materialdesignicons.css';
 // Vuetify
 import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
