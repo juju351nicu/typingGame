@@ -164,12 +164,12 @@ const resetModalData = (() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--black);
+  background-color: #000000;
   background-color: rgba(0, 0, 0, .5);
   opacity: 0;
   visibility: hidden;
   transition: all .3s ease-out;
-  color: var(--white);
+  color: #ffffff;
 }
 
 .modal.open {
@@ -187,8 +187,8 @@ const resetModalData = (() => {
   max-height: 55rem;
   margin: 2.5rem auto 0;
   border-radius: .6rem;
-  background-color: var(--main-bg-color);
-  border: .6rem solid var(--white);
+  background-color: #DB2777;
+  border: .6rem solid #dddddd;
   box-shadow: 0 8px 24px rgba(0, 0, 0, .75);
   transition: all .3s ease-out;
   transform: translateY(-100rem);
@@ -209,8 +209,8 @@ const resetModalData = (() => {
 
 .modal-body {
   padding: 2rem 1rem;
-  border-top: 1px solid var(--color-alto);
-  border-bottom: 1px solid var(--color-alto);
+  border-top: 1px solid  #dddddd;
+  border-bottom: 1px solid  #dddddd;
   font-size: 2rem;
   text-align: center
 }
@@ -231,7 +231,7 @@ const resetModalData = (() => {
   max-width: 60rem;
   max-height: 24rem;
   overflow-y: auto;
-  box-shadow: var(--bs-lg);
+  box-shadow: #888888;
   margin: 1rem auto 0;
   box-shadow: 0 1px 6px rgba(0, 0, 0, .75);
 }
@@ -250,7 +250,7 @@ const resetModalData = (() => {
 
 .game-scores tr:not(:last-child) td,
 th {
-  border-bottom: 1px solid var(--color-alto);
+  border-bottom: 1px solid  #dddddd;
 }
 
 .modal .game-option {

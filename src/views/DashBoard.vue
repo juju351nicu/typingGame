@@ -2,10 +2,9 @@
   <SideMenu />
   <v-container>
     <div class="game-board">
-      <TypingPanel :isGameStarted="isGameStarted" :typingWords="typingWords"  :isRestTimer="isRestTimer" :gameScore="gameScore"
-       :selectedOption="selectedOption"
-        @update:gameScore="$event => (gameScore = $event)" :isGameOverFlag="isGameOver"
-        @update:isGameOver="$event => (isGameOver = $event)" :inputValue="inputValue"
+      <TypingPanel :isGameStarted="isGameStarted" :typingWords="typingWords" :isRestTimer="isRestTimer"
+        :gameScore="gameScore" :selectedOption="selectedOption" @update:gameScore="$event => (gameScore = $event)"
+        :isGameOverFlag="isGameOver" @update:isGameOver="$event => (isGameOver = $event)" :inputValue="inputValue"
         @update:inputValue="$event => (inputValue = $event)" />
       <template v-if="isGameStarted">
         <v-container>
@@ -60,7 +59,7 @@ import TheFooter from "../components/TheFooter.vue";
 import { wordsData } from "../assets/words.js";
 import { useGameScoresStore } from "../stores/gameScores";
 import { useGameModeStore } from "../stores/gameMode.js"
-import { onMounted, reactive, ref, useTemplateRef, watch } from "vue";
+import { ref, watch } from "vue";
 import util from "../utils/util.js";
 
 /** ゲームスコアに関するストア情報 */
@@ -115,7 +114,6 @@ const restartGame = (() => {
 /** ゲームの難易度設定する */
 const setGameMode = ((newValue) => {
   gameModeStore.saveGameMode(newValue);
-  console.log('ゲームの難易度設定する:' + newValue);
 });
 
 /** モーダル表示フラグ */
@@ -154,27 +152,6 @@ watch(isGameOver, (newValue, _oldValue) => {
 });
 </script>
 <style>
-:root {
-  --main-bg-color: #DB2777;
-  --black: #000000;
-  --white: #ffffff;
-  --lime: #00FF00;
-  --red: #ff0000;
-  --gray: #888888;
-  --color-alto: #dddddd;
-  --color-emperor: #555555;
-  --color-malibu: #7bc1f7;
-  --color-gainsboro: #e0e0e0;
-}
-
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 html {
   font-size: 10px;
 }
@@ -190,46 +167,16 @@ html {
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
 }
 
-.words-board {
-  background-color: var(--color-gainsboro);
-  color: var(--black);
-  height: 75%;
-  padding: .5rem;
-  font-size: 2.4rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.word {
-  position: absolute;
-  padding: 0 1rem;
-  background-color: rgba(0, 0, 0, 0.75);
-  color: var(--white);
-  border-radius: 1rem;
-}
-
-.word span {
-  font-size: 2rem;
-}
-
 .game-board label {
   background-color: mediumpurple;
   font-weight: bold;
   font-size: 2.4rem;
   margin-bottom: .5rem;
-  color: var(--white);
+  color: #ffffff;
 }
 
 .game-board span {
   font-size: 2rem;
-}
-
-.correct {
-  color: var(--lime);
-}
-
-.incorrect {
-  color: var(--red);
 }
 
 ::-webkit-scrollbar {
@@ -237,15 +184,15 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-alto);
+  background: #dddddd;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--gray);
+  background: #888888;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-emperor);
+  background: #555555;
 }
 
 @media screen and (max-width: 600px) {

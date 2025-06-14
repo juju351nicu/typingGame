@@ -9,7 +9,6 @@
         </template>
     </div>
 </template>
-
 <script setup>
 import { defineProps, defineEmits, onMounted, reactive, ref, useTemplateRef, watch, computed } from "vue";
 
@@ -72,7 +71,6 @@ let config = reactive({
  * @param selectedOption 選択したオプション値
  */
 const setWordAnimationSpeed = ((selectedOption) => {
-    console.log('newValue:' + selectedOption);
     config.currentAnimationSpeed = config.wordAnimationSpeeds[
         selectedOption
     ];
@@ -95,9 +93,6 @@ let interval = reactive({
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
 const checkCharacter = ((typeBox) => {
-    if (isGameOverFlag.value) {
-        return;
-    }
     const inputValueArray = typeBox.split("");
     currentWords.value.forEach((word, wordIndex) => {
         word.characters.forEach((character, characherIndex) => {
@@ -120,9 +115,6 @@ const gameFinish = (() => {
 
 /** 出題された単語と入力した単語の値を比較判定する */
 const checkWordEquality = ((typeBox) => {
-    if (isGameOverFlag.value) {
-        return;
-    }
     const word = typeBox;
     const index = currentWords.value.findIndex(
         (item) => item.characters.join("") == word
@@ -257,16 +249,19 @@ watch(isGameStartedFlag, (newValue, _oldValue) => {
 
 /** 入力された単語をウォッチする */
 watch(typeBoxValue, (newValue, _oldValue) => {
+    if (isGameOverFlag.value) {
+        return;
+    }
     checkWordEquality(newValue);
     checkCharacter(newValue);
 });
 
-/** 入力された単語をウォッチする */
+/** 選択された難易度をウォッチする */
 watch(selectedOptionValue, (newValue, _oldValue) => {
     setWordAnimationSpeed(newValue);
 });
 
-/**  ボタンをクリックするとゲームがスタートする */
+/** リセットフラグをウォッチする */
 watch(isRestFlag, (newValue, _oldValue) => {
     if (newValue) {
         currentWords.value = [];
@@ -276,17 +271,6 @@ watch(isRestFlag, (newValue, _oldValue) => {
 });
 </script>
 <style>
-.game-board {
-    width: 100vmin;
-    height: 90vmin;
-    display: flex;
-    flex-direction: column;
-    margin: 5vmin auto 0;
-    -webkit-box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
-    -moz-box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
-    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
-}
-
 .words-board {
     background-color: #e0e0e0;
     color: #000000;
@@ -306,18 +290,6 @@ watch(isRestFlag, (newValue, _oldValue) => {
 }
 
 .word span {
-    font-size: 2rem;
-}
-
-.game-board label {
-    background-color: mediumpurple;
-    font-weight: bold;
-    font-size: 2.4rem;
-    margin-bottom: .5rem;
-    color: #ffffff;
-}
-
-.game-board span {
     font-size: 2rem;
 }
 
@@ -343,15 +315,5 @@ watch(isRestFlag, (newValue, _oldValue) => {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #555555;
-}
-
-@media screen and (max-width: 600px) {
-    .game-board {
-        margin: 0;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
-        height: 55rem;
-    }
 }
 </style>
