@@ -1,5 +1,5 @@
 <template>
-    <div class="words-board" ref="words_board">
+    <div class="words-board" ref="typing-panel">
         <template v-for="word in currentWords">
             <div class="word" :style="word.style">
                 <template v-for="(character, index) in word.characters">
@@ -139,19 +139,19 @@ const shuffleWords = (() => {
 });
 
 /** 単語を表示するテンプレート要素 */
-const wordsBoard = useTemplateRef("words_board");
+const wordsBoard = useTemplateRef("typing-panel");
 
 /**
  *  表示される単語のHTML要素の高さを比較判定する。
- *  現在表示されている単語と「words_board」要素の縦幅を比較する。
- * 「words_board」要素の縦幅を下回った場合、ゲームを終了する。
+ *  現在表示されている単語と「typing-panel」要素の縦幅を比較する。
+ * 「typing-panel」要素の縦幅を下回った場合、ゲームを終了する。
  */
 const checkIsTopToBottom = (() => {
     let wordsBoardTop = wordsBoard.value.offsetHeight;
     currentWords.value.forEach((_, index) => {
         // 現在表示されている単語の縦幅を取得する。
         let wordPositionTop = getCurrentWordTop(index);
-        // 現在表示されている単語と「words_board」要素の縦幅を比較する。
+        // 現在表示されている単語と「typing-panel」要素の縦幅を比較する。
         if (wordPositionTop > wordsBoardTop) {
             gameFinish();
 
@@ -206,7 +206,7 @@ const clearInterval = (() => {
     interval.animation = null;
 });
 
-/** 「words_board」要素の横幅を取得する */
+/** 「typing-panel」要素の横幅を取得する */
 const getWordsBoardWidth = (() => {
     return wordsBoard.value.offsetWidth;
 });
