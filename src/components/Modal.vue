@@ -1,52 +1,25 @@
 <template>
-  <div class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title">Game Completed</h1>
-      </div>
-      <div class="modal-body">
-        <p>{{ getLastScoreDesc }}</p>
-        <div class="game-option">
-          <select v-model="currentListMode">
-            <option disabled value="">List By Game Mode</option>
-            <option value="">All</option>
-            <option v-for="(mode, index) in gemeModeList" :value="index">{{ mode }}</option>
-          </select>
-        </div>
-        <template v-if="listGameScores.length > 0">
-          <h2>All Game Scores</h2>
-          <div class="game-scores-container">
-            <table class="game-scores">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Game Mode</th>
-                  <th>Time</th>
-                  <th>Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-if="gameScores" v-for="(score, index) in listGameScores">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ getGameMode(score.mode) }}</td>
-                  <td>{{ score.time }}</td>
-                  <td>{{ score.score }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </template>
-        <template v-else> There is no score information. </template>
-      </div>
-      <div class="modal-footer">
-        <v-btn class="mt-2" color="success" @click="restartGame" size="large" width="150px">
-          Play again ➔
-        </v-btn>
-        <v-btn class="mt-2" color="success" @click="resetModalData" size="large" width="150px">
-          Reset Scores
-        </v-btn>
-      </div>
-    </div>
+  <div class="text-center">
+    <v-dialog v-model="dialog" width="500">
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Privacy Policy
+        </v-card-title>
+
+        <v-card-text>
+          {{ scoreMessage }}
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="dialog = false">
+            閉じる
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script setup>
@@ -60,6 +33,9 @@ const props = defineProps({
   isGameOver: Boolean,
 });
 
+/** ダイアログの表示・非表示 */
+const dialog = ref(false);
+
 /** ゲームモード */
 const gemeModeList = computed(() => {
   return ["Easy", "Normal", "Hard"];
@@ -67,7 +43,9 @@ const gemeModeList = computed(() => {
 
 /** ゲームオーバーフラグ */
 const isGameOverFlag = computed(() => {
-  return props.isGameOver;
+  const propValue = props.isGameOver;
+  dialog.value = propValue
+  return propValue;
 });
 
 const emit = defineEmits(["restart-game"]);
@@ -93,7 +71,7 @@ let lastScore = reactive({
 });
 
 /** ゲームが終了した際に表示するメッセージ */
-const getLastScoreDesc = computed(() => {
+const scoreMessage = computed(() => {
   if (gameScores.value.length > 0) {
     let desc = `You completed ${lastScore.score} words in ${lastScore.time
       } time in ${getGameMode(lastScore.mode)} mode.`;
@@ -156,113 +134,4 @@ const resetModalData = (() => {
   initGameData();
 });
 </script>
-<style scoped>
-/* Modal */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #000000;
-  background-color: rgba(0, 0, 0, .5);
-  opacity: 0;
-  visibility: hidden;
-  transition: all .3s ease-out;
-  color: #ffffff;
-}
-
-.modal.open {
-  visibility: visible;
-  opacity: 1
-}
-
-.modal.open .modal-content {
-  transform: translateY(0)
-}
-
-.modal-content {
-  width: 80%;
-  max-width: 100rem;
-  max-height: 55rem;
-  margin: 2.5rem auto 0;
-  border-radius: .6rem;
-  background-color: #DB2777;
-  border: .6rem solid #dddddd;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .75);
-  transition: all .3s ease-out;
-  transform: translateY(-100rem);
-  overflow-y: auto;
-}
-
-.modal-header {
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center
-}
-
-.modal-title {
-  font-size: 2rem;
-  font-weight: 500
-}
-
-.modal-body {
-  padding: 2rem 1rem;
-  border-top: 1px solid  #dddddd;
-  border-bottom: 1px solid  #dddddd;
-  font-size: 2rem;
-  text-align: center
-}
-
-.modal-body p {
-  padding: 0 5rem 2rem;
-}
-
-.modal-footer {
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  grid-gap: 2.5rem
-}
-
-.game-scores-container {
-  width: 100%;
-  max-width: 60rem;
-  max-height: 24rem;
-  overflow-y: auto;
-  box-shadow: #888888;
-  margin: 1rem auto 0;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, .75);
-}
-
-.game-scores {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 1.8rem;
-}
-
-.game-scores td,
-.game-scores th {
-  text-align: left;
-  padding: 1rem;
-}
-
-.game-scores tr:not(:last-child) td,
-th {
-  border-bottom: 1px solid  #dddddd;
-}
-
-.modal .game-option {
-  justify-content: flex-end;
-  align-items: center;
-  max-width: 20rem;
-  margin-left: auto;
-  font-size: 1.5rem;
-}
-
-.modal .game-option select {
-  min-width: 15rem;
-  font-size: 1.5rem;
-}
-</style>
+<style scoped></style>
