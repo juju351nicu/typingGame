@@ -21,11 +21,18 @@ export const useGameScoresStore = defineStore("gameScores", {
       this.scores = this.scores || [];
       this.scores.push(data);
     },
+    /**
+     * ストレージにあるスコア情報を削除する。
+     */
     deleteGameScoreList() {
       this.scores = [];
     },
   },
   getters: {
+    /**
+     * スコア情報リストを取得する。
+     * @returns スコア情報リスト
+     */
     getGameScoreList() {
       indexedDB.getDatabase();
       return this.scores;
