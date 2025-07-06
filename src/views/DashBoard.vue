@@ -101,6 +101,7 @@ const saveGameScores = (() => {
     time: util.getCountDownTime(accumTime.value),
     score: gameScore.value,
     mode: selectedOption.value,
+    date: new Date().toDateString(),
   }
   gameScoresStore.saveGameScoreList(data);
 });

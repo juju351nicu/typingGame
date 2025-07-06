@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import DashBoard from "../views/DashBoard.vue";
 import ScoreResults from "../views/ScoreResults.vue";
+import SettingBoard from "../views/SettingBoard.vue";
 import VuetifyList from "../views/VuetifyList.vue";
 import NotFound from "../views/NotFound.vue";
 const routes = [
@@ -15,6 +16,12 @@ const routes = [
     path: "/ScoreResults",
     name: "ScoreResults",
     component: ScoreResults,
+  },
+  {
+    /** 設定画面 */
+    path: "/SettingBoard",
+    name: "SettingBoard",
+    component: SettingBoard,
   },
   {
     /** VuetifyList */

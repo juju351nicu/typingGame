@@ -26,8 +26,9 @@ const pages = ref([
 
 const headers = ref([
     { title: 'ゲームの難易度', align: 'start', key: 'mode' },
-    { title: 'Time', align: 'start', key: 'time' },
+    { title: 'タイム', align: 'start', key: 'time' },
     { title: 'スコア', align: 'end', key: 'score' },
+    { title: '日付', align: 'end', key: 'date' },
 ]);
 
 const items = ref([]);

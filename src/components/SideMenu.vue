@@ -5,7 +5,7 @@
     <v-spacer></v-spacer>
   </v-app-bar>
   <v-navigation-drawer v-model="drawer" absolute>
-    <v-list v-for="link in links" :key="link.title" color="primary" variant="plain">
+    <v-list v-for="link in links" :key="link.title" variant="plain">
       <v-list-item :href="link.href">
         <template v-slot:prepend>
           <v-icon>{{ link.icon }}</v-icon>
@@ -32,6 +32,11 @@ const links = ref([
     href: '/ScoreResults',
     title: 'スコア一覧',
     icon: 'mdi-account',
+  },
+  {
+    href: '/SettingBoard',
+    title: '設定画面',
+    icon: 'mdi-cog-outline',
   },
 ]);
 </script>
