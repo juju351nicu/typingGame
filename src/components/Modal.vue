@@ -27,7 +27,7 @@ import { useGameScoresStore } from "../stores/gameScores";
 import { defineProps, defineEmits, computed, reactive, ref, watch } from "vue";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
-const gameScoresStore = useGameScoresStore(); //setup() 内で useXxxxStore() を実行
+const gameScoresStore = useGameScoresStore();
 
 const props = defineProps({
   isGameOver: Boolean,
@@ -127,11 +127,5 @@ const initGameData = (() => {
   currentListMode.value = "";
 });
 
-/** ゲームのデータを初期化する */
-const resetModalData = (() => {
-  // ローカルストレージのゲームのスコアを削除する 
-  gameScoresStore.deleteGameScoreList();
-  initGameData();
-});
 </script>
 <style scoped></style>
