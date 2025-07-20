@@ -24,7 +24,7 @@
 </template>
 <script setup>
 import { useGameScoresStore } from "../stores/gameScores";
-import { defineProps, defineEmits, computed, reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();

@@ -10,7 +10,7 @@
     </div>
 </template>
 <script setup>
-import { defineProps, defineEmits, onMounted, reactive, ref, useTemplateRef, watch, computed } from "vue";
+import { onMounted, reactive, ref, useTemplateRef, watch, computed } from "vue";
 
 const props = defineProps(["isGameStarted", "typingWords", "isRestTimer", "gameScore", "isGameOver", "selectedOption", "inputValue"]);
 

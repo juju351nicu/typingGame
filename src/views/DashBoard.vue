@@ -4,7 +4,7 @@
     <div class="game-board">
       <TypingPanel :isGameStarted="isGameStarted" :typingWords="typingWords" :isRestTimer="isRestTimer"
         :gameScore="gameScore" :selectedOption="selectedOption" @update:gameScore="$event => (gameScore = $event)"
-        :isGameOverFlag="isGameOver" @update:isGameOver="$event => (isGameOver = $event)" :inputValue="inputValue"
+        :isGameOver="isGameOver" @update:isGameOver="$event => (isGameOver = $event)" :inputValue="inputValue"
         @update:inputValue="$event => (inputValue = $event)" />
       <template v-if="isGameStarted">
         <v-container>
@@ -15,9 +15,8 @@
           </v-row>
           <v-row>
             <v-col cols="6" sm="6" md="4">
-              <Timer :accumTime="accumTime" @update:accumTime="$event => (accumTime = $event)"
-                :isGameStartedFlag="isGameStarted" :isGameOverFlag="isGameOver" :isRestTimerFlag="isRestTimer"
-                :selectedOption="selectedOption" />
+              <Timer v-model:accumTime="accumTime" :isGameStarted="isGameStarted" :isGameOver="isGameOver"
+                :isRestTimer="isRestTimer" :selectedOption="selectedOption" />
             </v-col>
             <v-col cols="6" sm="6" md="4">
               <div style="display: flex;">

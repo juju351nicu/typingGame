@@ -6,11 +6,11 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed, ref, watch, onMounted } from "vue";
+import { computed, ref, watch, onMounted } from "vue";
 import util from "../utils/util";
 
 
-const props = defineProps(["accumTime", "isGameStartedFlag", "isGameOverFlag", "isRestTimerFlag"]);
+const props = defineProps(["accumTime", "isGameStarted", "isGameOver", "isRestTimer"]);
 
 const emit = defineEmits(["update:accumTime"]);
 
@@ -22,17 +22,17 @@ const accumTime = computed({
 
 /** ゲームスタートフラグ */
 const isGameStartedFlag = computed(() => {
-    return props.isGameStartedFlag;
+    return props.isGameStarted;
 });
 
 /** ゲームオーバーフラグ */
 const isGameOverFlag = computed(() => {
-    return props.isGameOverFlag;
+    return props.isGameOver;
 });
 
 /** リセットタイマーのフラグ */
 const isRestTimerFlag =  computed(() => {
-    return props.isRestTimerFlag;
+    return props.isRestTimer;
 });
 /**
  * 00:00:00形式で計測時間を取得する
