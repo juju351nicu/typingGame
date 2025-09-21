@@ -17,6 +17,9 @@
           <v-btn color="primary" text @click="dialog = false">
             閉じる
           </v-btn>
+          <v-btn class="mt-2" color="success" @click="reStartGame" size="large" width="150px">
+            &laquo; 再スタート
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -50,8 +53,8 @@ const isGameOverFlag = computed(() => {
 
 const emit = defineEmits(["restart-game"]);
 
-/** ゲームをリセットする */
-const restartGame = (() => {
+/** ゲームを再スタートする */
+const reStartGame = (() => {
   emit("restart-game");
 });
 
