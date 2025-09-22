@@ -3,7 +3,7 @@
     <v-dialog v-model="dialog" width="500">
       <v-card>
         <v-card-title class="text-h5 grey lighten-2">
-          Privacy Policy
+          モーダルタイトル
         </v-card-title>
 
         <v-card-text>
@@ -17,8 +17,8 @@
           <v-btn color="primary" text @click="dialog = false">
             閉じる
           </v-btn>
-          <v-btn class="mt-2" color="success" @click="reStartGame" size="large" width="150px">
-            &laquo; 再スタート
+          <v-btn color="success" @click="reStartGame">
+            再スタート
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -26,7 +26,7 @@
   </div>
 </template>
 <script setup>
-import { useGameScoresStore } from "../stores/gameScores";
+import { useGameScoresStore } from "@/stores/gameScores";
 import { computed, reactive, ref, watch } from "vue";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入

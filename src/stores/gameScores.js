@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import indexedDB from "../utils/indexedDB.js";
 export const useGameScoresStore = defineStore("gameScores", {
   state: () => ({
     scores: [
@@ -34,7 +33,6 @@ export const useGameScoresStore = defineStore("gameScores", {
      * @returns スコア情報リスト
      */
     getGameScoreList() {
-      indexedDB.getDatabase();
       return this.scores;
     },
   },

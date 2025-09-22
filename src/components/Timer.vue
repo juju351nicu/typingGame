@@ -7,7 +7,7 @@
 
 <script setup>
 import { computed, ref, watch, onMounted } from "vue";
-import util from "../utils/util";
+import util from "@/utils/util";
 
 
 const props = defineProps(["accumTime", "isGameStarted", "isGameOver", "isRestTimer"]);

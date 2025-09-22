@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
-import DashBoard from "../views/DashBoard.vue";
-import ScoreResults from "../views/ScoreResults.vue";
-import SettingBoard from "../views/SettingBoard.vue";
-import VuetifyList from "../views/VuetifyList.vue";
-import NotFound from "../views/NotFound.vue";
+import DashBoard from "@/views/DashBoard.vue";
+import ScoreResults from "@/views/ScoreResults.vue";
+import SettingBoard from "@/views/SettingBoard.vue";
+import VuetifyList from "@/views/VuetifyList.vue";
+import NotFound from "@/views/NotFound.vue";
 const routes = [
   {
     /** トップページ */

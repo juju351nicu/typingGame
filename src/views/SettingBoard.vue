@@ -9,7 +9,7 @@
 </template>
 <script setup>
 import { computed, ref } from 'vue'
-import { useGameScoresStore } from "../stores/gameScores";
+import { useGameScoresStore } from "@/stores/gameScores";
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
 

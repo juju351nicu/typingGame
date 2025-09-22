@@ -50,27 +50,29 @@
   <TheFooter />
 </template>
 <script setup>
-import TypingPanel from "../components/TypingPanel.vue"
-import Modal from "../components/Modal.vue";
-import SideMenu from "../components/SideMenu.vue";
-import Timer from "../components/Timer.vue";
-import TheFooter from "../components/TheFooter.vue";
-import { wordsData } from "../assets/words.js";
-import { useGameScoresStore } from "../stores/gameScores";
-import { useGameModeStore } from "../stores/gameMode.js"
 import { ref, watch } from "vue";
-import util from "../utils/util.js";
+import { useRouter } from "vue-router";
+import TypingPanel from "@/components/TypingPanel.vue"
+import Modal from "@/components/Modal.vue";
+import SideMenu from "@/components/SideMenu.vue";
+import Timer from "@/components/Timer.vue";
+import TheFooter from "@/components/TheFooter.vue";
+import { wordsData } from "@/assets/words.js";
+import { useGameScoresStore } from "@/stores/gameScores";
+import { useGameModeStore } from "@/stores/gameMode.js"
+import util from "@/utils/util.js";
 
+const router = useRouter();
 /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
 
 /** ゲーム難易度に関するストア情報 */
 const gameModeStore = useGameModeStore();
 
-/**　タイピング用単語リスト */
+/** タイピング用単語リスト */
 const typingWords = ref(wordsData);
 
-/**　ゲームスタートフラグ */
+/** ゲームスタートフラグ */
 const isGameStarted = ref(false);
 
 /** 選択されたゲームの難易度 */
@@ -107,8 +109,10 @@ const saveGameScores = (() => {
 
 /** モーダルにてリセットボタン押下時、データをリセットする */
 const restartGame = (() => {
-  resetGameData();
-  setModalDisplay();
+  // resetGameData();
+  // setModalDisplay();
+  // 現在のページをリロードする
+  router.go(0);
 });
 
 /** ゲームの難易度設定する */

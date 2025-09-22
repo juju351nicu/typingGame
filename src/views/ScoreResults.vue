@@ -8,8 +8,8 @@
 </template>
 
 <script setup>
-import SideMenu from "../components/SideMenu.vue";
-import { useGameScoresStore } from "../stores/gameScores";
+import SideMenu from "@/components/SideMenu.vue";
+import { useGameScoresStore } from "@/stores/gameScores";
 import { ref, onMounted } from "vue";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
