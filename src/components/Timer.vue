@@ -7,7 +7,7 @@
 
 <script setup>
 import { computed, ref, watch, onMounted } from "vue";
-import util from "@/utils/util";
+import Util from "@/utils/util";
 
 
 const props = defineProps(["accumTime", "isGameStarted", "isGameOver", "isRestTimer"]);
@@ -38,7 +38,7 @@ const isRestTimerFlag =  computed(() => {
  * 00:00:00形式で計測時間を取得する
  */
 const getTimeStr = computed(() => {
-    return util.getCountDownTime(accumTime.value);
+    return Util.getCountDownTime(accumTime.value);
 });
 
 /** スタートを押した時刻 */

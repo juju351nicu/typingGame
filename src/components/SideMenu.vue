@@ -2,6 +2,11 @@
   <v-app-bar color="deep-purple" dark>
     <v-app-bar-nav-icon variant="text" @click="drawer = !drawer"></v-app-bar-nav-icon>
     <v-toolbar-title>メニュー</v-toolbar-title>
+    <!-- dark theme switch -->
+    <template v-slot:append>
+      <v-switch v-model="darkTheme" @update:model-value="changeTheme"
+        :prepend-icon="darkTheme ? 'mdi-weather-night' : 'mdi-weather-sunny'" hide-details inset class="mr-auto" />
+    </template>
     <v-spacer></v-spacer>
   </v-app-bar>
   <v-navigation-drawer v-model="drawer" absolute>
@@ -17,6 +22,8 @@
 </template>
 <script setup>
 import { ref } from "vue";
+import { useTheme } from 'vuetify';
+
 
 /** サイドメニューフラグ */
 const drawer = ref(false);
@@ -39,6 +46,15 @@ const links = ref([
     icon: 'mdi-cog-outline',
   },
 ]);
+/** テーマフラグ */
+const darkTheme = ref(false);
+const theme = useTheme();
+/**
+ * トグルボタン押下時にテーマを変更する。
+ */
+const changeTheme = () => {
+  theme.global.name.value = darkTheme.value ? 'dark' : 'light';
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
