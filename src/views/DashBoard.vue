@@ -1,5 +1,7 @@
 <template>
   <SideMenu />
+  <v-switch v-model="darkTheme" @update:model-value="changeTheme"
+    :prepend-icon="darkTheme ? 'mdi-weather-night' : 'mdi-weather-sunny'" hide-details inset class="mr-auto" />
   <v-container>
     <div class="game-board">
       <TypingPanel :isGameStarted="isGameStarted" :typingWords="typingWords" :isRestTimer="isRestTimer"
@@ -60,8 +62,15 @@ import TheFooter from "@/components/TheFooter.vue";
 import { wordsData } from "@/assets/words.js";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useGameModeStore } from "@/stores/gameMode.js"
-import util from "@/utils/util.js";
+import Util from "@/utils/util.js";
+import { useTheme } from 'vuetify'
 
+const darkTheme = ref(false)
+const theme = useTheme()
+
+const changeTheme = () => {
+  theme.global.name.value = darkTheme.value ? 'dark' : 'light'
+}
 const router = useRouter();
 /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
@@ -99,7 +108,7 @@ const gameScore = ref(0);
 /** ゲームの時間・スコア・モードを保存する */
 const saveGameScores = (() => {
   const data = {
-    time: util.getCountDownTime(accumTime.value),
+    time: Util.getCountDownTime(accumTime.value),
     score: gameScore.value,
     mode: selectedOption.value,
     date: new Date().toDateString(),
