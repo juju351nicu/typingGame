@@ -1,55 +1,4 @@
-<template>
-  <SideMenu />
-  <v-container>
-    <div class="game-board">
-      <TypingPanel :isGameStarted="isGameStarted" :typingWords="typingWords" :isRestTimer="isRestTimer"
-        :gameScore="gameScore" :selectedOption="selectedOption" @update:gameScore="$event => (gameScore = $event)"
-        :isGameOver="isGameOver" @update:isGameOver="$event => (isGameOver = $event)" :inputValue="inputValue"
-        @update:inputValue="$event => (inputValue = $event)" />
-      <template v-if="isGameStarted">
-        <v-container>
-          <v-row>
-            <v-col cols="12" sm="12" md="4">
-              <v-text-field v-model="inputValue" />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="6" sm="6" md="4">
-              <Timer v-model:accumTime="accumTime" :isGameStarted="isGameStarted" :isGameOver="isGameOver"
-                :isRestTimer="isRestTimer" :selectedOption="selectedOption" />
-            </v-col>
-            <v-col cols="6" sm="6" md="4">
-              <div style="display: flex;">
-                <label>Score</label>
-                <span>{{ gameScore }}</span>
-              </div>
-            </v-col>
-          </v-row>
-        </v-container>
-      </template>
-      <template v-else>
-        <v-container>
-          <v-row>
-            <v-col cols="4" sm="6" md="4">
-              <v-select v-model="selectedOption" :items="options" :item-title="options.title"
-                :item-value="options.value" label="Game Mode" @update:modelValue="setGameMode" />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="4" sm="6" md="4">
-              <v-btn class="mt-2" color="success" @click="startGame" size="large" width="200px">
-                Play➔
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-      </template>
-    </div>
-    <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="isGameOver" @restart-game="restartGame" />
-  </v-container>
-  <TheFooter />
-</template>
-<script setup>
+<script setup lang="js">
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import TypingPanel from "@/components/TypingPanel.vue"
@@ -155,6 +104,57 @@ watch(isGameOver, (newValue, _oldValue) => {
   }
 });
 </script>
+<template>
+  <SideMenu />
+  <v-container>
+    <div class="game-board">
+      <TypingPanel :isGameStarted="isGameStarted" :typingWords="typingWords" :isRestTimer="isRestTimer"
+        :gameScore="gameScore" :selectedOption="selectedOption" @update:gameScore="$event => (gameScore = $event)"
+        :isGameOver="isGameOver" @update:isGameOver="$event => (isGameOver = $event)" :inputValue="inputValue"
+        @update:inputValue="$event => (inputValue = $event)" />
+      <template v-if="isGameStarted">
+        <v-container>
+          <v-row>
+            <v-col cols="12" sm="12" md="4">
+              <v-text-field v-model="inputValue" />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="6" sm="6" md="4">
+              <Timer v-model:accumTime="accumTime" :isGameStarted="isGameStarted" :isGameOver="isGameOver"
+                :isRestTimer="isRestTimer" :selectedOption="selectedOption" />
+            </v-col>
+            <v-col cols="6" sm="6" md="4">
+              <div style="display: flex;">
+                <label>Score</label>
+                <span>{{ gameScore }}</span>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
+      </template>
+      <template v-else>
+        <v-container>
+          <v-row>
+            <v-col cols="4" sm="6" md="4">
+              <v-select v-model="selectedOption" :items="options" :item-title="options.title"
+                :item-value="options.value" label="Game Mode" @update:modelValue="setGameMode" />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="4" sm="6" md="4">
+              <v-btn class="mt-2" color="success" @click="startGame" size="large" width="200px">
+                Play➔
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </template>
+    </div>
+    <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="isGameOver" @restart-game="restartGame" />
+  </v-container>
+  <TheFooter />
+</template>
 <style>
 html {
   font-size: 10px;

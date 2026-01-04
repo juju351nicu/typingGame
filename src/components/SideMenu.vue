@@ -24,7 +24,6 @@
 import { ref } from "vue";
 import { useTheme } from 'vuetify';
 
-
 /** サイドメニューフラグ */
 const drawer = ref(false);
 

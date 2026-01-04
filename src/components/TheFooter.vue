@@ -1,3 +1,14 @@
+<script setup lang="js">
+import { reactive } from "vue";
+
+const copyRight = reactive({
+    title: "2025 CLIP All rights reserved.",
+    icon: "©",
+    date: new Date().toDateString().slice(-4),
+});
+const inquiry = reactive({ title: "プライバシーポリシー", link: "#" });
+const privacyPolicy = reactive({ title: "お問い合わせ", link: "#" });
+</script>
 <template>
     <v-footer class="d-flex align-center justify-center" color="deep-purple" dark>
         <router-link :to="'/'" class="text-reset">
@@ -16,20 +27,9 @@
     </v-footer>
 </template>
 
-<script setup>
-import { reactive } from "vue";
-
-const copyRight = reactive({
-    title: "2025 CLIP All rights reserved.",
-    icon: "©",
-    date: new Date().toDateString().slice(-4),
-});
-const inquiry = reactive({ title: "プライバシーポリシー", link: "#" });
-const privacyPolicy = reactive({ title: "お問い合わせ", link: "#" });
-</script>
 <style scoped>
 a {
-  text-decoration: none;
-  color: black;
+    text-decoration: none;
+    color: black;
 }
 </style>

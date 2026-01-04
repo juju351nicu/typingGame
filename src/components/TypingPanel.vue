@@ -1,15 +1,4 @@
-<template>
-    <div class="words-board" ref="typing-panel">
-        <template v-for="word in currentWords">
-            <div class="word" :style="word.style">
-                <template v-for="(character, index) in word.characters">
-                    <span :class="word.classList[index]">{{ character }} </span>
-                </template>
-            </div>
-        </template>
-    </div>
-</template>
-<script setup>
+<script setup lang="js">
 import { onMounted, reactive, ref, useTemplateRef, watch, computed } from "vue";
 
 const props = defineProps(["isGameStarted", "typingWords", "isRestTimer", "gameScore", "isGameOver", "selectedOption", "inputValue"]);
@@ -270,6 +259,17 @@ watch(isRestFlag, (newValue, _oldValue) => {
     }
 });
 </script>
+<template>
+    <div class="words-board" ref="typing-panel">
+        <template v-for="word in currentWords">
+            <div class="word" :style="word.style">
+                <template v-for="(character, index) in word.characters">
+                    <span :class="word.classList[index]">{{ character }} </span>
+                </template>
+            </div>
+        </template>
+    </div>
+</template>
 <style>
 .words-board {
     background-color: #e0e0e0;

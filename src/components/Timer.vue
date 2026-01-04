@@ -1,11 +1,4 @@
-<template>
-    <div class="game-status-item">
-        <label>タイマー</label>
-        <span>{{ getTimeStr }}</span>
-    </div>
-</template>
-
-<script setup>
+<script setup lang="js">
 import { computed, ref, watch, onMounted } from "vue";
 import Util from "@/utils/util";
 
@@ -31,7 +24,7 @@ const isGameOverFlag = computed(() => {
 });
 
 /** リセットタイマーのフラグ */
-const isRestTimerFlag =  computed(() => {
+const isRestTimerFlag = computed(() => {
     return props.isRestTimer;
 });
 /**
@@ -107,3 +100,9 @@ watch(isRestTimerFlag, (newValue, _oldValue) => {
     }
 });
 </script>
+<template>
+    <div class="game-status-item">
+        <label>タイマー</label>
+        <span>{{ getTimeStr }}</span>
+    </div>
+</template>

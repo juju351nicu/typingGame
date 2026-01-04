@@ -1,3 +1,6 @@
+<script setup lang="js">
+const title = "タイピング練習";
+</script>
 <template>
     <v-app-bar :style="{ height: '80px' }" elevation="0" class="px-4 pt-1">
         <template v-slot:prepend>
@@ -10,7 +13,3 @@
         </template>
     </v-app-bar>
 </template>
-
-<script setup>
-const title = "ブログサイト";
-</script>

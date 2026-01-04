@@ -1,13 +1,5 @@
-<template>
-    <SideMenu />
-    <v-container>
-        <p class="text-h3">DataTable</p>
-        <v-data-table v-model:items-per-page="itemsPerPage" :headers="headers" :items="items"
-            :items-per-page-options="pages" items-per-page-text="表示行数" class="elevation-1"></v-data-table>
-    </v-container>
-</template>
 
-<script setup>
+<script setup lang="js">
 import SideMenu from "@/components/SideMenu.vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { ref, onMounted } from "vue";
@@ -37,3 +29,11 @@ onMounted(() => {
     items.value = gameScoresStore.getGameScoreList;
 });
 </script>
+<template>
+    <SideMenu />
+    <v-container>
+        <p class="text-h3">DataTable</p>
+        <v-data-table v-model:items-per-page="itemsPerPage" :headers="headers" :items="items"
+            :items-per-page-options="pages" items-per-page-text="表示行数" class="elevation-1"></v-data-table>
+    </v-container>
+</template>
