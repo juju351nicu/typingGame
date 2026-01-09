@@ -10,7 +10,7 @@ import { wordsData } from "@/assets/words.js";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useGameModeStore } from "@/stores/gameMode.js"
 import Util from "@/utils/util.js";
-
+import Const from "@/constants/const.js";
 const router = useRouter();
 /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
@@ -27,11 +27,8 @@ const isGameStarted = ref(false);
 /** 選択されたゲームの難易度 */
 const selectedOption = ref(0);
 
-const options = [
-  { title: 'Easy', value: 0 },
-  { title: 'Normal', value: 1 },
-  { title: 'Hard', value: 2 }
-];
+/** ゲーム難易度の選択項目 */
+const options = Const.DIFFICULTY_LEVEL
 
 /** 経過時間 */
 const accumTime = ref(0);
@@ -115,8 +112,8 @@ watch(isGameOver, (newValue, _oldValue) => {
       <template v-if="isGameStarted">
         <v-container>
           <v-row>
-            <v-col cols="12" sm="12" md="4">
-              <v-text-field v-model="inputValue" />
+            <v-col cols="12" sm="6" md="4">
+              <v-text-field class="game_text" v-model="inputValue" variant="outlined" />
             </v-col>
           </v-row>
           <v-row>
@@ -181,6 +178,10 @@ html {
 
 .game-board span {
   font-size: 2rem;
+}
+
+.game_text {
+  width: 800px;
 }
 
 ::-webkit-scrollbar {
