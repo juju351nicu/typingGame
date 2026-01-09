@@ -4,7 +4,27 @@ const DIFFICULTY_LEVEL = [
   { title: "Normal", value: 1 },
   { title: "Hard", value: 2 },
 ];
+/** data-tableの1ページあたりの表示件数（デフォルト）*/
+const NUMBER_OF_ITEMS = 5;
+
+/** data-tableの表示件数の選択リスト */
+const DATA_TABLE_PAGES = [
+  { value: 5, title: "5" },
+  { value: 10, title: "10" },
+  { value: 20, title: "20" },
+  { value: -1, title: "$vuetify.dataFooter.itemsPerPageAll" },
+];
+
+const OPTIONS_OF_HEADERS = [
+  { title: "ゲームの難易度", align: "start", key: "mode" },
+  { title: "タイム", align: "start", key: "time" },
+  { title: "スコア", align: "end", key: "score" },
+  { title: "日付", align: "end", key: "date" },
+];
 
 export default {
   DIFFICULTY_LEVEL,
+  NUMBER_OF_ITEMS,
+  DATA_TABLE_PAGES,
+  OPTIONS_OF_HEADERS,
 };

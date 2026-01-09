@@ -26,7 +26,6 @@ const privacyPolicy = reactive({ title: "お問い合わせ", link: "#" });
         </ul>
     </v-footer>
 </template>
-
 <style scoped>
 a {
     text-decoration: none;
