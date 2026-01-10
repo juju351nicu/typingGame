@@ -3,7 +3,6 @@ import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import TypingPanel from "@/components/TypingPanel.vue"
 import Modal from "@/components/Modal.vue";
-import SideMenu from "@/components/SideMenu.vue";
 import Timer from "@/components/Timer.vue";
 import TheFooter from "@/components/TheFooter.vue";
 import { wordsData } from "@/assets/words.js";
@@ -102,7 +101,6 @@ watch(isGameOver, (newValue, _oldValue) => {
 });
 </script>
 <template>
-  <SideMenu />
   <v-container>
     <div class="game-board">
       <TypingPanel :isGameStarted="isGameStarted" :typingWords="typingWords" :isRestTimer="isRestTimer"

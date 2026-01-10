@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import DashBoard from "@/views/DashBoard.vue";
 import ScoresBoard from "@/views/ScoresBoard.vue";
 import SettingBoard from "@/views/SettingBoard.vue";
-import VuetifyList from "@/views/VuetifyList.vue";
 import NotFound from "@/views/NotFound.vue";
 const routes = [
   {
@@ -22,12 +21,6 @@ const routes = [
     path: "/SettingBoard",
     name: "SettingBoard",
     component: SettingBoard,
-  },
-  {
-    /** VuetifyList */
-    path: "/vuetify",
-    name: "vuetify",
-    component: VuetifyList,
   },
   {
     /** 存在しないURLにアクセスした場合 */

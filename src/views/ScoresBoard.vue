@@ -1,5 +1,4 @@
 <script setup lang="js">
-import SideMenu from "@/components/SideMenu.vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { ref, onMounted } from "vue";
 import Const from "@/constants/const.js";
@@ -20,7 +19,6 @@ onMounted(() => {
 });
 </script>
 <template>
-    <SideMenu />
     <v-container>
         <p class="text-h3">DataTable</p>
         <v-data-table v-model:items-per-page="itemsPerPage" :headers="headers" :items="items"
