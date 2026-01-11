@@ -1,7 +1,7 @@
 <script setup lang="js">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useTheme } from 'vuetify';
-
+import { useGameModeStore } from "@/stores/gameMode.js"
 /** サイドメニューフラグ */
 const drawer = ref(false);
 
@@ -24,14 +24,50 @@ const links = ref([
   },
 ]);
 /** テーマフラグ */
-const darkTheme = ref(false);
+const isDarkMode = ref(false);
 const theme = useTheme();
+/** ゲーム難易度に関するストア情報 */
+const gameModeStore = useGameModeStore();
 /**
  * トグルボタン押下時にテーマを変更する。
  */
 const changeTheme = () => {
-  theme.global.name.value = darkTheme.value ? 'dark' : 'light';
+  // darkModeのスイッチがON（True）の場合
+  if (isDarkMode.value) {
+    // リアクティブ変数：theme を 'dark' に設定
+    theme.global.name.value = 'dark';
+  }
+  // darkModeのスイッチがOFF（False）の場合
+  else {
+    // リアクティブ変数：theme を 'light' に設定
+    theme.global.name.value = 'light';
+  }
+  // lightモード / darkモードの選択状態をlocalstorageに記録
+  localStorage.setItem("display_mode", isDarkMode.value);
 }
+// ページ表示時に実行
+onMounted(() => {
+  // システムのdarkモード設定を確認 → darkモード指定時
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    // darkモードとして画面表示する
+    theme.global.name.value = 'dark';
+    // トグルスイッチをdarkモード有効化状態（ON）に切り替える
+    isDarkMode.value = true;
+  }
+  // ローカルストレージ上のdarkモード設定を確認
+  const isDisMode = localStorage.getItem("display_mode");
+  // ローカルストレージに記録された内容が 'light' or 'dark' の場合
+  // darkモードが指定されている場合
+  if (isDisMode === 'true') {
+    // トグルスイッチをdarkモード有効化状態（ON）に切り替える
+    isDarkMode.value = true;
+    theme.global.name.value = 'dark';
+  } else {
+    // リアクティブ変数：theme を 'light' に設定
+    isDarkMode.value = false;
+    theme.global.name.value = 'light';
+  }
+});
 </script>
 <template>
   <v-app-bar color="deep-purple" dark>
@@ -39,8 +75,8 @@ const changeTheme = () => {
     <v-toolbar-title>メニュー</v-toolbar-title>
     <!-- dark theme switch -->
     <template v-slot:append>
-      <v-switch v-model="darkTheme" @update:model-value="changeTheme"
-        :prepend-icon="darkTheme ? 'mdi-weather-night' : 'mdi-weather-sunny'" hide-details inset class="mr-auto" />
+      <v-switch v-model="isDarkMode" @change="changeTheme"
+        :prepend-icon="isDarkMode ? 'mdi-weather-night' : 'mdi-weather-sunny'" hide-details inset class="mr-auto" />
     </template>
     <v-spacer></v-spacer>
   </v-app-bar>
