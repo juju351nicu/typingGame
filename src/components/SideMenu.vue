@@ -61,7 +61,7 @@ onMounted(() => {
     isDarkMode.value = true;
     theme.global.name.value = disTheme;
   } else {
-    // リアクティブ変数：theme を 'light' に設定
+    // リアクティブ変数: theme を 'light' に設定
     isDarkMode.value = false;
     theme.global.name.value = disTheme;
   }

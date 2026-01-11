@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
+import Const from "@/constants/const.js";
 
 export const useGameModeStore = defineStore("gameMode", {
   state: () => ({
     mode: 0,
-    displayMode: 'light'
+    displayMode: Const.DISPLAY_THEME.LIGHT,
   }),
 
   getters: {
