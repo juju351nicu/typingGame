@@ -1,3 +1,9 @@
+/** テーマの背色 */
+const DISPLAY_THEME = {
+  LIGHT: "light",
+  DARK: "dark",
+};
+
 /** ゲーム難易度の選択リスト */
 const DIFFICULTY_LEVEL = [
   { title: "Easy", value: 0 },
@@ -23,6 +29,7 @@ const OPTIONS_OF_HEADERS = [
 ];
 
 export default {
+  DISPLAY_THEME,
   DIFFICULTY_LEVEL,
   NUMBER_OF_ITEMS,
   DATA_TABLE_PAGES,

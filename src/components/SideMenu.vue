@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useTheme } from 'vuetify';
 import { useGameModeStore } from "@/stores/gameMode.js"
+import Const from "@/constants/const.js";
 /** サイドメニューフラグ */
 const drawer = ref(false);
 
@@ -35,14 +36,12 @@ const changeTheme = () => {
   // darkModeのスイッチがON（True）の場合
   if (isDarkMode.value) {
     // リアクティブ変数：theme を 'dark' に設定
-    theme.global.name.value = 'dark';
+    theme.global.name.value = Const.DISPLAY_THEME.DARK;
+  } else {
+    // darkModeのスイッチがOFF（False）の場合、リアクティブ変数：theme を 'light' に設定
+    theme.global.name.value = Const.DISPLAY_THEME.LIGHT;
   }
-  // darkModeのスイッチがOFF（False）の場合
-  else {
-    // リアクティブ変数：theme を 'light' に設定
-    theme.global.name.value = 'light';
-  }
-  // lightモード / darkモードの選択状態をlocalstorageに記録
+  // lightモード / darkモードの選択状態をストアに記録
   gameModeStore.saveDisplayMode(theme.global.name.value);
 }
 // ページ表示時に実行
@@ -50,21 +49,21 @@ onMounted(() => {
   // システムのdarkモード設定を確認 → darkモード指定時
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     // darkモードとして画面表示する
-    theme.global.name.value = 'dark';
+    theme.global.name.value = Const.DISPLAY_THEME.DARK;
     // トグルスイッチをdarkモード有効化状態（ON）に切り替える
     isDarkMode.value = true;
   }
   // ローカルストレージ上のdarkモード設定を確認
-  const disMode = gameModeStore.getDisplayMode;
+  const disTheme = gameModeStore.getDisplayMode;
   // darkモードが指定されている場合
-  if (disMode === 'dark') {
+  if (disTheme === Const.DISPLAY_THEME.DARK) {
     // トグルスイッチをdarkモード有効化状態（ON）に切り替える
     isDarkMode.value = true;
-    theme.global.name.value = disMode;
+    theme.global.name.value = disTheme;
   } else {
     // リアクティブ変数：theme を 'light' に設定
     isDarkMode.value = false;
-    theme.global.name.value = disMode;
+    theme.global.name.value = disTheme;
   }
 });
 </script>
