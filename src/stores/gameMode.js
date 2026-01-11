@@ -10,6 +10,9 @@ export const useGameModeStore = defineStore("gameMode", {
     getGameMode() {
       return this.mode;
     },
+    getDisplayMode() {
+      return this.displayMode;
+    },
   },
   actions: {
     saveGameMode(selectedGameMode) {

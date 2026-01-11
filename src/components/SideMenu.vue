@@ -43,7 +43,7 @@ const changeTheme = () => {
     theme.global.name.value = 'light';
   }
   // lightモード / darkモードの選択状態をlocalstorageに記録
-  localStorage.setItem("display_mode", isDarkMode.value);
+  gameModeStore.saveDisplayMode(theme.global.name.value);
 }
 // ページ表示時に実行
 onMounted(() => {
@@ -55,17 +55,16 @@ onMounted(() => {
     isDarkMode.value = true;
   }
   // ローカルストレージ上のdarkモード設定を確認
-  const isDisMode = localStorage.getItem("display_mode");
-  // ローカルストレージに記録された内容が 'light' or 'dark' の場合
+  const disMode = gameModeStore.getDisplayMode;
   // darkモードが指定されている場合
-  if (isDisMode === 'true') {
+  if (disMode === 'dark') {
     // トグルスイッチをdarkモード有効化状態（ON）に切り替える
     isDarkMode.value = true;
-    theme.global.name.value = 'dark';
+    theme.global.name.value = disMode;
   } else {
     // リアクティブ変数：theme を 'light' に設定
     isDarkMode.value = false;
-    theme.global.name.value = 'light';
+    theme.global.name.value = disMode;
   }
 });
 </script>
