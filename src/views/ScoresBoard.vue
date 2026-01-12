@@ -1,5 +1,5 @@
 <script setup lang="js">
-import { useGameScoresStore } from "@/stores/gameScores";
+import { useGameScoresStore } from "@/stores/gameScores.js";
 import { ref, onMounted } from "vue";
 import Const from "@/constants/const.js";
 

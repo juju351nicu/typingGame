@@ -1,6 +1,6 @@
 <script setup lang="js">
 import { computed, ref } from 'vue'
-import { useGameScoresStore } from "@/stores/gameScores";
+import { useGameScoresStore } from "@/stores/gameScores.js";
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
 
