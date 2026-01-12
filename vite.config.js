@@ -8,7 +8,6 @@ export default defineConfig({
     host: true,
     port: "8081",
   },
-  treeShake: true,
   plugins: [vue(), vuetify()],
   resolve: {
     alias: {

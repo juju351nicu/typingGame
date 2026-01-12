@@ -6,8 +6,8 @@ import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
 import TheFooter from "@/components/TheFooter.vue";
 import { wordsData } from "@/assets/words.js";
-import { useGameScoresStore } from "@/stores/gameScores";
-import { useGameModeStore } from "@/stores/gameMode.js"
+import { useGameScoresStore } from "@/stores/gameScores.js";
+import { useConfigStore } from "@/stores/config.js"
 import Util from "@/utils/util.js";
 import Const from "@/constants/const.js";
 const router = useRouter();
@@ -15,7 +15,7 @@ const router = useRouter();
 const gameScoresStore = useGameScoresStore();
 
 /** ゲーム難易度に関するストア情報 */
-const gameModeStore = useGameModeStore();
+const configStore = useConfigStore();
 
 /** タイピング用単語リスト */
 const typingWords = ref(wordsData);
@@ -62,7 +62,7 @@ const restartGame = (() => {
 
 /** ゲームの難易度設定する */
 const setGameMode = ((newValue) => {
-  gameModeStore.saveGameMode(newValue);
+  configStore.saveGameMode(newValue);
 });
 
 /** モーダル表示フラグ */

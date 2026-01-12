@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import Const from "@/constants/const.js";
 
-export const useGameModeStore = defineStore("gameMode", {
+export const useConfigStore = defineStore("config", {
   state: () => ({
     mode: 0,
     displayMode: Const.DISPLAY_THEME.LIGHT,
