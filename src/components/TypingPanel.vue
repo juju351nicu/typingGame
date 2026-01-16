@@ -1,7 +1,7 @@
 <script setup lang="js">
 import { onMounted, reactive, ref, useTemplateRef, watch, computed } from "vue";
-
-const props = defineProps(["isGameStarted", "typingWords", "isRestTimer", "gameScore", "isGameOver", "selectedOption", "inputValue"]);
+import { wordsData as WORD_DATAS } from "@/assets/words.js";
+const props = defineProps(["isGameStarted", "isRestTimer", "gameScore", "isGameOver", "selectedOption", "inputValue"]);
 
 const emit = defineEmits(["update:isGameOver", "update:gameScore", "update:inputValue"]);
 
@@ -11,9 +11,7 @@ const isGameStartedFlag = computed(() => {
 });
 
 /** タイピング用単語リスト */
-const typingWords = computed(() => {
-    return props.typingWords;
-});
+const typingWords = ref(WORD_DATAS);
 
 /** リセットフラグ */
 const isRestFlag = computed(() => {

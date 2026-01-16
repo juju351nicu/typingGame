@@ -5,7 +5,6 @@ import TypingPanel from "@/components/TypingPanel.vue"
 import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
 import TheFooter from "@/components/TheFooter.vue";
-import { wordsData } from "@/assets/words.js";
 import { useGameScoresStore } from "@/stores/gameScores.js";
 import { useConfigStore } from "@/stores/config.js"
 import Util from "@/utils/util.js";
@@ -16,9 +15,6 @@ const gameScoresStore = useGameScoresStore();
 
 /** ゲーム難易度に関するストア情報 */
 const configStore = useConfigStore();
-
-/** タイピング用単語リスト */
-const typingWords = ref(wordsData);
 
 /** ゲームスタートフラグ */
 const isGameStarted = ref(false);
@@ -103,7 +99,7 @@ watch(isGameOver, (newValue, _oldValue) => {
 <template>
   <v-container>
     <div class="game-board">
-      <TypingPanel :isGameStarted="isGameStarted" :typingWords="typingWords" :isRestTimer="isRestTimer"
+      <TypingPanel :isGameStarted="isGameStarted" :isRestTimer="isRestTimer"
         :gameScore="gameScore" :selectedOption="selectedOption" @update:gameScore="$event => (gameScore = $event)"
         :isGameOver="isGameOver" @update:isGameOver="$event => (isGameOver = $event)" :inputValue="inputValue"
         @update:inputValue="$event => (inputValue = $event)" />

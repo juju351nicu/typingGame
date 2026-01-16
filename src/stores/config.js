@@ -5,6 +5,8 @@ export const useConfigStore = defineStore("config", {
   state: () => ({
     mode: 0,
     displayMode: Const.DISPLAY_THEME.LIGHT,
+    insertion: 0,
+    animation: 0,
   }),
 
   getters: {
@@ -21,7 +23,7 @@ export const useConfigStore = defineStore("config", {
     },
     saveDisplayMode(theme) {
       this.displayMode = theme;
-    }
+    },
   },
   // LocalStorageに保存する場合
   persist: {
