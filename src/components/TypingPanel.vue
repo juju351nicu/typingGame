@@ -1,9 +1,13 @@
 <script setup lang="js">
-import { onMounted, reactive, ref, useTemplateRef, watch, computed } from "vue";
+import { onMounted, ref, useTemplateRef, watch, computed } from "vue";
 import { wordsData as WORD_DATAS } from "@/assets/words.js";
-const props = defineProps(["isGameStarted", "isRestTimer", "gameScore", "isGameOver", "selectedOption", "inputValue"]);
+import { useConfigStore } from "@/stores/config.js"
+const props = defineProps(["isGameStarted", "isRestTimer", "gameScore", "isGameOver", "inputValue"]);
 
 const emit = defineEmits(["update:isGameOver", "update:gameScore", "update:inputValue"]);
+
+/** ゲーム難易度に関するストア情報 */
+const configStore = useConfigStore();
 
 /** ゲームスタートフラグ */
 const isGameStartedFlag = computed(() => {
@@ -30,11 +34,6 @@ const isGameOverFlag = computed({
     set: (value) => emit("update:isGameOver", value)
 });
 
-/** 選択されたゲームの難易度 */
-const selectedOptionValue = computed(() => {
-    return props.selectedOption;
-});
-
 /** テキストボックスに入力された値 */
 const typeBoxValue = computed({
     get: () => props.inputValue,
@@ -44,38 +43,9 @@ const typeBoxValue = computed({
 /** 現在表示している単語リスト */
 const currentWords = ref([]);
 
-/**　設定オブジェクト */
-let config = reactive({
-    wordStyleWidth: 200,
-    wordInsertionSpeeds: [4, 3, 2],
-    wordAnimationSpeeds: [60, 30, 15],
-    currentInsertionSpeed: 4,
-    currentAnimationSpeed: 60,
-});
-
-/**
- * アニメーションの表示速度を設定する
- * @param selectedOption 選択したオプション値
- */
-const setWordAnimationSpeed = ((selectedOption) => {
-    config.currentAnimationSpeed = config.wordAnimationSpeeds[
-        selectedOption
-    ];
-    config.currentInsertionSpeed = config.wordInsertionSpeeds[
-        selectedOption
-    ];
-});
-
 onMounted(() => {
     /** 単語をシャッフルする */
     shuffleWords();
-    setWordAnimationSpeed(selectedOptionValue.value);
-});
-
-/** 単語を表示するインターバル */
-let interval = reactive({
-    insertion: null,
-    animation: null,
 });
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
@@ -97,7 +67,7 @@ const checkCharacter = ((typeBox) => {
 /** ゲームを終了する */
 const gameFinish = (() => {
     isGameOverFlag.value = true;
-    clearInterval();
+    useConfigStore.clearInterval;
 });
 
 /** 出題された単語と入力した単語の値を比較判定する */
@@ -187,12 +157,6 @@ const checkGameCompleted = (() => {
     }
 });
 
-/** 単語を表示するインターバルをクリアする */
-const clearInterval = (() => {
-    interval.insertion = null;
-    interval.animation = null;
-});
-
 /** 「typing-panel」要素の横幅を取得する */
 const getWordsBoardWidth = (() => {
     return wordsBoard.value.offsetWidth;
@@ -201,7 +165,7 @@ const getWordsBoardWidth = (() => {
 /** 表示するタイピング単語の横位置を生成する */
 const getRandomPosition = (() => {
     return Math.floor(
-        Math.random() * (getWordsBoardWidth() - config.wordStyleWidth)
+        Math.random() * (getWordsBoardWidth() - configStore.getWordStyleWidth)
     );
 });
 
@@ -224,13 +188,13 @@ const addWord = (() => {
 watch(isGameStartedFlag, (newValue, _oldValue) => {
     if (newValue) {
         addWord();
-        interval.insertion = setInterval(() => {
+        setInterval(() => {
             addWord();
-        }, config.currentInsertionSpeed * 1000);
-        interval.animation = setInterval(() => {
+        }, configStore.getInsertionSpeed * 1000);
+        setInterval(() => {
             wordsTopToBottom();
             checkIsTopToBottom();
-        }, config.currentAnimationSpeed);
+        }, configStore.getAnimationSpeed);
     }
 });
 
@@ -241,11 +205,6 @@ watch(typeBoxValue, (newValue, _oldValue) => {
     }
     checkWordEquality(newValue);
     checkCharacter(newValue);
-});
-
-/** 選択された難易度をウォッチする */
-watch(selectedOptionValue, (newValue, _oldValue) => {
-    setWordAnimationSpeed(newValue);
 });
 
 /** リセットフラグをウォッチする */
