@@ -20,7 +20,7 @@ onMounted(() => {
 </script>
 <template>
     <v-container>
-        <p class="text-h3">DataTable</p>
+        <p class="text-h3">スコア表</p>
         <v-data-table v-model:items-per-page="itemsPerPage" :headers="headers" :items="items"
             :items-per-page-options="pages" items-per-page-text="表示行数" class="elevation-1"></v-data-table>
     </v-container>

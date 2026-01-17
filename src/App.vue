@@ -1,6 +1,5 @@
 <script setup lang="js">
 import SideMenu from "@/components/SideMenu.vue";
-
 </script>
 <template>
   <v-app>

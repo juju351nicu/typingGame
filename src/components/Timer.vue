@@ -2,7 +2,6 @@
 import { computed, ref, watch, onMounted } from "vue";
 import Util from "@/utils/util";
 
-
 const props = defineProps(["accumTime", "isGameStarted", "isGameOver", "isRestTimer"]);
 
 const emit = defineEmits(["update:accumTime"]);

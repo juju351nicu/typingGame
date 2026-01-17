@@ -6,7 +6,7 @@ const props = defineProps(["isGameStarted", "isRestTimer", "gameScore", "isGameO
 
 const emit = defineEmits(["update:isGameOver", "update:gameScore", "update:inputValue"]);
 
-/** ゲーム難易度に関するストア情報 */
+/** ゲームの設定情報に関するストア情報 */
 const configStore = useConfigStore();
 
 /** ゲームスタートフラグ */
@@ -42,11 +42,6 @@ const typeBoxValue = computed({
 
 /** 現在表示している単語リスト */
 const currentWords = ref([]);
-
-onMounted(() => {
-    /** 単語をシャッフルする */
-    shuffleWords();
-});
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
 const checkCharacter = ((typeBox) => {
@@ -196,6 +191,11 @@ watch(isGameStartedFlag, (newValue, _oldValue) => {
             checkIsTopToBottom();
         }, configStore.getAnimationSpeed);
     }
+});
+
+onMounted(() => {
+    /** 単語をシャッフルする */
+    shuffleWords();
 });
 
 /** 入力された単語をウォッチする */

@@ -20,7 +20,7 @@ const configStore = useConfigStore();
 const isGameStarted = ref(false);
 
 /** 選択されたゲームの難易度 */
-const selectedOption = ref(0);
+const selectedOption = ref(configStore.getGameMode);
 
 /** ゲーム難易度の選択項目 */
 const options = Const.DIFFICULTY_LEVEL
@@ -57,8 +57,8 @@ const restartGame = (() => {
 });
 
 /** ゲームの難易度設定する */
-const setGameMode = ((newValue) => {
-  configStore.saveGameMode(newValue);
+const setGameMode = ((mode) => {
+  configStore.saveGameMode(mode);
 });
 
 /** モーダル表示フラグ */
@@ -192,15 +192,5 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555555;
-}
-
-@media screen and (max-width: 600px) {
-  .game-board {
-    margin: 0;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-    height: 55rem;
-  }
 }
 </style>

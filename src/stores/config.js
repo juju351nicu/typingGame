@@ -9,14 +9,25 @@ export const useConfigStore = defineStore("config", {
     insertion: 0,
     animation: 0,
   }),
-
   getters: {
+    /**
+     * ゲームの難易度を取得する
+     * @returns 難易度の数値
+     */
     getGameMode() {
       return this.mode;
     },
+    /**
+     * ダークモード等のディスプレイの値
+     * @returns 'light'か'dark'モード
+     */
     getDisplayMode() {
       return this.displayMode;
     },
+    /**
+     * 単語の幅のCSS長さ
+     * @returns CSSのwidth
+     */
     getWordStyleWidth() {
       return this.wordStyleWidth;
     },
@@ -28,6 +39,10 @@ export const useConfigStore = defineStore("config", {
     },
   },
   actions: {
+    /**
+     *
+     * @param {number} selectedGameMode
+     */
     saveGameMode(selectedGameMode) {
       this.mode = selectedGameMode;
       switch (selectedGameMode) {
@@ -44,9 +59,7 @@ export const useConfigStore = defineStore("config", {
           this.animation = 15;
           break;
         default:
-          this.insertion = 4;
-          this.animation = 60;
-          break;
+          throw new Error(`不明なステータスです: ${selectedGameMode}`);
       }
     },
     saveDisplayMode(theme) {
