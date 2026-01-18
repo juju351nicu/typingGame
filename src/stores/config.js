@@ -47,18 +47,20 @@ export const useConfigStore = defineStore("config", {
       this.mode = selectedGameMode;
       switch (selectedGameMode) {
         case 0:
-          this.insertion = 4;
-          this.animation = 60;
+          this.insertion = Const.INTERVAL_INSERTION.EASY;
+          this.animation = Const.INTERVAL_ANIMATION.EASY;
           break;
         case 1:
-          this.insertion = 3;
-          this.animation = 30;
+          this.insertion = Const.INTERVAL_INSERTION.NORMAL;
+          this.animation = Const.INTERVAL_ANIMATION.NORMAL;
           break;
         case 2:
-          this.insertion = 2;
-          this.animation = 15;
+          this.insertion = Const.INTERVAL_INSERTION.HARD;
+          this.animation = Const.INTERVAL_ANIMATION.HARD;
           break;
         default:
+          // assertNever(status);
+          // break;
           throw new Error(`不明なステータスです: ${selectedGameMode}`);
       }
     },
@@ -78,3 +80,6 @@ export const useConfigStore = defineStore("config", {
     storage: localStorage,
   },
 });
+// const assertNever = (x: never) => {
+//   throw new Error("This code should not be called");
+// };

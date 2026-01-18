@@ -3,7 +3,18 @@ const DISPLAY_THEME = {
   LIGHT: "light",
   DARK: "dark",
 };
-
+/** 単語挿入の速度 */
+const INTERVAL_INSERTION = {
+  EASY: 4,
+  NORMAL: 3,
+  HARD: 2,
+};
+/** アニメーションの速度*/
+const INTERVAL_ANIMATION = {
+  EASY: 60,
+  NORMAL: 30,
+  HARD: 15,
+};
 /** ゲーム難易度の選択リスト */
 const DIFFICULTY_LEVEL = [
   { title: "Easy", value: 0 },
@@ -30,6 +41,8 @@ const OPTIONS_OF_HEADERS = [
 
 export default {
   DISPLAY_THEME,
+  INTERVAL_ANIMATION,
+  INTERVAL_INSERTION,
   DIFFICULTY_LEVEL,
   NUMBER_OF_ITEMS,
   DATA_TABLE_PAGES,
