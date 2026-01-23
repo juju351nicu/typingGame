@@ -185,7 +185,7 @@ watch(isGameStartedFlag, (newValue, _oldValue) => {
         addWord();
         setInterval(() => {
             addWord();
-        }, configStore.getInsertionSpeed * 1000);
+        }, configStore.getInsertionSpeed);
         setInterval(() => {
             wordsTopToBottom();
             checkIsTopToBottom();

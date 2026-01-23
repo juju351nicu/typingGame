@@ -5,9 +5,9 @@ const DISPLAY_THEME = {
 };
 /** 単語挿入の速度 */
 const INTERVAL_INSERTION = {
-  EASY: 4,
-  NORMAL: 3,
-  HARD: 2,
+  EASY: 4000,
+  NORMAL: 3000,
+  HARD: 2000,
 };
 /** アニメーションの速度*/
 const INTERVAL_ANIMATION = {

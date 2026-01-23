@@ -21,7 +21,7 @@ onMounted(() => {
 </script>
 <template>
   <v-container>
-    <v-slider v-model="insertSpeed" :max="60" :min="1" :step="1" thumb-label></v-slider>
+    <v-slider v-model="insertSpeed" :max="6000" :min="1000" :step="100" thumb-label></v-slider>
     <br />
     <v-slider v-model="animationSpeed" :max="60" :min="1" :step="1" thumb-label></v-slider>
     <br />

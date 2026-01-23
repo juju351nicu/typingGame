@@ -73,7 +73,9 @@ const listGameScores = computed(() => {
 watch(isGameOverFlag, (newValue, _oldValue) => {
   if (newValue) {
     getGameScores();
-    lastScore = gameScores.value[gameScores.value.length - 1];
+    // if (gameScores.value.length > 0) {
+      lastScore = gameScores.value[gameScores.value.length - 1];
+    // }
     sortGameScores();
   } else {
     initGameData();
@@ -82,7 +84,7 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
 
 /** ローカルストレージからゲームのスコアを取得する */
 const getGameScores = (() => {
-  return gameScores.value = gameScoresStore.getGameScoreList || [];
+  return gameScores.value = gameScoresStore.getGameScoreList;
 });
 
 /** スコアのスコアを昇順に取得する */

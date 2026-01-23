@@ -14,6 +14,31 @@ const isEmpty = (target) => {
 };
 
 /**
+ * 文字列のNull・空文字を判定する。
+ *
+ * @param {string} target 値
+ * @returns 判定結果
+ */
+const isNullOrEmptyByString = (target) => {
+  if (typeof target !== String) {
+    return false;
+  }
+  return target === null || target === undefined || target === "";
+};
+/**
+ * ブラウザがHTML5ローカルストレージをサポートしているかどうかを判断する
+ */
+const isLocalStorage = () => {
+  try {
+    if ("localStorage" in window && window["localStorage"] !== null) {
+      console.log("localStorage は使用可能です。");
+    }
+  } catch (error) {
+    console.log("error" + error);
+  }
+};
+
+/**
  * 何のブラウザかをチェックする
  */
 const checkBrowser = () => {
@@ -61,6 +86,7 @@ const getCountDownTime = (accumTime) => {
 
 export default {
   isEmpty,
+  isLocalStorage,
   checkBrowser,
   getCountDownTime,
 };
