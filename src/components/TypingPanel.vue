@@ -179,6 +179,11 @@ const addWord = (() => {
     }
 });
 
+onMounted(() => {
+    /** 単語をシャッフルする */
+    shuffleWords();
+});
+
 /**  ボタンをクリックするとゲームがスタートする */
 watch(isGameStartedFlag, (newValue, _oldValue) => {
     if (newValue) {
@@ -191,11 +196,6 @@ watch(isGameStartedFlag, (newValue, _oldValue) => {
             checkIsTopToBottom();
         }, configStore.getAnimationSpeed);
     }
-});
-
-onMounted(() => {
-    /** 単語をシャッフルする */
-    shuffleWords();
 });
 
 /** 入力された単語をウォッチする */
