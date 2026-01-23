@@ -1,10 +1,10 @@
 <script setup lang="js">
-import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
 import TypingPanel from "@/components/TypingPanel.vue"
 import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
 import TheFooter from "@/components/TheFooter.vue";
+import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores.js";
 import { useConfigStore } from "@/stores/config.js"
 import Util from "@/utils/util.js";

@@ -1,4 +1,5 @@
 <script setup lang="js">
+import VirtualiKeyBoard from "@/components/VirtualiKeyBoard.vue"
 import { onMounted, ref } from 'vue'
 import { useGameScoresStore } from "@/stores/gameScores.js";
 import { useConfigStore } from "@/stores/config.js"
@@ -16,7 +17,7 @@ const resetModalData = (() => {
   gameScoresStore.deleteGameScoreList();
 });
 onMounted(() => {
-    console.log(configStore.getGameMode);
+  console.log(configStore.getGameMode);
 });
 </script>
 <template>
@@ -28,5 +29,6 @@ onMounted(() => {
     <v-btn color="primary" text @click="resetModalData()">
       スコアを初期化する
     </v-btn>
+    <VirtualiKeyBoard />
   </v-container>
 </template>
