@@ -7,12 +7,12 @@
   const input = ref("");
   let keyboard = null;
   
-  // キーボードの内容を更新
+  // 仮想キーボードの内容を更新
   const onChange = (inputVal) => {
     input.value = inputVal;
   };
   
-  // キーボードの入力を処理
+  // 仮想キーボードの入力を処理
   const onKeyPress = (button) => {
     console.log("Button pressed", button);
   };
@@ -41,7 +41,7 @@
         @input="onInputChange"
         placeholder="タップして入力"
       />
-      <!-- キーボード表示エリア -->
+      <!-- 仮想キーボード表示エリア -->
       <div class="simple-keyboard"></div>
     </div>
   </template>

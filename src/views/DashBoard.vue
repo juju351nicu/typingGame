@@ -1,9 +1,10 @@
 <script setup lang="js">
 import TypingPanel from "@/components/TypingPanel.vue"
+import Alert from "@/components/Alert.vue";
 import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
 import TheFooter from "@/components/TheFooter.vue";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores.js";
 import { useConfigStore } from "@/stores/config.js"
@@ -85,7 +86,16 @@ const resetGameData = (() => {
   isGameStarted.value = false;
   inputValue.value = "";
 });
-
+/** アラートに表示するメッセージ */
+const errorMessages = ref([]);
+onMounted(() => {
+  if (Util.isLocalStorage()) {
+    errorMessages.value.push("ローカルストレージは使用可能です。");
+  }
+  if (Util.checkBrowser()) {
+    errorMessages.value.push("Google Chromeをお使いですね");
+  }
+});
 /** ゲームオーバーフラグ */
 watch(isGameOver, (newValue, _oldValue) => {
   if (newValue) {
@@ -98,10 +108,15 @@ watch(isGameOver, (newValue, _oldValue) => {
 </script>
 <template>
   <v-container>
+    <div v-for="(message, index) in errorMessages" :key="index">
+      <div class="d-flex justify-end">
+        <Alert class="mx-4" :message="message" :type=Const.ALERT_TYPE.SUCCESS />
+      </div>
+    </div>
     <div class="game-board">
-      <TypingPanel :isGameStarted="isGameStarted" :isRestTimer="isRestTimer"
-        :gameScore="gameScore" :selectedOption="selectedOption" @update:gameScore="$event => (gameScore = $event)"
-        :isGameOver="isGameOver" @update:isGameOver="$event => (isGameOver = $event)" :inputValue="inputValue"
+      <TypingPanel :isGameStarted="isGameStarted" :isRestTimer="isRestTimer" :gameScore="gameScore"
+        :selectedOption="selectedOption" @update:gameScore="$event => (gameScore = $event)" :isGameOver="isGameOver"
+        @update:isGameOver="$event => (isGameOver = $event)" :inputValue="inputValue"
         @update:inputValue="$event => (inputValue = $event)" />
       <template v-if="isGameStarted">
         <v-container>

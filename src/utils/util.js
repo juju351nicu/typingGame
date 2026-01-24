@@ -31,10 +31,14 @@ const isNullOrEmptyByString = (target) => {
 const isLocalStorage = () => {
   try {
     if ("localStorage" in window && window["localStorage"] !== null) {
-      console.log("localStorage は使用可能です。");
+      console.log("ローカルストレージは使用可能です。");
+      return true;
+    } else {
+      return false;
     }
   } catch (error) {
     console.log("error" + error);
+    return false;
   }
 };
 
@@ -45,18 +49,25 @@ const checkBrowser = () => {
   const userAgent = window.navigator.userAgent.toLowerCase();
   if (userAgent.indexOf("msie") != -1 || userAgent.indexOf("trident") != -1) {
     console.log("Internet Explorerをお使いですね");
+    return false;
   } else if (userAgent.indexOf("edge") != -1) {
     console.log("Edgeをお使いですね");
+    return false;
   } else if (userAgent.indexOf("chrome") != -1) {
     console.log("Google Chromeをお使いですね");
+    return true;
   } else if (userAgent.indexOf("safari") != -1) {
     console.log("Safariをお使いですね");
+    return false;
   } else if (userAgent.indexOf("firefox") != -1) {
     console.log("FireFoxをお使いですね");
+    return false;
   } else if (userAgent.indexOf("opera") != -1) {
     console.log("Operaをお使いですね");
+    return false;
   } else {
     console.log("そんなブラウザは知らん");
+    return false;
   }
 };
 

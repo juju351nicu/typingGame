@@ -3,6 +3,15 @@ const DISPLAY_THEME = {
   LIGHT: "light",
   DARK: "dark",
 };
+/**
+ * アラートの種類の定数
+ */
+const ALERT_TYPE = {
+  SUCCESS: "success",
+  INFO: "info",
+  WARNING: "warning",
+  ERROR: "error",
+};
 /** 単語挿入の速度 */
 const INTERVAL_INSERTION = {
   EASY: 4000,
@@ -41,6 +50,7 @@ const OPTIONS_OF_HEADERS = [
 
 export default {
   DISPLAY_THEME,
+  ALERT_TYPE,
   INTERVAL_ANIMATION,
   INTERVAL_INSERTION,
   DIFFICULTY_LEVEL,

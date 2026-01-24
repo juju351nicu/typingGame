@@ -3,8 +3,12 @@ import Const from "@/constants/const.js";
 
 export const useConfigStore = defineStore("config", {
   state: () => ({
+    /** ゲームの難易度 */
     mode: 0,
+    /** ディスプレイモードの値 */
     displayMode: Const.DISPLAY_THEME.LIGHT,
+    /** 仮想キーボードの表示有無 */
+    isVirtualKeyBoard: false,
     wordStyleWidth: 200,
     insertion: 0,
     animation: 0,
@@ -23,6 +27,13 @@ export const useConfigStore = defineStore("config", {
      */
     getDisplayMode() {
       return this.displayMode;
+    },
+    /**
+     * 仮想キーボードの表示有無を取得する
+     * @returns 仮想キーボードの表示・非表示の判定結果
+     */
+    getIsVirtualKeyBoard() {
+      return this.isVirtualKeyBoard;
     },
     /**
      * 単語の幅のCSS長さ
@@ -66,6 +77,13 @@ export const useConfigStore = defineStore("config", {
     },
     saveDisplayMode(theme) {
       this.displayMode = theme;
+    },
+    /**
+     * 仮想キーボードの表示有無を設定する
+     * @param {boolean} flag 仮想キーボードの表示有無
+     */
+    saveIsVertualKeyBoard(flag) {
+      this.isVirtualKeyBoard = flag;
     },
     /**
      * 単語を表示するインターバルをクリアする
