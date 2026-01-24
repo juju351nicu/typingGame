@@ -87,13 +87,13 @@ const resetGameData = (() => {
   inputValue.value = "";
 });
 /** アラートに表示するメッセージ */
-const errorMessages = ref([]);
+const alertMessages = ref([]);
 onMounted(() => {
   if (!Util.isLocalStorage()) {
-    errorMessages.value.push("ローカルストレージは使用不可能です。");
+    alertMessages.value.push("ローカルストレージは使用不可能です。");
   }
   if (!Util.checkBrowser()) {
-    errorMessages.value.push("Google Chromeをお使い下さい。");
+    alertMessages.value.push("Google Chromeをお使い下さい。");
   }
 });
 /** ゲームオーバーフラグ */
@@ -108,7 +108,7 @@ watch(isGameOver, (newValue, _oldValue) => {
 </script>
 <template>
   <v-container>
-    <div v-for="(message, index) in errorMessages" :key="index">
+    <div v-for="(message, index) in alertMessages" :key="index">
       <div class="d-flex justify-end" style="position: relative; z-index: 9999;">
         <Alert class="mx-4" :message="message" :type=Const.ALERT_TYPE.ERROR />
       </div>

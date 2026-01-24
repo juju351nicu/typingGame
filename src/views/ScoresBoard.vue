@@ -24,8 +24,8 @@ const getColor = ((target) => {
             throw new Error(`不明なステータスです: ${target}`);
     }
 });
-const setStatus = ((status) => {
-    switch (status) {
+const getLevel = ((target) => {
+    switch (target) {
         case 0:
             return '易'
         case 1:
@@ -33,7 +33,7 @@ const setStatus = ((status) => {
         case 2:
             return '難'
         default:
-            throw new Error(`不明なステータスです: ${status}`);
+            throw new Error(`不明なステータスです: ${target}`);
     }
 });
 const items = ref([]);
@@ -49,7 +49,7 @@ onMounted(() => {
             :items-per-page-options="pages" items-per-page-text="表示行数" class="elevation-1">
             <template v-slot:item.mode="{ value }">
                 <v-chip :color="getColor(value)">
-                    {{ setStatus(value) }}
+                    {{ getLevel(value) }}
                 </v-chip>
             </template>
         </v-data-table>

@@ -1,5 +1,5 @@
 <script setup lang="js">
-import { ref, onBeforeMount, computed } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
     message: String,
