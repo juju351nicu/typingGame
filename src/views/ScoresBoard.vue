@@ -6,7 +6,7 @@ import Const from "@/constants/const.js";
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
 /** data-tableの1ページあたりの表示件数（デフォルト）*/
-const itemsPerPage = Const.NUMBER_OF_ITEMS;
+const itemsPerPage = ref(Const.NUMBER_OF_ITEMS);
 /** data-tableの表示件数の選択リスト */
 const pages = Const.DATA_TABLE_PAGES;
 /** テーブルの関連するラベル・プロパティ等の情報 */

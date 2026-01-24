@@ -23,6 +23,8 @@ const changeVirtualKeyBoard = () => {
 const resetModalData = (() => {
   // ローカルストレージのゲームのスコアを削除する 
   gameScoresStore.deleteGameScoreList();
+  // OptionAPIの時は$reset()有効
+  configStore.$reset();
 });
 onMounted(() => {
   console.log(configStore.getGameMode);
