@@ -1,4 +1,4 @@
-<script setup lang="js">
+<script setup lang="ts">
 import SideMenu from "@/components/SideMenu.vue";
 import TheFooter from "@/components/TheFooter.vue";
 </script>
