@@ -3,7 +3,6 @@ import TypingPanel from "@/components/TypingPanel.vue"
 import Alert from "@/components/Alert.vue";
 import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
-import TheFooter from "@/components/TheFooter.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores.js";
@@ -89,10 +88,10 @@ const resetGameData = (() => {
 /** アラートに表示するメッセージ */
 const alertMessages = ref([]);
 onMounted(() => {
-  if (!Util.isLocalStorage()) {
+  if (Util.isLocalStorage()) {
     alertMessages.value.push("ローカルストレージは使用不可能です。");
   }
-  if (!Util.checkBrowser()) {
+  if (Util.checkBrowser()) {
     alertMessages.value.push("Google Chromeをお使い下さい。");
   }
 });
@@ -109,8 +108,8 @@ watch(isGameOver, (newValue, _oldValue) => {
 <template>
   <v-container>
     <div v-for="(message, index) in alertMessages" :key="index">
-      <div class="d-flex justify-end" style="position: relative; z-index: 9999;">
-        <Alert class="mx-4" :message="message" :type=Const.ALERT_TYPE.ERROR />
+      <div class="d-flex justify-end">
+        <Alert :message="message" :type=Const.ALERT_TYPE.ERROR />
       </div>
     </div>
     <div class="game-board">
@@ -155,7 +154,6 @@ watch(isGameOver, (newValue, _oldValue) => {
     </div>
   </v-container>
   <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="isGameOver" @restart-game="restartGame" />
-  <TheFooter />
 </template>
 <style>
 html {
@@ -167,7 +165,7 @@ html {
   height: 80vmin;
   display: flex;
   flex-direction: column;
-  margin: 5vmin auto 0;
+  margin: auto;
   -webkit-box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);

@@ -24,8 +24,12 @@ setTimeout(() => {
 </template>
 <style scoped>
 .alert {
-    margin: 5px;
-    max-width: 400px;
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    width: 90%;
+    max-width: 500px;
+    z-index: 9999;
 }
 .bg-error {
     background-color: #F44336 !important

@@ -70,7 +70,7 @@ onMounted(() => {
 <template>
   <v-app-bar color="deep-purple" dark>
     <v-app-bar-nav-icon variant="text" @click="drawer = !drawer"></v-app-bar-nav-icon>
-    <v-toolbar-title>メニュー</v-toolbar-title>
+    <v-toolbar-title>タイピングゲーム</v-toolbar-title>
     <!-- dark theme switch -->
     <template v-slot:append>
       <v-switch v-model="isDarkMode" @change="changeTheme"

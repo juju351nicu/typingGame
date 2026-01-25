@@ -1,5 +1,6 @@
 <script setup lang="js">
 import SideMenu from "@/components/SideMenu.vue";
+import TheFooter from "@/components/TheFooter.vue";
 </script>
 <template>
   <v-app>
@@ -7,5 +8,6 @@ import SideMenu from "@/components/SideMenu.vue";
       <SideMenu />
       <router-view />
     </v-main>
+    <TheFooter />
   </v-app>
 </template>

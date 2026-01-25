@@ -75,6 +75,10 @@ export const useConfigStore = defineStore("config", {
           throw new Error(`不明なステータスです: ${selectedGameMode}`);
       }
     },
+    /**
+     * ディスプレイモードの値を設定する
+     * @param {String} theme ディスプレイモードの値
+     */
     saveDisplayMode(theme) {
       this.displayMode = theme;
     },

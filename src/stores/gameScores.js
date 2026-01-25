@@ -1,7 +1,9 @@
 import { defineStore } from "pinia";
 export const useGameScoresStore = defineStore("gameScores", {
   state: () => ({
+    /** スコア情報リスト */
     scores: [],
+    /** ローディングフラグ */
     isLoading: true,
   }),
   getters: {

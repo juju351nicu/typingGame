@@ -8,7 +8,7 @@ const inquiry = { title: "プライバシーポリシー", link: "#" };
 const privacyPolicy = { title: "お問い合わせ", link: "#" };
 </script>
 <template>
-    <v-footer class="d-flex align-center justify-center" color="deep-purple" dark>
+    <v-footer class="d-flex align-center justify-center footer" color="deep-purple" dark>
         <router-link :to="'/'" class="text-reset">
             <p class="m-0 p-0">{{ copyRight.title }}</p>
         </router-link>
@@ -25,6 +25,9 @@ const privacyPolicy = { title: "お問い合わせ", link: "#" };
     </v-footer>
 </template>
 <style scoped>
+.footer{
+    max-height: 60px;
+}
 a {
     text-decoration: none;
     color: black;
