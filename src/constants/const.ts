@@ -48,6 +48,11 @@ const OPTIONS_OF_HEADERS = [
   { title: "日付", align: "end", key: "date" },
 ];
 
+const DATE_FORMAT = {
+  STANDARD_DATE: "YYYY/MM/DD",
+  STANDARD_DATE_TIME: "YYYY-MM-DD HH:mm:ss",
+};
+
 export default {
   DISPLAY_THEME,
   ALERT_TYPE,
@@ -57,4 +62,5 @@ export default {
   NUMBER_OF_ITEMS,
   DATA_TABLE_PAGES,
   OPTIONS_OF_HEADERS,
+  DATE_FORMAT
 };

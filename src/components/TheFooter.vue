@@ -1,11 +1,10 @@
-<script setup lang="js">
-const copyRight = {
+<script setup lang="ts">
+const copyRight : any = {
     title: "2025 CLIP All rights reserved.",
     icon: "©",
     date: new Date().toDateString().slice(-4),
 };
-const inquiry = { title: "プライバシーポリシー", link: "#" };
-const privacyPolicy = { title: "お問い合わせ", link: "#" };
+const privacyPolicy: any = { title: "プライバシーポリシー", link: "#" };
 </script>
 <template>
     <v-footer class="d-flex align-center justify-center footer" color="deep-purple" dark>
@@ -19,7 +18,6 @@ const privacyPolicy = { title: "お問い合わせ", link: "#" };
             {{ copyRight.date }}
         </p>
         <ul class="footer__list">
-            <li><a href="#" class="footer__link">{{ inquiry.title }}</a></li>
             <li><a href="#" class="footer__link">{{ privacyPolicy.title }}</a></li>
         </ul>
     </v-footer>

@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 /**
  * 値があるかどうか判定する。
  * リストの場合は空かどうかを判定する。
@@ -24,6 +26,36 @@ const isNullOrEmptyByString = (target) => {
     return false;
   }
   return target === null || target === undefined || target === "";
+};
+
+/**
+ * 日付をフォーマット形式に変換する
+ * @param {string} val
+ * @param {string} format
+ * @returns 変換後の日付
+ */
+const convertDate = (val, format) => {
+  if (!val || !format) {
+    return null;
+  }
+  const date = dayjs(val, format);
+  if (date.format(format) !== val) {
+    return null;
+  }
+  return date.toDate();
+};
+
+/**
+ * 現在の日付を取得する。
+ * @returns 現在の日付文字列
+ */
+const getStrCurrentDate = () => {
+  const today = new Date();
+  const year = today.getFullYear().toString();
+  const month = (today.getMonth() + 1).toString().padStart(2, "0");
+  const day = today.getDate().toString().padStart(2, "0");
+  const dateString = year + "/" + month + "/" + day;
+  return dateString;
 };
 /**
  * ブラウザがHTML5ローカルストレージをサポートしているかどうかを判断する
@@ -98,6 +130,8 @@ const getCountDownTime = (accumTime) => {
 export default {
   isEmpty,
   isLocalStorage,
+  convertDate,
+  getStrCurrentDate,
   checkBrowser,
   getCountDownTime,
 };

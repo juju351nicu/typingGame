@@ -7,6 +7,7 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores.js";
 import { useConfigStore } from "@/stores/config.js"
+import dayjs from 'dayjs';
 import Util from "@/utils/util.js";
 import Const from "@/constants/const.ts";
 const router = useRouter();
@@ -39,11 +40,13 @@ const gameScore = ref(0);
 
 /** ゲームの時間・スコア・モードを保存する */
 const saveGameScores = (() => {
+  // 現在の日時を取得
+  const now = dayjs();
   const data = {
     time: Util.getCountDownTime(accumTime.value),
     score: gameScore.value,
     mode: selectedOption.value,
-    date: new Date().toDateString(),
+    date: now.format(Const.DATE_FORMAT.STANDARD_DATE_TIME),
   }
   gameScoresStore.saveGameScoreList(data);
 });
