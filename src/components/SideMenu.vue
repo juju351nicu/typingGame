@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useTheme } from 'vuetify';
 import { useConfigStore } from "@/stores/config.js"
-import Const from "@/constants/const.js";
+import Const from "@/constants/const.ts";
 /** サイドメニューフラグ */
 const drawer = ref(false);
 

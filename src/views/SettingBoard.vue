@@ -4,7 +4,7 @@ import VirtualKeyBoard from "@/components/VirtualKeyBoard.vue"
 import { onMounted, ref } from 'vue'
 import { useGameScoresStore } from "@/stores/gameScores.js";
 import { useConfigStore } from "@/stores/config.js"
-import Const from "@/constants/const.js";
+import Const from "@/constants/const.ts";
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
 /** ゲームの設定情報に関するストア情報 */

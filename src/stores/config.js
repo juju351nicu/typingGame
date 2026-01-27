@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import Const from "@/constants/const.js";
+import Const from "@/constants/const.ts";
 
 export const useConfigStore = defineStore("config", {
   state: () => ({

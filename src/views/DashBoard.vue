@@ -8,7 +8,7 @@ import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores.js";
 import { useConfigStore } from "@/stores/config.js"
 import Util from "@/utils/util.js";
-import Const from "@/constants/const.js";
+import Const from "@/constants/const.ts";
 const router = useRouter();
 /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();

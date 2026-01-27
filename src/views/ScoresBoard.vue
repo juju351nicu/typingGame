@@ -1,7 +1,7 @@
 <script setup lang="js">
 import { useGameScoresStore } from "@/stores/gameScores.js";
 import { ref, onMounted } from "vue";
-import Const from "@/constants/const.js";
+import Const from "@/constants/const.ts";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
