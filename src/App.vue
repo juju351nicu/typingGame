@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import SideMenu from "@/components/SideMenu.vue";
+import TheHeader from "@/components/TheHeader.vue";
 import TheFooter from "@/components/TheFooter.vue";
 </script>
 <template>
   <v-app>
     <v-main>
-      <SideMenu />
+      <TheHeader />
       <router-view />
     </v-main>
     <TheFooter />

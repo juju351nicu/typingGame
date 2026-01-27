@@ -1,10 +1,11 @@
 <script setup lang="ts">
-const copyRight : any = {
-    title: "2025 CLIP All rights reserved.",
+import type { copyRight, PrivacyPolicy } from '@/interfaces';
+const copyRight : copyRight = {
+    title: "2026 CLIP All rights reserved.",
     icon: "©",
-    date: new Date().toDateString().slice(-4),
+    dateStr: new Date().toDateString().slice(-4),
 };
-const privacyPolicy: any = { title: "プライバシーポリシー", link: "#" };
+const privacyPolicy: PrivacyPolicy = { title: "プライバシーポリシー", link: "#" };
 </script>
 <template>
     <v-footer class="d-flex align-center justify-center footer" color="deep-purple" dark>
@@ -15,7 +16,7 @@ const privacyPolicy: any = { title: "プライバシーポリシー", link: "#" 
         <p class="m-0 p-0">
             Created with ❤️ by
             <a href="https://github.com/yeikiu/" target="_blank" class="text-reset">JQ</a> ©
-            {{ copyRight.date }}
+            {{ copyRight.dateStr }}
         </p>
         <ul class="footer__list">
             <li><a href="#" class="footer__link">{{ privacyPolicy.title }}</a></li>
