@@ -22,7 +22,8 @@ setTimeout(() => {
 <template>
     <div v-for="(alert, index) in alerts" :key="index">
         <div class="d-flex justify-end">
-            <v-alert v-model="alertFlag" :type=alert.type dense class="alert" closable>
+            <v-alert v-model="alertFlag" :style="{ top: `${90 * index}px` }" :type=alert.type dense class="alert"
+                closable>
                 {{ alert.message }}
             </v-alert>
         </div>
@@ -31,7 +32,7 @@ setTimeout(() => {
 <style scoped>
 .alert {
     position: fixed;
-    top: 16px;
+    margin-top: 16px;
     left: 50%;
     width: 90%;
     max-width: 500px;
