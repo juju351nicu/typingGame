@@ -6,17 +6,19 @@ import type { Alert } from '@/interfaces';
 interface Props {
     alerts: Alert[];
 }
+
+/** Propsオブジェクトの設定 */
 const props = defineProps<Props>();
 
 /** メッセージ情報 */
-const alerts = computed(() => {
+const alerts = computed((): Alert[] => {
     return props.alerts;
 });
 
 const alertFlag = ref(true);
 
-setTimeout(() => {
-    alertFlag.value = false
+setTimeout((): void => {
+    alertFlag.value = false;
 }, 4000);
 </script>
 <template>
