@@ -102,6 +102,4 @@ export const useConfigStore = defineStore("config", {
     storage: localStorage,
   },
 });
-// const assertNever = (x: never) => {
-//   throw new Error("This code should not be called");
-// };
+

@@ -6,7 +6,7 @@ import dayjs from "dayjs";
  * @param {string} target 値
  * @returns 判定結果
  */
-const isEmpty = (target) => {
+const isEmpty = (target: string | any[] | null | undefined) => {
   return (
     target === null ||
     target === undefined ||
@@ -16,30 +16,17 @@ const isEmpty = (target) => {
 };
 
 /**
- * 文字列のNull・空文字を判定する。
- *
- * @param {string} target 値
- * @returns 判定結果
- */
-const isNullOrEmptyByString = (target) => {
-  if (typeof target !== String) {
-    return false;
-  }
-  return target === null || target === undefined || target === "";
-};
-
-/**
  * 日付をフォーマット形式に変換する
- * @param {string} val
+ * @param {string} target
  * @param {string} format
  * @returns 変換後の日付
  */
-const convertDate = (val, format) => {
-  if (!val || !format) {
+const convertDate = (target: string, format: string) => {
+  if (!target || !format) {
     return null;
   }
-  const date = dayjs(val, format);
-  if (date.format(format) !== val) {
+  const date = dayjs(target, format);
+  if (date.format(format) !== target) {
     return null;
   }
   return date.toDate();
@@ -49,7 +36,7 @@ const convertDate = (val, format) => {
  * 現在の日付を取得する。
  * @returns 現在の日付文字列
  */
-const getStrCurrentDate = () => {
+const getStrCurrentDate = (): string => {
   const today = new Date();
   const year = today.getFullYear().toString();
   const month = (today.getMonth() + 1).toString().padStart(2, "0");
@@ -57,10 +44,11 @@ const getStrCurrentDate = () => {
   const dateString = year + "/" + month + "/" + day;
   return dateString;
 };
+
 /**
  * ブラウザがHTML5ローカルストレージをサポートしているかどうかを判断する
  */
-const isLocalStorage = () => {
+const isLocalStorage = (): boolean => {
   try {
     if ("localStorage" in window && window["localStorage"] !== null) {
       console.log("ローカルストレージは使用可能です。");
@@ -77,7 +65,7 @@ const isLocalStorage = () => {
 /**
  * 何のブラウザかをチェックする
  */
-const checkBrowser = () => {
+const checkBrowser = (): boolean => {
   const userAgent = window.navigator.userAgent.toLowerCase();
   if (userAgent.indexOf("msie") != -1 || userAgent.indexOf("trident") != -1) {
     console.log("Internet Explorerをお使いですね");
@@ -105,8 +93,10 @@ const checkBrowser = () => {
 
 /**
  * 計測時間を返却する。
+ * @param accumTime 
+ * @returns 計測時間
  */
-const getCountDownTime = (accumTime) => {
+const getCountDownTime = (accumTime: number): string => {
   // this.time is milliseconds
   const currentTime = accumTime;
   let milliseconds = currentTime % 1000;
@@ -119,13 +109,17 @@ const getCountDownTime = (accumTime) => {
 
   let millisecondsMultiplyTen = Math.floor(milliseconds / 10);
 
-  millisecondsMultiplyTen = ("0" + millisecondsMultiplyTen).slice(-2);
-  seconds = ("0" + seconds).slice(-2);
-  minutes = ("0" + minutes).slice(-2);
-  hours = hours < 100 ? ("0" + hours).slice(-2) : hours;
+  const millisecondsStr = ("0" + millisecondsMultiplyTen).slice(-2);
+  const secondsStr = ("0" + seconds).slice(-2);
+  const minutesStr = ("0" + minutes).slice(-2);
+  const hoursStr = hours < 100 ? ("0" + hours).slice(-2) : hours;
 
-  return `${hours}:${minutes}:${seconds}.${millisecondsMultiplyTen}`;
+  return `${hoursStr}:${minutesStr}:${secondsStr}.${millisecondsStr}`;
 };
+
+// const assertNever = (x: never) => {
+//   throw new Error("This code should not be called");
+// };
 
 export default {
   isEmpty,
@@ -134,4 +128,5 @@ export default {
   getStrCurrentDate,
   checkBrowser,
   getCountDownTime,
+  // assertNever
 };

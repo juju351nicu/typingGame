@@ -3,7 +3,7 @@ import DashBoard from "@/views/DashBoard.vue";
 import ScoresBoard from "@/views/ScoresBoard.vue";
 import SettingBoard from "@/views/SettingBoard.vue";
 import NotFound from "@/views/NotFound.vue";
-const routes: RouteRecordRaw[] = [
+const routeSetting: RouteRecordRaw[] = [
   {
     /** トップページ */
     path: "/",
@@ -33,6 +33,6 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   // Viteの環境変数でimport.meta.env.BASE_URL = vite.config.tsのbase
   history: createWebHistory(),
-  routes: routes,
+  routes: routeSetting,
 });
 export default router;

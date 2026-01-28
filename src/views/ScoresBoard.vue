@@ -15,11 +15,11 @@ const headers = Const.OPTIONS_OF_HEADERS;
 const getColor = ((target) => {
     switch (target) {
         case 0:
-            return '#000080'
+            return '#000080';
         case 1:
-            return '#ff00ff'
+            return '#ff00ff';
         case 2:
-            return '#ff0000'
+            return '#ff0000';
         default:
             throw new Error(`不明なステータスです: ${target}`);
     }
@@ -27,11 +27,11 @@ const getColor = ((target) => {
 const getLevel = ((target) => {
     switch (target) {
         case 0:
-            return '易'
+            return '易';
         case 1:
-            return '普'
+            return '普';
         case 2:
-            return '難'
+            return '難';
         default:
             throw new Error(`不明なステータスです: ${target}`);
     }
