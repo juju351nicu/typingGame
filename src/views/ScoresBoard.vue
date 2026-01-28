@@ -2,7 +2,7 @@
 import { useGameScoresStore } from "@/stores/gameScores.js";
 import { ref, onMounted } from "vue";
 import Const from "@/constants/const.ts";
-
+import Util from "@/utils/util.ts";
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
 /** data-tableの1ページあたりの表示件数（デフォルト）*/
@@ -12,30 +12,6 @@ const pages = Const.DATA_TABLE_PAGES;
 /** テーブルの関連するラベル・プロパティ等の情報 */
 const headers = Const.OPTIONS_OF_HEADERS;
 
-const getColor = ((target) => {
-    switch (target) {
-        case 0:
-            return '#000080';
-        case 1:
-            return '#ff00ff';
-        case 2:
-            return '#ff0000';
-        default:
-            throw new Error(`不明なステータスです: ${target}`);
-    }
-});
-const getLevel = ((target) => {
-    switch (target) {
-        case 0:
-            return '易';
-        case 1:
-            return '普';
-        case 2:
-            return '難';
-        default:
-            throw new Error(`不明なステータスです: ${target}`);
-    }
-});
 const items = ref([]);
 /** 現在のゲーム難易度に該当するゲームスコアリストを取得する */
 onMounted(() => {
@@ -48,8 +24,8 @@ onMounted(() => {
         <v-data-table v-model:items-per-page="itemsPerPage" :headers="headers" :items="items"
             :items-per-page-options="pages" items-per-page-text="表示行数" class="elevation-1">
             <template v-slot:item.mode="{ value }">
-                <v-chip :color="getColor(value)">
-                    {{ getLevel(value) }}
+                <v-chip :color="Util.getColor(value)">
+                    {{ Util.getLevel(value) }}
                 </v-chip>
             </template>
         </v-data-table>

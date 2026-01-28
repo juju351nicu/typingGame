@@ -121,6 +121,41 @@ const getCountDownTime = (accumTime: number): string => {
   return `${hoursStr}:${minutesStr}:${secondsStr}.${millisecondsStr}`;
 };
 
+/**
+ * チップに表示する該当の色コードを取得する
+ * @param target ゲームのモード値（難易度）
+ * @returns 色コード
+ */
+const getColor = (target: number): string => {
+  switch (target) {
+    case 0:
+      return "#000080";
+    case 1:
+      return "#ff00ff";
+    case 2:
+      return "#ff0000";
+    default:
+      throw new Error(`不明なステータスです: ${target}`);
+  }
+};
+
+/**
+ * 該当する易〜難の値を取得する
+ * @param target ゲームのモード値（難易度）
+ * @returns 易〜難の値を取得する
+ */
+const getLevel = (target: number): string => {
+  switch (target) {
+    case 0:
+      return "易";
+    case 1:
+      return "普";
+    case 2:
+      return "難";
+    default:
+      throw new Error(`不明なステータスです: ${target}`);
+  }
+};
 // const assertNever = (x: never) => {
 //   throw new Error("This code should not be called");
 // };
@@ -132,5 +167,7 @@ export default {
   getStrCurrentDate,
   checkBrowser,
   getCountDownTime,
+  getColor,
+  getLevel,
   // assertNever
 };

@@ -1,7 +1,7 @@
 <script setup lang="js">
-import { useGameScoresStore } from "@/stores/gameScores.js";
 import { computed, reactive, ref, watch } from "vue";
-
+import { useGameScoresStore } from "@/stores/gameScores.js";
+import Util from "@/utils/util.ts";
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
 
@@ -11,11 +11,6 @@ const props = defineProps({
 
 /** ダイアログの表示・非表示 */
 const dialog = ref(false);
-
-/** ゲームモード */
-const gemeModeList = computed(() => {
-  return ["Easy", "Normal", "Hard"];
-});
 
 /** ゲームオーバーフラグ */
 const isGameOverFlag = computed(() => {
@@ -29,11 +24,6 @@ const emit = defineEmits(["restart-game"]);
 /** ゲームを再スタートする */
 const reStartGame = (() => {
   emit("restart-game");
-});
-
-/** ゲームのEasyモード等のモード情報を取得する */
-const getGameMode = ((index) => {
-  return gemeModeList.value[Number(index)];
 });
 
 /** ゲームスコア */
@@ -50,7 +40,7 @@ let lastScore = reactive({
 const scoreMessage = computed(() => {
   if (gameScores.value.length > 0) {
     let desc = `You completed ${lastScore.score} words in ${lastScore.time
-      } time in ${getGameMode(lastScore.mode)} mode.`;
+      } time in ${Util.getLevel(lastScore.mode)} mode.`;
     return desc;
   }
   return "";
@@ -59,22 +49,12 @@ const scoreMessage = computed(() => {
 /** 現在のゲーム難易度 */
 const currentListMode = ref("");
 
-/** 現在のゲーム難易度に該当するゲームスコアリストを取得する */
-const listGameScores = computed(() => {
-  if (typeof currentListMode.value == "number") {
-    return gameScores.value.filter(
-      (gameScore) => gameScore.mode == currentListMode.value
-    );
-  }
-  return gameScores.value;
-});
-
 /** ゲームオーバーフラグをウォッチにて判定する */
 watch(isGameOverFlag, (newValue, _oldValue) => {
   if (newValue) {
     getGameScores();
     // if (gameScores.value.length > 0) {
-      lastScore = gameScores.value[gameScores.value.length - 1];
+    lastScore = gameScores.value[gameScores.value.length - 1];
     // }
     sortGameScores();
   } else {
