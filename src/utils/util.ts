@@ -3,16 +3,20 @@ import dayjs from "dayjs";
 /**
  * 値があるかどうか判定する。
  * リストの場合は空かどうかを判定する。
- * @param {string} target 値
+ * @param {string | any[] | null | undefined} target 値
  * @returns 判定結果
  */
 const isEmpty = (target: string | any[] | null | undefined) => {
-  return (
-    target === null ||
-    target === undefined ||
-    ((typeof target === "string" || target instanceof Array) &&
-      target.length <= 0)
-  );
+  if (target === null || target === undefined) {
+    return true;
+  }
+  if (typeof target === "string" && target === "") {
+    return true;
+  }
+  if (target instanceof Array && target.length <= 0) {
+    return true;
+  }
+  return false;
 };
 
 /**
@@ -93,7 +97,7 @@ const checkBrowser = (): boolean => {
 
 /**
  * 計測時間を返却する。
- * @param accumTime 
+ * @param accumTime
  * @returns 計測時間
  */
 const getCountDownTime = (accumTime: number): string => {

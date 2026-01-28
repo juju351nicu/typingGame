@@ -1,6 +1,6 @@
 <script setup lang="js">
 import TypingPanel from "@/components/TypingPanel.vue"
-import Alert from "@/components/Alert.vue";
+import Alerts from "@/components/Alerts.vue";
 import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
 import { onMounted, ref, watch } from "vue";
@@ -89,13 +89,13 @@ const resetGameData = (() => {
   inputValue.value = "";
 });
 /** アラートに表示するメッセージ */
-const alertMessages = ref([]);
+const alerts = ref([]);
 onMounted(() => {
   if (Util.isLocalStorage()) {
-    alertMessages.value.push("ローカルストレージは使用不可能です。");
+    alerts.value.push({ message: "ローカルストレージは使用不可能です。", type: Const.ALERT_TYPE.ERROR });
   }
   if (Util.checkBrowser()) {
-    alertMessages.value.push("Google Chromeをお使い下さい。");
+    alerts.value.push({ message: "Google Chromeをお使い下さい。", type: Const.ALERT_TYPE.ERROR });
   }
 });
 /** ゲームオーバーフラグ */
@@ -110,11 +110,7 @@ watch(isGameOver, (newValue, _oldValue) => {
 </script>
 <template>
   <v-container>
-    <div v-for="(message, index) in alertMessages" :key="index">
-      <div class="d-flex justify-end">
-        <Alert :message="message" :type=Const.ALERT_TYPE.ERROR />
-      </div>
-    </div>
+    <Alerts :alerts="alerts" />
     <div class="game-board">
       <TypingPanel :isGameStarted="isGameStarted" :isRestTimer="isRestTimer" :gameScore="gameScore"
         @update:gameScore="$event => (gameScore = $event)" :isGameOver="isGameOver"
