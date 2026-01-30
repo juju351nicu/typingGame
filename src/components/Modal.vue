@@ -49,29 +49,9 @@ const scoreMessage = computed(() => {
 /** 現在のゲーム難易度 */
 const currentListMode = ref("");
 
-/** ゲームオーバーフラグをウォッチにて判定する */
-watch(isGameOverFlag, (newValue, _oldValue) => {
-  if (newValue) {
-    getGameScores();
-    // if (gameScores.value.length > 0) {
-    lastScore = gameScores.value[gameScores.value.length - 1];
-    // }
-    sortGameScores();
-  } else {
-    initGameData();
-  }
-});
-
 /** ローカルストレージからゲームのスコアを取得する */
 const getGameScores = (() => {
   return gameScores.value = gameScoresStore.getGameScoreList;
-});
-
-/** スコアのスコアを昇順に取得する */
-const sortGameScores = (() => {
-  return gameScores.value.sort(
-    (a, b) => b.mode.toString().localeCompare(a.mode) || b.score - a.score
-  );
 });
 
 /** ゲームのデータを初期化する */
@@ -84,7 +64,17 @@ const initGameData = (() => {
   };
   currentListMode.value = "";
 });
-
+/** ゲームオーバーフラグをウォッチにて判定する */
+watch(isGameOverFlag, (newValue, _oldValue) => {
+  if (newValue) {
+    getGameScores();
+    // if (gameScores.value.length > 0) {
+    lastScore = gameScores.value[gameScores.value.length - 1];
+    // }
+  } else {
+    initGameData();
+  }
+});
 </script>
 <template>
   <div class="text-center">

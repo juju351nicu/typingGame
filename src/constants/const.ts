@@ -1,3 +1,4 @@
+import type { DataTableHeader } from 'vuetify';
 /** テーマの背色 */
 const DISPLAY_THEME = {
   LIGHT: "light",
@@ -41,7 +42,7 @@ const DATA_TABLE_PAGES = [
   { value: -1, title: "$vuetify.dataFooter.itemsPerPageAll" },
 ];
 
-const OPTIONS_OF_HEADERS = [
+const OPTIONS_OF_HEADERS : DataTableHeader[]  = [
   { title: "ゲームの難易度", align: "start", key: "mode" },
   { title: "タイム", align: "start", key: "time" },
   { title: "スコア", align: "end", key: "score" },

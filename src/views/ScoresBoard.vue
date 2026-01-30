@@ -1,8 +1,9 @@
-<script setup lang="js">
-import { useGameScoresStore } from "@/stores/gameScores.ts";
+<script setup lang="ts">
+import { useGameScoresStore } from "@/stores/gameScores";
 import { ref, onMounted } from "vue";
-import Const from "@/constants/const.ts";
-import Util from "@/utils/util.ts";
+import Const from "@/constants/const";
+import Util from "@/utils/util";
+import { GameScore } from "@/types/interfaces";
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
 /** data-tableの1ページあたりの表示件数（デフォルト）*/
@@ -12,17 +13,16 @@ const pages = Const.DATA_TABLE_PAGES;
 /** テーブルの関連するラベル・プロパティ等の情報 */
 const headers = Const.OPTIONS_OF_HEADERS;
 
-/** スコアのスコアを昇順に取得する */
-const reverseGameScoresByDate = (() => {
-  return gameScores.value.sort(
-    (a, b) =>  b.date - a.date
-  );
+/** スコアのスコアを日付降順に取得する */
+const reverseGameScoresByDate = ((gameScores: GameScore[]) => {
+    return gameScores.sort(
+        (a, b) => b.date.localeCompare(a.date));
 });
 
-const items = ref([]);
+const items = ref<GameScore[]>([]);
 /** 現在のゲーム難易度に該当するゲームスコアリストを取得する */
 onMounted(() => {
-    items.value = gameScoresStore.getGameScoreList;
+    items.value = reverseGameScoresByDate(gameScoresStore.getGameScoreList);
 });
 </script>
 <template>
