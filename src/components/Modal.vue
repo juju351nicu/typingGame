@@ -1,6 +1,6 @@
 <script setup lang="js">
 import { computed, reactive, ref, watch } from "vue";
-import { useGameScoresStore } from "@/stores/gameScores.js";
+import { useGameScoresStore } from "@/stores/gameScores.ts";
 import Util from "@/utils/util.ts";
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();

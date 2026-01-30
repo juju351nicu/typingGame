@@ -5,7 +5,7 @@ import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useGameScoresStore } from "@/stores/gameScores.js";
+import { useGameScoresStore } from "@/stores/gameScores.ts";
 import { useConfigStore } from "@/stores/config.js"
 import dayjs from 'dayjs';
 import Util from "@/utils/util.ts";

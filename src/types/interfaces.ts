@@ -12,5 +12,11 @@ export interface PrivacyPolicy {
 // アラートのインターフェ-ス
 export interface Alert {
   message: string;
-  type?: "success" | "info" | "warning" | "error" | undefined
+  type?: "success" | "info" | "warning" | "error" | undefined;
+}
+export interface GameScore {
+  time: string;
+  score: number;
+  mode: number;
+  date: string;
 }

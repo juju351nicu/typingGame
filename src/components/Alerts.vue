@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import type { Alert } from '@/interfaces';
+import type { Alert } from '@/types/interfaces';
 
 /** Propsインタフェース定義 */
 interface Props {

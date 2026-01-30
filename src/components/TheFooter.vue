@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { copyRight, PrivacyPolicy } from '@/interfaces';
+import type { copyRight, PrivacyPolicy } from '@/types/interfaces';
 const copyRight : copyRight = {
     title: "2026 CLIP All rights reserved.",
     icon: "©",

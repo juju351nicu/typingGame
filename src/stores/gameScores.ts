@@ -1,6 +1,14 @@
 import { defineStore } from "pinia";
+import type { GameScore } from "@/types/interfaces";
+/**
+ *
+ */
+interface GameScoresState {
+  scores: GameScore[];
+  isLoading: boolean;
+}
 export const useGameScoresStore = defineStore("gameScores", {
-  state: () => ({
+  state: (): GameScoresState => ({
     /** スコア情報リスト */
     scores: [],
     /** ローディングフラグ */
@@ -11,7 +19,7 @@ export const useGameScoresStore = defineStore("gameScores", {
      * スコア情報リストを取得する。
      * @returns スコア情報リスト
      */
-    getGameScoreList() {
+    getGameScoreList(): GameScore[] {
       return this.scores;
     },
   },
@@ -20,7 +28,7 @@ export const useGameScoresStore = defineStore("gameScores", {
      * 難易度・スコア・タイマーのオブジェクトを保存する。
      * @param {*} data
      */
-    saveGameScoreList(data) {
+    saveGameScoreList(data: GameScore) {
       this.scores.push(data);
     },
     /**
