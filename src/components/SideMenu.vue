@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 
 const props = defineProps(["drawer"]);
 
+const emit = defineEmits(["update:drawer"]);
 /** サイドメニューフラグ */
 const drawer = computed({
   get: () => props.drawer,
