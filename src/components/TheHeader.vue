@@ -2,7 +2,7 @@
 import SideMenu from "@/components/SideMenu.vue";
 import { ref, onMounted } from "vue";
 import { useTheme } from 'vuetify';
-import { useConfigStore } from "@/stores/config.js"
+import { useConfigStore } from "@/stores/config.ts"
 import Const from "@/constants/const.ts";
 /** メニュータイトル */
 const title = "タイピングゲーム";

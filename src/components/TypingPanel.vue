@@ -1,7 +1,7 @@
 <script setup lang="js">
 import { onMounted, ref, useTemplateRef, watch, computed } from "vue";
 import { wordsData as WORD_DATAS } from "@/assets/words.ts";
-import { useConfigStore } from "@/stores/config.js"
+import { useConfigStore } from "@/stores/config.ts"
 const props = defineProps(["isGameStarted", "isRestTimer", "gameScore", "isGameOver", "inputValue"]);
 
 const emit = defineEmits(["update:isGameOver", "update:gameScore", "update:inputValue"]);

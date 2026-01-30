@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import type { GameScore } from "@/types/interfaces";
 /**
- *
+ * ゲームスコアのストアで使用する型定義
  */
 interface GameScoresState {
   scores: GameScore[];

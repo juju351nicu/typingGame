@@ -12,6 +12,13 @@ const pages = Const.DATA_TABLE_PAGES;
 /** テーブルの関連するラベル・プロパティ等の情報 */
 const headers = Const.OPTIONS_OF_HEADERS;
 
+/** スコアのスコアを昇順に取得する */
+const reverseGameScoresByDate = (() => {
+  return gameScores.value.sort(
+    (a, b) =>  b.date - a.date
+  );
+});
+
 const items = ref([]);
 /** 現在のゲーム難易度に該当するゲームスコアリストを取得する */
 onMounted(() => {

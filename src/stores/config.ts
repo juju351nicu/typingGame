@@ -1,8 +1,18 @@
 import { defineStore } from "pinia";
-import Const from "@/constants/const.ts";
-
+import Const from "@/constants/const";
+/**
+ * 設定のストアで使用する型定義
+ */
+interface ConfigState {
+  mode: number;
+  displayMode: string;
+  isVirtualKeyBoard: boolean;
+  wordStyleWidth: number;
+  insertion: number;
+  animation: number;
+}
 export const useConfigStore = defineStore("config", {
-  state: () => ({
+  state: (): ConfigState => ({
     /** ゲームの難易度 */
     mode: 0,
     /** ディスプレイモードの値 */
@@ -18,34 +28,34 @@ export const useConfigStore = defineStore("config", {
      * ゲームの難易度を取得する
      * @returns 難易度の数値
      */
-    getGameMode() {
+    getGameMode(): number {
       return this.mode;
     },
     /**
      * ダークモード等のディスプレイの値
      * @returns 'light'か'dark'モード
      */
-    getDisplayMode() {
+    getDisplayMode(): string {
       return this.displayMode;
     },
     /**
      * 仮想キーボードの表示有無を取得する
      * @returns 仮想キーボードの表示・非表示の判定結果
      */
-    getIsVirtualKeyBoard() {
+    getIsVirtualKeyBoard(): boolean {
       return this.isVirtualKeyBoard;
     },
     /**
      * 単語の幅のCSS長さ
      * @returns CSSのwidth
      */
-    getWordStyleWidth() {
+    getWordStyleWidth(): number {
       return this.wordStyleWidth;
     },
-    getInsertionSpeed() {
+    getInsertionSpeed(): number {
       return this.insertion;
     },
-    getAnimationSpeed() {
+    getAnimationSpeed(): number {
       return this.animation;
     },
   },
@@ -54,7 +64,7 @@ export const useConfigStore = defineStore("config", {
      *
      * @param {number} selectedGameMode
      */
-    saveGameMode(selectedGameMode) {
+    saveGameMode(selectedGameMode: number) {
       this.mode = selectedGameMode;
       switch (selectedGameMode) {
         case 0:
@@ -79,14 +89,14 @@ export const useConfigStore = defineStore("config", {
      * ディスプレイモードの値を設定する
      * @param {String} theme ディスプレイモードの値
      */
-    saveDisplayMode(theme) {
+    saveDisplayMode(theme: string) {
       this.displayMode = theme;
     },
     /**
      * 仮想キーボードの表示有無を設定する
      * @param {boolean} flag 仮想キーボードの表示有無
      */
-    saveIsVertualKeyBoard(flag) {
+    saveIsVertualKeyBoard(flag: boolean) {
       this.isVirtualKeyBoard = flag;
     },
     /**
@@ -102,4 +112,3 @@ export const useConfigStore = defineStore("config", {
     storage: localStorage,
   },
 });
-

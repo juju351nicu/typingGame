@@ -3,7 +3,7 @@ import Alerts from "@/components/Alerts.vue";
 import VirtualKeyBoard from "@/components/VirtualKeyBoard.vue"
 import { onMounted, ref } from 'vue'
 import { useGameScoresStore } from "@/stores/gameScores.ts";
-import { useConfigStore } from "@/stores/config.js"
+import { useConfigStore } from "@/stores/config.ts"
 import Const from "@/constants/const.ts";
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
