@@ -1,10 +1,11 @@
-<script setup lang="js">
+<script setup lang="ts">
 import Alerts from "@/components/Alerts.vue";
 import VirtualKeyBoard from "@/components/VirtualKeyBoard.vue"
 import { onMounted, ref } from 'vue'
-import { useGameScoresStore } from "@/stores/gameScores.ts";
-import { useConfigStore } from "@/stores/config.ts"
-import Const from "@/constants/const.ts";
+import { useGameScoresStore } from "@/stores/gameScores";
+import { useConfigStore } from "@/stores/config"
+import Const from "@/constants/const";
+import { Alert } from "@/types/interfaces";
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
 /** ゲームの設定情報に関するストア情報 */
@@ -22,7 +23,7 @@ const changeVirtualKeyBoard = () => {
   configStore.saveIsVertualKeyBoard(isVirtualKeyBoard.value);
 }
 /** アラートに表示するメッセージ */
-const alerts = ref([]);
+const alerts = ref<any[]>([]);
 const isAlert = ref(false);
 /** ゲームのデータを初期化する */
 const resetModalData = (() => {
