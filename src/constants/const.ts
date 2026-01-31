@@ -1,3 +1,4 @@
+
 import type { DataTableHeader } from 'vuetify';
 /** テーマの背色 */
 const DISPLAY_THEME = {

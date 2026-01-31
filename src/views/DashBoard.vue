@@ -1,15 +1,15 @@
-<script setup lang="js">
+<script setup lang="ts">
 import TypingPanel from "@/components/TypingPanel.vue"
 import Alerts from "@/components/Alerts.vue";
 import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useGameScoresStore } from "@/stores/gameScores.ts";
-import { useConfigStore } from "@/stores/config.ts"
+import { useGameScoresStore } from "@/stores/gameScores";
+import { useConfigStore } from "@/stores/config"
 import dayjs from 'dayjs';
-import Util from "@/utils/util.ts";
-import Const from "@/constants/const.ts";
+import Util from "@/utils/util";
+import Const from "@/constants/const";
 const router = useRouter();
 /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
@@ -24,7 +24,7 @@ const isGameStarted = ref(false);
 const selectedOption = ref(configStore.getGameMode);
 
 /** ゲーム難易度の選択項目 */
-const options = Const.DIFFICULTY_LEVEL
+const options = ref<any>(Const.DIFFICULTY_LEVEL);
 
 /** 経過時間 */
 const accumTime = ref(0);
@@ -60,7 +60,7 @@ const restartGame = (() => {
 });
 
 /** ゲームの難易度設定する */
-const setGameMode = ((mode) => {
+const setGameMode = ((mode : number) => {
   configStore.saveGameMode(mode);
 });
 
@@ -89,12 +89,12 @@ const resetGameData = (() => {
   inputValue.value = "";
 });
 /** アラートに表示するメッセージ */
-const alerts = ref([]);
+const alerts = ref<any>([]);
 onMounted(() => {
-  if (Util.isLocalStorage()) {
+  if (!Util.isLocalStorage()) {
     alerts.value.push({ message: "ローカルストレージは使用不可能です。", type: Const.ALERT_TYPE.ERROR });
   }
-  if (Util.checkBrowser()) {
+  if (!Util.checkBrowser()) {
     alerts.value.push({ message: "Google Chromeをお使い下さい。", type: Const.ALERT_TYPE.ERROR });
   }
 });

@@ -21,3 +21,7 @@ export interface GameScore {
   mode: number;
   date: string;
 }
+export interface Item {
+  title: string;
+  value: number;
+}
