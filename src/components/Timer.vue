@@ -1,4 +1,4 @@
-<script setup lang="js">
+<script setup lang="ts">
 import { computed, ref, watch, onMounted } from "vue";
 import Util from "@/utils/util";
 
@@ -34,13 +34,13 @@ const getTimeStr = computed(() => {
 });
 
 /** スタートを押した時刻 */
-const startTime = ref(null);
+const startTime = ref<any>(null);
 
 /** ストップ時間 */
 const stopTime = ref(0);
 
 /** setInterval()の格納用 */
-const timer = ref(null);
+const timer = ref<any>(null);
 
 /**
  * タイマーの時間を計算する

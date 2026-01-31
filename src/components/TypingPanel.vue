@@ -1,7 +1,7 @@
-<script setup lang="js">
+<script setup lang="ts">
 import { onMounted, ref, useTemplateRef, watch, computed } from "vue";
-import { wordsData as WORD_DATAS } from "@/assets/words.ts";
-import { useConfigStore } from "@/stores/config.ts"
+import { wordsData as WORD_DATAS } from "@/assets/words";
+import { useConfigStore } from "@/stores/config"
 const props = defineProps(["isGameStarted", "isRestTimer", "gameScore", "isGameOver", "inputValue"]);
 
 const emit = defineEmits(["update:isGameOver", "update:gameScore", "update:inputValue"]);
@@ -41,13 +41,13 @@ const typeBoxValue = computed({
 });
 
 /** 現在表示している単語リスト */
-const currentWords = ref([]);
+const currentWords = ref<any>([]);
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
-const checkCharacter = ((typeBox) => {
+const checkCharacter = ((typeBox: any) => {
     const inputValueArray = typeBox.split("");
-    currentWords.value.forEach((word, wordIndex) => {
-        word.characters.forEach((character, characherIndex) => {
+    currentWords.value.forEach((word: any, wordIndex: any) => {
+        word.characters.forEach((character: any, characherIndex: any) => {
             if (inputValueArray[characherIndex] == null) {
                 currentWords.value[wordIndex].classList[characherIndex] = "";
             } else if (character == inputValueArray[characherIndex]) {
@@ -62,14 +62,14 @@ const checkCharacter = ((typeBox) => {
 /** ゲームを終了する */
 const gameFinish = (() => {
     isGameOverFlag.value = true;
-    useConfigStore.clearInterval;
+    configStore.clearInterval;
 });
 
 /** 出題された単語と入力した単語の値を比較判定する */
-const checkWordEquality = ((typeBox) => {
+const checkWordEquality = ((typeBox: any) => {
     const word = typeBox;
     const index = currentWords.value.findIndex(
-        (item) => item.characters.join("") == word
+        (item: any) => item.characters.join("") == word
     );
     //一致した場合
     if (index != -1) {
@@ -99,14 +99,15 @@ const wordsBoard = useTemplateRef("typing-panel");
  * 「typing-panel」要素の縦幅を下回った場合、ゲームを終了する。
  */
 const checkIsTopToBottom = (() => {
-    let wordsBoardTop = wordsBoard.value.offsetHeight;
-    currentWords.value.forEach((_, index) => {
+    let wordsBoardTop = wordsBoard.value?.offsetHeight;
+    currentWords.value.forEach((_: any, index: any) => {
         // 現在表示されている単語の縦幅を取得する。
         let wordPositionTop = getCurrentWordTop(index);
         // 現在表示されている単語と「typing-panel」要素の縦幅を比較する。
-        if (wordPositionTop > wordsBoardTop) {
-            gameFinish();
-
+        if (wordsBoardTop !== undefined) {
+            if (wordPositionTop > wordsBoardTop) {
+                gameFinish();
+            }
         }
     });
 });
@@ -115,7 +116,7 @@ const checkIsTopToBottom = (() => {
  * 索引に該当する、現在表示されている単語の要素の上からの配置位置（距離）を取得する
  * @param index 索引
  */
-const getCurrentWordTop = ((index) => {
+const getCurrentWordTop = ((index: any) => {
     return Number(currentWords.value[index].style.top.slice(0, -2));
 });
 
@@ -123,7 +124,7 @@ const getCurrentWordTop = ((index) => {
  * 索引に該当する、単語の垂直位置を増加させる。
  * @param index 索引
  */
-const increasePositionTop = ((index) => {
+const increasePositionTop = ((index: any) => {
     currentWords.value[index].style.top = `${getCurrentWordTop(index) + 1
         }px`;
 });
@@ -132,7 +133,7 @@ const increasePositionTop = ((index) => {
  * 現在表示している各単語の単語の垂直位置を増加させる。
  */
 const wordsTopToBottom = (() => {
-    currentWords.value.forEach((_, index) => {
+    currentWords.value.forEach((_: any, index: any) => {
         increasePositionTop(index);
     });
 });
@@ -154,14 +155,17 @@ const checkGameCompleted = (() => {
 
 /** 「typing-panel」要素の横幅を取得する */
 const getWordsBoardWidth = (() => {
-    return wordsBoard.value.offsetWidth;
+    return wordsBoard.value?.offsetWidth;
 });
 
 /** 表示するタイピング単語の横位置を生成する */
 const getRandomPosition = (() => {
-    return Math.floor(
-        Math.random() * (getWordsBoardWidth() - configStore.getWordStyleWidth)
-    );
+    const boardWidth = getWordsBoardWidth()
+    if (boardWidth !== undefined) {
+        return Math.floor(
+            Math.random() * (boardWidth - configStore.getWordStyleWidth)
+        );
+    }
 });
 
 /** 表示するタイピングの単語を追加する */
