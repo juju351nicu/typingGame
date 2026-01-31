@@ -5,7 +5,7 @@ import Const from "@/constants/const";
  */
 interface ConfigState {
   mode: number;
-  displayMode: string;
+  isDarkMode: boolean;
   isVirtualKeyBoard: boolean;
   wordStyleWidth: number;
   insertion: number;
@@ -16,7 +16,7 @@ export const useConfigStore = defineStore("config", {
     /** ゲームの難易度 */
     mode: 0,
     /** ディスプレイモードの値 */
-    displayMode: Const.DISPLAY_THEME.LIGHT,
+    isDarkMode: false,
     /** 仮想キーボードの表示有無 */
     isVirtualKeyBoard: false,
     wordStyleWidth: 200,
@@ -35,8 +35,8 @@ export const useConfigStore = defineStore("config", {
      * ダークモード等のディスプレイの値
      * @returns 'light'か'dark'モード
      */
-    getDisplayMode(): string {
-      return this.displayMode;
+    getDisplayMode(): boolean {
+      return this.isDarkMode;
     },
     /**
      * 仮想キーボードの表示有無を取得する
@@ -87,10 +87,10 @@ export const useConfigStore = defineStore("config", {
     },
     /**
      * ディスプレイモードの値を設定する
-     * @param {String} theme ディスプレイモードの値
+     * @param {boolean} flag ディスプレイモードの値
      */
-    saveDisplayMode(theme: string) {
-      this.displayMode = theme;
+    saveDisplayMode(flag: boolean) {
+      this.isDarkMode = flag;
     },
     /**
      * 仮想キーボードの表示有無を設定する

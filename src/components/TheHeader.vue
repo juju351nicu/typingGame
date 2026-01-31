@@ -1,9 +1,11 @@
-<script setup lang="js">
+<script setup lang="ts">
 import SideMenu from "@/components/SideMenu.vue";
 import { ref, onMounted } from "vue";
 import { useTheme } from 'vuetify';
-import { useConfigStore } from "@/stores/config.ts"
-import Const from "@/constants/const.ts";
+import { useConfigStore } from "@/stores/config"
+import Const from "@/constants/const";
+/** ゲーム難易度に関するストア情報 */
+const configStore = useConfigStore();
 /** メニュータイトル */
 const title = "タイピングゲーム";
 
@@ -11,16 +13,13 @@ const title = "タイピングゲーム";
 const drawer = ref(false);
 
 /** テーマフラグ */
-const isDarkMode = ref(false);
+const isDarkMode = ref(configStore.getDisplayMode);
 const theme = useTheme();
-
-/** ゲーム難易度に関するストア情報 */
-const configStore = useConfigStore();
 
 /**
  * トグルボタン押下時にテーマを変更する。
  */
-const changeTheme = () => {
+const changeTheme = (): void => {
     // darkModeのスイッチがON（True）の場合
     if (isDarkMode.value) {
         // リアクティブ変数：theme を 'dark' に設定
@@ -30,7 +29,7 @@ const changeTheme = () => {
         theme.global.name.value = Const.DISPLAY_THEME.LIGHT;
     }
     // lightモード / darkモードの選択状態をストアに記録
-    configStore.saveDisplayMode(theme.global.name.value);
+    configStore.saveDisplayMode(isDarkMode.value);
 }
 
 // ページ表示時に実行
@@ -41,18 +40,20 @@ onMounted(() => {
         theme.global.name.value = Const.DISPLAY_THEME.DARK;
         // トグルスイッチをdarkモード有効化状態（ON）に切り替える
         isDarkMode.value = true;
+        // lightモード / darkモードの選択状態をストアに記録
+        configStore.saveDisplayMode(isDarkMode.value);
     }
     // ローカルストレージ上のdarkモード設定を確認
-    const disTheme = configStore.getDisplayMode;
+    const isDisTheme = configStore.getDisplayMode;
     // darkモードが指定されている場合
-    if (disTheme === Const.DISPLAY_THEME.DARK) {
+    if (isDisTheme) {
         // トグルスイッチをdarkモード有効化状態（ON）に切り替える
         isDarkMode.value = true;
-        theme.global.name.value = disTheme;
+        theme.global.name.value = Const.DISPLAY_THEME.DARK;
     } else {
         // リアクティブ変数: theme を 'light' に設定
         isDarkMode.value = false;
-        theme.global.name.value = disTheme;
+        theme.global.name.value = Const.DISPLAY_THEME.LIGHT;
     }
 });
 </script>

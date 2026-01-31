@@ -1,4 +1,4 @@
-<script setup lang="js">
+<script setup lang="ts">
 import { computed, ref } from "vue";
 
 const props = defineProps(["drawer"]);
@@ -6,8 +6,8 @@ const props = defineProps(["drawer"]);
 const emit = defineEmits(["update:drawer"]);
 /** サイドメニューフラグ */
 const drawer = computed({
-  get: () => props.drawer,
-  set: (value) => emit("update:drawer", value)
+  get: (): boolean => props.drawer,
+  set: (value: boolean) => emit("update:drawer", value)
 });
 
 /** サイドメニュー */

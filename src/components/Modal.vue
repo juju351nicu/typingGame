@@ -40,7 +40,7 @@ let lastScore = reactive({
 });
 
 /** ゲームが終了した際に表示するメッセージ */
-const scoreMessage = computed(() => {
+const scoreMessage = computed((): string => {
   if (gameScores.value.length > 0) {
     let desc = `You completed ${lastScore.score} words in ${lastScore.time
       } time in ${Util.getLevel(lastScore.mode)} mode.`;
