@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-
+import Const from "@/constants/const";
 /**
  * 値があるかどうか判定する。
  * リストの場合は空かどうかを判定する。
@@ -122,6 +122,15 @@ const getCountDownTime = (accumTime: number): string => {
 };
 
 /**
+ * 現在の時刻を取得する
+ * @returns 現在の時刻
+ */
+const getCurrentTime = (): string => {
+  // 現在の日時を取得
+  const now = dayjs();
+  return now.format(Const.DATE_FORMAT.STANDARD_DATE_TIME);
+};
+/**
  * チップに表示する該当の色コードを取得する
  * @param target ゲームのモード値（難易度）
  * @returns 色コード
@@ -169,5 +178,6 @@ export default {
   getCountDownTime,
   getColor,
   getLevel,
+  getCurrentTime,
   // assertNever
 };
