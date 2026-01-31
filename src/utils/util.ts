@@ -20,36 +20,6 @@ const isEmpty = (target: string | any[] | null | undefined) => {
 };
 
 /**
- * 日付をフォーマット形式に変換する
- * @param {string} target
- * @param {string} format
- * @returns 変換後の日付
- */
-const convertDate = (target: string, format: string) => {
-  if (!target || !format) {
-    return null;
-  }
-  const date = dayjs(target, format);
-  if (date.format(format) !== target) {
-    return null;
-  }
-  return date.toDate();
-};
-
-/**
- * 現在の日付を取得する。
- * @returns 現在の日付文字列
- */
-const getStrCurrentDate = (): string => {
-  const today = new Date();
-  const year = today.getFullYear().toString();
-  const month = (today.getMonth() + 1).toString().padStart(2, "0");
-  const day = today.getDate().toString().padStart(2, "0");
-  const dateString = year + "/" + month + "/" + day;
-  return dateString;
-};
-
-/**
  * ブラウザがHTML5ローカルストレージをサポートしているかどうかを判断する
  */
 const isLocalStorage = (): boolean => {
@@ -130,6 +100,7 @@ const getCurrentTime = (): string => {
   const now = dayjs();
   return now.format(Const.DATE_FORMAT.STANDARD_DATE_TIME);
 };
+
 /**
  * チップに表示する該当の色コードを取得する
  * @param target ゲームのモード値（難易度）
@@ -172,8 +143,6 @@ const getLevel = (target: number): string => {
 export default {
   isEmpty,
   isLocalStorage,
-  convertDate,
-  getStrCurrentDate,
   checkBrowser,
   getCountDownTime,
   getColor,
