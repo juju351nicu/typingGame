@@ -13,17 +13,17 @@ const accumTime = computed({
 });
 
 /** ゲームスタートフラグ */
-const isGameStartedFlag = computed(() => {
+const isStarted = computed(() => {
     return props.isGameStarted;
 });
 
 /** ゲームオーバーフラグ */
-const isGameOverFlag = computed(() => {
+const isStop = computed(() => {
     return props.isGameOver;
 });
 
 /** リセットタイマーのフラグ */
-const isRestTimerFlag = computed(() => {
+const isReset = computed(() => {
     return props.isRestTimer;
 });
 /**
@@ -42,6 +42,7 @@ const stopTime = ref(0);
 /** setInterval()の格納用 */
 const timerId = ref<any>(null);
 
+const isRunning = ref<boolean>(false);
 /**
  * タイマーの時間を計算する
  */
@@ -52,6 +53,9 @@ const checkTime = () => {
  * スタートボタンを押下した際にインターバルをストップする。
  */
 const startTimer = (() => {
+    if (isRunning.value) {
+        return;
+    }
     if (startTime.value === null) {
         startTime.value = Date.now();
     }
@@ -62,6 +66,7 @@ const startTimer = (() => {
  * ストップボタンを押下した際にインターバルをストップする。
  */
 const stopTimer = (() => {
+    isRunning.value = false;
     if (timerId.value) {
         clearInterval(timerId.value);
     }
@@ -75,40 +80,32 @@ const stopTimer = (() => {
 const resetTimer = (() => {
     stopTimer();
     accumTime.value = 0;
-    startTime.value = null;
     stopTime.value = 0;
 });
-/**
- * スタートボタンを押下した際にインターバルをストップする。
- */
- const childMethod = (() => {
-    console.log('chiled component');
-});
+
 onMounted(() => {
-    if (isGameStartedFlag) {
+    if (isStarted) {
         startTimer();
     }
 });
+
 onUnmounted(() => {
     resetTimer();
 });
 /** ゲームオーバーフラグにてストップウォッチを止める */
-watch(isGameOverFlag, (newValue, _oldValue) => {
+watch(isStop, (newValue, _oldValue) => {
     if (newValue) {
         stopTimer();
     }
 });
 
 /** リセットタイマーフラグにてタイマーをリセットする */
-watch(isRestTimerFlag, (newValue, _oldValue) => {
+watch(isReset, (newValue, _oldValue) => {
     if (newValue) {
         resetTimer();
     }
 });
-// 【重要】親コンポーネントに公開する
-defineExpose({
-  childMethod
-});
+defineExpose({ stopTimer })
 </script>
 <template>
     <div class="game-status-item">

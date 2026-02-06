@@ -3,7 +3,7 @@ import TypingPanel from "@/components/TypingPanel.vue"
 import Alerts from "@/components/Alerts.vue";
 import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config"
@@ -18,12 +18,6 @@ const configStore = useConfigStore();
 
 /** ゲームスタートフラグ */
 const isGameStarted = ref(false);
-
-/** 選択されたゲームの難易度 */
-const selectedOption = ref(configStore.getGameMode);
-
-/** ゲーム難易度の選択項目 */
-const options = ref<any>(Const.DIFFICULTY_LEVEL);
 
 /** 経過時間 */
 const accumTime = ref(0);
@@ -42,7 +36,7 @@ const saveGameScores = ((): void => {
   const data = {
     time: Util.getCountDownTime(accumTime.value),
     score: gameScore.value,
-    mode: selectedOption.value,
+    mode: configStore.getGameMode,
     date: Util.getCurrentTime(),
   }
   gameScoresStore.saveGameScoreList(data);
@@ -56,11 +50,6 @@ const restartGame = (() => {
   router.go(0);
 });
 
-/** ゲームの難易度設定する */
-const setGameMode = ((mode : number) => {
-  configStore.saveGameMode(mode);
-});
-
 /** モーダル表示フラグ */
 const modalDisplayStatus = ref(false);
 
@@ -72,7 +61,6 @@ const setModalDisplay = (() => {
 /** ボタンをクリックするとゲームがスタートする  */
 const startGame = (() => {
   isGameStarted.value = true;
-  callChildMethod();
 });
 
 /** リセットタイマーのフラグ */
@@ -105,13 +93,29 @@ watch(isGameOver, (newValue, _oldValue) => {
     }, 500);
   }
 });
-// 子コンポーネントへの参照を作成（初期値はnull）
-const childRef = ref<any>(null);
+const childComponent = ref<any>(null);
 
-const callChildMethod = () => {
+const clickChildButton = () => {
   // 子コンポーネントのメソッドを呼び出す
-  childRef.value.childMethod();
+  childComponent.value.stopTimer();
+}
+const handleEscape = () => {
+  console.log('子コンポーネントのメソッドを呼び出す');
+  clickChildButton();
 };
+const handleEsc = (event: any) => {
+  if (event.key === 'Escape') {
+    handleEscape();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('keydown', handleEsc);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleEsc);
+});
 </script>
 <template>
   <v-container>
@@ -129,7 +133,7 @@ const callChildMethod = () => {
         </v-row>
         <v-row>
           <v-col cols="6" sm="6" md="4">
-            <Timer ref="childRef" v-model:accumTime="accumTime" :isGameStarted="isGameStarted" :isGameOver="isGameOver"
+            <Timer ref="childComponent" v-model:accumTime="accumTime" :isGameStarted="isGameStarted" :isGameOver="isGameOver"
               :isRestTimer="isRestTimer" />
           </v-col>
           <v-col cols="6" sm="6" md="4">
@@ -141,19 +145,9 @@ const callChildMethod = () => {
         </v-row>
       </template>
       <template v-else>
-        <v-row>
-          <v-col cols="4" sm="6" md="4">
-            <v-select v-model="selectedOption" :items="options" :item-title="options.title" :item-value="options.value"
-              label="Game Mode" @update:modelValue="setGameMode" />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="4" sm="6" md="4">
-            <v-btn class="mt-2" color="success" @click="startGame" size="large" width="200px">
-              Play➔
-            </v-btn>
-          </v-col>
-        </v-row>
+        <v-btn class="mt-2" color="success" @click="startGame" size="large" width="200px">
+          Play➔
+        </v-btn>
       </template>
     </div>
   </v-container>
