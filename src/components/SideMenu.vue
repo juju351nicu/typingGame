@@ -30,7 +30,7 @@ const links = ref([
 ]);
 </script>
 <template>
-  <v-navigation-drawer v-model="drawer" absolute>
+  <v-navigation-drawer v-model="drawer" temporary>
     <v-list v-for="link in links" :key="link.title" variant="plain">
       <v-list-item :href="link.href">
         <template v-slot:prepend>

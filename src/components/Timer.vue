@@ -78,7 +78,12 @@ const resetTimer = (() => {
     startTime.value = null;
     stopTime.value = 0;
 });
-
+/**
+ * スタートボタンを押下した際にインターバルをストップする。
+ */
+ const childMethod = (() => {
+    console.log('chiled component');
+});
 onMounted(() => {
     if (isGameStartedFlag) {
         startTimer();
@@ -99,6 +104,10 @@ watch(isRestTimerFlag, (newValue, _oldValue) => {
     if (newValue) {
         resetTimer();
     }
+});
+// 【重要】親コンポーネントに公開する
+defineExpose({
+  childMethod
 });
 </script>
 <template>

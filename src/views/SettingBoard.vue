@@ -4,16 +4,48 @@ import VirtualKeyBoard from "@/components/VirtualKeyBoard.vue"
 import { onMounted, ref } from 'vue'
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config"
+import { useTheme } from 'vuetify';
 import Const from "@/constants/const";
-import { Alert } from "@/types/interfaces";
+
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
 /** ゲームの設定情報に関するストア情報 */
 const configStore = useConfigStore();
 
-const insertSpeed = ref(configStore.getInsertionSpeed);
+/** 選択されたゲームの難易度 */
+const selectedOption = ref(configStore.getGameMode);
 
-const animationSpeed = ref(configStore.getAnimationSpeed);
+/** ゲーム難易度の選択項目 */
+const options = ref<any>(Const.DIFFICULTY_LEVEL);
+
+/** テーマフラグ */
+const isDarkMode = ref(configStore.getDisplayMode);
+const theme = useTheme();
+
+/**
+ * トグルボタン押下時にテーマを変更する。
+ */
+const changeTheme = (): void => {
+  // darkModeのスイッチがON（True）の場合
+  if (isDarkMode.value) {
+    // リアクティブ変数：theme を 'dark' に設定
+    theme.global.name.value = Const.DISPLAY_THEME.DARK;
+  } else {
+    // darkModeのスイッチがOFF（False）の場合、リアクティブ変数：theme を 'light' に設定
+    theme.global.name.value = Const.DISPLAY_THEME.LIGHT;
+  }
+  // lightモード / darkモードの選択状態をストアに記録
+  configStore.saveDisplayMode(isDarkMode.value);
+}
+
+/**
+ * ゲームの難易度設定する
+ * @param mode 難易度
+ */
+const setGameMode = ((mode: number) => {
+  configStore.saveGameMode(mode);
+});
+
 /** 仮想キーボードの表示有無 */
 const isVirtualKeyBoard = ref(configStore.getIsVirtualKeyBoard);
 /**
@@ -34,21 +66,32 @@ const resetModalData = (() => {
   alerts.value.push({ message: "初期化しました。", type: Const.ALERT_TYPE.SUCCESS });
   isAlert.value = true;
 });
-onMounted(() => {
-  console.log(configStore.getGameMode);
-});
+
 </script>
 <template>
   <v-container>
     <Alerts :alerts="alerts" />
-    <v-slider v-model="insertSpeed" :max="6000" :min="1000" :step="100" thumb-label></v-slider>
-    <br />
-    <v-slider v-model="animationSpeed" :max="60" :min="1" :step="1" thumb-label></v-slider>
-    <br />
-    <v-switch v-model="isVirtualKeyBoard" @change="changeVirtualKeyBoard" color="primary" label="on"></v-switch>
-    <v-btn color="primary" text @click="resetModalData()">
-      スコアを初期化する
-    </v-btn>
+    <v-row>
+      <v-col cols="6" sm="6" md="4">
+        <!-- dark theme switch -->
+        <v-switch v-model="isDarkMode" @change="changeTheme"
+          :prepend-icon="isDarkMode ? 'mdi-weather-night' : 'mdi-weather-sunny'" hide-details inset class="mr-auto" />
+      </v-col>
+      <v-col cols="6" sm="6" md="4">
+        <v-select v-model="selectedOption" :items="options" :item-title="options.title" :item-value="options.value"
+          label="Game Mode" @update:modelValue="setGameMode" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="6" sm="6" md="4">
+        <v-switch v-model="isVirtualKeyBoard" @change="changeVirtualKeyBoard" color="primary" label="on"></v-switch>
+      </v-col>
+      <v-col cols="6" sm="6" md="4">
+        <v-btn color="primary" text @click="resetModalData()">
+          スコアを初期化する
+        </v-btn>
+      </v-col>
+    </v-row>
     <VirtualKeyBoard v-if="isVirtualKeyBoard" />
   </v-container>
 </template>

@@ -72,6 +72,7 @@ const setModalDisplay = (() => {
 /** ボタンをクリックするとゲームがスタートする  */
 const startGame = (() => {
   isGameStarted.value = true;
+  callChildMethod();
 });
 
 /** リセットタイマーのフラグ */
@@ -104,6 +105,13 @@ watch(isGameOver, (newValue, _oldValue) => {
     }, 500);
   }
 });
+// 子コンポーネントへの参照を作成（初期値はnull）
+const childRef = ref<any>(null);
+
+const callChildMethod = () => {
+  // 子コンポーネントのメソッドを呼び出す
+  childRef.value.childMethod();
+};
 </script>
 <template>
   <v-container>
@@ -121,7 +129,7 @@ watch(isGameOver, (newValue, _oldValue) => {
         </v-row>
         <v-row>
           <v-col cols="6" sm="6" md="4">
-            <Timer v-model:accumTime="accumTime" :isGameStarted="isGameStarted" :isGameOver="isGameOver"
+            <Timer ref="childRef" v-model:accumTime="accumTime" :isGameStarted="isGameStarted" :isGameOver="isGameOver"
               :isRestTimer="isRestTimer" />
           </v-col>
           <v-col cols="6" sm="6" md="4">
