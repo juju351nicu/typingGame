@@ -15,7 +15,7 @@ const isGameStartedFlag = computed(() => {
 });
 
 /** タイピング用単語リスト */
-const typingWords = ref(WORD_DATAS);
+const typingWords = ref<string[]>(WORD_DATAS);
 
 /** リセットフラグ */
 const isRestFlag = computed(() => {

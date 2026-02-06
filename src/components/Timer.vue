@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from "vue";
+import { computed, ref, watch, onMounted, onUnmounted } from "vue";
 import Util from "@/utils/util";
 
 const props = defineProps(["accumTime", "isGameStarted", "isGameOver", "isRestTimer"]);
@@ -40,7 +40,7 @@ const startTime = ref<any>(null);
 const stopTime = ref(0);
 
 /** setInterval()の格納用 */
-const timer = ref<any>(null);
+const timerId = ref<any>(null);
 
 /**
  * タイマーの時間を計算する
@@ -55,15 +55,15 @@ const startTimer = (() => {
     if (startTime.value === null) {
         startTime.value = Date.now();
     }
-    timer.value = setInterval(checkTime, 10);
+    timerId.value = setInterval(checkTime, 10);
 });
 
 /**
  * ストップボタンを押下した際にインターバルをストップする。
  */
 const stopTimer = (() => {
-    if (timer.value) {
-        clearInterval(timer.value);
+    if (timerId.value) {
+        clearInterval(timerId.value);
     }
     startTime.value = null;
     stopTime.value = accumTime.value;
@@ -84,7 +84,9 @@ onMounted(() => {
         startTimer();
     }
 });
-
+onUnmounted(() => {
+    resetTimer();
+});
 /** ゲームオーバーフラグにてストップウォッチを止める */
 watch(isGameOverFlag, (newValue, _oldValue) => {
     if (newValue) {
