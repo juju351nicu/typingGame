@@ -15,7 +15,8 @@ const gameScoresStore = useGameScoresStore();
 
 /** ゲーム難易度に関するストア情報 */
 const configStore = useConfigStore();
-
+/** Timerコンポーネントに関する情報 */
+const timerComponent = ref();
 /** ゲームスタートフラグ */
 const isGameStarted = ref(false);
 
@@ -88,33 +89,42 @@ onMounted(() => {
 watch(isGameOver, (newValue, _oldValue) => {
   if (newValue) {
     saveGameScores();
+    // 子コンポーネントのメソッドを呼び出す
+    timerComponent.value.stopTimer();
     setTimeout(() => {
       setModalDisplay();
     }, 500);
   }
 });
-const childComponent = ref<any>(null);
+
 
 const clickChildButton = () => {
   // 子コンポーネントのメソッドを呼び出す
-  childComponent.value.stopTimer();
+  timerComponent.value.stopTimer();
 }
 const handleEscape = () => {
   console.log('子コンポーネントのメソッドを呼び出す');
   clickChildButton();
 };
+
 const handleEsc = (event: any) => {
   if (event.key === 'Escape') {
     handleEscape();
   }
 };
-
+const handleShift = (event: any) => {
+  if (event.key === 'Shift') {
+    timerComponent.value.startTimer();
+  }
+};
 onMounted(() => {
   window.addEventListener('keydown', handleEsc);
+  window.addEventListener('keydown', handleShift);
 });
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleEsc);
+  window.removeEventListener('keydown', handleShift);
 });
 </script>
 <template>
@@ -133,8 +143,7 @@ onUnmounted(() => {
         </v-row>
         <v-row>
           <v-col cols="6" sm="6" md="4">
-            <Timer ref="childComponent" v-model:accumTime="accumTime" :isGameStarted="isGameStarted" :isGameOver="isGameOver"
-              :isRestTimer="isRestTimer" />
+            <Timer ref="timerComponent" v-model:accumTime="accumTime" />
           </v-col>
           <v-col cols="6" sm="6" md="4">
             <div style="display: flex;">

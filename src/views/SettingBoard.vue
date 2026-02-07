@@ -72,21 +72,24 @@ const resetModalData = (() => {
   <v-container>
     <Alerts :alerts="alerts" />
     <v-row>
-      <v-col cols="6" sm="6" md="4">
+      <v-col  class="pa-2 ma-2">
         <!-- dark theme switch -->
+        <span>ダークモード</span>
         <v-switch v-model="isDarkMode" @change="changeTheme"
           :prepend-icon="isDarkMode ? 'mdi-weather-night' : 'mdi-weather-sunny'" hide-details inset class="mr-auto" />
       </v-col>
-      <v-col cols="6" sm="6" md="4">
+      <v-col  class="pa-2 ma-2">
+        <span>難易度</span>
         <v-select v-model="selectedOption" :items="options" :item-title="options.title" :item-value="options.value"
           label="Game Mode" @update:modelValue="setGameMode" />
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="6" sm="6" md="4">
+      <v-col cols="6" >
+        <span>仮想キーボード</span>
         <v-switch v-model="isVirtualKeyBoard" @change="changeVirtualKeyBoard" color="primary" label="on"></v-switch>
       </v-col>
-      <v-col cols="6" sm="6" md="4">
+      <v-col cols="6">
         <v-btn color="primary" text @click="resetModalData()">
           スコアを初期化する
         </v-btn>

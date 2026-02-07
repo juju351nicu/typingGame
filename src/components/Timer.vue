@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, onUnmounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import Util from "@/utils/util";
 
-const props = defineProps(["accumTime", "isGameStarted", "isGameOver", "isRestTimer"]);
+const props = defineProps(["accumTime"]);
 
 const emit = defineEmits(["update:accumTime"]);
 
@@ -12,20 +12,6 @@ const accumTime = computed({
     set: (value) => emit("update:accumTime", value)
 });
 
-/** ゲームスタートフラグ */
-const isStarted = computed(() => {
-    return props.isGameStarted;
-});
-
-/** ゲームオーバーフラグ */
-const isStop = computed(() => {
-    return props.isGameOver;
-});
-
-/** リセットタイマーのフラグ */
-const isReset = computed(() => {
-    return props.isRestTimer;
-});
 /**
  * 00:00:00形式で計測時間を取得する
  */
@@ -50,12 +36,14 @@ const checkTime = () => {
     accumTime.value = Date.now() - startTime.value + stopTime.value;
 };
 /**
- * スタートボタンを押下した際にインターバルをストップする。
+ * スタートボタンを押下した際にインターバルを開始する。
  */
 const startTimer = (() => {
+    console.log('スタートボタンを押下した際にインターバルを開始する。');
     if (isRunning.value) {
         return;
     }
+    isRunning.value = true;
     if (startTime.value === null) {
         startTime.value = Date.now();
     }
@@ -66,6 +54,7 @@ const startTimer = (() => {
  * ストップボタンを押下した際にインターバルをストップする。
  */
 const stopTimer = (() => {
+    console.log('ストップボタンを押下した際にインターバルをストップする。');
     isRunning.value = false;
     if (timerId.value) {
         clearInterval(timerId.value);
@@ -82,30 +71,16 @@ const resetTimer = (() => {
     accumTime.value = 0;
     stopTime.value = 0;
 });
-
+// ページ表示時に実行
 onMounted(() => {
-    if (isStarted) {
-        startTimer();
-    }
+    startTimer();
 });
-
+// ページ破棄に実行
 onUnmounted(() => {
     resetTimer();
 });
-/** ゲームオーバーフラグにてストップウォッチを止める */
-watch(isStop, (newValue, _oldValue) => {
-    if (newValue) {
-        stopTimer();
-    }
-});
-
-/** リセットタイマーフラグにてタイマーをリセットする */
-watch(isReset, (newValue, _oldValue) => {
-    if (newValue) {
-        resetTimer();
-    }
-});
-defineExpose({ stopTimer })
+// defineExpose を使用してコンポーネント内に定義されたメソッドを親コンポーネントから参照できる様にしています。
+defineExpose({ startTimer, stopTimer, resetTimer })
 </script>
 <template>
     <div class="game-status-item">
