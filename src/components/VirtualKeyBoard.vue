@@ -39,6 +39,10 @@ onMounted(() => {
   keyboard = new Keyboard({
     onChange: onChange,
     onKeyPress: onKeyPress,
+    physicalKeyboardHighlight: true,
+    physicalKeyboardHighlightPress: true,
+    physicalKeyboardHighlightTextColor: 'red',
+    physicalKeyboardHighlightBgColor: 'yellow'
   });
 });
 </script>
