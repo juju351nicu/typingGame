@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import SideMenu from "@/components/SideMenu.vue";
 import { ref } from "vue";
-
+import { useRouter } from "vue-router";
+const router = useRouter();
 /** メニュータイトル */
 const title = "タイピングゲーム";
-
+/**
+ * ブログ記事一覧ページに戻る
+ */
+ const goBlogList = () => {
+  router.push({ name: "BlogPostList" });
+};
 /** サイドメニューフラグ */
 const drawer = ref(false);
 </script>
@@ -14,8 +20,8 @@ const drawer = ref(false);
         <v-toolbar-title>{{ title }}</v-toolbar-title>
         <v-spacer />
         <div class="d-flex justify-end">
-            <span class="mr-10">当サイトについて</span>
-            <span class="mr-10">ブログ</span>
+            <v-btn class="mr-10">当サイトについて</v-btn>
+            <v-btn class="mr-10" @click="goBlogList()">ブログ</v-btn>
         </div>
     </v-app-bar>
     <SideMenu v-model:drawer="drawer" />
