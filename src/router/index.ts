@@ -26,7 +26,6 @@ const routeSetting: RouteRecordRaw[] = [
   },
   {
     /** ブログ記事一覧 */
-    // path: "/:section?",
     path: "/BlogPostList",
     name: "BlogPostList",
     component: BlogPostList,

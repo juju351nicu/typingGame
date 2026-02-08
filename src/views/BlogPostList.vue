@@ -4,7 +4,7 @@ import { onBeforeMount, ref } from "vue";
 import Loading from "@/components/Loading.vue";
 import BlogPagingList from "@/components/BlogPagingList.vue";
 import { useRouter } from "vue-router";
-import { usePostsStore } from "@/stores/Posts"
+import { useBlogPostsStore } from "@/stores/BlogPosts"
 import Fetcher from "@/utils/rest";
 const router = useRouter();
 
@@ -19,7 +19,7 @@ const doPostDetail = (section: string, id: string): void => {
   router.push({ name: "BlogPost", params: { section: section, id: id } });
 };
 
-const postsStore = usePostsStore();
+const blogPostsStore = useBlogPostsStore();
 /** 記事の一覧情報 */
 const pageStatus = ref();
 /** 記事の取得件数 */
@@ -41,7 +41,7 @@ const searchPaging = async (pageNumber: number) => {
 /** 記事の一覧情報をセットする。 */
 onBeforeMount(async () => {
   isLoading.value = true;
-  postsStore.recievePostIndex();
+  blogPostsStore.recievePostIndex();
   const response = await Fetcher.getRequest("blog_store/posts_index.json").then(response => {
     return response.json();
   });

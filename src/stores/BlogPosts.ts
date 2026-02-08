@@ -11,7 +11,7 @@ interface PostsState {
 /**
  *
  */
-export const usePostsStore = defineStore("Posts", {
+export const useBlogPostsStore = defineStore("Posts", {
   state: (): PostsState => ({
     pageStatus: [],
     isLoading: true,
@@ -35,9 +35,5 @@ export const usePostsStore = defineStore("Posts", {
       console.log(postsIndex.length);
       this.pageStatus = postsIndex.slice(1, 5);
     },
-  },
-  // SessionStorageに保存する場合
-  persist: {
-    storage: sessionStorage,
   },
 });
