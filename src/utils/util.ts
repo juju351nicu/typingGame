@@ -73,15 +73,15 @@ const checkBrowser = (): boolean => {
 const getCountDownTime = (accumTime: number): string => {
   // this.time is milliseconds
   const currentTime = accumTime;
-  let milliseconds = currentTime % 1000;
+  const milliseconds = currentTime % 1000;
   // 1秒 = 1000ミリ秒
-  let seconds = Math.floor((currentTime / 1000) % 60);
+  const seconds = Math.floor((currentTime / 1000) % 60);
   // 1分 = 60 * 1000ミリ秒
-  let minutes = Math.floor((currentTime / (60 * 1000)) % 60);
+  const minutes = Math.floor((currentTime / (60 * 1000)) % 60);
   // 1時間 = 60 * 60 * 1000ミリ秒
-  let hours = Math.floor(currentTime / (60 * 60 * 1000));
+  const hours = Math.floor(currentTime / (60 * 60 * 1000));
 
-  let millisecondsMultiplyTen = Math.floor(milliseconds / 10);
+  const millisecondsMultiplyTen = Math.floor(milliseconds / 10);
 
   const millisecondsStr = ("0" + millisecondsMultiplyTen).slice(-2);
   const secondsStr = ("0" + seconds).slice(-2);

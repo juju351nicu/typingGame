@@ -2,6 +2,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import DashBoard from "@/views/DashBoard.vue";
 import ScoresBoard from "@/views/ScoresBoard.vue";
 import SettingBoard from "@/views/SettingBoard.vue";
+import BlogPostList from "@/views/BlogPostList.vue";
+import BlogPost from "@/views/BlogPost.vue";
 import NotFound from "@/views/NotFound.vue";
 const routeSetting: RouteRecordRaw[] = [
   {
@@ -21,6 +23,21 @@ const routeSetting: RouteRecordRaw[] = [
     path: "/SettingBoard",
     name: "SettingBoard",
     component: SettingBoard,
+  },
+  {
+    /** ブログ記事一覧 */
+    // path: "/:section?",
+    path: "/BlogPostList",
+    name: "BlogPostList",
+    component: BlogPostList,
+    props: true,
+  },
+  {
+    /** ブログ詳細情報 */
+    path: "/:section/:id",
+    name: "BlogPost",
+    component: BlogPost,
+    props: true,
   },
   {
     /** 存在しないURLにアクセスした場合 */

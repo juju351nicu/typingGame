@@ -1,0 +1,43 @@
+import type { PostIndex } from "@/types/interfaces";
+import { defineStore } from "pinia";
+import Fetcher from "@/utils/rest";
+/**
+ *
+ */
+interface PostsState {
+  pageStatus: Object;
+  isLoading: boolean;
+}
+/**
+ *
+ */
+export const usePostsStore = defineStore("Posts", {
+  state: (): PostsState => ({
+    pageStatus: [],
+    isLoading: true,
+  }),
+  getters: {
+    getPostStatus: (state: { pageStatus: any }): any => {
+      return state.pageStatus;
+    },
+  },
+  actions: {
+    /**
+     *
+     */
+    async recievePostIndex() {
+      const response = await Fetcher.getRequest(
+        "blog_store/posts_index.json"
+      ).then((response) => {
+        return response.json();
+      });
+      const postsIndex = response;
+      console.log(postsIndex.length);
+      this.pageStatus = postsIndex.slice(1, 5);
+    },
+  },
+  // SessionStorageに保存する場合
+  persist: {
+    storage: sessionStorage,
+  },
+});
