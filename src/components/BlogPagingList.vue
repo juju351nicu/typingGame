@@ -33,7 +33,7 @@ const totalPages = computed((): number => {
   if (totalCount.value % 5 == 0) {
     return totalCount.value / 5;
   } else {
-    return totalCount.value / 5 + 1;
+    return Math.ceil(totalCount.value / 5);
   }
 });
 /**検索結果件数を表示する。前半部 */
