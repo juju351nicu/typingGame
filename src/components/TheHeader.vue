@@ -8,8 +8,8 @@ const title = "タイピングゲーム";
 /**
  * ブログ記事一覧ページに戻る
  */
- const goBlogList = () => {
-  router.push({ name: "BlogPostList" });
+const goBlogList = () => {
+    router.push({ name: "BlogPostList" });
 };
 /** サイドメニューフラグ */
 const drawer = ref(false);
@@ -20,9 +20,14 @@ const drawer = ref(false);
         <v-toolbar-title>{{ title }}</v-toolbar-title>
         <v-spacer />
         <div class="d-flex justify-end">
-            <v-btn class="mr-10">当サイトについて</v-btn>
-            <v-btn class="mr-10" @click="goBlogList()">ブログ</v-btn>
+            <v-btn class="mr-10 header_list">当サイトについて</v-btn>
+            <v-btn class="mr-10 header_list" @click="goBlogList()">ブログ</v-btn>
         </div>
     </v-app-bar>
     <SideMenu v-model:drawer="drawer" />
 </template>
+<style scoped>
+.header_list {
+    font-size: medium;
+}
+</style>

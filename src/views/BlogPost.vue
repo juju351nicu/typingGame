@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import MarkdownIt from "markdown-it";
+// import { sanitize } from '@markdown-design/markdown-it-sanitize';
 import { onBeforeMount, ref } from "vue";
 import Fetcher from "@/utils/rest";
 const router = useRouter();
@@ -25,6 +26,7 @@ const goBlogList = () => {
 /** Htmlに表示するマークダウン情報 */
 const postHtml = ref();
 const markDownIt = new MarkdownIt({ html: true });
+// markDownIt.use(sanitize);
 /** Htmlに表示するマークダウン情報をセットする。 */
 onBeforeMount(async () => {
   await Fetcher.getRequest("/blog_store/posts/" + props.section + "/" + props.id + ".md")

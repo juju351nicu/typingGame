@@ -1,32 +1,24 @@
 <script setup lang="ts">
 import type { copyRight, PrivacyPolicy } from '@/types/interfaces';
-const copyRight : copyRight = {
-    title: "2026 CLIP All rights reserved.",
+const copyRight: copyRight = {
+    title: "CLIP Corporation. All Rights Reserved.",
     icon: "©",
     dateStr: new Date().toDateString().slice(-4),
 };
-const privacyPolicy: PrivacyPolicy = { title: "プライバシーポリシー", link: "#" };
 </script>
 <template>
     <v-footer class="d-flex align-center justify-center footer" color="deep-purple" dark>
-        <router-link :to="'/'" class="text-reset">
-            <p class="m-0 p-0">{{ copyRight.title }}</p>
-        </router-link>
-        <br />
-        <p class="m-0 p-0">
-            Created with ❤️ by
-            <a href="https://github.com/yeikiu/" target="_blank" class="text-reset">JQ</a> ©
-            {{ copyRight.dateStr }}
+        <p class="m-0 p-0 mr-2">
+            {{ copyRight.dateStr }} &copy;
         </p>
-        <ul class="footer__list">
-            <li><a href="#" class="footer__link">{{ privacyPolicy.title }}</a></li>
-        </ul>
+        <p class="m-0 p-0 ">{{ copyRight.title }}</p>
     </v-footer>
 </template>
 <style scoped>
-.footer{
+.footer {
     max-height: 60px;
 }
+
 a {
     text-decoration: none;
     color: black;

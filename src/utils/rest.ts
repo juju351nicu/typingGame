@@ -49,20 +49,6 @@ const postRequest = (uri: string, reqestData: any) => {
 };
 
 /**
- * DELETE送信の結果
- * @param {string} uri リクエストURL
- * @returns fetch結果
- */
-const deleteRequest = (uri: string) => {
-  // HttpMeshodに Getを設定する
-  const method = METHOD.DELETE;
-  // リクエストデータ作成
-  const requestDatas = createRequestData(uri, null, null, method);
-  // fetch返却
-  return fetcher(requestDatas);
-};
-
-/**
  * fetch送信する
  * @param {Object} requestDatas リクエスト送信の設定情報
  * @returns fetch結果
@@ -116,5 +102,4 @@ const createRequestData = (
 export default {
   getRequest,
   postRequest,
-  deleteRequest,
 };

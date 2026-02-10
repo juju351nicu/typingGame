@@ -25,7 +25,7 @@ export interface Item {
   title: string;
   value: number;
 }
-export type PostIndex = {
+export interface PostIndex {
   /**日付 */
   date: string;
   /**詳細 */
@@ -35,4 +35,4 @@ export type PostIndex = {
   /**タイトル */
   title: string;
   url: string;
-};
+}
