@@ -87,7 +87,18 @@ const resetModalData = (() => {
     <v-row>
       <v-col cols="6">
         <span>仮想キーボード</span>
-        <v-switch v-model="isVirtualKeyBoard" @change="changeVirtualKeyBoard" color="primary" label="on"></v-switch>
+        <!-- <v-switch v-model="isVirtualKeyBoard" @change="changeVirtualKeyBoard" color="primary" label="on"></v-switch> -->
+        <div class="d-flex">
+          <p class="mr-1 my-auto"
+            :class="!isVirtualKeyBoard ? 'purple--text text--darken-2 font-weight-bold' : 'grey--text'">OFF
+          </p>
+          <v-switch v-model="isVirtualKeyBoard" @change="changeVirtualKeyBoard" color="blue darken-2"
+            hide-details class="mt-n1 custom-red"></v-switch>
+          <p class="mx-auto my-auto"
+            :class="isVirtualKeyBoard ? 'blue--text text--darken-2 font-weight-bold' : 'grey--text'">
+            ON
+          </p>
+        </div>
       </v-col>
       <v-col cols="6">
         <v-btn color="primary" text @click="resetModalData()">
