@@ -87,17 +87,16 @@ const resetModalData = (() => {
     <v-row>
       <v-col cols="6">
         <span>仮想キーボード</span>
-        <!-- <v-switch v-model="isVirtualKeyBoard" @change="changeVirtualKeyBoard" color="primary" label="on"></v-switch> -->
         <div class="d-flex">
-          <p class="mr-1 my-auto"
+          <span class="keyBoard__left__label"
             :class="!isVirtualKeyBoard ? 'purple--text text--darken-2 font-weight-bold' : 'grey--text'">OFF
-          </p>
-          <v-switch v-model="isVirtualKeyBoard" @change="changeVirtualKeyBoard" color="blue darken-2"
-            hide-details class="mt-n1 custom-red"></v-switch>
-          <p class="mx-auto my-auto"
+          </span>
+          <v-switch v-model="isVirtualKeyBoard" @change="changeVirtualKeyBoard" color="primary darken-2" hide-details
+            class="mt-n1 keyBoard__switch__button" inset />
+          <span class="keyBoard__right__label"
             :class="isVirtualKeyBoard ? 'blue--text text--darken-2 font-weight-bold' : 'grey--text'">
             ON
-          </p>
+          </span>
         </div>
       </v-col>
       <v-col cols="6">
@@ -109,3 +108,16 @@ const resetModalData = (() => {
     <VirtualKeyBoard v-if="isVirtualKeyBoard" />
   </v-container>
 </template>
+<style scoped>
+.keyBoard__left__label {
+  margin-top: 1.6%;
+  margin-right: 2%;
+  font-size: larger;
+}
+
+.keyBoard__right__label {
+  margin-top: 1.6%;
+  margin-left: 2%;
+  font-size: larger;
+}
+</style>
