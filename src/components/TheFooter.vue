@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import type { copyRight, PrivacyPolicy } from '@/types/interfaces';
-const copyRight: copyRight = {
-    title: "CLIP Corporation. All Rights Reserved.",
-    icon: "©",
+import type { copyRightType } from '@/types/interfaces';
+const copyRight: copyRightType = {
+    company: "CLIP Corporation.",
+    copyRight: "All Rights Reserved.",
     dateStr: new Date().toDateString().slice(-4),
 };
 </script>
 <template>
     <v-footer class="d-flex align-center justify-center footer" color="deep-purple" dark>
-        <p class="m-0 p-0 mr-2">
+        <span class="m-0 p-0 mr-2">
             {{ copyRight.dateStr }} &copy;
-        </p>
-        <p class="m-0 p-0 ">{{ copyRight.title }}</p>
+        </span>
+        <span class="m-0 p-0 ">{{ copyRight.company }}</span>&nbsp;&nbsp;
+        <span class="m-0 p-0 ">{{ copyRight.copyRight }}</span>
     </v-footer>
 </template>
 <style scoped>

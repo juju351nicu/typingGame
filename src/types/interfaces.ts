@@ -1,7 +1,7 @@
 /** コピーライトのインターフェ-ス */
-export interface copyRight {
-  title: string;
-  icon: string;
+export interface copyRightType {
+  company: string;
+  copyRight: string;
   dateStr: string;
 }
 /** プライバシーポリシーのインターフェ-ス */

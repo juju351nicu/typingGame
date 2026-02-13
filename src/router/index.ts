@@ -4,6 +4,7 @@ import ScoresBoard from "@/views/ScoresBoard.vue";
 import SettingBoard from "@/views/SettingBoard.vue";
 import BlogPostList from "@/views/BlogPostList.vue";
 import BlogPost from "@/views/BlogPost.vue";
+import AboutUs from "@/views/AboutUs.vue";
 import NotFound from "@/views/NotFound.vue";
 const routeSetting: RouteRecordRaw[] = [
   {
@@ -37,6 +38,12 @@ const routeSetting: RouteRecordRaw[] = [
     name: "BlogPost",
     component: BlogPost,
     props: true,
+  },
+  {
+    /** 当サイトについて */
+    path: "/AboutUs",
+    name: "AboutUs",
+    component: AboutUs,
   },
   {
     /** 存在しないURLにアクセスした場合 */

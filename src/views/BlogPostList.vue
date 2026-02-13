@@ -48,7 +48,7 @@ onBeforeMount(async () => {
   const postsIndex = response;
   pageStatus.value = postsIndex.slice(1, 5);
   isLoading.value = false;
-  console.log("BlogPostList: Component about to be mounted.");
+  console.log("BlogPostList: Component about to be mounted." + postsIndex.length);
   pageCounts.value = postsIndex.length;
 });
 </script>
