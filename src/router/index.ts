@@ -15,19 +15,19 @@ const routeSetting: RouteRecordRaw[] = [
   },
   {
     /** スコア一覧 */
-    path: "/ScoresBoard",
+    path: "/scoresBoard",
     name: "ScoresBoard",
     component: ScoresBoard,
   },
   {
     /** 設定画面 */
-    path: "/SettingBoard",
+    path: "/settingBoard",
     name: "SettingBoard",
     component: SettingBoard,
   },
   {
     /** ブログ記事一覧 */
-    path: "/BlogPostList",
+    path: "/blogPostList",
     name: "BlogPostList",
     component: BlogPostList,
     props: true,
@@ -41,7 +41,7 @@ const routeSetting: RouteRecordRaw[] = [
   },
   {
     /** 当サイトについて */
-    path: "/AboutUs",
+    path: "/aboutUs",
     name: "AboutUs",
     component: AboutUs,
   },

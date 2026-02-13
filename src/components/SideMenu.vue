@@ -18,12 +18,12 @@ const links = ref([
     icon: 'mdi-home',
   },
   {
-    href: '/ScoresBoard',
+    href: '/scoresBoard',
     title: 'スコア一覧',
     icon: 'mdi-account',
   },
   {
-    href: '/SettingBoard',
+    href: '/settingBoard',
     title: '設定画面',
     icon: 'mdi-cog-outline',
   },

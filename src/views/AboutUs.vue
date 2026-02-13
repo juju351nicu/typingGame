@@ -2,12 +2,30 @@
 import { onMounted } from 'vue';
 
 const company = "株式会社CLIP";
-
+const items = [
+    {
+        title: 'トップページ',
+        disabled: false,
+        href: '/',
+    },
+    {
+        title: '当サイトについて',
+        disabled: true,
+        href: '/aboutUs',
+    },
+]
 onMounted(() => {
     document.title = "当サイトについて";
 })
 </script>
 <template>
+    <div>
+        <v-breadcrumbs :items="items">
+            <template v-slot:divider>
+                <v-icon icon="mdi-chevron-right"></v-icon>
+            </template>
+        </v-breadcrumbs>
+    </div>
     <v-container>
         <div class="about__us">
             <h4>目的</h4>
