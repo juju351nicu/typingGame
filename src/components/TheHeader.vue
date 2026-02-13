@@ -8,6 +8,12 @@ const title = "タイピングゲーム";
 /**
  * ブログ記事一覧ページに戻る
  */
+ const goAboutUs = () => {
+    router.push({ name: "AboutUs" });
+};
+/**
+ * ブログ記事一覧ページに戻る
+ */
 const goBlogList = () => {
     router.push({ name: "BlogPostList" });
 };
@@ -20,7 +26,7 @@ const drawer = ref(false);
         <v-toolbar-title>{{ title }}</v-toolbar-title>
         <v-spacer />
         <div class="d-flex justify-end">
-            <v-btn class="mr-10 header_list">当サイトについて</v-btn>
+            <v-btn class="mr-10 header_list" @click="goAboutUs()">当サイトについて</v-btn>
             <v-btn class="mr-10 header_list" @click="goBlogList()">ブログ</v-btn>
         </div>
     </v-app-bar>
