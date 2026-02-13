@@ -40,6 +40,7 @@ const searchPaging = async (pageNumber: number) => {
 };
 /** 記事の一覧情報をセットする。 */
 onBeforeMount(async () => {
+  document.title = "ブログの一覧";
   isLoading.value = true;
   blogPostsStore.recievePostIndex();
   const response = await Fetcher.getRequest("blog_store/posts_index.json").then(response => {

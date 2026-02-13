@@ -29,6 +29,7 @@ const markDownIt = new MarkdownIt({ html: true });
 // markDownIt.use(sanitize);
 /** Htmlに表示するマークダウン情報をセットする。 */
 onBeforeMount(async () => {
+  document.title = "ブログ記事";
   await Fetcher.getRequest("/blog_store/posts/" + props.section + "/" + props.id + ".md")
     .then(response => {
       return response.text();
