@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Breadcrumbs from "@/components/Breadcrumbs.vue";
 import { onMounted } from 'vue';
 
 const company = "株式会社CLIP";
@@ -19,13 +20,7 @@ onMounted(() => {
 })
 </script>
 <template>
-    <div>
-        <v-breadcrumbs :items="items">
-            <template v-slot:divider>
-                <v-icon icon="mdi-chevron-right"></v-icon>
-            </template>
-        </v-breadcrumbs>
-    </div>
+    <Breadcrumbs :items=items />
     <v-container>
         <div class="about__us">
             <h4>目的</h4>

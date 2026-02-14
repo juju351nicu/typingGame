@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { onBeforeMount, ref } from "vue";
 import Loading from "@/components/Loading.vue";
@@ -6,6 +5,7 @@ import BlogPagingList from "@/components/BlogPagingList.vue";
 import { useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/BlogPosts"
 import Fetcher from "@/utils/rest";
+import Const from "@/constants/const";
 const router = useRouter();
 
 /** 最初のページ */
@@ -30,7 +30,7 @@ const isLoading = ref(false);
 const searchPaging = async (pageNumber: number) => {
   currentPage.value = pageNumber;
   isLoading.value = true;
-  const response = await Fetcher.getRequest("blog_store/posts_index.json").then(response => {
+  const response = await Fetcher.getRequest(Const.BLOG_PATH.POST_INDEX).then(response => {
     return response.json();
   });
   const postsIndex = response;

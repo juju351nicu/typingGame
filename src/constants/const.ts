@@ -1,5 +1,12 @@
+import type { DataTableHeader } from "vuetify";
 
-import type { DataTableHeader } from 'vuetify';
+/**
+ * マークダウンブログ取得用のURL
+ */
+const BLOG_PATH = {
+  POST_INDEX: "blog_store/posts_index.json",
+  POST_FOLDER: "/blog_store/posts/",
+};
 /** テーマの背色 */
 const DISPLAY_THEME = {
   LIGHT: "light",
@@ -43,7 +50,7 @@ const DATA_TABLE_PAGES = [
   { value: -1, title: "$vuetify.dataFooter.itemsPerPageAll" },
 ];
 
-const OPTIONS_OF_HEADERS : DataTableHeader[]  = [
+const OPTIONS_OF_HEADERS: DataTableHeader[] = [
   { title: "ゲームの難易度", align: "start", key: "mode" },
   { title: "タイム", align: "start", key: "time" },
   { title: "スコア", align: "end", key: "score" },
@@ -56,6 +63,7 @@ const DATE_FORMAT = {
 };
 
 export default {
+  BLOG_PATH,
   DISPLAY_THEME,
   ALERT_TYPE,
   INTERVAL_ANIMATION,
@@ -64,5 +72,5 @@ export default {
   NUMBER_OF_ITEMS,
   DATA_TABLE_PAGES,
   OPTIONS_OF_HEADERS,
-  DATE_FORMAT
+  DATE_FORMAT,
 };

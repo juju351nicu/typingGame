@@ -4,6 +4,7 @@ import MarkdownIt from "markdown-it";
 // import { sanitize } from '@markdown-design/markdown-it-sanitize';
 import { onBeforeMount, ref } from "vue";
 import Fetcher from "@/utils/rest";
+import Const from "@/constants/const";
 const router = useRouter();
 /** Propsインタフェース定義 */
 interface Props {
@@ -30,7 +31,7 @@ const markDownIt = new MarkdownIt({ html: true });
 /** Htmlに表示するマークダウン情報をセットする。 */
 onBeforeMount(async () => {
   document.title = "ブログ記事";
-  await Fetcher.getRequest("/blog_store/posts/" + props.section + "/" + props.id + ".md")
+  await Fetcher.getRequest(Const.BLOG_PATH.POST_FOLDER + props.section + "/" + props.id + ".md")
     .then(response => {
       return response.text();
     })

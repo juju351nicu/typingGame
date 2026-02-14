@@ -1,6 +1,7 @@
 import type { PostIndex } from "@/types/interfaces";
 import { defineStore } from "pinia";
 import Fetcher from "@/utils/rest";
+import Const from "@/constants/const";
 /**
  *
  */
@@ -27,7 +28,7 @@ export const useBlogPostsStore = defineStore("Posts", {
      */
     async recievePostIndex() {
       const response = await Fetcher.getRequest(
-        "blog_store/posts_index.json"
+        Const.BLOG_PATH.POST_INDEX
       ).then((response) => {
         return response.json();
       });
