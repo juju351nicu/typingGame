@@ -43,12 +43,13 @@ onBeforeMount(async () => {
   document.title = "ブログの一覧";
   isLoading.value = true;
   blogPostsStore.recievePostIndex();
-  const response = await Fetcher.getRequest("blog_store/posts_index.json").then(response => {
+  const response = await Fetcher.getRequest(Const.BLOG_PATH.POST_INDEX).then(response => {
     return response.json();
   });
   const postsIndex = response;
-  pageStatus.value = postsIndex.slice(1, 5);
+  pageStatus.value = postsIndex.slice(0, 5);
   isLoading.value = false;
+  console.log("BlogPostList: pageStatus.value." + blogPostsStore.getPostStatus);
   console.log("BlogPostList: Component about to be mounted." + postsIndex.length);
   pageCounts.value = postsIndex.length;
 });

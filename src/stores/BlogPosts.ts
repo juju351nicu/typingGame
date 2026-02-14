@@ -6,7 +6,7 @@ import Const from "@/constants/const";
  *
  */
 interface PostsState {
-  pageStatus: Object;
+  pageStatus: PostIndex[];
   isLoading: boolean;
 }
 /**
@@ -18,8 +18,12 @@ export const useBlogPostsStore = defineStore("Posts", {
     isLoading: true,
   }),
   getters: {
-    getPostStatus: (state: { pageStatus: any }): any => {
-      return state.pageStatus;
+    /**
+     * 記事情報リストを取得する。
+     * @returns 記事情報リスト
+     */
+    getPostStatus(): PostIndex[] {
+      return this.pageStatus;
     },
   },
   actions: {
