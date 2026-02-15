@@ -19,26 +19,45 @@ export const useBlogPostsStore = defineStore("Posts", {
   }),
   getters: {
     /**
-     * 記事情報リストを取得する。
-     * @returns 記事情報リスト
+     * ローディング情報を取得する
+     * @returns フラグの判定
      */
-    getPostStatus(): PostIndex[] {
-      return this.pageStatus;
+    getLoading(): boolean {
+      return this.isLoading;
+    },
+    /**
+     * 記事情報リスト件数
+     * @returns 難易度の数値
+     */
+    postCount(): number {
+      return this.pageStatus.length;
     },
   },
   actions: {
     /**
+     * 記事情報リストを取得する。
+     * @param pageNumber ページ番号
+     * @returns 記事情報リスト
+     */
+    getPostRageByPage(pageNumber: number): PostIndex[] {
+      const SIZE = 5;
+      return this.pageStatus.slice(
+        (pageNumber - 1) * SIZE,
+        (pageNumber - 1) * SIZE + SIZE
+      );
+    },
+    /**
      *
      */
     async recievePostIndex() {
+      this.isLoading = true;
       const response = await Fetcher.getRequest(
         Const.BLOG_PATH.POST_INDEX
       ).then((response) => {
         return response.json();
       });
-      const postsIndex = response;
-      console.log(postsIndex.length);
-      this.pageStatus = postsIndex.slice(1, 5);
+      this.pageStatus = response;
+      this.isLoading = false;
     },
   },
 });
