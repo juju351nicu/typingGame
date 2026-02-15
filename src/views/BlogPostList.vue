@@ -4,6 +4,7 @@ import Loading from "@/components/Loading.vue";
 import BlogPagingList from "@/components/BlogPagingList.vue";
 import { useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/BlogPosts"
+import { PostIndex } from "@/types/interfaces";
 
 const router = useRouter();
 
@@ -23,7 +24,7 @@ const doPostDetail = (section: string, id: string): void => {
 };
 
 /** 記事の一覧情報 */
-const pageStatus = ref();
+const pageStatus = ref<PostIndex[]>([]);
 /** 記事の総件数 */
 const pageCounts = computed((): number => {
   return blogPostsStore.postCount;
