@@ -4,11 +4,10 @@ import Loading from "@/components/Loading.vue";
 import BlogPagingList from "@/components/BlogPagingList.vue";
 import { useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/BlogPosts"
-import Fetcher from "@/utils/rest";
-import Const from "@/constants/const";
+
 const router = useRouter();
 
-/** 最初のページ */
+/** 現在のページ */
 const currentPage = ref<number>(1);
 
 /** ブログのストア情報取得 */
@@ -29,43 +28,26 @@ const pageStatus = ref();
 const pageCounts = computed((): number => {
   return blogPostsStore.postCount;
 });
+
 /** データ取得中フラグ */
-const isLoading = ref(false);
-// const isLoading = computed((): boolean => {
-//   return blogPostsStore.getLoading;
-// });
-const SIZE = 5;
+const isLoading = computed((): boolean => {
+  return blogPostsStore.getLoading;
+});
+
 /** ページ遷移 */
-const searchPaging = async (pageNumber: number) => {
+const searchPaging = (pageNumber: number) => {
   currentPage.value = pageNumber;
-  isLoading.value = true;
-  const response = await Fetcher.getRequest(Const.BLOG_PATH.POST_INDEX).then(response => {
-    return response.json();
-  });
-  const postsIndex = response;
-  pageStatus.value = postsIndex.slice(
-    (pageNumber - 1) * SIZE,
-    (pageNumber - 1) * SIZE + SIZE
-  );
-  isLoading.value = false;
+  pageStatus.value = blogPostsStore.getPostRageByPage(pageNumber);
   console.log(pageNumber);
 };
+
 /** 記事の一覧情報をセットする。 */
 onBeforeMount(async () => {
   document.title = "ブログの一覧";
-  isLoading.value = true;
-  blogPostsStore.recievePostIndex();
-  const response = await Fetcher.getRequest(Const.BLOG_PATH.POST_INDEX).then(response => {
-    return response.json();
-  });
-  const postsIndex = response;
-  pageStatus.value = postsIndex.slice(
-    (1 - 1) * SIZE,
-    (1 - 1) * SIZE + SIZE
-  );
-  isLoading.value = false;
+  await blogPostsStore.recievePostIndex();
+  pageStatus.value = blogPostsStore.getPostRageByPage(1);
   console.log("BlogPostList: pageStatus.value.");
-  console.log("BlogPostList: Component about to be mounted." + postsIndex.length);
+  console.log("BlogPostList: Component about to be mounted.");
 });
 </script>
 <template>
