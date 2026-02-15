@@ -28,7 +28,7 @@ const goBlogList = () => {
 };
 /** Htmlに表示するマークダウン情報 */
 const postHtml = ref();
-const markDownIt = new MarkdownIt({
+const markDownIt: MarkdownIt = new MarkdownIt({
   html: true,
   highlight: (str: string, lang: string) => {
     if (lang && hljs.getLanguage(lang)) {
@@ -39,7 +39,7 @@ const markDownIt = new MarkdownIt({
       } catch (__) { }
     }
     return ''
-    // return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>'
+    // return '<pre class="hljs"><code>' + markDownIt.utils.escapeHtml(str) + '</code></pre>'
     /* c8 ignore stop */
   }
 });
@@ -57,9 +57,8 @@ onBeforeMount(async () => {
 });
 </script>
 <template>
-  <!-- <PatchMeta :title="title" /> -->
   <v-container style="background-color: white">
-    <span class="markdown-body" :style="`background-color: 'blue' ; color: 'white';`" v-html="postHtml" />
+    <div class="markdown-body" :style="`background-color: 'blue' ; color: 'white';`" v-html="postHtml" />
     <v-btn @click="goBlogList()"> &laquo; Back </v-btn>
   </v-container>
 </template>
