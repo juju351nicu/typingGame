@@ -38,7 +38,7 @@ export const useBlogPostsStore = defineStore("Posts", {
      * @returns 記事情報リスト
      */
     getPostRageByPage: (state) => {
-      return (pageNumber: number) => {
+      return (pageNumber: number): PostIndex[] => {
         const SIZE = 5;
         return state.pageStatus.slice(
           (pageNumber - 1) * SIZE,
@@ -51,7 +51,7 @@ export const useBlogPostsStore = defineStore("Posts", {
     /**
      *
      */
-    async recievePostIndex() {
+    async recievePostIndex(): Promise<void> {
       this.isLoading = true;
       const response = await Fetcher.getRequest(
         Const.BLOG_PATH.POST_INDEX

@@ -82,90 +82,85 @@ div :deep(p) {
   margin: 0 0 10px 0;
 }
 
-div>>>h1,
-div>>>h2,
-div>>>h3 {
+div :deep(h1),
+div :deep(h2),
+div :deep(h3) {
   margin: 20px 0 10px 0;
 }
 
-div>>>h4,
-div>>>h5,
-div>>>h6 {
+div :deep(h4),
+div :deep(h5),
+div :deep(h6) {
   margin: 10px 0;
 }
 
-div>>>blockquote {
+div :deep(blockquote) {
   margin: 0 0 20px 0;
   padding: 10px 20px;
-  border-left: 5px solid rgb(var(--v-theme-background-2));
-  /* <- #eee; */
+  border-left: 5px solid rgb(#eee);
 }
 
-div>>>ul,
-div>>>ol {
+div :deep(ul),
+div :deep(ol) {
   margin: 0 0 10px 0;
   padding: 0 0 0 40px;
 }
 
-div>>>ul ul,
-div>>>ol ul,
-div>>>ul ol,
-div>>>ol ol {
+div :deep(ul ul),
+div :deep(ol ul),
+div :deep(ul ol),
+div :deep(ol ol) {
   margin: 0;
 }
 
-div>>>code {
+div :deep(code) {
   padding: 2px 4px;
   font-size: 90%;
-  color: rgb(var(--v-theme-accent));
+  color: rgb(#d73a49);
   /* <- #d73a49; <- #c7254e; */
-  background-color: rgb(var(--v-theme-background-1));
+  background-color: rgb(#f9f2f4);
   /* <- #f9f2f4; */
   border-radius: 4px;
 }
 
-div>>>pre {
+div :deep(pre) {
   padding: 9.5px;
   margin: 0 0 10px 0;
   word-break: break-all;
-  background-color: rgb(var(--v-theme-background-1));
-  /* <- #f5f5f5; */
-  border: 1px solid rgb(var(--v-theme-background-2));
-  /* <- #ccc; */
+  background-color: rgb(#f5f5f5);
+  border: 1px solid rgb(#ccc);
   border-radius: 4px;
 }
 
-div>>>pre code {
+div :deep(pre code) {
   padding: 0;
   font-size: inherit;
   color: inherit;
   white-space: pre-wrap;
 }
 
-div>>>table {
+div :deep(table) {
   width: 100%;
   margin: 0 0 20px 0;
   border-collapse: collapse;
 }
 
-div>>>th {
+div :deep(th) {
   padding: 8px;
-  border-bottom: 2px solid rgb(var(--v-theme-background-2));
-  /* <- #ddd; */
+  border-bottom: 2px solid rgb(#ddd);
 }
 
-div>>>tr:nth-child(odd)>td {
-  background-color: rgb(var(--v-theme-background-1));
-  /* <- #f9f9f9; */
+div :deep(tr:nth-child(odd)>td) {
+  background-color: rgb(#f9f9f9);
 }
 
-div>>>td {
+div :deep(td) {
   padding: 8px;
-  border-top: 1px solid rgb(var(--v-theme-background-2));
-  /* <- #ddd; */
+  border-top: 1px solid rgb(#ddd);
 }
 
-div>>>img {
+
+div :deep(img) {
   max-width: 35%;
   vertical-align: middle;
 }

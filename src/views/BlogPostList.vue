@@ -8,11 +8,21 @@ import { PostIndex } from "@/types/interfaces";
 
 const router = useRouter();
 
-/** 現在のページ */
-const currentPage = ref<number>(1);
-
 /** ブログのストア情報取得 */
 const blogPostsStore = useBlogPostsStore();
+
+/** 記事の一覧情報 */
+const pageStatus = ref<PostIndex[]>([]);
+
+/** 記事の総件数 */
+const pageCounts = computed((): number => {
+  return blogPostsStore.postCount;
+});
+
+/** データ取得中フラグ */
+const isLoading = computed((): boolean => {
+  return blogPostsStore.getLoading;
+});
 
 /**
  * 記事の詳細ページに遷移する
@@ -23,17 +33,8 @@ const doPostDetail = (section: string, id: string): void => {
   router.push({ name: "BlogPost", params: { section: section, id: id } });
 };
 
-/** 記事の一覧情報 */
-const pageStatus = ref<PostIndex[]>([]);
-/** 記事の総件数 */
-const pageCounts = computed((): number => {
-  return blogPostsStore.postCount;
-});
-
-/** データ取得中フラグ */
-const isLoading = computed((): boolean => {
-  return blogPostsStore.getLoading;
-});
+/** 現在のページ */
+const currentPage = ref<number>(1);
 
 /** ページ遷移 */
 const searchPaging = (pageNumber: number) => {
