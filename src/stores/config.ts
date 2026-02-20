@@ -11,6 +11,9 @@ interface ConfigState {
   insertion: number;
   animation: number;
 }
+/**
+ * 設定のストア
+ */
 export const useConfigStore = defineStore("config", {
   state: (): ConfigState => ({
     /** ゲームの難易度 */

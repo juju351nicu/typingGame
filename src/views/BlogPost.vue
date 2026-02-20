@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import Loading from "@/components/Loading.vue";
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import MarkdownIt from "markdown-it";
 import { sanitize } from '@markdown-design/markdown-it-sanitize';
-import { onBeforeMount, ref } from "vue";
-import Fetcher from "@/utils/rest";
-import Const from "@/constants/const";
+import { computed, onBeforeMount, ref } from "vue";
+import { useBlogPostsStore } from "@/stores/BlogPosts"
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github-dark.min.css'
 const router = useRouter();
@@ -13,13 +13,17 @@ interface Props {
   section: string;
   id: string;
 }
+/** ブログのストア情報取得 */
+const blogPostsStore = useBlogPostsStore();
+
 /** Propsインタフェース定義 */
 const props = defineProps<Props>();
 
-/* Hacky navigation when a href link is clicked within the compiled html Post */
-onBeforeRouteUpdate(async () => {
-  location.reload();
+/** データ取得中フラグ */
+const isLoading = computed((): boolean => {
+  return blogPostsStore.getLoading;
 });
+
 /**
  * ブログ記事一覧ページに戻る
  */
@@ -54,16 +58,16 @@ markDownIt.use(sanitize, {
     'iframe': ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'allow']
   }
 });
+
+/* Hacky navigation when a href link is clicked within the compiled html Post */
+onBeforeRouteUpdate(async () => {
+  location.reload();
+});
+
 /** Htmlに表示するマークダウン情報をセットする。 */
 onBeforeMount(async () => {
   document.title = "ブログ記事";
-  await Fetcher.getRequest(Const.BLOG_PATH.POST_FOLDER + props.section + "/" + props.id + ".md")
-    .then(response => {
-      return response.text();
-    })
-    .then(body => {
-      postHtml.value = markDownIt.render(body);
-    });
+  postHtml.value = markDownIt.render(await blogPostsStore.recieveBlogPost(props.section, props.id));
 });
 </script>
 <template>
@@ -71,6 +75,7 @@ onBeforeMount(async () => {
     <div class="markdown-body" :style="`background-color: 'blue' ; color: 'white';`" v-html="postHtml" />
     <v-btn @click="goBlogList()"> &laquo; Back </v-btn>
   </v-container>
+  <Loading v-if="isLoading" />
 </template>
 <style scoped>
 /* NOTE: VuetifyのCSS Resetで崩れる＋調整の為 */

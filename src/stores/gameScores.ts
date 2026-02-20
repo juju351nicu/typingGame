@@ -7,6 +7,9 @@ interface GameScoresState {
   scores: GameScore[];
   isLoading: boolean;
 }
+/**
+ * ゲームスコアのストア
+ */
 export const useGameScoresStore = defineStore("gameScores", {
   state: (): GameScoresState => ({
     /** スコア情報リスト */
