@@ -47,7 +47,6 @@ onBeforeMount(async () => {
   document.title = "ブログの一覧";
   await blogPostsStore.recievePostIndex();
   pageStatus.value = blogPostsStore.getPostRageByPage(1);
-  console.log("BlogPostList: pageStatus.value.");
   console.log("BlogPostList: Component about to be mounted.");
 });
 </script>

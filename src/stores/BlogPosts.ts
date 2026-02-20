@@ -32,20 +32,22 @@ export const useBlogPostsStore = defineStore("Posts", {
     postCount(): number {
       return this.pageStatus.length;
     },
-  },
-  actions: {
     /**
      * 記事情報リストを取得する。
      * @param pageNumber ページ番号
      * @returns 記事情報リスト
      */
-    getPostRageByPage(pageNumber: number): PostIndex[] {
-      const SIZE = 5;
-      return this.pageStatus.slice(
-        (pageNumber - 1) * SIZE,
-        (pageNumber - 1) * SIZE + SIZE
-      );
+    getPostRageByPage: (state) => {
+      return (pageNumber: number) => {
+        const SIZE = 5;
+        return state.pageStatus.slice(
+          (pageNumber - 1) * SIZE,
+          (pageNumber - 1) * SIZE + SIZE
+        );
+      };
     },
+  },
+  actions: {
     /**
      *
      */

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import MarkdownIt from "markdown-it";
-// import { sanitize } from '@markdown-design/markdown-it-sanitize';
+import { sanitize } from '@markdown-design/markdown-it-sanitize';
 import { onBeforeMount, ref } from "vue";
 import Fetcher from "@/utils/rest";
 import Const from "@/constants/const";
@@ -43,7 +43,17 @@ const markDownIt: MarkdownIt = new MarkdownIt({
     /* c8 ignore stop */
   }
 });
-// markDownIt.use(sanitize);
+markDownIt.use(sanitize, {
+  // 許可するタグのリストにiframeを追加
+  allowedTags: [
+    'h1', 'h2', 'p', 'br', 'b', 'i', 'strong', 'em', 'a', 'pre', 'code',
+    'iframe' // 許可
+  ],
+  // 許可するiframeの属性（src, width, heightなど）
+  allowedAttributes: {
+    'iframe': ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'allow']
+  }
+});
 /** Htmlに表示するマークダウン情報をセットする。 */
 onBeforeMount(async () => {
   document.title = "ブログ記事";
@@ -64,11 +74,11 @@ onBeforeMount(async () => {
 </template>
 <style scoped>
 /* NOTE: VuetifyのCSS Resetで崩れる＋調整の為 */
-div>>>hr {
+div :deep(hr) {
   margin: 20px 0;
 }
 
-div>>>p {
+div :deep(p) {
   margin: 0 0 10px 0;
 }
 
