@@ -2,6 +2,7 @@
 import { onMounted, ref, useTemplateRef, watch, computed } from "vue";
 import { wordsData as WORD_DATAS } from "@/assets/words";
 import { useConfigStore } from "@/stores/config"
+import { currentWord } from "@/types/interfaces";
 const props = defineProps(["isGameStarted", "isRestTimer", "gameScore", "isGameOver", "inputValue"]);
 
 const emit = defineEmits(["update:isGameOver", "update:gameScore", "update:inputValue"]);
@@ -41,13 +42,13 @@ const typeBoxValue = computed({
 });
 
 /** 現在表示している単語リスト */
-const currentWords = ref<any>([]);
+const currentWords = ref<currentWord[]>([]);
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
-const checkCharacter = ((typeBox: any) => {
+const checkCharacter = ((typeBox: string) => {
     const inputValueArray = typeBox.split("");
-    currentWords.value.forEach((word: any, wordIndex: any) => {
-        word.characters.forEach((character: any, characherIndex: any) => {
+    currentWords.value.forEach((word: currentWord, wordIndex: number) => {
+        word.characters.forEach((character: string, characherIndex: number) => {
             if (inputValueArray[characherIndex] == null) {
                 currentWords.value[wordIndex].classList[characherIndex] = "";
             } else if (character == inputValueArray[characherIndex]) {
@@ -66,10 +67,10 @@ const gameFinish = (() => {
 });
 
 /** 出題された単語と入力した単語の値を比較判定する */
-const checkWordEquality = ((typeBox: any) => {
+const checkWordEquality = ((typeBox: string) => {
     const word = typeBox;
     const index = currentWords.value.findIndex(
-        (item: any) => item.characters.join("") == word
+        (item: currentWord) => item.characters.join("") == word
     );
     //一致した場合
     if (index != -1) {
@@ -100,7 +101,7 @@ const wordsBoard = useTemplateRef("typing-panel");
  */
 const checkIsTopToBottom = (() => {
     let wordsBoardTop = wordsBoard.value?.offsetHeight;
-    currentWords.value.forEach((_: any, index: any) => {
+    currentWords.value.forEach((_: any, index: number) => {
         // 現在表示されている単語の縦幅を取得する。
         let wordPositionTop = getCurrentWordTop(index);
         // 現在表示されている単語と「typing-panel」要素の縦幅を比較する。
@@ -116,7 +117,7 @@ const checkIsTopToBottom = (() => {
  * 索引に該当する、現在表示されている単語の要素の上からの配置位置（距離）を取得する
  * @param index 索引
  */
-const getCurrentWordTop = ((index: any) => {
+const getCurrentWordTop = ((index: number) => {
     return Number(currentWords.value[index].style.top.slice(0, -2));
 });
 
@@ -124,7 +125,7 @@ const getCurrentWordTop = ((index: any) => {
  * 索引に該当する、単語の垂直位置を増加させる。
  * @param index 索引
  */
-const increasePositionTop = ((index: any) => {
+const increasePositionTop = ((index: number) => {
     currentWords.value[index].style.top = `${getCurrentWordTop(index) + 1
         }px`;
 });
@@ -133,7 +134,7 @@ const increasePositionTop = ((index: any) => {
  * 現在表示している各単語の単語の垂直位置を増加させる。
  */
 const wordsTopToBottom = (() => {
-    currentWords.value.forEach((_: any, index: any) => {
+    currentWords.value.forEach((_: any, index: number) => {
         increasePositionTop(index);
     });
 });

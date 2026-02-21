@@ -13,11 +13,12 @@ interface Props {
   section: string;
   id: string;
 }
-/** ブログのストア情報取得 */
-const blogPostsStore = useBlogPostsStore();
 
 /** Propsインタフェース定義 */
 const props = defineProps<Props>();
+
+  /** ブログのストア情報取得 */
+const blogPostsStore = useBlogPostsStore();
 
 /** データ取得中フラグ */
 const isLoading = computed((): boolean => {

@@ -25,6 +25,7 @@ export interface Item {
   title: string;
   value: number;
 }
+/** JSON記事情報のインターフェ-ス */
 export interface PostIndex {
   /**日付 */
   date: string;
@@ -35,4 +36,10 @@ export interface PostIndex {
   /**タイトル */
   title: string;
   url: string;
+}
+/** 表示するタイピングの単語のインターフェ-ス */
+export interface currentWord {
+  characters: string[];
+  classList: string[];
+  style: any;
 }
