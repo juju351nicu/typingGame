@@ -47,7 +47,7 @@ const searchPaging = (pageNumber: number) => {
 onBeforeMount(async () => {
   document.title = "ブログの一覧";
   await blogPostsStore.recievePostIndex();
-  pageStatus.value = blogPostsStore.getPostRageByPage(1);
+  pageStatus.value = blogPostsStore.getPostRageByPage(currentPage.value);
   console.log("BlogPostList: Component about to be mounted.");
 });
 </script>

@@ -7,7 +7,7 @@ import { computed, onBeforeMount, onUnmounted, ref } from "vue";
 import { useBlogPostsStore } from "@/stores/blogPosts"
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github-dark.min.css'
-const router = useRouter();
+
 /** Propsインタフェース定義 */
 interface Props {
   section: string;
@@ -17,7 +17,9 @@ interface Props {
 /** Propsインタフェース定義 */
 const props = defineProps<Props>();
 
-  /** ブログのストア情報取得 */
+const router = useRouter();
+
+/** ブログのストア情報取得 */
 const blogPostsStore = useBlogPostsStore();
 
 /** データ取得中フラグ */
@@ -80,7 +82,7 @@ onUnmounted(() => {
 <template>
   <v-container style="background-color: white">
     <div class="markdown-body" :style="`background-color: 'blue' ; color: 'white';`" v-html="postHtml" />
-    <v-btn @click="goBlogList()"> &laquo; Back </v-btn>
+    <v-btn @click="goBlogList()"> 戻る </v-btn>
   </v-container>
   <Loading v-if="isLoading" />
 </template>
