@@ -4,7 +4,7 @@ import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import MarkdownIt from "markdown-it";
 import { sanitize } from '@markdown-design/markdown-it-sanitize';
 import { computed, onBeforeMount, onUnmounted, ref } from "vue";
-import { useBlogPostsStore } from "@/stores/BlogPosts"
+import { useBlogPostsStore } from "@/stores/blogPosts"
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github-dark.min.css'
 const router = useRouter();

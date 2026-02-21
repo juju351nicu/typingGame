@@ -3,7 +3,7 @@ import Loading from "@/components/Loading.vue";
 import BlogPagingList from "@/components/BlogPagingList.vue";
 import { computed, onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
-import { useBlogPostsStore } from "@/stores/BlogPosts"
+import { useBlogPostsStore } from "@/stores/blogPosts"
 import { PostIndex } from "@/types/interfaces";
 
 const router = useRouter();
