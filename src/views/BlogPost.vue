@@ -3,7 +3,7 @@ import Loading from "@/components/Loading.vue";
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import MarkdownIt from "markdown-it";
 import { sanitize } from '@markdown-design/markdown-it-sanitize';
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, onUnmounted, ref } from "vue";
 import { useBlogPostsStore } from "@/stores/BlogPosts"
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github-dark.min.css'
@@ -48,15 +48,17 @@ const markDownIt: MarkdownIt = new MarkdownIt({
   }
 });
 markDownIt.use(sanitize, {
-  // 許可するタグのリストにiframeを追加
-  allowedTags: [
-    'h1', 'h2', 'p', 'br', 'b', 'i', 'strong', 'em', 'a', 'pre', 'code',
-    'iframe' // 許可
+  ADD_TAGS: ['iframe'],
+  ADD_ATTR: [
+    'allow',
+    'allowfullscreen',
+    'frameborder',
+    'scrolling',
+    'src',
+    'width',
+    'height',
+    'style' //必要に応じて
   ],
-  // 許可するiframeの属性（src, width, heightなど）
-  allowedAttributes: {
-    'iframe': ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'allow']
-  }
 });
 
 /* Hacky navigation when a href link is clicked within the compiled html Post */
@@ -67,7 +69,11 @@ onBeforeRouteUpdate(async () => {
 /** Htmlに表示するマークダウン情報をセットする。 */
 onBeforeMount(async () => {
   document.title = "ブログ記事";
-  postHtml.value = markDownIt.render(await blogPostsStore.recieveBlogPost(props.section, props.id));
+  await blogPostsStore.recieveBlogPost(props.section, props.id)
+  postHtml.value = markDownIt.render(blogPostsStore.getPostHtml);
+});
+onUnmounted(() => {
+  blogPostsStore.$reset;
 });
 </script>
 <template>

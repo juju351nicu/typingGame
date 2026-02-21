@@ -74,20 +74,20 @@ export const useBlogPostsStore = defineStore("Posts", {
      * 記事のマークダウン情報を取得する
      * @param section
      * @param id
-     * @returns 記事のマークダウン情報を取得する
      */
-    async recieveBlogPost(section: string, id: string): Promise<string> {
+    async recieveBlogPost(section: string, id: string): Promise<void> {
       this.isLoading = true;
-      return await Fetcher.getRequest(
+      const response = await Fetcher.getRequest(
         Const.BLOG_PATH.POST_FOLDER + section + "/" + id + ".md"
       )
         .then((response) => {
           return response.text();
         })
         .then((body) => {
-          this.isLoading = false;
           return body;
         });
+      this.postHtml = response;
+      this.isLoading = false;
     },
   },
 });
