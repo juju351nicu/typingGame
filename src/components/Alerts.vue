@@ -11,9 +11,17 @@ interface Props {
 const props = defineProps<Props>();
 
 /** メッセージ情報 */
-// const alerts = computed((): Alert[] => {
-//     return props.alerts;
-// });
+const alerts = computed((): Alert[] => {
+    return props.alerts;
+});
+/**
+ * アラートの高さを調整する
+ * @param index インデックス
+ */
+const getTopStyle = (index: number) => {
+    const topPosition = index * 90;
+    return { top: `${topPosition}px` };
+};
 
 const alertFlag = ref(true);
 
@@ -22,10 +30,9 @@ setTimeout((): void => {
 }, 4000);
 </script>
 <template>
-    <div v-for="(alert, index) in props.alerts" :key="index">
+    <div v-for="(alert, index) in alerts" :key="index">
         <div class="d-flex justify-end">
-            <v-alert v-model="alertFlag" :style="{ top: `${90 * index}px` }" :type=alert.type dense class="alert"
-                closable>
+            <v-alert v-model="alertFlag" :style="getTopStyle(index)" :type=alert.type dense class="alert" closable>
                 {{ alert.message }}
             </v-alert>
         </div>
