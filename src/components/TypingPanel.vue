@@ -234,7 +234,7 @@ watch(isRestFlag, (newValue, _oldValue) => {
 </template>
 <style>
 .words-board {
-    background-color: #e0e0e0;
+    background-color: #88bdcc;
     color: #000000;
     height: 75%;
     padding: .5rem;

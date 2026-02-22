@@ -57,7 +57,7 @@ export const useBlogPostsStore = defineStore("Posts", {
      */
     getPostRageByPage: (state) => {
       return (pageNumber: number): PostIndex[] => {
-        const SIZE = 5;
+        const SIZE = Const.NUMBER_OF_BLOGS;
         return state.pageStatus.slice(
           (pageNumber - 1) * SIZE,
           (pageNumber - 1) * SIZE + SIZE

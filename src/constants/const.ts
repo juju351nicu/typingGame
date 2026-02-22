@@ -7,6 +7,10 @@ const BLOG_PATH = {
   POST_INDEX: "blog_store/posts_index.json",
   POST_FOLDER: "/blog_store/posts/",
 };
+
+/** ブログリストの1ページあたりの表示件数（デフォルト）*/
+const NUMBER_OF_BLOGS = 5;
+
 /** テーマの背色 */
 const DISPLAY_THEME = {
   LIGHT: "light",
@@ -64,6 +68,7 @@ const DATE_FORMAT = {
 
 export default {
   BLOG_PATH,
+  NUMBER_OF_BLOGS,
   DISPLAY_THEME,
   ALERT_TYPE,
   INTERVAL_ANIMATION,

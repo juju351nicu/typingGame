@@ -197,16 +197,4 @@ html {
 ::-webkit-scrollbar {
   width: .8rem;
 }
-
-::-webkit-scrollbar-track {
-  background: #dddddd;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888888;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555555;
-}
 </style>

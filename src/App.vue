@@ -37,10 +37,15 @@ onMounted(() => {
 </script>
 <template>
   <v-app>
-    <v-main>
+    <v-main class="main__board">
       <TheHeader />
       <router-view />
     </v-main>
     <TheFooter />
   </v-app>
 </template>
+<style>
+.main__board {
+  background-color: #e0e0e0;
+}
+</style>

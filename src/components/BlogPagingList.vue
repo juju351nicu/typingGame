@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import Const from "@/constants/const";
 /** Propsインタフェース定義 */
 interface Props {
   pageStatus: any;
@@ -30,15 +31,15 @@ const currentPage = computed((): number => {
 const showPaging = ref(true);
 /** 総ページ数 */
 const totalPages = computed((): number => {
-  if (totalCount.value % 5 == 0) {
-    return totalCount.value / 5;
+  if (totalCount.value % Const.NUMBER_OF_BLOGS == 0) {
+    return totalCount.value / Const.NUMBER_OF_BLOGS;
   } else {
-    return Math.ceil(totalCount.value / 5);
+    return Math.ceil(totalCount.value / Const.NUMBER_OF_BLOGS);
   }
 });
 /**検索結果件数を表示する。前半部 */
 const firstRowsCounts = computed(() => {
-  const start = (currentPage.value - 1) * 5;
+  const start = (currentPage.value - 1) * Const.NUMBER_OF_BLOGS;
   if (start + 1 < totalCount.value) {
     return start + 1;
   } else {
@@ -47,7 +48,7 @@ const firstRowsCounts = computed(() => {
 });
 /**検索結果件数を表示する。後半部 */
 const lastRowsCounts = computed(() => {
-  const end = currentPage.value * 5;
+  const end = currentPage.value * Const.NUMBER_OF_BLOGS;
   if (end < totalCount.value) {
     return end;
   } else {
@@ -79,7 +80,7 @@ const toNumberPage = (pageNumber: number) => {
     <span>{{ listHeader }}</span>
     <v-row dense>
       <v-col v-for="entry in pageStatus" :key="entry.id" cols="12">
-        <v-card class="mx-auto" max-width="800" hover>
+        <v-card class="mx-auto" max-width="800" max-height="160" hover>
           <v-card-item>
             <v-card-title @click="doPostDetail(entry)">
               {{ entry.title }}
