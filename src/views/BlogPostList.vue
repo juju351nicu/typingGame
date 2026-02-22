@@ -24,17 +24,18 @@ const isLoading = computed((): boolean => {
   return blogPostsStore.getLoading;
 });
 
-/**
- * 記事の詳細ページに遷移する
- * @param section
- * @param id
- */
-const doPostDetail = (section: string, id: string): void => {
-  router.push({ name: "BlogPost", params: { section: section, id: id } });
-};
-
 /** 現在のページ */
 const currentPage = ref<number>(1);
+
+/**
+* 記事の詳細ページに遷移する
+* @param section
+* @param id
+*/
+const doPostDetail = (section: string, id: string): void => {
+  blogPostsStore.savePrevPageNo(currentPage.value);
+  router.push({ name: "BlogPost", params: { section: section, id: id } });
+};
 
 /** ページ遷移 */
 const searchPaging = (pageNumber: number) => {

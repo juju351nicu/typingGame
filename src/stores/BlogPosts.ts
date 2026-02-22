@@ -6,6 +6,7 @@ import Const from "@/constants/const";
  * BlogPostsストアで使用する変数の型定義
  */
 interface PostsState {
+  prevPageNo: number;
   pageStatus: PostIndex[];
   postHtml: string;
   isLoading: boolean;
@@ -15,11 +16,19 @@ interface PostsState {
  */
 export const useBlogPostsStore = defineStore("Posts", {
   state: (): PostsState => ({
+    prevPageNo: 1,
+    isLoading: true,
     pageStatus: [],
     postHtml: "",
-    isLoading: true,
   }),
   getters: {
+    /**
+     * 前ページ番号を取得する
+     * @returns フラグの判定
+     */
+    getPrevPageNo(): number {
+      return this.prevPageNo;
+    },
     /**
      * ローディング情報を取得する
      * @returns フラグの判定
@@ -57,6 +66,13 @@ export const useBlogPostsStore = defineStore("Posts", {
     },
   },
   actions: {
+    /**
+     * 前ページ番号を保存する。
+     * @param {number} payload
+     */
+    savePrevPageNo(payload: number) {
+      this.prevPageNo = payload;
+    },
     /**
      * 記事のJSON一覧を取得する
      */
