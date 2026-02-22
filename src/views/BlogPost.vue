@@ -76,7 +76,7 @@ onBeforeMount(async () => {
   postHtml.value = markDownIt.render(blogPostsStore.getPostHtml);
 });
 onUnmounted(() => {
-  blogPostsStore.$reset;
+  blogPostsStore.$reset();
 });
 </script>
 <template>
