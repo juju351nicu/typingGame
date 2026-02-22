@@ -9,7 +9,7 @@ const BLOG_PATH = {
 };
 
 /** ブログリストの1ページあたりの表示件数（デフォルト）*/
-const NUMBER_OF_BLOGS = 5;
+const NUMBER_OF_BLOGS = 4;
 
 /** テーマの背色 */
 const DISPLAY_THEME = {

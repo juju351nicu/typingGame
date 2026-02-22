@@ -105,19 +105,6 @@ onMounted(() => {
                     </p>
                 </article>
                 <article class="">
-                    <h6> &#9632;Meta</h6>
-                    <p>
-                        プライバシーポリシー<br>
-                        オプトアウト方法<br>
-                    </p>
-                </article>
-                <article class="">
-                    <h6> &#9632;Juicer</h6>
-                    <p>
-                        プライバシーポリシー、オプトアウト方法<br>
-                    </p>
-                </article>
-                <article class="">
                     <h5>JavaScriptの設定</h5>
                     <p>
                         当サイトでは各ページにJavaScriptの記述を含んでいます。<br>
@@ -129,7 +116,8 @@ onMounted(() => {
             <section>
                 <h4>著作権について</h4>
                 <p>
-                    <span>当サイトに掲載されているすべての情報（文章・写真・動画・ソフトウェア等）は、当社もしくは当社に利用を認めた権利者が著作権を保有しています。事前の許可なく当サイトにあるコンテンツを転用・掲載することは固くお断りいたします。</span>
+                    当サイトに掲載されているすべての情報（文章・写真・動画・ソフトウェア等）は、当社もしくは当社に利用を認めた権利者が著作権を保有しています。<br>
+                    事前の許可なく当サイトにあるコンテンツを転用・掲載することは固くお断りいたします。
                 </p>
             </section>
             <section>
@@ -150,4 +138,8 @@ onMounted(() => {
         </div>
     </v-container>
 </template>
-<style scoped></style>
+<style scoped>
+.about__us {
+    background-color: #ffffff;
+}
+</style>
