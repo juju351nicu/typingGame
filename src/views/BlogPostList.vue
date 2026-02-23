@@ -48,15 +48,14 @@ const searchPaging = (pageNumber: number) => {
 onBeforeMount(async () => {
   document.title = "ブログの一覧";
   const route = useRoute();
-  console.info(route.query.pageNumber)
   const queryName = route.query.pageNumber;
   if (queryName !== null && queryName !== undefined) {
     currentPage.value = Number(queryName);
-    console.log('ここを通りました。')
-  } 
+    console.info('ここを通りました。' + route.query.pageNumber)
+  }
   await blogPostsStore.recievePostIndex();
   pageStatus.value = blogPostsStore.getPostRageByPage(currentPage.value);
-  console.log("BlogPostList: Component about to be mounted.");
+  console.info("BlogPostList: Component about to be mounted.");
 });
 </script>
 <template>
