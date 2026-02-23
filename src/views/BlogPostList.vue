@@ -2,7 +2,7 @@
 import Loading from "@/components/Loading.vue";
 import BlogPagingList from "@/components/BlogPagingList.vue";
 import { computed, onBeforeMount, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/blogPosts"
 import { PostIndex } from "@/types/interfaces";
 
@@ -41,12 +41,19 @@ const doPostDetail = (section: string, id: string): void => {
 const searchPaging = (pageNumber: number) => {
   currentPage.value = pageNumber;
   pageStatus.value = blogPostsStore.getPostRageByPage(pageNumber);
-  console.log(pageNumber);
+  console.info(pageNumber);
 };
 
 /** 記事の一覧情報をセットする。 */
 onBeforeMount(async () => {
   document.title = "ブログの一覧";
+  const route = useRoute();
+  console.info(route.query.pageNumber)
+  const queryName = route.query.pageNumber;
+  if (queryName !== null && queryName !== undefined) {
+    currentPage.value = Number(queryName);
+    console.log('ここを通りました。')
+  } 
   await blogPostsStore.recievePostIndex();
   pageStatus.value = blogPostsStore.getPostRageByPage(currentPage.value);
   console.log("BlogPostList: Component about to be mounted.");

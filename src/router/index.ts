@@ -30,7 +30,6 @@ const routeSetting: RouteRecordRaw[] = [
     path: "/blogPostList",
     name: "BlogPostList",
     component: BlogPostList,
-    props: true,
   },
   {
     /** ブログ詳細情報 */

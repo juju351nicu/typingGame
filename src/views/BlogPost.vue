@@ -31,7 +31,7 @@ const isLoading = computed((): boolean => {
  * ブログ記事一覧ページに戻る
  */
 const goBlogList = () => {
-  router.push({ name: "BlogPostList" });
+  router.push({ path: "/blogPostList", query: { pageNumber: blogPostsStore.getPrevPageNo } });
 };
 /** Htmlに表示するマークダウン情報 */
 const postHtml = ref();
