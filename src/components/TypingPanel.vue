@@ -262,20 +262,4 @@ watch(isRestFlag, (newValue, _oldValue) => {
 .incorrect {
     color: #ff0000;
 }
-
-::-webkit-scrollbar {
-    width: .8rem;
-}
-
-::-webkit-scrollbar-track {
-    background: #dddddd;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #888888;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #555555;
-}
 </style>

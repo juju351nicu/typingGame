@@ -173,8 +173,6 @@ html {
   display: flex;
   flex-direction: column;
   margin: auto;
-  -webkit-box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
 }
 
@@ -192,9 +190,5 @@ html {
 
 .game_text {
   width: 800px;
-}
-
-::-webkit-scrollbar {
-  width: .8rem;
 }
 </style>

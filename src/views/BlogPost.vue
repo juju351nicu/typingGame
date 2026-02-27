@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Loading from "@/components/Loading.vue";
+import { computed, onBeforeMount, onUnmounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
+import { useBlogPostsStore } from "@/stores/blogPosts"
 import MarkdownIt from "markdown-it";
 import { sanitize } from '@markdown-design/markdown-it-sanitize';
-import { computed, onBeforeMount, onUnmounted, ref } from "vue";
-import { useBlogPostsStore } from "@/stores/blogPosts"
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github-dark.min.css'
 
@@ -84,7 +84,7 @@ onUnmounted(() => {
     <div class="markdown-body" :style="`background-color: 'blue' ; color: 'white';`" v-html="postHtml" />
     <v-btn @click="goBlogList()"> 戻る </v-btn>
   </v-container>
-  <Loading v-if="isLoading" />
+  <Loading :isLoading="isLoading"/>
 </template>
 <style scoped>
 /* NOTE: VuetifyのCSS Resetで崩れる＋調整の為 */

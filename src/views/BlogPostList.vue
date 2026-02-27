@@ -61,5 +61,5 @@ onBeforeMount(async () => {
 <template>
   <BlogPagingList v-if="!isLoading" :pageStatus="pageStatus" :pageCounts="pageCounts" :currentPage="currentPage"
     @doPostDetail="doPostDetail" @toNumberPage="searchPaging" />
-  <Loading v-if="isLoading" />
+  <Loading :isLoading="isLoading"/>
 </template>
