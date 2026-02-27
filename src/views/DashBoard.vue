@@ -3,12 +3,13 @@ import TypingPanel from "@/components/TypingPanel.vue"
 import Alerts from "@/components/Alerts.vue";
 import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config"
 import Util from "@/utils/util";
 import Const from "@/constants/const";
+import { GameScore } from "@/types/interfaces";
 const router = useRouter();
 /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
@@ -32,15 +33,22 @@ const isGameOver = ref(false);
 /** ゲームスコア */
 const gameScore = ref(0);
 
+/** 最後に取得したゲームスコア */
+let lastScore = reactive<GameScore>({
+  score: 0,
+  mode: 0,
+  time: "",
+  date: ""
+});
 /** ゲームの時間・スコア・モードを保存する */
 const saveGameScores = ((): void => {
-  const data = {
-    time: Util.getCountDownTime(accumTime.value),
+  lastScore = {
     score: gameScore.value,
     mode: configStore.getGameMode,
+    time: Util.getCountDownTime(accumTime.value),
     date: Util.getCurrentTime(),
   }
-  gameScoresStore.saveGameScoreList(data);
+  gameScoresStore.saveGameScoreList(lastScore);
 });
 
 /** モーダルにてリセットボタン押下時、データをリセットする */
@@ -160,7 +168,7 @@ onUnmounted(() => {
       </template>
     </div>
   </v-container>
-  <Modal :class="modalDisplayStatus ? 'open' : ''" :isGameOver="isGameOver" @restart-game="restartGame" />
+  <Modal :lastScore="lastScore" :isGameOver="isGameOver" @restart-game="restartGame" />
 </template>
 <style>
 html {

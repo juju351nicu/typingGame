@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from "vue";
-import { useGameScoresStore } from "@/stores/gameScores";
+import { computed, ref, watch } from "vue";
 import Util from "@/utils/util";
 import { GameScore } from "@/types/interfaces";
-//インポートした関数を呼び出してストアをインスタンス化して変数に代入
-const gameScoresStore = useGameScoresStore();
+/** Propsインタフェース定義 */
+interface Props {
+  isGameOver: boolean,
+  lastScore: GameScore,
+}
 
-const props = defineProps({
-  isGameOver: Boolean,
-});
-
+/** Propsオブジェクトの設定 */
+const props = defineProps<Props>();
 const emit = defineEmits(["restart-game"]);
 
 /** ダイアログの表示・非表示 */
@@ -20,30 +20,22 @@ const isGameOverFlag = computed((): boolean => {
   return props.isGameOver;
 });
 
+/** 最終ゲームスコア */
+const lastScore = computed((): GameScore => {
+  return props.lastScore;
+});
+
 /** ゲームを再スタートする */
 const reStartGame = (() => {
   emit("restart-game");
   dialog.value = false;
 });
 
-/** ストアからゲームのスコアリストを取得する */
-const gameScores = computed((): GameScore[] => {
-  return gameScoresStore.getGameScoreList;
-});
-
-/** 最後に取得したゲームスコア */
-let lastScore = reactive({
-  score: 0,
-  mode: 0,
-  time: "",
-  date: ""
-});
-
 /** ゲームが終了した際に表示するメッセージ */
 const scoreMessage = computed((): string => {
-  if (gameScores.value.length > 0) {
-    let desc = `You completed ${lastScore.score} words in ${lastScore.time
-      } time in ${Util.getLevel(lastScore.mode)} mode.`;
+  if (lastScore.value != null) {
+    let desc = `You completed ${lastScore.value.score} words in ${lastScore.value.time
+      } time in ${Util.getLevel(lastScore.value.mode)} mode.`;
     return desc;
   }
   return "";
@@ -53,9 +45,6 @@ const scoreMessage = computed((): string => {
 watch(isGameOverFlag, (newValue, _oldValue) => {
   if (newValue) {
     dialog.value = true;
-    // if (gameScores.value.length > 0) {
-    lastScore = gameScores.value[gameScores.value.length - 1];
-    // }
   }
 });
 </script>
