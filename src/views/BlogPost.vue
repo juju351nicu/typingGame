@@ -82,7 +82,7 @@ onUnmounted(() => {
 <template>
   <v-container style="background-color: white">
     <div class="markdown-body" :style="`background-color: 'blue' ; color: 'white';`" v-html="postHtml" />
-    <v-btn @click="goBlogList()"> 戻る </v-btn>
+    <v-btn @click="goBlogList()"> 一覧ページに戻る </v-btn>
   </v-container>
   <Loading :isLoading="isLoading"/>
 </template>
