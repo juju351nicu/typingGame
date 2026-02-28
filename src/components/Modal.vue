@@ -12,9 +12,6 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(["restart-game"]);
 
-/** ダイアログの表示・非表示 */
-const dialog = ref(false);
-
 /** ゲームオーバーフラグ */
 const isGameOverFlag = computed((): boolean => {
   return props.isGameOver;
@@ -25,6 +22,9 @@ const lastScore = computed((): GameScore => {
   return props.lastScore;
 });
 
+/** ダイアログの表示・非表示 */
+const dialog = ref(false);
+
 /** ゲームを再スタートする */
 const reStartGame = (() => {
   emit("restart-game");
@@ -33,12 +33,8 @@ const reStartGame = (() => {
 
 /** ゲームが終了した際に表示するメッセージ */
 const scoreMessage = computed((): string => {
-  if (lastScore.value != null) {
-    let desc = `You completed ${lastScore.value.score} words in ${lastScore.value.time
-      } time in ${Util.getLevel(lastScore.value.mode)} mode.`;
-    return desc;
-  }
-  return "";
+  return `正解の単語数は ${lastScore.value.score} になります。また、 ${lastScore.value.time
+    } になります。 ${Util.getLevel(lastScore.value.mode)} モード.`;
 });
 
 /** ゲームオーバーフラグをウォッチにて判定する */

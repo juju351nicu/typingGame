@@ -11,7 +11,7 @@ const emit = defineEmits(["update:isGameOver", "update:gameScore", "update:input
 const configStore = useConfigStore();
 
 /** ゲームスタートフラグ */
-const isGameStartedFlag = computed(() => {
+const isGameStartedFlag = computed((): boolean => {
     return props.isGameStarted;
 });
 
@@ -19,26 +19,26 @@ const isGameStartedFlag = computed(() => {
 const typingWords = ref<string[]>(WORD_DATAS);
 
 /** リセットフラグ */
-const isRestFlag = computed(() => {
+const isRestFlag = computed((): boolean => {
     return props.isRestTimer;
 });
 
 /** ゲームスコア */
 const gameScore = computed({
-    get: () => props.gameScore,
-    set: (value) => emit("update:gameScore", value)
+    get: (): number => props.gameScore,
+    set: (value: number) => emit("update:gameScore", value)
 });
 
 /** ゲームオーバーフラグ */
 const isGameOverFlag = computed({
-    get: () => props.isGameOver,
-    set: (value) => emit("update:isGameOver", value)
+    get: (): boolean => props.isGameOver,
+    set: (value: boolean) => emit("update:isGameOver", value)
 });
 
 /** テキストボックスに入力された値 */
 const typeBoxValue = computed({
-    get: () => props.inputValue,
-    set: (value) => emit("update:inputValue", value)
+    get: (): string => props.inputValue,
+    set: (value: string) => emit("update:inputValue", value)
 });
 
 /** 現在表示している単語リスト */
@@ -46,12 +46,12 @@ const currentWords = ref<currentWord[]>([]);
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
 const checkCharacter = ((typeBox: string) => {
-    const inputValueArray = typeBox.split("");
+    const charArray = typeBox.split("");
     currentWords.value.forEach((word: currentWord, wordIndex: number) => {
         word.characters.forEach((character: string, characherIndex: number) => {
-            if (inputValueArray[characherIndex] == null) {
+            if (charArray[characherIndex] == null) {
                 currentWords.value[wordIndex].classList[characherIndex] = "";
-            } else if (character == inputValueArray[characherIndex]) {
+            } else if (character == charArray[characherIndex]) {
                 currentWords.value[wordIndex].classList[characherIndex] = "correct";
             } else {
                 currentWords.value[wordIndex].classList[characherIndex] = "incorrect";
@@ -67,8 +67,7 @@ const gameFinish = (() => {
 });
 
 /** 出題された単語と入力した単語の値を比較判定する */
-const checkWordEquality = ((typeBox: string) => {
-    const word = typeBox;
+const checkWordEquality = ((word: string) => {
     const index = currentWords.value.findIndex(
         (item: currentWord) => item.characters.join("") == word
     );
