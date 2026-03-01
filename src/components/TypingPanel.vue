@@ -3,7 +3,7 @@ import { onMounted, ref, useTemplateRef, watch, computed } from "vue";
 import { wordsData as WORD_DATAS } from "@/assets/words";
 import { useConfigStore } from "@/stores/config"
 import { currentWord } from "@/types/interfaces";
-const props = defineProps(["isGameStarted", "isRestTimer", "gameScore", "isGameOver", "inputValue"]);
+const props = defineProps(["isGameStarted", "isResetTimer", "gameScore", "isGameOver", "inputValue"]);
 
 const emit = defineEmits(["update:isGameOver", "update:gameScore", "update:inputValue"]);
 
@@ -19,8 +19,8 @@ const isGameStartedFlag = computed((): boolean => {
 const typingWords = ref<string[]>(WORD_DATAS);
 
 /** リセットフラグ */
-const isRestFlag = computed((): boolean => {
-    return props.isRestTimer;
+const isResetFlag = computed((): boolean => {
+    return props.isResetTimer;
 });
 
 /** ゲームスコア */
@@ -46,7 +46,7 @@ const currentWords = ref<currentWord[]>([]);
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
 const checkCharacter = ((typeBox: string) => {
-    const charArray = typeBox.split("");
+    const charArray: string[] = typeBox.split("");
     currentWords.value.forEach((word: currentWord, wordIndex: number) => {
         word.characters.forEach((character: string, characherIndex: number) => {
             if (charArray[characherIndex] == null) {
@@ -212,7 +212,7 @@ watch(typeBoxValue, (newValue, _oldValue) => {
 });
 
 /** リセットフラグをウォッチする */
-watch(isRestFlag, (newValue, _oldValue) => {
+watch(isResetFlag, (newValue, _oldValue) => {
     if (newValue) {
         currentWords.value = [];
         currentWordIndex.value = 0;

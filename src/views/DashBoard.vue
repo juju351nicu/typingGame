@@ -73,12 +73,12 @@ const startGame = (() => {
 });
 
 /** リセットタイマーのフラグ */
-const isRestTimer = ref(false);
+const isResetTimer = ref(false);
 
 /** ゲームのデータをリセットする */
 const resetGameData = (() => {
   gameScore.value = 0;
-  isRestTimer.value = true;
+  isResetTimer.value = true;
   isGameOver.value = false;
   isGameStarted.value = false;
   inputValue.value = "";
@@ -139,7 +139,7 @@ onUnmounted(() => {
   <v-container>
     <Alerts :alerts="alerts" />
     <div class="game-board">
-      <TypingPanel :isGameStarted="isGameStarted" :isRestTimer="isRestTimer" :gameScore="gameScore"
+      <TypingPanel :isGameStarted="isGameStarted" :isResetTimer="isResetTimer" :gameScore="gameScore"
         @update:gameScore="$event => (gameScore = $event)" :isGameOver="isGameOver"
         @update:isGameOver="$event => (isGameOver = $event)" :inputValue="inputValue"
         @update:inputValue="$event => (inputValue = $event)" />
