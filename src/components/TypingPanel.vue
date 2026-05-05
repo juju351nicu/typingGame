@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, watch, computed } from "vue";
+import { onMounted,onUnmounted ,ref, useTemplateRef, watch, computed } from "vue";
 import { wordsData as WORD_DATAS } from "@/assets/words";
 import { useConfigStore } from "@/stores/config"
 import { currentWord } from "@/types/interfaces";
@@ -59,12 +59,23 @@ const checkCharacter = ((typeBox: string) => {
         });
     });
 });
+const stopTimers = () => {
+  if (addWordTimerId.value !== null) {
+    clearInterval(addWordTimerId.value);
+    addWordTimerId.value = null;
+  }
 
+  if (moveWordTimerId.value !== null) {
+    clearInterval(moveWordTimerId.value);
+    moveWordTimerId.value = null;
+  }
+};
 /** ゲームを終了する */
-const gameFinish = (() => {
-    isGameOverFlag.value = true;
-    configStore.resetIntervalSettings();
-});
+const gameFinish = () => {
+  isGameOverFlag.value = true;
+  stopTimers();
+  configStore.resetIntervalSettings();
+};
 
 /** 出題された単語と入力した単語の値を比較判定する */
 const checkWordEquality = ((word: string) => {
@@ -73,7 +84,7 @@ const checkWordEquality = ((word: string) => {
     );
     //一致した場合
     if (index != -1) {
-        currentWords.value.splice(0, 1);
+        currentWords.value.splice(index, 1);
         typeBoxValue.value = "";
         gameScore.value++;
         checkGameCompleted();
@@ -140,7 +151,8 @@ const wordsTopToBottom = (() => {
 
 /** 現在表示されているの単語の索引 */
 const currentWordIndex = ref(0);
-
+const addWordTimerId = ref<ReturnType<typeof setInterval> | null>(null);
+const moveWordTimerId = ref<ReturnType<typeof setInterval> | null>(null);
 /**  総単語数と入力完了した単語の数を比較判定する */
 const isAddedAllWords = (() => {
     return typingWords.value.length == currentWordIndex.value;
@@ -187,19 +199,27 @@ onMounted(() => {
     /** 単語をシャッフルする */
     shuffleWords();
 });
-
+onUnmounted(() => {
+  stopTimers();
+});
 /**  ボタンをクリックするとゲームがスタートする */
 watch(isGameStartedFlag, (newValue, _oldValue) => {
-    if (newValue) {
-        addWord();
-        setInterval(() => {
-            addWord();
-        }, configStore.getInsertionSpeed);
-        setInterval(() => {
-            wordsTopToBottom();
-            checkIsTopToBottom();
-        }, configStore.getAnimationSpeed);
-    }
+  if (newValue) {
+    stopTimers();
+
+    addWord();
+
+    addWordTimerId.value = setInterval(() => {
+      addWord();
+    }, configStore.getInsertionSpeed);
+
+    moveWordTimerId.value = setInterval(() => {
+      wordsTopToBottom();
+      checkIsTopToBottom();
+    }, configStore.getAnimationSpeed);
+  } else {
+    stopTimers();
+  }
 });
 
 /** 入力された単語をウォッチする */
