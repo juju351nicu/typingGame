@@ -105,7 +105,7 @@ export const useConfigStore = defineStore("config", {
     /**
      * 単語を表示するインターバルをクリアする
      */
-    clearInterval() : void {
+    resetIntervalSettings() : void {
       this.insertion = 0;
       this.animation = 0;
     },

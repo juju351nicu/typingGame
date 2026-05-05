@@ -63,7 +63,7 @@ const checkCharacter = ((typeBox: string) => {
 /** ゲームを終了する */
 const gameFinish = (() => {
     isGameOverFlag.value = true;
-    configStore.clearInterval;
+    configStore.resetIntervalSettings();
 });
 
 /** 出題された単語と入力した単語の値を比較判定する */
