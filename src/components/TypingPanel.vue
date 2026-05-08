@@ -74,7 +74,6 @@ const stopTimers = () => {
 const gameFinish = () => {
   isGameOverFlag.value = true;
   stopTimers();
-  configStore.resetIntervalSettings();
 };
 
 /** 出題された単語と入力した単語の値を比較判定する */
@@ -196,8 +195,11 @@ const addWord = (() => {
 });
 
 onMounted(() => {
-    /** 単語をシャッフルする */
-    shuffleWords();
+  shuffleWords();
+
+  if (configStore.getInsertionSpeed <= 0 || configStore.getAnimationSpeed <= 0) {
+    configStore.saveGameMode(configStore.getGameMode);
+  }
 });
 onUnmounted(() => {
   stopTimers();
@@ -206,7 +208,14 @@ onUnmounted(() => {
 watch(isGameStartedFlag, (newValue, _oldValue) => {
   if (newValue) {
     stopTimers();
+
+    // 難易度が未設定なら、デフォルトでEASYを設定
+    if (configStore.getInsertionSpeed <= 0 || configStore.getAnimationSpeed <= 0) {
+      configStore.saveGameMode(configStore.getGameMode);
+    }
+
     addWord();
+
     addWordTimerId.value = setInterval(() => {
       addWord();
     }, configStore.getInsertionSpeed);
@@ -231,12 +240,12 @@ watch(typeBoxValue, (newValue, _oldValue) => {
 
 /** リセットフラグをウォッチする */
 watch(isResetFlag, (newValue, _oldValue) => {
-    if (newValue) {
-        stopTimers();
-        currentWords.value = [];
-        currentWordIndex.value = 0;
-        shuffleWords();
-    }
+  if (newValue) {
+    stopTimers();
+    currentWords.value = [];
+    currentWordIndex.value = 0;
+    shuffleWords();
+  }
 });
 </script>
 <template>
