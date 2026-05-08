@@ -271,13 +271,57 @@ watch(isResetFlag, (newValue, _oldValue) => {
 }
 
 .word {
-    position: absolute;
-    padding: 0 1rem;
-    background-color: rgba(0, 0, 0, 0.75);
-    color: #ffffff;
-    border-radius: 1rem;
+  position: absolute;
+  min-width: 120px;
+  min-height: 80px;
+  padding: 1rem;
+  background: radial-gradient(circle at 30% 30%, #ffffff, #ff8fb1 35%, #ff4f8b 100%);
+  color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 110px;
+  min-height: 90px;
+  padding: 0.8rem 1rem;
+  border-radius: 55% 55% 50% 50%;
+  animation: balloonFloat 2s ease-in-out infinite;
 }
+.word::after {
+  content: "";
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 30px;
+  background: rgba(80, 80, 80, 0.7);
+}
+.word::before {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 10px;
+  background: #ff4f8b;
+  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+}
+@keyframes balloonFloat {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
 
+  50% {
+    transform: translateY(-4px) rotate(1deg);
+  }
+
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
 .word span {
     font-size: 2rem;
 }
