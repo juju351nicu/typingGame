@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted,onUnmounted ,ref, useTemplateRef, watch, computed } from "vue";
+import { computed, onMounted, onUnmounted ,ref, useTemplateRef, watch } from "vue";
 import { wordsData as WORD_DATAS } from "@/assets/words";
 import { useConfigStore } from "@/stores/config"
 import { currentWord } from "@/types/interfaces";
@@ -111,7 +111,7 @@ const wordsBoard = useTemplateRef("typing-panel");
  */
 const checkIsTopToBottom = (() => {
     let wordsBoardTop = wordsBoard.value?.offsetHeight;
-    currentWords.value.forEach((_: any, index: number) => {
+    currentWords.value.forEach((_, index: number) => {
         // 現在表示されている単語の縦幅を取得する。
         let wordPositionTop = getCurrentWordTop(index);
         // 現在表示されている単語と「typing-panel」要素の縦幅を比較する。
@@ -206,9 +206,7 @@ onUnmounted(() => {
 watch(isGameStartedFlag, (newValue, _oldValue) => {
   if (newValue) {
     stopTimers();
-
     addWord();
-
     addWordTimerId.value = setInterval(() => {
       addWord();
     }, configStore.getInsertionSpeed);
@@ -234,6 +232,7 @@ watch(typeBoxValue, (newValue, _oldValue) => {
 /** リセットフラグをウォッチする */
 watch(isResetFlag, (newValue, _oldValue) => {
     if (newValue) {
+        stopTimers();
         currentWords.value = [];
         currentWordIndex.value = 0;
         shuffleWords();
@@ -242,7 +241,7 @@ watch(isResetFlag, (newValue, _oldValue) => {
 </script>
 <template>
     <div class="words-board" ref="typing-panel">
-        <template v-for="word in currentWords">
+        <template v-for="(word, wordIndex) in currentWords" :key="wordIndex">
             <div class="word" :style="word.style">
                 <template v-for="(character, index) in word.characters">
                     <span :class="word.classList[index]">{{ character }} </span>
