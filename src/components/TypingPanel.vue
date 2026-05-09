@@ -138,15 +138,12 @@ const wordsBoard = useTemplateRef("typing-panel");
  * 「typing-panel」要素の縦幅を下回った場合、ゲームを終了する。
  */
 const checkIsTopToBottom = () => {
-  let wordsBoardTop = wordsBoard.value?.offsetHeight;
   currentWords.value.forEach((_: currentWord, index: number) => {
     // 現在表示されている単語の縦幅を取得する。
     let wordPositionTop = getCurrentWordTop(index);
     // 現在表示されている単語と「typing-panel」要素の縦幅を比較する。
-    if (wordsBoardTop !== undefined) {
-      if (wordPositionTop > wordsBoardTop) {
-        gameFinish();
-      }
+    if (wordPositionTop < -120) {
+      gameFinish();
     }
   });
 };
@@ -163,8 +160,8 @@ const getCurrentWordTop = (index: number) => {
  * 索引に該当する、単語の垂直位置を増加させる。
  * @param index 索引
  */
-const increasePositionTop = (index: number) => {
-  currentWords.value[index].style.top = `${getCurrentWordTop(index) + 1}px`;
+const decreasePositionTop = (index: number) => {
+  currentWords.value[index].style.top = `${getCurrentWordTop(index) - 1}px`;
 };
 
 /**
@@ -172,7 +169,7 @@ const increasePositionTop = (index: number) => {
  */
 const wordsTopToBottom = () => {
   currentWords.value.forEach((_: currentWord, index: number) => {
-    increasePositionTop(index);
+    decreasePositionTop(index);
   });
 };
 
@@ -196,7 +193,9 @@ const checkGameCompleted = () => {
 const getWordsBoardWidth = () => {
   return wordsBoard.value?.offsetWidth;
 };
-
+const getWordsBoardHeight = () => {
+  return wordsBoard.value?.offsetHeight;
+};
 /** 表示するタイピング単語の横位置を生成する */
 const getRandomPosition = () => {
   const boardWidth = getWordsBoardWidth();
@@ -216,7 +215,7 @@ const addWord = () => {
       balloonClass: getRandomBalloonColorClass(),
       style: {
         left: `${getRandomPosition()}px`,
-        top: "-30px",
+        top: `${getWordsBoardHeight() ?? 0}px`,
       },
     });
     currentWordIndex.value++;
