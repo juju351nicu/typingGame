@@ -8,12 +8,12 @@
     "url": "blog_store/posts/guide/setup-yor-own-blog.md"
   },
   {
-    "id": "post-with-a-simple-git-commit",
+    "id": "vue3-setinterval-multiple-start",
     "section": "guide",
     "date": "February 09, 2020",
-    "title": "Post with a simple GIT commit 🕶",
-    "description": "This tutorial is based on VSCode but any IDE with an integrated shell will do the job. This is me, writing this very line right now Public Dir Structure There is a few interesting things to notice in the image, take a second look. Basically every time you want to create a new post you will need to create a new-post-file.md file following a...",
-    "url": "blog_store/posts/guide/post-with-a-simple-git-commit.md"
+    "title": "Vue3 の setInterval 多重起動で単語が大量生成された話",
+    "description": "Vue3 + TypeScript でタイピングゲームを作成中に発生した、setInterval の多重起動バグについて原因と解決方法をまとめました。",
+    "url": "blog_store/posts/guide/vue3-setinterval-multiple-start.md"
   },
   {
     "id": "embed-youtube-video",

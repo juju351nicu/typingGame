@@ -1,13 +1,12 @@
 # Setup your own Blog in under 5 minutes
-#### February 11, 2020
 
+#### February 11, 2020
 
 > This tutorial assumes you have the following installed on your system:
 >
 > - An active [GitHub](https://github.com/) account
 > - [GIT](https://git-scm.com/)
 > - [NodeJS](https://nodejs.org/)
-
 
 ## 1.- Get your own repo
 
@@ -17,20 +16,17 @@ Login into your GitHub account and start a new repo.
 
 ![Public Dir Structure](blog_store/assets/step1-github.png)
 
-
 ## 2.- Configure your `.env` file
 
     BASE_URL=/<YOUR-REPO-NAME>/
 
     VUE_APP_POSTS_PER_PAGE=5
 
-
 ## 3.- Test locally
 
 Make sure your terminal is within your repos root folder and run `npm run setup`.
 
 Then do `npm run serve` and you should be able to access the site under [http://localhost:8080](http://localhost:8080)
-
 
 ## 4.- Deploy with GitHub Actions
 
@@ -61,10 +57,9 @@ Then do `npm run serve` and you should be able to access the site under [http://
 
 Your new blog should be available soon under https://<YOUR_GITHUB_USER>.github.io/<YOUR_REPO_NAME>/
 
-
 ## 5.- Next Steps
 
-- [Post with a simple commit from your favourite IDE 🕶](#/guide/post-with-a-simple-git-commit)
+- [Post with a simple commit from your favourite IDE 🕶](#/guide/vue3-setinterval-multiple-start)
 
 - Check the [features](#/features) list to see all the cool stuff you can do in your posts!
 
