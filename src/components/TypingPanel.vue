@@ -110,7 +110,7 @@ const wordsBoard = useTemplateRef("typing-panel");
  */
 const checkIsTopToBottom = (() => {
     let wordsBoardTop = wordsBoard.value?.offsetHeight;
-    currentWords.value.forEach((_, index: number) => {
+    currentWords.value.forEach((_: currentWord, index: number) => {
         // 現在表示されている単語の縦幅を取得する。
         let wordPositionTop = getCurrentWordTop(index);
         // 現在表示されている単語と「typing-panel」要素の縦幅を比較する。
@@ -143,7 +143,7 @@ const increasePositionTop = ((index: number) => {
  * 現在表示している各単語の単語の垂直位置を増加させる。
  */
 const wordsTopToBottom = (() => {
-    currentWords.value.forEach((_: any, index: number) => {
+    currentWords.value.forEach((_: currentWord, index: number) => {
         increasePositionTop(index);
     });
 });
@@ -272,32 +272,37 @@ watch(isResetFlag, (newValue, _oldValue) => {
 
 .word {
   position: absolute;
-  min-width: 120px;
-  min-height: 80px;
-  padding: 1rem;
-  background: radial-gradient(circle at 30% 30%, #ffffff, #ff8fb1 35%, #ff4f8b 100%);
+
+  min-width: 95px;
+  min-height: 120px;
+  padding: 0.5rem 1rem;
+
+  background: #ff3b5c;
   color: #ffffff;
-  border-radius: 50%;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+
+  border-radius: 50% 50% 48% 48%;
+
+  box-shadow:
+    inset -8px -10px 0 rgba(0, 0, 0, 0.15),
+    0 8px 14px rgba(0, 0, 0, 0.2);
+
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 110px;
-  min-height: 90px;
-  padding: 0.8rem 1rem;
-  border-radius: 55% 55% 50% 50%;
-  animation: balloonFloat 2s ease-in-out infinite;
+
+  font-weight: bold;
 }
 .word::after {
   content: "";
   position: absolute;
-  bottom: -28px;
+  bottom: -75px;
   left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 30px;
-  background: rgba(80, 80, 80, 0.7);
+  transform: translateX(-50%) rotate(4deg);
+  width: 3px;
+  height: 80px;
+  background: rgba(120, 120, 120, 0.8);
 }
+
 .word::before {
   content: "";
   position: absolute;
@@ -323,7 +328,7 @@ watch(isResetFlag, (newValue, _oldValue) => {
   }
 }
 .word span {
-    font-size: 2rem;
+    font-size: 1.7rem;
 }
 
 .correct {

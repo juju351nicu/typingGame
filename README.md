@@ -9,7 +9,7 @@ Vue3 + TypeScriptで作成したタイピングゲームです。
 ---
 ## スクリーンショット
 
-![ゲーム画面](./docs/images/game.png)
+![ゲーム画面](./public/images/typing-baloon-demo.png)
 
 ## デモ
 
@@ -43,10 +43,10 @@ Vue3 + TypeScriptで作成したタイピングゲームです。
 
 * Piniaを使い、ゲーム設定とスコアを一元管理
 * localStorageを利用してスコアを永続化
-* setIntervalの多重起動を防止し、安定したゲーム動作を実現
+* setIntervalのタイマーIDを管理し、多重起動バグを防止
 * コンポーネント分割により、保守性を向上（Game / Score / Config）
 * Vitestを導入し、ユーティリティ関数のテストを実装
-* setIntervalのタイマーIDを管理し、多重起動バグを防止
+* CSSを工夫し、風船UIでゲームらしい演出を実装
 ---
 
 ## 苦労した点
