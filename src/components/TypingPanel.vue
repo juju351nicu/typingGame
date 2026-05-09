@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted ,ref, useTemplateRef, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, useTemplateRef, watch } from "vue";
 import { wordsData as WORD_DATAS } from "@/assets/words";
 import { useConfigStore } from "@/stores/config"
 import { currentWord } from "@/types/interfaces";
@@ -59,21 +59,27 @@ const checkCharacter = ((typeBox: string) => {
         });
     });
 });
-const stopTimers = () => {
-  if (addWordTimerId.value !== null) {
-    clearInterval(addWordTimerId.value);
-    addWordTimerId.value = null;
-  }
+const balloonColorClasses = ["balloon-red", "balloon-blue", "balloon-green", "balloon-yellow", "balloon-purple"];
 
-  if (moveWordTimerId.value !== null) {
-    clearInterval(moveWordTimerId.value);
-    moveWordTimerId.value = null;
-  }
+const getRandomBalloonColorClass = (): string => {
+    const index = Math.floor(Math.random() * balloonColorClasses.length);
+    return balloonColorClasses[index];
+};
+const stopTimers = () => {
+    if (addWordTimerId.value !== null) {
+        clearInterval(addWordTimerId.value);
+        addWordTimerId.value = null;
+    }
+
+    if (moveWordTimerId.value !== null) {
+        clearInterval(moveWordTimerId.value);
+        moveWordTimerId.value = null;
+    }
 };
 /** ゲームを終了する */
 const gameFinish = () => {
-  isGameOverFlag.value = true;
-  stopTimers();
+    isGameOverFlag.value = true;
+    stopTimers();
 };
 
 /** 出題された単語と入力した単語の値を比較判定する */
@@ -185,6 +191,7 @@ const addWord = (() => {
         currentWords.value.push({
             characters: typingWords.value[currentWordIndex.value].split(""),
             classList: [],
+            balloonClass: getRandomBalloonColorClass(),
             style: {
                 left: `${getRandomPosition()}px`,
                 top: "-30px",
@@ -195,38 +202,38 @@ const addWord = (() => {
 });
 
 onMounted(() => {
-  shuffleWords();
+    shuffleWords();
 
-  if (configStore.getInsertionSpeed <= 0 || configStore.getAnimationSpeed <= 0) {
-    configStore.saveGameMode(configStore.getGameMode);
-  }
+    if (configStore.getInsertionSpeed <= 0 || configStore.getAnimationSpeed <= 0) {
+        configStore.saveGameMode(configStore.getGameMode);
+    }
 });
 onUnmounted(() => {
-  stopTimers();
+    stopTimers();
 });
 /**  ボタンをクリックするとゲームがスタートする */
 watch(isGameStartedFlag, (newValue, _oldValue) => {
-  if (newValue) {
-    stopTimers();
+    if (newValue) {
+        stopTimers();
 
-    // 難易度が未設定なら、デフォルトでEASYを設定
-    if (configStore.getInsertionSpeed <= 0 || configStore.getAnimationSpeed <= 0) {
-      configStore.saveGameMode(configStore.getGameMode);
+        // 難易度が未設定なら、デフォルトでEASYを設定
+        if (configStore.getInsertionSpeed <= 0 || configStore.getAnimationSpeed <= 0) {
+            configStore.saveGameMode(configStore.getGameMode);
+        }
+
+        addWord();
+
+        addWordTimerId.value = setInterval(() => {
+            addWord();
+        }, configStore.getInsertionSpeed);
+
+        moveWordTimerId.value = setInterval(() => {
+            wordsTopToBottom();
+            checkIsTopToBottom();
+        }, configStore.getAnimationSpeed);
+    } else {
+        stopTimers();
     }
-
-    addWord();
-
-    addWordTimerId.value = setInterval(() => {
-      addWord();
-    }, configStore.getInsertionSpeed);
-
-    moveWordTimerId.value = setInterval(() => {
-      wordsTopToBottom();
-      checkIsTopToBottom();
-    }, configStore.getAnimationSpeed);
-  } else {
-    stopTimers();
-  }
 });
 
 /** 入力された単語をウォッチする */
@@ -240,18 +247,18 @@ watch(typeBoxValue, (newValue, _oldValue) => {
 
 /** リセットフラグをウォッチする */
 watch(isResetFlag, (newValue, _oldValue) => {
-  if (newValue) {
-    stopTimers();
-    currentWords.value = [];
-    currentWordIndex.value = 0;
-    shuffleWords();
-  }
+    if (newValue) {
+        stopTimers();
+        currentWords.value = [];
+        currentWordIndex.value = 0;
+        shuffleWords();
+    }
 });
 </script>
 <template>
     <div class="words-board" ref="typing-panel">
         <template v-for="(word, wordIndex) in currentWords" :key="wordIndex">
-            <div class="word" :style="word.style">
+                <div class="word" :class="word.balloonClass" :style="word.style">
                 <template v-for="(character, index) in word.characters">
                     <span :class="word.classList[index]">{{ character }} </span>
                 </template>
@@ -271,66 +278,87 @@ watch(isResetFlag, (newValue, _oldValue) => {
 }
 
 .word {
-  position: absolute;
+    position: absolute;
 
-  min-width: 95px;
-  min-height: 120px;
-  padding: 0.5rem 1rem;
+    min-width: 95px;
+    min-height: 120px;
+    padding: 0.5rem 1rem;
 
-  background: #ff3b5c;
-  color: #ffffff;
+    background: #ff3b5c;
+    color: #ffffff;
 
-  border-radius: 50% 50% 48% 48%;
+    border-radius: 50% 50% 48% 48%;
 
-  box-shadow:
-    inset -8px -10px 0 rgba(0, 0, 0, 0.15),
-    0 8px 14px rgba(0, 0, 0, 0.2);
+    box-shadow:
+        inset -8px -10px 0 rgba(0, 0, 0, 0.15),
+        0 8px 14px rgba(0, 0, 0, 0.2);
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  font-weight: bold;
+    font-weight: bold;
 }
+
 .word::after {
-  content: "";
-  position: absolute;
-  bottom: -75px;
-  left: 50%;
-  transform: translateX(-50%) rotate(4deg);
-  width: 3px;
-  height: 80px;
-  background: rgba(120, 120, 120, 0.8);
+    content: "";
+    position: absolute;
+    bottom: -75px;
+    left: 50%;
+    transform: translateX(-50%) rotate(4deg);
+    width: 3px;
+    height: 80px;
+    background: rgba(120, 120, 120, 0.8);
 }
 
 .word::before {
-  content: "";
-  position: absolute;
-  bottom: -7px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 12px;
-  height: 10px;
-  background: #ff4f8b;
-  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+    content: "";
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 10px;
+    background: #ff4f8b;
+    clip-path: polygon(50% 0, 0 100%, 100% 100%);
 }
+
 @keyframes balloonFloat {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-  }
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
 
-  50% {
-    transform: translateY(-4px) rotate(1deg);
-  }
+    50% {
+        transform: translateY(-4px) rotate(1deg);
+    }
 
-  100% {
-    transform: translateY(0px) rotate(0deg);
-  }
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
 }
+
 .word span {
     font-size: 1.7rem;
 }
+.balloon-red {
+  background: #ff3b5c;
+}
 
+.balloon-blue {
+  background: #4dabf7;
+}
+
+.balloon-green {
+  background: #2ee889;
+}
+
+.balloon-yellow {
+  background: #ffd43b;
+}
+
+.balloon-purple {
+  background: #b197fc;
+}
 .correct {
     color: #00FF00;
 }

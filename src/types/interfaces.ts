@@ -42,4 +42,5 @@ export interface currentWord {
   characters: string[];
   classList: string[];
   style: any;
+  balloonClass: string;
 }
