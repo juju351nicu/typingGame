@@ -307,23 +307,18 @@ watch(isResetFlag, (newValue, _oldValue) => {
 
 .word {
   position: absolute;
-
+  animation: balloonFloat 2s ease-in-out infinite;
   min-width: 95px;
   min-height: 120px;
   padding: 0.5rem 1rem;
-
   background: #ff3b5c;
   color: #ffffff;
-
   border-radius: 50% 50% 48% 48%;
-
   box-shadow: inset -8px -10px 0 rgba(0, 0, 0, 0.15),
     0 8px 14px rgba(0, 0, 0, 0.2);
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   font-weight: bold;
 }
 

@@ -4,8 +4,8 @@ import Util from "@/utils/util";
 import { GameScore } from "@/types/interfaces";
 /** Propsインタフェース定義 */
 interface Props {
-  isGameOver: boolean,
-  lastScore: GameScore,
+  isGameOver: boolean;
+  lastScore: GameScore;
 }
 
 /** Propsオブジェクトの設定 */
@@ -26,15 +26,16 @@ const lastScore = computed((): GameScore => {
 const dialog = ref(false);
 
 /** ゲームを再スタートする */
-const reStartGame = (() => {
+const reStartGame = () => {
   emit("restart-game");
   dialog.value = false;
-});
+};
 
 /** ゲームが終了した際に表示するメッセージ */
 const scoreMessage = computed((): string => {
-  return `正解の単語数は ${lastScore.value.score} になります。また、 ${lastScore.value.time
-    } になります。 ${Util.getLevel(lastScore.value.mode)} モード.`;
+  return `正解の単語数は ${lastScore.value.score} になります。また、 ${
+    lastScore.value.time
+  } になります。 ${Util.getLevel(lastScore.value.mode)} モード.`;
 });
 
 /** ゲームオーバーフラグをウォッチにて判定する */
@@ -60,9 +61,7 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="success" @click="reStartGame">
-            再スタート
-          </v-btn>
+          <v-btn color="success" @click="reStartGame"> 再スタート </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

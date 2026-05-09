@@ -100,8 +100,12 @@ const toNumberPage = (pageNumber: number) => {
   <div v-if="totalCount > 0">
     <div v-if="showPaging && totalCount > 0">
       <div class="text-center">
-        <v-pagination :model-value="currentPage" :length="totalPages" color="indigo-darken-3"
-          @update:model-value="toNumberPage"></v-pagination>
+        <v-pagination
+          :model-value="currentPage"
+          :length="totalPages"
+          color="indigo-darken-3"
+          @update:model-value="toNumberPage"
+        ></v-pagination>
       </div>
     </div>
   </div>

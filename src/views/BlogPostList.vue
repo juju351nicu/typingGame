@@ -3,7 +3,7 @@ import Loading from "@/components/Loading.vue";
 import BlogPagingList from "@/components/BlogPagingList.vue";
 import { computed, onBeforeMount, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useBlogPostsStore } from "@/stores/blogPosts"
+import { useBlogPostsStore } from "@/stores/blogPosts";
 import { PostIndex } from "@/types/interfaces";
 
 const router = useRouter();
@@ -28,10 +28,10 @@ const isLoading = computed((): boolean => {
 const currentPage = ref<number>(1);
 
 /**
-* 記事の詳細ページに遷移する
-* @param section
-* @param id
-*/
+ * 記事の詳細ページに遷移する
+ * @param section
+ * @param id
+ */
 const doPostDetail = (section: string, id: string): void => {
   blogPostsStore.savePrevPageNo(currentPage.value);
   router.push({ name: "BlogPost", params: { section: section, id: id } });
@@ -51,7 +51,7 @@ onBeforeMount(async () => {
   const queryName = route.query.pageNumber;
   if (queryName !== null && queryName !== undefined) {
     currentPage.value = Number(queryName);
-    console.info('ここを通りました。' + route.query.pageNumber)
+    console.info("ここを通りました。" + route.query.pageNumber);
   }
   await blogPostsStore.recievePostIndex();
   pageStatus.value = blogPostsStore.getPostRageByPage(currentPage.value);
@@ -59,7 +59,13 @@ onBeforeMount(async () => {
 });
 </script>
 <template>
-  <BlogPagingList v-if="!isLoading" :pageStatus="pageStatus" :pageCounts="pageCounts" :currentPage="currentPage"
-    @doPostDetail="doPostDetail" @toNumberPage="searchPaging" />
-  <Loading :isLoading="isLoading"/>
+  <BlogPagingList
+    v-if="!isLoading"
+    :pageStatus="pageStatus"
+    :pageCounts="pageCounts"
+    :currentPage="currentPage"
+    @doPostDetail="doPostDetail"
+    @toNumberPage="searchPaging"
+  />
+  <Loading :isLoading="isLoading" />
 </template>

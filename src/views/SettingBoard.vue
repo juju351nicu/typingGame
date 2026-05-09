@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Alerts from "@/components/Alerts.vue";
-import VirtualKeyBoard from "@/components/VirtualKeyBoard.vue"
-import { ref } from 'vue'
+import VirtualKeyBoard from "@/components/VirtualKeyBoard.vue";
+import { ref } from "vue";
 import { useGameScoresStore } from "@/stores/gameScores";
-import { useConfigStore } from "@/stores/config"
-import { useTheme } from 'vuetify';
+import { useConfigStore } from "@/stores/config";
+import { useTheme } from "vuetify";
 import Const from "@/constants/const";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
@@ -36,15 +36,15 @@ const changeTheme = (): void => {
   }
   // lightモード / darkモードの選択状態をストアに記録
   configStore.saveDisplayMode(isDarkMode.value);
-}
+};
 
 /**
  * ゲームの難易度設定する
  * @param mode 難易度
  */
-const setGameMode = ((mode: number) => {
+const setGameMode = (mode: number) => {
   configStore.saveGameMode(mode);
-});
+};
 
 /** 仮想キーボードの表示有無 */
 const isVirtualKeyBoard = ref(configStore.getIsVirtualKeyBoard);
@@ -53,20 +53,22 @@ const isVirtualKeyBoard = ref(configStore.getIsVirtualKeyBoard);
  */
 const changeVirtualKeyBoard = () => {
   configStore.saveIsVertualKeyBoard(isVirtualKeyBoard.value);
-}
+};
 /** アラートに表示するメッセージ */
 const alerts = ref<any[]>([]);
 const isAlert = ref(false);
 /** ゲームのデータを初期化する */
-const resetModalData = (() => {
-  // ローカルストレージのゲームのスコアを削除する 
+const resetModalData = () => {
+  // ローカルストレージのゲームのスコアを削除する
   gameScoresStore.$reset();
   // OptionAPIの時は$reset()有効
   configStore.$reset();
-  alerts.value.push({ message: "初期化しました。", type: Const.ALERT_TYPE.SUCCESS });
+  alerts.value.push({
+    message: "初期化しました。",
+    type: Const.ALERT_TYPE.SUCCESS,
+  });
   isAlert.value = true;
-});
-
+};
 </script>
 <template>
   <v-container>
@@ -75,26 +77,56 @@ const resetModalData = (() => {
       <v-col class="pa-2 ma-2">
         <!-- dark theme switch -->
         <span>ダークモード</span>
-        <v-switch v-model="isDarkMode" @change="changeTheme"
-          :prepend-icon="isDarkMode ? 'mdi-weather-night' : 'mdi-weather-sunny'" hide-details inset class="mr-auto" />
+        <v-switch
+          v-model="isDarkMode"
+          @change="changeTheme"
+          :prepend-icon="isDarkMode ? 'mdi-weather-night' : 'mdi-weather-sunny'"
+          hide-details
+          inset
+          class="mr-auto"
+        />
       </v-col>
       <v-col class="pa-2 ma-2">
         <span>難易度</span>
-        <v-select v-model="selectedOption" :items="options" :item-title="options.title" :item-value="options.value"
-          label="Game Mode" @update:modelValue="setGameMode" />
+        <v-select
+          v-model="selectedOption"
+          :items="options"
+          :item-title="options.title"
+          :item-value="options.value"
+          label="Game Mode"
+          @update:modelValue="setGameMode"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="6">
         <span>仮想キーボード</span>
         <div class="d-flex">
-          <span class="keyBoard__left__label"
-            :class="!isVirtualKeyBoard ? 'purple--text text--darken-2 font-weight-bold' : 'grey--text'">OFF
+          <span
+            class="keyBoard__left__label"
+            :class="
+              !isVirtualKeyBoard
+                ? 'purple--text text--darken-2 font-weight-bold'
+                : 'grey--text'
+            "
+            >OFF
           </span>
-          <v-switch v-model="isVirtualKeyBoard" @change="changeVirtualKeyBoard" color="primary darken-2" hide-details
-            class="mt-n1 keyBoard__switch__button" inset />
-          <span class="keyBoard__right__label"
-            :class="isVirtualKeyBoard ? 'blue--text text--darken-2 font-weight-bold' : 'grey--text'">
+          <v-switch
+            v-model="isVirtualKeyBoard"
+            @change="changeVirtualKeyBoard"
+            color="primary darken-2"
+            hide-details
+            class="mt-n1 keyBoard__switch__button"
+            inset
+          />
+          <span
+            class="keyBoard__right__label"
+            :class="
+              isVirtualKeyBoard
+                ? 'blue--text text--darken-2 font-weight-bold'
+                : 'grey--text'
+            "
+          >
             ON
           </span>
         </div>

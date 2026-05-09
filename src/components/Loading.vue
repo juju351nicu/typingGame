@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 /** Propsインタフェース定義 */
 interface Props {
   isLoading: boolean;
@@ -15,8 +15,17 @@ const isLoading = computed((): boolean => {
 </script>
 <template>
   <div class="text-center">
-    <v-overlay class="align-center justify-center" :model-value="isLoading" :opacity="0.8">
-      <v-progress-circular :size="70" :width="8" color="deep-purple" indeterminate></v-progress-circular>
+    <v-overlay
+      class="align-center justify-center"
+      :model-value="isLoading"
+      :opacity="0.8"
+    >
+      <v-progress-circular
+        :size="70"
+        :width="8"
+        color="deep-purple"
+        indeterminate
+      ></v-progress-circular>
     </v-overlay>
   </div>
 </template>

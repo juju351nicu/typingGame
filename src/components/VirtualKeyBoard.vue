@@ -8,7 +8,7 @@ let keyboard: Keyboard | null = null;
 
 /**
  * 仮想キーボードの内容を更新
- * @param inputVal 
+ * @param inputVal
  */
 const onChange = (inputVal: string) => {
   input.value = inputVal;
@@ -16,7 +16,7 @@ const onChange = (inputVal: string) => {
 
 /**
  * 仮想キーボードの入力を処理
- * @param button 
+ * @param button
  */
 const onKeyPress = (button: string) => {
   console.log("Button pressed", button);
@@ -24,7 +24,7 @@ const onKeyPress = (button: string) => {
 
 /**
  * リアルタイム入力に対応
- * @param event 
+ * @param event
  */
 const onInputChange = (event: Event) => {
   //  targetをHTMLInputElementにキャストしてvalueを取得
@@ -41,15 +41,20 @@ onMounted(() => {
     onKeyPress: onKeyPress,
     physicalKeyboardHighlight: true,
     physicalKeyboardHighlightPress: true,
-    physicalKeyboardHighlightTextColor: 'red',
-    physicalKeyboardHighlightBgColor: 'yellow'
+    physicalKeyboardHighlightTextColor: "red",
+    physicalKeyboardHighlightBgColor: "yellow",
   });
 });
 </script>
 <template>
   <div>
     <!-- 入力フィールド -->
-    <input :value="input" class="input" @input="onInputChange" placeholder="タップして入力" />
+    <input
+      :value="input"
+      class="input"
+      @input="onInputChange"
+      placeholder="タップして入力"
+    />
     <!-- 仮想キーボード表示エリア -->
     <div class="simple-keyboard"></div>
   </div>

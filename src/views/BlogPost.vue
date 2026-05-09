@@ -2,11 +2,11 @@
 import Loading from "@/components/Loading.vue";
 import { computed, onBeforeMount, onUnmounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
-import { useBlogPostsStore } from "@/stores/blogPosts"
+import { useBlogPostsStore } from "@/stores/blogPosts";
 import MarkdownIt from "markdown-it";
-import { sanitize } from '@markdown-design/markdown-it-sanitize';
-import hljs from 'highlight.js'
-import 'highlight.js/styles/github-dark.min.css'
+import { sanitize } from "@markdown-design/markdown-it-sanitize";
+import hljs from "highlight.js";
+import "highlight.js/styles/github-dark.min.css";
 
 /** Propsインタフェース定義 */
 interface Props {
@@ -31,7 +31,10 @@ const isLoading = computed((): boolean => {
  * ブログ記事一覧ページに戻る
  */
 const goBlogList = () => {
-  router.push({ path: "/blogPostList", query: { pageNumber: blogPostsStore.getPrevPageNo } });
+  router.push({
+    path: "/blogPostList",
+    query: { pageNumber: blogPostsStore.getPrevPageNo },
+  });
 };
 /** Htmlに表示するマークダウン情報 */
 const postHtml = ref();
@@ -40,27 +43,27 @@ const markDownIt: MarkdownIt = new MarkdownIt({
   highlight: (str: string, lang: string) => {
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return hljs.highlight(str, { language: lang }).value
+        return hljs.highlight(str, { language: lang }).value;
         // return '<pre class="hljs"><code>' + hljs.highlight(str, { language: lang, ignoreIllegals: true }).value + '</code></pre>'
         /* c8 ignore start */
-      } catch (__) { }
+      } catch (__) {}
     }
-    return ''
+    return "";
     // return '<pre class="hljs"><code>' + markDownIt.utils.escapeHtml(str) + '</code></pre>'
     /* c8 ignore stop */
-  }
+  },
 });
 markDownIt.use(sanitize, {
-  ADD_TAGS: ['iframe'],
+  ADD_TAGS: ["iframe"],
   ADD_ATTR: [
-    'allow',
-    'allowfullscreen',
-    'frameborder',
-    'scrolling',
-    'src',
-    'width',
-    'height',
-    'style' //必要に応じて
+    "allow",
+    "allowfullscreen",
+    "frameborder",
+    "scrolling",
+    "src",
+    "width",
+    "height",
+    "style", //必要に応じて
   ],
 });
 
@@ -72,7 +75,7 @@ onBeforeRouteUpdate(async () => {
 /** Htmlに表示するマークダウン情報をセットする。 */
 onBeforeMount(async () => {
   document.title = "ブログ記事";
-  await blogPostsStore.recieveBlogPost(props.section, props.id)
+  await blogPostsStore.recieveBlogPost(props.section, props.id);
   postHtml.value = markDownIt.render(blogPostsStore.getPostHtml);
 });
 onUnmounted(() => {
@@ -81,10 +84,14 @@ onUnmounted(() => {
 </script>
 <template>
   <v-container style="background-color: white">
-    <div class="markdown-body" :style="`background-color: 'blue' ; color: 'white';`" v-html="postHtml" />
+    <div
+      class="markdown-body"
+      :style="`background-color: 'blue' ; color: 'white';`"
+      v-html="postHtml"
+    />
     <v-btn @click="goBlogList()"> 一覧ページに戻る </v-btn>
   </v-container>
-  <Loading :isLoading="isLoading"/>
+  <Loading :isLoading="isLoading" />
 </template>
 <style scoped>
 /* NOTE: VuetifyのCSS Resetで崩れる＋調整の為 */
@@ -164,7 +171,7 @@ div :deep(th) {
   border-bottom: 2px solid rgb(#ddd);
 }
 
-div :deep(tr:nth-child(odd)>td) {
+div :deep(tr:nth-child(odd) > td) {
   background-color: rgb(#f9f9f9);
 }
 
@@ -172,7 +179,6 @@ div :deep(td) {
   padding: 8px;
   border-top: 1px solid rgb(#ddd);
 }
-
 
 div :deep(img) {
   max-width: 35%;

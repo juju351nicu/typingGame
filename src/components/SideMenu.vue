@@ -7,25 +7,25 @@ const emit = defineEmits(["update:drawer"]);
 /** サイドメニューフラグ */
 const drawer = computed({
   get: (): boolean => props.drawer,
-  set: (value: boolean) => emit("update:drawer", value)
+  set: (value: boolean) => emit("update:drawer", value),
 });
 
 /** サイドメニュー */
 const links = ref([
   {
-    href: '/',
-    title: 'ダッシュボード',
-    icon: 'mdi-home',
+    href: "/",
+    title: "ダッシュボード",
+    icon: "mdi-home",
   },
   {
-    href: '/scoresBoard',
-    title: 'スコア一覧',
-    icon: 'mdi-account',
+    href: "/scoresBoard",
+    title: "スコア一覧",
+    icon: "mdi-account",
   },
   {
-    href: '/settingBoard',
-    title: '設定画面',
-    icon: 'mdi-cog-outline',
+    href: "/settingBoard",
+    title: "設定画面",
+    icon: "mdi-cog-outline",
   },
 ]);
 </script>

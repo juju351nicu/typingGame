@@ -14,27 +14,32 @@ const pages = Const.DATA_TABLE_PAGES;
 const headers = Const.OPTIONS_OF_HEADERS;
 
 /** スコアのスコアを日付降順に取得する */
-const reverseGameScoresByDate = ((gameScores: GameScore[]) => {
-    return gameScores.sort(
-        (a, b) => b.date.localeCompare(a.date));
-});
+const reverseGameScoresByDate = (gameScores: GameScore[]) => {
+  return gameScores.sort((a, b) => b.date.localeCompare(a.date));
+};
 
 const items = ref<GameScore[]>([]);
 /** 現在のゲーム難易度に該当するゲームスコアリストを取得する */
 onMounted(() => {
-    items.value = reverseGameScoresByDate(gameScoresStore.getGameScoreList);
+  items.value = reverseGameScoresByDate(gameScoresStore.getGameScoreList);
 });
 </script>
 <template>
-    <v-container>
-        <p class="text-h3">スコア表</p>
-        <v-data-table v-model:items-per-page="itemsPerPage" :headers="headers" :items="items"
-            :items-per-page-options="pages" items-per-page-text="表示行数" class="elevation-1">
-            <template v-slot:item.mode="{ value }">
-                <v-chip :color="Util.getColor(value)">
-                    {{ Util.getLevel(value) }}
-                </v-chip>
-            </template>
-        </v-data-table>
-    </v-container>
+  <v-container>
+    <p class="text-h3">スコア表</p>
+    <v-data-table
+      v-model:items-per-page="itemsPerPage"
+      :headers="headers"
+      :items="items"
+      :items-per-page-options="pages"
+      items-per-page-text="表示行数"
+      class="elevation-1"
+    >
+      <template v-slot:item.mode="{ value }">
+        <v-chip :color="Util.getColor(value)">
+          {{ Util.getLevel(value) }}
+        </v-chip>
+      </template>
+    </v-data-table>
+  </v-container>
 </template>
