@@ -14,7 +14,7 @@ Vue3 + TypeScript で作成したタイピングゲームです。
 
 ## デモ
 
-※GitHub Pages URL をここに貼る
+https://juju351nicu.github.io/typingGame/
 
 ---
 

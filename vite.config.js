@@ -3,7 +3,8 @@ import vue from "@vitejs/plugin-vue";
 import vuetify from "vite-plugin-vuetify";
 import { fileURLToPath, URL } from "node:url";
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  base: command === "build" ? "/typingGame/" : "/",
   server: {
     host: true,
     port: "8081",
@@ -14,4 +15,4 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-});
+}));
