@@ -13,17 +13,17 @@ const drawer = computed({
 /** サイドメニュー */
 const links = ref([
   {
-    href: "/",
+    to: { name: "DashBoard" },
     title: "ダッシュボード",
     icon: "mdi-home",
   },
   {
-    href: "/scoresBoard",
+    to: { name: "ScoresBoard" },
     title: "スコア一覧",
     icon: "mdi-account",
   },
   {
-    href: "/settingBoard",
+    to: { name: "SettingBoard" },
     title: "設定画面",
     icon: "mdi-cog-outline",
   },
@@ -32,7 +32,7 @@ const links = ref([
 <template>
   <v-navigation-drawer v-model="drawer" temporary>
     <v-list v-for="link in links" :key="link.title" variant="plain">
-      <v-list-item :href="link.href">
+      <v-list-item :to="link.to">
         <template v-slot:prepend>
           <v-icon>{{ link.icon }}</v-icon>
         </template>

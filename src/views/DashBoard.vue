@@ -104,7 +104,7 @@ watch(isGameOver, (newValue, _oldValue) => {
   if (newValue) {
     saveGameScores();
     // 子コンポーネントのメソッドを呼び出す
-    timerComponent.value.stopTimer();
+    timerComponent.value?.stopTimer?.();
     setTimeout(() => {
       setModalDisplay();
     }, 500);
@@ -113,7 +113,7 @@ watch(isGameOver, (newValue, _oldValue) => {
 
 const clickChildButton = () => {
   // 子コンポーネントのメソッドを呼び出す
-  timerComponent.value.stopTimer();
+  timerComponent.value?.stopTimer?.();
 };
 const handleEscape = () => {
   console.log("子コンポーネントのメソッドを呼び出す");
@@ -126,8 +126,8 @@ const handleEsc = (event: any) => {
   }
 };
 const handleShift = (event: any) => {
-  if (event.key === "Shift") {
-    timerComponent.value.startTimer();
+  if (event.key === "Shift" && isGameStarted.value) {
+    timerComponent.value?.startTimer?.();
   }
 };
 onMounted(() => {
