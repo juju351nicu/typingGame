@@ -4,7 +4,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 /** メニュータイトル */
-const title = "タイピングゲーム";
+const title = "Balloon Typing Game";
 /**
  * ブログ記事一覧ページに戻る
  */

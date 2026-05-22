@@ -34,7 +34,7 @@ onMounted(() => {
       <section>
         <h4>提供するコンテンツ</h4>
         <p>
-          <span>特徴1: Vue.jsを使用したタイピングゲームの作成</span><br />
+          <span>特徴1: Vue.jsを使用した Balloon Typing Game の作成</span><br />
           <span>特徴2: おすすめのツール・サービスの紹介</span><br />
           <span>特徴3: 最新のWEBトレンド情報の紹介</span><br />
         </p>
