@@ -43,4 +43,5 @@ export interface currentWord {
   classList: string[];
   style: any;
   balloonClass: string;
+  isBursting?: boolean;
 }

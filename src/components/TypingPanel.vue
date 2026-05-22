@@ -83,6 +83,7 @@ const balloonColorClasses = [
   "balloon-yellow",
   "balloon-purple",
 ];
+const BURST_ANIMATION_DURATION = 200;
 
 const getRandomBalloonColorClass = (): string => {
   const index = Math.floor(Math.random() * balloonColorClasses.length);
@@ -98,6 +99,9 @@ const stopTimers = () => {
     clearInterval(moveWordTimerId.value);
     moveWordTimerId.value = null;
   }
+
+  burstTimerIds.value.forEach((timerId) => clearTimeout(timerId));
+  burstTimerIds.value = [];
 };
 /** ゲームを終了する */
 const gameFinish = () => {
@@ -108,14 +112,25 @@ const gameFinish = () => {
 /** 出題された単語と入力した単語の値を比較判定する */
 const checkWordEquality = (word: string) => {
   const index = currentWords.value.findIndex(
-    (item: currentWord) => item.characters.join("") == word
+    (item: currentWord) => !item.isBursting && item.characters.join("") == word
   );
   //一致した場合
   if (index != -1) {
-    currentWords.value.splice(index, 1);
+    const targetWord = currentWords.value[index];
+    targetWord.isBursting = true;
     typeBoxValue.value = "";
     gameScore.value++;
-    checkGameCompleted();
+    const timerId = setTimeout(() => {
+      const currentIndex = currentWords.value.findIndex(
+        (item) => item === targetWord
+      );
+      if (currentIndex !== -1) {
+        currentWords.value.splice(currentIndex, 1);
+      }
+      burstTimerIds.value = burstTimerIds.value.filter((id) => id !== timerId);
+      checkGameCompleted();
+    }, BURST_ANIMATION_DURATION);
+    burstTimerIds.value.push(timerId);
   }
 };
 
@@ -177,6 +192,7 @@ const wordsTopToBottom = () => {
 const currentWordIndex = ref(0);
 const addWordTimerId = ref<ReturnType<typeof setInterval> | null>(null);
 const moveWordTimerId = ref<ReturnType<typeof setInterval> | null>(null);
+const burstTimerIds = ref<ReturnType<typeof setTimeout>[]>([]);
 /**  総単語数と入力完了した単語の数を比較判定する */
 const isAddedAllWords = () => {
   return typingWords.value.length == currentWordIndex.value;
@@ -285,7 +301,11 @@ watch(isResetFlag, (newValue, _oldValue) => {
 <template>
   <div class="words-board" ref="typing-panel">
     <template v-for="(word, wordIndex) in currentWords" :key="wordIndex">
-      <div class="word" :class="word.balloonClass" :style="word.style">
+      <div
+        class="word"
+        :class="[word.balloonClass, { 'word-burst': word.isBursting }]"
+        :style="word.style"
+      >
         <template v-for="(character, index) in word.characters">
           <span :class="word.classList[index]">{{ character }} </span>
         </template>
@@ -355,6 +375,76 @@ watch(isResetFlag, (newValue, _oldValue) => {
 
   100% {
     transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes balloonBurst {
+  0% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1);
+  }
+
+  55% {
+    opacity: 1;
+    transform: scale(1.22) rotate(-2deg);
+    filter: brightness(1.35);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.2) rotate(10deg);
+    filter: brightness(1.5);
+  }
+}
+
+.word-burst {
+  animation: balloonBurst 200ms ease-out forwards;
+}
+
+.word-burst span {
+  opacity: 0;
+}
+
+.word-burst::before,
+.word-burst::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 3px, transparent 4px)
+      10px 18px / 42px 42px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.8) 0 2px, transparent 3px)
+      22px 4px / 36px 36px;
+  transform: translate(-50%, -50%) scale(0.7);
+  animation: burstParticles 200ms ease-out forwards;
+}
+
+.word-burst::after {
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 2px, transparent 3px)
+      0 8px / 34px 34px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.7) 0 2px, transparent 3px)
+      18px 18px / 46px 46px;
+  animation-delay: 40ms;
+}
+
+@keyframes burstParticles {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4) rotate(0deg);
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.5) rotate(30deg);
   }
 }
 
