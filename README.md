@@ -1,83 +1,140 @@
 # Balloon Typing Game
 
-## 概要
+Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲームです。
 
-Vue3 + TypeScript で作成したタイピングゲームです。
-画面下から浮かび上がる風船型の単語を入力し、スコアを競います。
-単語を正しく入力すると風船が消え、スコアが加算されます。
+画面下から浮かび上がる風船型の単語を入力し、正しく打てると風船が破裂してスコアが加算されます。
 
----
+## Demo
 
-## スクリーンショット
+[https://juju351nicu.github.io/typingGame/](https://juju351nicu.github.io/typingGame/)
+
+## Screenshot
 
 ![ゲーム画面](./public/images/typing-baloon-demo.png)
 
-## デモ
+## Features
 
-https://juju351nicu.github.io/typingGame/
+- 画面下から浮かぶ風船型の単語表示
+- タイピング入力の正誤判定
+- 入力中の文字ハイライト
+- 正解時の風船破裂アニメーション
+- スコア表示
+- 難易度設定
+- スコア履歴の localStorage 保存
+- GitHub Pages 自動デプロイ
 
----
+## How to Play
 
-## 使用技術
+1. デモURL、またはローカル環境でゲームを開きます。
+2. `Play` ボタンを押してゲームを開始します。
+3. 画面に表示される風船の単語を入力します。
+4. 正しく入力すると風船が破裂し、スコアが加算されます。
+5. 風船が画面上部まで到達するとゲーム終了です。
+
+## Tech Stack
 
 - Vue 3
 - TypeScript
 - Vite
-- Pinia（状態管理）
-- Vuetify（UI）
-- Vitest（テスト）
+- Vue Router
+- Pinia
+- pinia-plugin-persistedstate
+- Vuetify
+- Vitest
+- GitHub Actions
+- GitHub Pages
 
----
+## Highlights
 
-## 主な機能
+- `setInterval` のタイマーIDを管理し、多重起動を防止
+- `stopTimers` を導入し、画面遷移やゲーム終了時にタイマーを確実に停止
+- GitHub Pages のベースパスに対応し、公開環境でのページ遷移エラーを修正
+- macOS と Linux のファイル名大文字小文字差異による build エラーを修正
+- Pinia と localStorage を使い、設定とスコアを保持
+- CSS アニメーションで、風船の浮遊と破裂演出を実装
+- Vitest でユーティリティ関数のテストを実装
 
-- タイピング入力判定
-- スコア表示・更新
-- 難易度設定
-- スコア保存（localStorage）
-- ゲームオーバー判定
-- 風船 UI 表示
-
----
-
-## 工夫した点
-
-- Pinia を使い、ゲーム設定とスコアを一元管理
-- localStorage を利用してスコアを永続化
-- setInterval のタイマー ID を管理し、多重起動バグを防止
-- コンポーネント分割により、保守性を向上（Game / Score / Config）
-- Vitest を導入し、ユーティリティ関数のテストを実装
-- CSS を工夫し、風船 UI でゲームらしい演出を実装
-
----
-
-## 苦労した点
-
-- setInterval の管理が難しく、多重起動バグの対応に時間がかかった
-- Vue のリアクティブ更新とタイマー処理の整合性調整
-
----
-
-## 今後の改善
-
-- 仮想キーボードの追加
-- ランキング機能
-- UI/UX の強化
-- Nuxt への移行検討
-
----
-
-## 起動方法
+## Development
 
 ```bash
 npm install
 npm run dev
 ```
 
----
+Local URL:
 
-## ビルド
+```text
+http://localhost:8081/
+```
+
+## Build
 
 ```bash
 npm run build
 ```
+
+## Test
+
+```bash
+npx vitest run
+```
+
+## Deployment
+
+`master` ブランチへ push すると、GitHub Actions で build が実行され、GitHub Pages に自動デプロイされます。
+
+Workflow:
+
+1. `npm ci`
+2. `npm run build`
+3. `dist` を GitHub Pages へデプロイ
+
+## Roadmap
+
+### Next
+
+- リザルト画面の強化
+  - スコア
+  - WPM
+  - 正確率
+  - ミス数
+  - プレイ時間
+  - 難易度
+  - ランク S / A / B / C
+  - リトライボタン
+- ローカルランキング改善
+  - 上位スコア表示
+  - 日付表示
+  - 難易度別ランキング
+  - 最高スコア表示
+- UI/UX 改善
+  - 風船演出の調整
+  - スマホ表示調整
+  - ゲーム終了時の見やすさ改善
+- テスト追加
+  - スコア計算
+  - WPM計算
+  - 正確率計算
+  - ランク判定
+  - localStorage 保存処理
+
+### Future
+
+- 分析グラフ
+  - スコア推移
+  - WPM推移
+  - 正確率推移
+  - プレイ回数
+  - 苦手キー
+- Spring Boot API
+  - スコア保存API
+  - ランキング取得API
+  - 成績一覧API
+- JWTログイン
+  - ユーザー登録
+  - ログイン
+  - ユーザー別スコア管理
+- Docker / PWA
+  - Docker Compose
+  - オフライン対応
+  - ホーム画面追加
