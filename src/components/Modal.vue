@@ -31,11 +31,38 @@ const reStartGame = () => {
   dialog.value = false;
 };
 
-/** ゲームが終了した際に表示するメッセージ */
-const scoreMessage = computed((): string => {
-  return `正解の単語数は ${lastScore.value.score} になります。また、 ${
-    lastScore.value.time
-  } になります。 ${Util.getLevel(lastScore.value.mode)} モード.`;
+/** ランク */
+const resultRank = computed((): string => {
+  const score = lastScore.value.score;
+  if (score >= 20) {
+    return "S";
+  }
+  if (score >= 12) {
+    return "A";
+  }
+  if (score >= 6) {
+    return "B";
+  }
+  return "C";
+});
+
+/** ランク色 */
+const rankColor = computed((): string => {
+  switch (resultRank.value) {
+    case "S":
+      return "#ffd43b";
+    case "A":
+      return "#4dabf7";
+    case "B":
+      return "#51cf66";
+    default:
+      return "#868e96";
+  }
+});
+
+/** 難易度 */
+const gameModeLabel = computed((): string => {
+  return Util.getLevel(lastScore.value.mode);
 });
 
 /** ゲームオーバーフラグをウォッチにて判定する */
@@ -47,24 +74,136 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
 </script>
 <template>
   <div class="text-center">
-    <v-dialog v-model="dialog" width="500" persistent>
-      <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
-          モーダルタイトル
+    <v-dialog v-model="dialog" width="560" persistent>
+      <v-card class="result-card">
+        <v-card-title class="result-header">
+          <span>Result</span>
+          <span class="rank-badge" :style="{ backgroundColor: rankColor }">
+            {{ resultRank }}
+          </span>
         </v-card-title>
 
-        <v-card-text>
-          {{ scoreMessage }}
+        <v-card-text class="result-body">
+          <div class="score-summary">
+            <span class="score-label">Score</span>
+            <span class="score-value">{{ lastScore.score }}</span>
+          </div>
+
+          <div class="result-grid">
+            <div class="result-item">
+              <span class="item-label">プレイ時間</span>
+              <span class="item-value">{{ lastScore.time }}</span>
+            </div>
+            <div class="result-item">
+              <span class="item-label">難易度</span>
+              <span class="item-value">{{ gameModeLabel }}</span>
+            </div>
+            <div class="result-item">
+              <span class="item-label">ランク</span>
+              <span class="item-value">{{ resultRank }}</span>
+            </div>
+            <div class="result-item">
+              <span class="item-label">プレイ日時</span>
+              <span class="item-value">{{ lastScore.date }}</span>
+            </div>
+          </div>
         </v-card-text>
 
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="success" @click="reStartGame"> 再スタート </v-btn>
+        <v-card-actions class="result-actions">
+          <v-btn color="success" size="large" block @click="reStartGame">
+            リトライ
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+.result-card {
+  border-radius: 8px;
+}
+
+.result-header {
+  align-items: center;
+  background: #673ab7;
+  color: #ffffff;
+  display: flex;
+  font-size: 2.4rem;
+  font-weight: bold;
+  justify-content: space-between;
+  padding: 20px 24px;
+}
+
+.rank-badge {
+  align-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  display: inline-flex;
+  font-size: 2.4rem;
+  height: 56px;
+  justify-content: center;
+  width: 56px;
+}
+
+.result-body {
+  padding: 24px;
+}
+
+.score-summary {
+  align-items: baseline;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.score-label {
+  color: #666666;
+  font-size: 1.6rem;
+  margin-right: 16px;
+}
+
+.score-value {
+  color: #2f2f2f;
+  font-size: 5.2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.result-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.result-item {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 14px 16px;
+  text-align: left;
+}
+
+.item-label {
+  color: #666666;
+  display: block;
+  font-size: 1.3rem;
+  margin-bottom: 6px;
+}
+
+.item-value {
+  color: #222222;
+  display: block;
+  font-size: 1.8rem;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.result-actions {
+  padding: 0 24px 24px;
+}
+
+@media (max-width: 600px) {
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

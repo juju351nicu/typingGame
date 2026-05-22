@@ -3,7 +3,7 @@ import TypingPanel from "@/components/TypingPanel.vue";
 import Alerts from "@/components/Alerts.vue";
 import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
-import { onMounted, onUnmounted, reactive, ref, watch } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
@@ -34,7 +34,7 @@ const isGameOver = ref(false);
 const gameScore = ref(0);
 
 /** 最後に取得したゲームスコア */
-let lastScore = reactive<GameScore>({
+const lastScore = ref<GameScore>({
   score: 0,
   mode: 0,
   time: "",
@@ -42,13 +42,13 @@ let lastScore = reactive<GameScore>({
 });
 /** ゲームの時間・スコア・モードを保存する */
 const saveGameScores = (): void => {
-  lastScore = {
+  lastScore.value = {
     score: gameScore.value,
     mode: configStore.getGameMode,
     time: Util.getCountDownTime(accumTime.value),
     date: Util.getCurrentTime(),
   };
-  gameScoresStore.saveGameScoreList(lastScore);
+  gameScoresStore.saveGameScoreList(lastScore.value);
 };
 
 /** モーダルにてリセットボタン押下時、データをリセットする */
@@ -102,9 +102,9 @@ onMounted(() => {
 /** ゲームオーバーフラグ */
 watch(isGameOver, (newValue, _oldValue) => {
   if (newValue) {
-    saveGameScores();
     // 子コンポーネントのメソッドを呼び出す
     timerComponent.value?.stopTimer?.();
+    saveGameScores();
     setTimeout(() => {
       setModalDisplay();
     }, 500);
@@ -126,7 +126,7 @@ const handleEsc = (event: any) => {
   }
 };
 const handleShift = (event: any) => {
-  if (event.key === "Shift" && isGameStarted.value) {
+  if (event.key === "Shift" && isGameStarted.value && !isGameOver.value) {
     timerComponent.value?.startTimer?.();
   }
 };

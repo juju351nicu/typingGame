@@ -58,6 +58,7 @@ const stopTimer = () => {
   isRunning.value = false;
   if (timerId.value) {
     clearInterval(timerId.value);
+    timerId.value = null;
   }
   startTime.value = null;
   stopTime.value = accumTime.value;
