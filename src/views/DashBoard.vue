@@ -141,7 +141,7 @@ onUnmounted(() => {
 });
 </script>
 <template>
-  <v-container>
+  <v-container class="game-page">
     <Alerts :alerts="alerts" />
     <div class="game-board">
       <TypingPanel
@@ -155,37 +155,32 @@ onUnmounted(() => {
         @update:inputValue="($event) => (inputValue = $event)"
       />
       <template v-if="isGameStarted">
-        <v-row>
-          <v-col cols="12" sm="6" md="4">
+        <div class="game-control-panel">
+          <div class="input-panel">
             <v-text-field
-              class="game_text"
+              class="game-text-field"
               v-model="inputValue"
               variant="outlined"
+              density="comfortable"
+              hide-details
+              autofocus
             />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="6" sm="6" md="4">
+          </div>
+          <div class="status-panel">
             <Timer ref="timerComponent" v-model:accumTime="accumTime" />
-          </v-col>
-          <v-col cols="6" sm="6" md="4">
-            <div style="display: flex">
+            <div class="game-status-item">
               <label>Score</label>
               <span>{{ gameScore }}</span>
             </div>
-          </v-col>
-        </v-row>
+          </div>
+        </div>
       </template>
       <template v-else>
-        <v-btn
-          class="mt-2"
-          color="success"
-          @click="startGame"
-          size="large"
-          width="200px"
-        >
-          Play➔
-        </v-btn>
+        <div class="start-panel">
+          <v-btn color="success" @click="startGame" size="large" min-width="220">
+            Play
+          </v-btn>
+        </div>
       </template>
     </div>
   </v-container>
@@ -200,28 +195,101 @@ html {
   font-size: 10px;
 }
 
+.game-page {
+  max-width: 1080px;
+}
+
 .game-board {
-  width: 100vmin;
-  height: 80vmin;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
   display: flex;
   flex-direction: column;
+  height: min(78vh, 760px);
   margin: auto;
-  box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+  width: min(100%, 920px);
 }
 
-.game-board label {
-  background-color: mediumpurple;
+.game-control-panel {
+  align-items: stretch;
+  background: #f8f9fa;
+  border-top: 1px solid #d9dee2;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(260px, 1fr) minmax(360px, 380px);
+  padding: 18px;
+}
+
+.input-panel {
+  align-items: center;
+  display: flex;
+}
+
+.game-text-field {
+  width: 100%;
+}
+
+.status-panel {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.game-status-item {
+  background: #ffffff;
+  border: 1px solid #e2e6ea;
+  border-radius: 8px;
+  min-width: 0;
+  padding: 12px 14px;
+}
+
+.game-status-item label {
+  color: #666666;
+  display: block;
+  font-size: 1.2rem;
   font-weight: bold;
-  font-size: 2.4rem;
-  margin-bottom: 0.5rem;
-  color: #ffffff;
+  margin-bottom: 6px;
 }
 
-.game-board span {
-  font-size: 2rem;
+.game-status-item span {
+  color: #222222;
+  display: block;
+  font-size: 1.9rem;
+  font-weight: bold;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 
-.game_text {
-  width: 800px;
+.start-panel {
+  align-items: center;
+  background: #f8f9fa;
+  border-top: 1px solid #d9dee2;
+  display: flex;
+  justify-content: center;
+  min-height: 112px;
+  padding: 24px;
+}
+
+@media (max-width: 760px) {
+  .game-board {
+    height: calc(100vh - 150px);
+    min-height: 560px;
+  }
+
+  .game-control-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .status-panel {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-panel {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
