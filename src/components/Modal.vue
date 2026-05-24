@@ -99,8 +99,16 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
               <span class="item-value">{{ gameModeLabel }}</span>
             </div>
             <div class="result-item">
-              <span class="item-label">ランク</span>
-              <span class="item-value">{{ resultRank }}</span>
+              <span class="item-label">WPM</span>
+              <span class="item-value">{{ lastScore.wpm ?? 0 }}</span>
+            </div>
+            <div class="result-item">
+              <span class="item-label">正確率</span>
+              <span class="item-value">{{ lastScore.accuracy ?? 100 }}%</span>
+            </div>
+            <div class="result-item">
+              <span class="item-label">ミス数</span>
+              <span class="item-value">{{ lastScore.missCount ?? 0 }}</span>
             </div>
             <div class="result-item">
               <span class="item-label">プレイ日時</span>

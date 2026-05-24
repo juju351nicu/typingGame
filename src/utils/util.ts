@@ -92,6 +92,41 @@ const getCountDownTime = (accumTime: number): string => {
 };
 
 /**
+ * WPMを計算する。
+ * @param correctCharacterCount 正しく入力できた文字数
+ * @param accumTime 計測時間(ms)
+ * @returns WPM
+ */
+const calculateWpm = (
+  correctCharacterCount: number,
+  accumTime: number
+): number => {
+  if (correctCharacterCount <= 0 || accumTime <= 0) {
+    return 0;
+  }
+  const minutes = accumTime / 1000 / 60;
+  const words = correctCharacterCount / 5;
+  return Math.round(words / minutes);
+};
+
+/**
+ * 正確率を計算する。
+ * @param typedCharacterCount 入力した文字数
+ * @param missCount ミスした文字数
+ * @returns 正確率
+ */
+const calculateAccuracy = (
+  typedCharacterCount: number,
+  missCount: number
+): number => {
+  if (typedCharacterCount <= 0) {
+    return 100;
+  }
+  const correctCount = Math.max(typedCharacterCount - missCount, 0);
+  return Math.round((correctCount / typedCharacterCount) * 100);
+};
+
+/**
  * 現在の時刻を取得する
  * @returns 現在の時刻
  */
@@ -145,6 +180,8 @@ export default {
   isLocalStorage,
   checkBrowser,
   getCountDownTime,
+  calculateWpm,
+  calculateAccuracy,
   getColor,
   getLevel,
   getCurrentTime,

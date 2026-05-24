@@ -33,6 +33,15 @@ const isGameOver = ref(false);
 /** ゲームスコア */
 const gameScore = ref(0);
 
+/** 入力した文字数 */
+const typedCharacterCount = ref(0);
+
+/** ミスした文字数 */
+const missCount = ref(0);
+
+/** 正しく入力した文字数 */
+const correctCharacterCount = ref(0);
+
 /** 最後に取得したゲームスコア */
 const lastScore = ref<GameScore>({
   score: 0,
@@ -47,6 +56,9 @@ const saveGameScores = (): void => {
     mode: configStore.getGameMode,
     time: Util.getCountDownTime(accumTime.value),
     date: Util.getCurrentTime(),
+    wpm: Util.calculateWpm(correctCharacterCount.value, accumTime.value),
+    accuracy: Util.calculateAccuracy(typedCharacterCount.value, missCount.value),
+    missCount: missCount.value,
   };
   gameScoresStore.saveGameScoreList(lastScore.value);
 };
@@ -78,6 +90,9 @@ const isResetTimer = ref(false);
 /** ゲームのデータをリセットする */
 const resetGameData = () => {
   gameScore.value = 0;
+  typedCharacterCount.value = 0;
+  missCount.value = 0;
+  correctCharacterCount.value = 0;
   isResetTimer.value = true;
   isGameOver.value = false;
   isGameStarted.value = false;
@@ -153,6 +168,14 @@ onUnmounted(() => {
         @update:isGameOver="($event) => (isGameOver = $event)"
         :inputValue="inputValue"
         @update:inputValue="($event) => (inputValue = $event)"
+        :typedCharacterCount="typedCharacterCount"
+        @update:typedCharacterCount="($event) => (typedCharacterCount = $event)"
+        :missCount="missCount"
+        @update:missCount="($event) => (missCount = $event)"
+        :correctCharacterCount="correctCharacterCount"
+        @update:correctCharacterCount="
+          ($event) => (correctCharacterCount = $event)
+        "
       />
       <template v-if="isGameStarted">
         <div class="game-control-panel">

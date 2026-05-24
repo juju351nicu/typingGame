@@ -20,6 +20,9 @@ export interface GameScore {
   score: number;
   mode: number;
   date: string;
+  wpm?: number;
+  accuracy?: number;
+  missCount?: number;
 }
 export interface Item {
   title: string;

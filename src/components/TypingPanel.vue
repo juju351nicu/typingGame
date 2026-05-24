@@ -16,12 +16,18 @@ const props = defineProps([
   "gameScore",
   "isGameOver",
   "inputValue",
+  "typedCharacterCount",
+  "missCount",
+  "correctCharacterCount",
 ]);
 
 const emit = defineEmits([
   "update:isGameOver",
   "update:gameScore",
   "update:inputValue",
+  "update:typedCharacterCount",
+  "update:missCount",
+  "update:correctCharacterCount",
 ]);
 
 /** ゲームの設定情報に関するストア情報 */
@@ -56,6 +62,24 @@ const isGameOverFlag = computed({
 const typeBoxValue = computed({
   get: (): string => props.inputValue,
   set: (value: string) => emit("update:inputValue", value),
+});
+
+/** 入力した文字数 */
+const typedCharacterCount = computed({
+  get: (): number => props.typedCharacterCount,
+  set: (value: number) => emit("update:typedCharacterCount", value),
+});
+
+/** ミスした文字数 */
+const missCount = computed({
+  get: (): number => props.missCount,
+  set: (value: number) => emit("update:missCount", value),
+});
+
+/** 正しく入力した文字数 */
+const correctCharacterCount = computed({
+  get: (): number => props.correctCharacterCount,
+  set: (value: number) => emit("update:correctCharacterCount", value),
 });
 
 /** 現在表示している単語リスト */
@@ -120,6 +144,7 @@ const checkWordEquality = (word: string) => {
     targetWord.isBursting = true;
     typeBoxValue.value = "";
     gameScore.value++;
+    correctCharacterCount.value += targetWord.characters.length;
     const timerId = setTimeout(() => {
       const currentIndex = currentWords.value.findIndex(
         (item) => item === targetWord
@@ -132,6 +157,17 @@ const checkWordEquality = (word: string) => {
     }, BURST_ANIMATION_DURATION);
     burstTimerIds.value.push(timerId);
   }
+};
+
+/** 入力値がいずれかの単語の先頭と一致するか判定する */
+const hasMatchedPrefix = (word: string): boolean => {
+  if (word === "") {
+    return true;
+  }
+  return currentWords.value.some(
+    (item: currentWord) =>
+      !item.isBursting && item.characters.join("").startsWith(word)
+  );
 };
 
 /** 単語をシャッフルする */
@@ -280,9 +316,15 @@ watch(isGameStartedFlag, (newValue, _oldValue) => {
 });
 
 /** 入力された単語をウォッチする */
-watch(typeBoxValue, (newValue, _oldValue) => {
+watch(typeBoxValue, (newValue, oldValue) => {
   if (isGameOverFlag.value) {
     return;
+  }
+  if (newValue.length > oldValue.length) {
+    typedCharacterCount.value += newValue.length - oldValue.length;
+    if (!hasMatchedPrefix(newValue)) {
+      missCount.value++;
+    }
   }
   checkWordEquality(newValue);
   checkCharacter(newValue);
