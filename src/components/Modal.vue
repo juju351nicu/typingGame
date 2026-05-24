@@ -33,31 +33,12 @@ const reStartGame = () => {
 
 /** ランク */
 const resultRank = computed((): string => {
-  const score = lastScore.value.score;
-  if (score >= 20) {
-    return "S";
-  }
-  if (score >= 12) {
-    return "A";
-  }
-  if (score >= 6) {
-    return "B";
-  }
-  return "C";
+  return Util.getResultRank(lastScore.value.score);
 });
 
 /** ランク色 */
 const rankColor = computed((): string => {
-  switch (resultRank.value) {
-    case "S":
-      return "#ffd43b";
-    case "A":
-      return "#4dabf7";
-    case "B":
-      return "#51cf66";
-    default:
-      return "#868e96";
-  }
+  return Util.getResultRankColor(resultRank.value);
 });
 
 /** 難易度 */

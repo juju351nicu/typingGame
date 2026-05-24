@@ -127,6 +127,42 @@ const calculateAccuracy = (
 };
 
 /**
+ * スコアからリザルトランクを取得する。
+ * @param score スコア
+ * @returns リザルトランク
+ */
+const getResultRank = (score: number): string => {
+  if (score >= 20) {
+    return "S";
+  }
+  if (score >= 12) {
+    return "A";
+  }
+  if (score >= 6) {
+    return "B";
+  }
+  return "C";
+};
+
+/**
+ * リザルトランクに対応する色を取得する。
+ * @param rank リザルトランク
+ * @returns 色コード
+ */
+const getResultRankColor = (rank: string): string => {
+  switch (rank) {
+    case "S":
+      return "#ffd43b";
+    case "A":
+      return "#4dabf7";
+    case "B":
+      return "#51cf66";
+    default:
+      return "#868e96";
+  }
+};
+
+/**
  * 現在の時刻を取得する
  * @returns 現在の時刻
  */
@@ -182,6 +218,8 @@ export default {
   getCountDownTime,
   calculateWpm,
   calculateAccuracy,
+  getResultRank,
+  getResultRankColor,
   getColor,
   getLevel,
   getCurrentTime,

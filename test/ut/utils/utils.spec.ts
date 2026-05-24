@@ -34,3 +34,21 @@ describe("calculateAccuracy", () => {
     expect(Util.calculateAccuracy(5, 10)).toBe(0);
   });
 });
+
+describe("getResultRank", () => {
+  it("スコアからランクを判定する", () => {
+    expect(Util.getResultRank(20)).toBe("S");
+    expect(Util.getResultRank(12)).toBe("A");
+    expect(Util.getResultRank(6)).toBe("B");
+    expect(Util.getResultRank(5)).toBe("C");
+  });
+});
+
+describe("getResultRankColor", () => {
+  it("ランクに対応した色を返す", () => {
+    expect(Util.getResultRankColor("S")).toBe("#ffd43b");
+    expect(Util.getResultRankColor("A")).toBe("#4dabf7");
+    expect(Util.getResultRankColor("B")).toBe("#51cf66");
+    expect(Util.getResultRankColor("C")).toBe("#868e96");
+  });
+});

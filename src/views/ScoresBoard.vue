@@ -7,6 +7,7 @@ import { GameScore } from "@/types/interfaces";
 
 interface RankingScore extends GameScore {
   rank: number;
+  resultRank: string;
 }
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
@@ -19,6 +20,10 @@ const pages = Const.DATA_TABLE_PAGES;
 const headers = [
   { title: "順位", align: "start", key: "rank" },
   { title: "スコア", align: "end", key: "score" },
+  { title: "ランク", align: "center", key: "resultRank" },
+  { title: "WPM", align: "end", key: "wpm" },
+  { title: "正確率", align: "end", key: "accuracy" },
+  { title: "ミス", align: "end", key: "missCount" },
   { title: "難易度", align: "start", key: "mode" },
   { title: "タイム", align: "start", key: "time" },
   { title: "日付", align: "end", key: "date" },
@@ -52,6 +57,7 @@ const rankingItems = computed((): RankingScore[] => {
     .map((item, index) => ({
       ...item,
       rank: index + 1,
+      resultRank: Util.getResultRank(item.score),
     }));
 });
 
@@ -99,7 +105,11 @@ const getRankClass = (rank: number): string => {
         <span class="summary-label">Best Score</span>
         <span class="summary-value">{{ bestScore?.score ?? "-" }}</span>
         <span class="summary-note">
-          {{ bestScore ? `${Util.getLevel(bestScore.mode)} / ${bestScore.time}` : "No records" }}
+          {{
+            bestScore
+              ? `${bestScore.resultRank}ランク / ${Util.getLevel(bestScore.mode)} / ${bestScore.time}`
+              : "No records"
+          }}
         </span>
       </div>
       <div class="summary-card">
@@ -130,6 +140,23 @@ const getRankClass = (rank: number): string => {
       </template>
       <template v-slot:item.score="{ value }">
         <span class="score-cell">{{ value }}</span>
+      </template>
+      <template v-slot:item.resultRank="{ value }">
+        <span
+          class="result-rank-badge"
+          :style="{ backgroundColor: Util.getResultRankColor(value) }"
+        >
+          {{ value }}
+        </span>
+      </template>
+      <template v-slot:item.wpm="{ value }">
+        <span class="metric-cell">{{ value ?? "-" }}</span>
+      </template>
+      <template v-slot:item.accuracy="{ value }">
+        <span class="metric-cell">{{ value != null ? `${value}%` : "-" }}</span>
+      </template>
+      <template v-slot:item.missCount="{ value }">
+        <span class="metric-cell">{{ value ?? "-" }}</span>
       </template>
       <template v-slot:item.mode="{ value }">
         <v-chip :color="Util.getColor(value)">
@@ -216,6 +243,11 @@ const getRankClass = (rank: number): string => {
   overflow: hidden;
 }
 
+.ranking-table :deep(th),
+.ranking-table :deep(td) {
+  white-space: nowrap;
+}
+
 .rank-badge {
   border-radius: 999px;
   display: inline-block;
@@ -248,6 +280,23 @@ const getRankClass = (rank: number): string => {
 
 .score-cell {
   font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.result-rank-badge {
+  align-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  display: inline-flex;
+  font-size: 1.2rem;
+  font-weight: bold;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.metric-cell {
+  color: #333333;
   font-weight: bold;
 }
 
