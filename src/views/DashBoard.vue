@@ -42,6 +42,9 @@ const missCount = ref(0);
 /** 正しく入力した文字数 */
 const correctCharacterCount = ref(0);
 
+/** 入力中の文字が現在の単語と一致していないか */
+const isInputMiss = ref(false);
+
 /** 最後に取得したゲームスコア */
 const lastScore = ref<GameScore>({
   score: 0,
@@ -93,6 +96,7 @@ const resetGameData = () => {
   typedCharacterCount.value = 0;
   missCount.value = 0;
   correctCharacterCount.value = 0;
+  isInputMiss.value = false;
   isResetTimer.value = true;
   isGameOver.value = false;
   isGameStarted.value = false;
@@ -176,16 +180,20 @@ onUnmounted(() => {
         @update:correctCharacterCount="
           ($event) => (correctCharacterCount = $event)
         "
+        :isInputMiss="isInputMiss"
+        @update:isInputMiss="($event) => (isInputMiss = $event)"
       />
       <template v-if="isGameStarted">
         <div class="game-control-panel">
           <div class="input-panel">
             <v-text-field
               class="game-text-field"
+              :class="{ 'game-text-field-error': isInputMiss }"
               v-model="inputValue"
               variant="outlined"
               density="comfortable"
               hide-details
+              :error="isInputMiss"
               autofocus
             />
           </div>
@@ -251,6 +259,32 @@ html {
 
 .game-text-field {
   width: 100%;
+}
+
+.game-text-field-error {
+  animation: inputMissShake 160ms ease;
+}
+
+.game-text-field-error .v-field {
+  background: #fff5f5;
+}
+
+@keyframes inputMissShake {
+  0% {
+    transform: translateX(0);
+  }
+
+  35% {
+    transform: translateX(-4px);
+  }
+
+  70% {
+    transform: translateX(4px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
 }
 
 .status-panel {

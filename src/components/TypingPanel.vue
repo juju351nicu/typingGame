@@ -19,6 +19,7 @@ const props = defineProps([
   "typedCharacterCount",
   "missCount",
   "correctCharacterCount",
+  "isInputMiss",
 ]);
 
 const emit = defineEmits([
@@ -28,6 +29,7 @@ const emit = defineEmits([
   "update:typedCharacterCount",
   "update:missCount",
   "update:correctCharacterCount",
+  "update:isInputMiss",
 ]);
 
 /** ゲームの設定情報に関するストア情報 */
@@ -82,6 +84,12 @@ const correctCharacterCount = computed({
   set: (value: number) => emit("update:correctCharacterCount", value),
 });
 
+/** 入力が現在の単語と一致していないか */
+const isInputMiss = computed({
+  get: (): boolean => props.isInputMiss,
+  set: (value: boolean) => emit("update:isInputMiss", value),
+});
+
 /** 現在表示している単語リスト */
 const currentWords = ref<currentWord[]>([]);
 
@@ -99,6 +107,20 @@ const checkCharacter = (typeBox: string) => {
       }
     });
   });
+};
+
+/** 単語ごとの入力状態を返す */
+const getWordFeedbackClass = (word: currentWord): string => {
+  if (typeBoxValue.value === "" || word.isBursting) {
+    return "";
+  }
+  if (word.characters.join("").startsWith(typeBoxValue.value)) {
+    return "word-active";
+  }
+  if (isInputMiss.value) {
+    return "word-miss";
+  }
+  return "";
 };
 const balloonColorClasses = [
   "balloon-red",
@@ -322,9 +344,13 @@ watch(typeBoxValue, (newValue, oldValue) => {
   }
   if (newValue.length > oldValue.length) {
     typedCharacterCount.value += newValue.length - oldValue.length;
-    if (!hasMatchedPrefix(newValue)) {
+    const isMiss = !hasMatchedPrefix(newValue);
+    isInputMiss.value = isMiss;
+    if (isMiss) {
       missCount.value++;
     }
+  } else {
+    isInputMiss.value = !hasMatchedPrefix(newValue);
   }
   checkWordEquality(newValue);
   checkCharacter(newValue);
@@ -336,6 +362,7 @@ watch(isResetFlag, (newValue, _oldValue) => {
     stopTimers();
     currentWords.value = [];
     currentWordIndex.value = 0;
+    isInputMiss.value = false;
     shuffleWords();
   }
 });
@@ -345,7 +372,11 @@ watch(isResetFlag, (newValue, _oldValue) => {
     <template v-for="(word, wordIndex) in currentWords" :key="wordIndex">
       <div
         class="word"
-        :class="[word.balloonClass, { 'word-burst': word.isBursting }]"
+        :class="[
+          word.balloonClass,
+          getWordFeedbackClass(word),
+          { 'word-burst': word.isBursting },
+        ]"
         :style="word.style"
       >
         <template v-for="(character, index) in word.characters">
@@ -381,6 +412,29 @@ watch(isResetFlag, (newValue, _oldValue) => {
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  transition:
+    box-shadow 120ms ease,
+    filter 120ms ease,
+    transform 120ms ease;
+}
+
+.word-active {
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.75),
+    0 0 0 8px rgba(81, 207, 102, 0.45),
+    inset -8px -10px 0 rgba(0, 0, 0, 0.15),
+    0 8px 14px rgba(0, 0, 0, 0.2);
+  filter: brightness(1.08);
+}
+
+.word-miss {
+  animation:
+    balloonFloat 2s ease-in-out infinite,
+    missShake 160ms ease;
+  box-shadow:
+    0 0 0 5px rgba(255, 107, 107, 0.55),
+    inset -8px -10px 0 rgba(0, 0, 0, 0.15),
+    0 8px 14px rgba(0, 0, 0, 0.2);
 }
 
 .word::after {
@@ -417,6 +471,24 @@ watch(isResetFlag, (newValue, _oldValue) => {
 
   100% {
     transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes missShake {
+  0% {
+    margin-left: 0;
+  }
+
+  35% {
+    margin-left: -5px;
+  }
+
+  70% {
+    margin-left: 5px;
+  }
+
+  100% {
+    margin-left: 0;
   }
 }
 
@@ -491,7 +563,9 @@ watch(isResetFlag, (newValue, _oldValue) => {
 }
 
 .word span {
+  border-radius: 6px;
   font-size: 1.7rem;
+  padding: 0 1px;
 }
 
 .balloon-red {
@@ -515,10 +589,14 @@ watch(isResetFlag, (newValue, _oldValue) => {
 }
 
 .correct {
-  color: #00ff00;
+  background: rgba(255, 255, 255, 0.28);
+  color: #eaffd0;
+  text-shadow: 0 0 8px rgba(47, 158, 68, 0.85);
 }
 
 .incorrect {
-  color: #ff0000;
+  background: rgba(255, 255, 255, 0.85);
+  color: #d6336c;
+  text-shadow: none;
 }
 </style>
