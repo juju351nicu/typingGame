@@ -270,14 +270,27 @@ const getWordsBoardWidth = () => {
 const getWordsBoardHeight = () => {
   return wordsBoard.value?.offsetHeight;
 };
+
+/** 画面幅に応じた風船の想定幅を取得する */
+const getBalloonWidth = (): number => {
+  const boardWidth = getWordsBoardWidth();
+  if (boardWidth !== undefined && boardWidth <= 480) {
+    return 120;
+  }
+  if (boardWidth !== undefined && boardWidth <= 760) {
+    return 140;
+  }
+  return configStore.getWordStyleWidth;
+};
+
 /** 表示するタイピング単語の横位置を生成する */
 const getRandomPosition = () => {
   const boardWidth = getWordsBoardWidth();
   if (boardWidth !== undefined) {
-    return Math.floor(
-      Math.random() * (boardWidth - configStore.getWordStyleWidth)
-    );
+    const maxPosition = Math.max(boardWidth - getBalloonWidth(), 0);
+    return Math.floor(Math.random() * maxPosition);
   }
+  return 0;
 };
 
 /** 表示するタイピングの単語を追加する */

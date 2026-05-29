@@ -55,7 +55,7 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
 </script>
 <template>
   <div class="text-center">
-    <v-dialog v-model="dialog" width="560" persistent>
+    <v-dialog v-model="dialog" width="560" persistent class="result-dialog">
       <v-card class="result-card">
         <v-card-title class="result-header">
           <span>Result</span>
@@ -110,6 +110,8 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
 <style scoped>
 .result-card {
   border-radius: 8px;
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
 }
 
 .result-header {
@@ -191,7 +193,20 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
 }
 
 @media (max-width: 600px) {
+  .result-dialog :deep(.v-overlay__content) {
+    margin: 12px;
+    max-height: calc(100dvh - 24px);
+    width: calc(100vw - 24px) !important;
+  }
+
+  .result-card {
+    max-height: calc(100dvh - 24px);
+  }
+
   .result-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
     font-size: 2rem;
     padding: 16px 18px;
   }
