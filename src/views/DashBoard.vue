@@ -330,23 +330,56 @@ html {
 }
 
 @media (max-width: 760px) {
+  .game-page {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
   .game-board {
-    height: calc(100vh - 150px);
-    min-height: 560px;
+    border-radius: 8px;
+    height: calc(100dvh - 132px);
+    min-height: 0;
   }
 
   .game-control-panel {
+    gap: 10px;
     grid-template-columns: 1fr;
+    padding: 12px;
   }
 
   .status-panel {
     grid-template-columns: 1fr 1fr;
   }
+
+  .game-status-item {
+    padding: 10px 12px;
+  }
+
+  .game-status-item span {
+    font-size: 1.7rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .status-panel {
-    grid-template-columns: 1fr;
+  .game-board {
+    height: calc(100dvh - 116px);
+  }
+
+  .start-panel {
+    min-height: 92px;
+    padding: 18px;
+  }
+
+  .game-control-panel {
+    padding: 10px;
+  }
+
+  .game-status-item label {
+    font-size: 1.1rem;
+  }
+
+  .game-status-item span {
+    font-size: 1.55rem;
   }
 }
 </style>

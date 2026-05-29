@@ -222,6 +222,10 @@ const getRankClass = (rank: number): string => {
   overflow: hidden;
 }
 
+.ranking-table :deep(.v-table__wrapper) {
+  overflow-x: auto;
+}
+
 .ranking-table :deep(th),
 .ranking-table :deep(td) {
   white-space: nowrap;
@@ -280,9 +284,24 @@ const getRankClass = (rank: number): string => {
 }
 
 @media (max-width: 720px) {
+  .score-board {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
   .score-header {
     align-items: stretch;
     flex-direction: column;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .score-title {
+    font-size: 2.6rem;
+  }
+
+  .score-subtitle {
+    font-size: 1.2rem;
   }
 
   .mode-filter {
@@ -290,7 +309,21 @@ const getRankClass = (rank: number): string => {
   }
 
   .summary-grid {
+    gap: 10px;
     grid-template-columns: 1fr;
+    margin-bottom: 18px;
+  }
+
+  .summary-card {
+    padding: 14px 16px;
+  }
+
+  .summary-value {
+    font-size: 2.6rem;
+  }
+
+  .ranking-table :deep(table) {
+    min-width: 760px;
   }
 }
 </style>

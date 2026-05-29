@@ -390,6 +390,7 @@ watch(isResetFlag, (newValue, _oldValue) => {
 .words-board {
   background-color: #88bdcc;
   color: #000000;
+  flex: 1 1 auto;
   height: 75%;
   padding: 0.5rem;
   font-size: 2.4rem;
@@ -598,5 +599,44 @@ watch(isResetFlag, (newValue, _oldValue) => {
   background: rgba(255, 255, 255, 0.85);
   color: #d6336c;
   text-shadow: none;
+}
+
+@media (max-width: 760px) {
+  .words-board {
+    height: auto;
+    min-height: 0;
+  }
+
+  .word {
+    min-height: 104px;
+    min-width: 82px;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .word::after {
+    bottom: -62px;
+    height: 66px;
+  }
+
+  .word span {
+    font-size: 1.45rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .word {
+    min-height: 94px;
+    min-width: 74px;
+    padding: 0.35rem 0.7rem;
+  }
+
+  .word::after {
+    bottom: -54px;
+    height: 58px;
+  }
+
+  .word span {
+    font-size: 1.3rem;
+  }
 }
 </style>
