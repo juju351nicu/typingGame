@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import Const from "@/constants/const";
+import type { GameScore, RankingScore } from "@/types/interfaces";
 /**
  * 値があるかどうか判定する。
  * リストの場合は空かどうかを判定する。
@@ -163,6 +164,35 @@ const getResultRankColor = (rank: string): string => {
 };
 
 /**
+ * スコア一覧をランキング表示用に整形する。
+ * @param scores スコア一覧
+ * @param selectedMode 絞り込み対象の難易度
+ * @returns ランキング表示用スコア一覧
+ */
+const createRankingScores = (
+  scores: GameScore[],
+  selectedMode: number | null = null
+): RankingScore[] => {
+  return scores
+    .filter((item) => selectedMode === null || item.mode === selectedMode)
+    .slice()
+    .sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      if (a.time !== b.time) {
+        return a.time.localeCompare(b.time);
+      }
+      return b.date.localeCompare(a.date);
+    })
+    .map((item, index) => ({
+      ...item,
+      rank: index + 1,
+      resultRank: getResultRank(item.score),
+    }));
+};
+
+/**
  * 現在の時刻を取得する
  * @returns 現在の時刻
  */
@@ -220,6 +250,7 @@ export default {
   calculateAccuracy,
   getResultRank,
   getResultRankColor,
+  createRankingScores,
   getColor,
   getLevel,
   getCurrentTime,

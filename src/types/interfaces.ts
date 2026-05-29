@@ -24,6 +24,11 @@ export interface GameScore {
   accuracy?: number;
   missCount?: number;
 }
+/** ランキング表示用スコアのインターフェース */
+export interface RankingScore extends GameScore {
+  rank: number;
+  resultRank: string;
+}
 export interface Item {
   title: string;
   value: number;

@@ -1,4 +1,5 @@
 import Util from "@/utils/util";
+import { GameScore } from "@/types/interfaces";
 import { describe, expect, it } from "vitest";
 
 describe("isEmpty", () => {
@@ -50,5 +51,58 @@ describe("getResultRankColor", () => {
     expect(Util.getResultRankColor("A")).toBe("#4dabf7");
     expect(Util.getResultRankColor("B")).toBe("#51cf66");
     expect(Util.getResultRankColor("C")).toBe("#868e96");
+  });
+});
+
+describe("createRankingScores", () => {
+  const scores: GameScore[] = [
+    {
+      score: 8,
+      mode: 1,
+      time: "00:00:35.00",
+      date: "2026-05-24 12:00:00",
+    },
+    {
+      score: 12,
+      mode: 2,
+      time: "00:00:40.00",
+      date: "2026-05-24 12:10:00",
+    },
+    {
+      score: 12,
+      mode: 1,
+      time: "00:00:30.00",
+      date: "2026-05-24 12:20:00",
+      wpm: 20,
+      accuracy: 95,
+      missCount: 2,
+    },
+    {
+      score: 12,
+      mode: 1,
+      time: "00:00:30.00",
+      date: "2026-05-24 12:30:00",
+    },
+  ];
+
+  it("スコア降順、同点ならタイム昇順、さらに同条件なら日付降順で並べる", () => {
+    const result = Util.createRankingScores(scores);
+
+    expect(result.map((item) => item.date)).toEqual([
+      "2026-05-24 12:30:00",
+      "2026-05-24 12:20:00",
+      "2026-05-24 12:10:00",
+      "2026-05-24 12:00:00",
+    ]);
+    expect(result.map((item) => item.rank)).toEqual([1, 2, 3, 4]);
+    expect(result[0].resultRank).toBe("A");
+  });
+
+  it("難易度でランキングを絞り込む", () => {
+    const result = Util.createRankingScores(scores, 2);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].mode).toBe(2);
+    expect(result[0].rank).toBe(1);
   });
 });

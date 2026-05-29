@@ -3,12 +3,7 @@ import { useGameScoresStore } from "@/stores/gameScores";
 import { computed, ref } from "vue";
 import Const from "@/constants/const";
 import Util from "@/utils/util";
-import { GameScore } from "@/types/interfaces";
-
-interface RankingScore extends GameScore {
-  rank: number;
-  resultRank: string;
-}
+import { GameScore, RankingScore } from "@/types/interfaces";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
@@ -42,23 +37,7 @@ const gameScores = computed((): GameScore[] => {
 
 /** ランキング用スコア一覧 */
 const rankingItems = computed((): RankingScore[] => {
-  return gameScores.value
-    .filter((item) => selectedMode.value === null || item.mode === selectedMode.value)
-    .slice()
-    .sort((a, b) => {
-      if (b.score !== a.score) {
-        return b.score - a.score;
-      }
-      if (a.time !== b.time) {
-        return a.time.localeCompare(b.time);
-      }
-      return b.date.localeCompare(a.date);
-    })
-    .map((item, index) => ({
-      ...item,
-      rank: index + 1,
-      resultRank: Util.getResultRank(item.score),
-    }));
+  return Util.createRankingScores(gameScores.value, selectedMode.value);
 });
 
 /** 最高スコア */
