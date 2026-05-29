@@ -16,6 +16,10 @@ import {
   hasMatchedPrefix,
   shuffleWords,
 } from "@/composables/useTypingWords";
+import {
+  hasAnyWordReachedTop,
+  moveWordsUp,
+} from "@/composables/useTypingWordPositions";
 import { useConfigStore } from "@/stores/config";
 import { currentWord } from "@/types/interfaces";
 const props = defineProps([
@@ -169,42 +173,16 @@ const wordsBoard = useTemplateRef("typing-panel");
  * 「typing-panel」要素の縦幅を下回った場合、ゲームを終了する。
  */
 const checkIsTopToBottom = () => {
-  currentWords.value.forEach((word: currentWord, index: number) => {
-    if (word.isBursting) {
-      return;
-    }
-    // 現在表示されている単語の縦幅を取得する。
-    let wordPositionTop = getCurrentWordTop(index);
-    // 現在表示されている単語と「typing-panel」要素の縦幅を比較する。
-    if (wordPositionTop < -120) {
-      gameFinish();
-    }
-  });
-};
-
-/**
- * 索引に該当する、現在表示されている単語の要素の上からの配置位置（距離）を取得する
- * @param index 索引
- */
-const getCurrentWordTop = (index: number) => {
-  return Number(currentWords.value[index].style.top.slice(0, -2));
-};
-
-/**
- * 索引に該当する、単語の垂直位置を増加させる。
- * @param index 索引
- */
-const decreasePositionTop = (index: number) => {
-  currentWords.value[index].style.top = `${getCurrentWordTop(index) - 1}px`;
+  if (hasAnyWordReachedTop(currentWords.value)) {
+    gameFinish();
+  }
 };
 
 /**
  * 現在表示している各単語の単語の垂直位置を増加させる。
  */
 const wordsTopToBottom = () => {
-  currentWords.value.forEach((_: currentWord, index: number) => {
-    decreasePositionTop(index);
-  });
+  moveWordsUp(currentWords.value);
 };
 
 /** 現在表示されているの単語の索引 */

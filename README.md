@@ -26,7 +26,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - 難易度設定
 - スコア履歴の localStorage 保存・初期化
 - スマホ表示対応
-- GitHub Pages 自動デプロイ
+- GitHub Actions による test / build / deploy 自動化
 
 ## How to Play
 
