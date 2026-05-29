@@ -24,7 +24,8 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - WPM / 正確率 / ミス数の表示
 - localStorage を使ったランキング表示
 - 難易度設定
-- スコア履歴の localStorage 保存
+- スコア履歴の localStorage 保存・初期化
+- スマホ表示対応
 - GitHub Pages 自動デプロイ
 
 ## How to Play
@@ -60,6 +61,9 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - ミス入力時に入力欄と風船へ短いフィードバックアニメーションを追加
 - リザルト画面で WPM / 正確率 / ミス数 / ランクを表示
 - ランキング画面でスコア、ランク、WPM、正確率、ミス数、難易度、タイムを比較可能に改善
+- 設定画面は難易度変更とスコア初期化に絞り、未完成に見える項目を非表示化
+- スコア初期化前に確認ダイアログを表示し、誤操作で履歴を消しにくいように改善
+- スマホ幅でもゲーム画面、リザルト画面、ランキング画面が見やすいようにレスポンシブ調整
 - Vitest でユーティリティ関数、ランキング並び替え、スコア保存処理のテストを実装
 
 ## Development
@@ -89,7 +93,7 @@ npm run test
 
 ## Deployment
 
-`master` ブランチへ push すると、GitHub Actions で build が実行され、GitHub Pages に自動デプロイされます。
+`master` ブランチへ push すると、GitHub Actions で test / build が実行され、GitHub Pages に自動デプロイされます。
 
 Workflow:
 
@@ -103,12 +107,14 @@ Workflow:
 ### Next
 
 - UI/UX 改善
-  - スマホ表示調整
   - ゲーム終了時の見やすさ改善
 - テスト追加
   - スコア計算
   - localStorage 復元処理
   - ランキングフィルター
+- コード整理
+  - `TypingPanel.vue` の composable 化
+  - タイマー処理とスコア計算処理の責務分離
 
 ### Future
 
