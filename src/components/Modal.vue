@@ -207,42 +207,59 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
     position: sticky;
     top: 0;
     z-index: 1;
-    font-size: 2rem;
-    padding: 16px 18px;
+    font-size: 1.8rem;
+    padding: 12px 16px;
   }
 
   .rank-badge {
-    font-size: 2rem;
-    height: 46px;
-    width: 46px;
+    font-size: 1.7rem;
+    height: 40px;
+    width: 40px;
   }
 
   .result-body {
-    padding: 18px;
+    padding: 14px 16px;
   }
 
   .score-summary {
-    margin-bottom: 18px;
+    margin-bottom: 12px;
+  }
+
+  .score-label {
+    font-size: 1.3rem;
+    margin-right: 10px;
   }
 
   .score-value {
-    font-size: 4.2rem;
+    font-size: 3.6rem;
   }
 
   .result-grid {
-    grid-template-columns: 1fr;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .result-item {
-    padding: 12px 14px;
+    padding: 9px 10px;
+  }
+
+  .item-label {
+    font-size: 1.05rem;
+    margin-bottom: 4px;
   }
 
   .item-value {
-    font-size: 1.6rem;
+    font-size: 1.35rem;
   }
 
   .result-actions {
-    padding: 0 18px 18px;
+    padding: 0 16px 14px;
+  }
+}
+
+@media (max-width: 360px) {
+  .result-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>
