@@ -8,6 +8,14 @@ import {
   watch,
 } from "vue";
 import { wordsData as WORD_DATAS } from "@/assets/words";
+import {
+  applyCharacterFeedback,
+  createCurrentWord,
+  findCompletedWordIndex,
+  getWordFeedbackClass as getTypingWordFeedbackClass,
+  hasMatchedPrefix,
+  shuffleWords,
+} from "@/composables/useTypingWords";
 import { useConfigStore } from "@/stores/config";
 import { currentWord } from "@/types/interfaces";
 const props = defineProps([
@@ -95,46 +103,19 @@ const currentWords = ref<currentWord[]>([]);
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
 const checkCharacter = (typeBox: string) => {
-  const charArray: string[] = typeBox.split("");
-  currentWords.value.forEach((word: currentWord, wordIndex: number) => {
-    word.characters.forEach((character: string, characherIndex: number) => {
-      if (charArray[characherIndex] == null) {
-        currentWords.value[wordIndex].classList[characherIndex] = "";
-      } else if (character == charArray[characherIndex]) {
-        currentWords.value[wordIndex].classList[characherIndex] = "correct";
-      } else {
-        currentWords.value[wordIndex].classList[characherIndex] = "incorrect";
-      }
-    });
-  });
+  currentWords.value = applyCharacterFeedback(currentWords.value, typeBox);
 };
 
 /** 単語ごとの入力状態を返す */
 const getWordFeedbackClass = (word: currentWord): string => {
-  if (typeBoxValue.value === "" || word.isBursting) {
-    return "";
-  }
-  if (word.characters.join("").startsWith(typeBoxValue.value)) {
-    return "word-active";
-  }
-  if (isInputMiss.value) {
-    return "word-miss";
-  }
-  return "";
+  return getTypingWordFeedbackClass(
+    word,
+    typeBoxValue.value,
+    isInputMiss.value
+  );
 };
-const balloonColorClasses = [
-  "balloon-red",
-  "balloon-blue",
-  "balloon-green",
-  "balloon-yellow",
-  "balloon-purple",
-];
 const BURST_ANIMATION_DURATION = 200;
 
-const getRandomBalloonColorClass = (): string => {
-  const index = Math.floor(Math.random() * balloonColorClasses.length);
-  return balloonColorClasses[index];
-};
 const stopTimers = () => {
   if (addWordTimerId.value !== null) {
     clearInterval(addWordTimerId.value);
@@ -157,9 +138,7 @@ const gameFinish = () => {
 
 /** 出題された単語と入力した単語の値を比較判定する */
 const checkWordEquality = (word: string) => {
-  const index = currentWords.value.findIndex(
-    (item: currentWord) => !item.isBursting && item.characters.join("") == word
-  );
+  const index = findCompletedWordIndex(currentWords.value, word);
   //一致した場合
   if (index != -1) {
     const targetWord = currentWords.value[index];
@@ -181,27 +160,6 @@ const checkWordEquality = (word: string) => {
   }
 };
 
-/** 入力値がいずれかの単語の先頭と一致するか判定する */
-const hasMatchedPrefix = (word: string): boolean => {
-  if (word === "") {
-    return true;
-  }
-  return currentWords.value.some(
-    (item: currentWord) =>
-      !item.isBursting && item.characters.join("").startsWith(word)
-  );
-};
-
-/** 単語をシャッフルする */
-const shuffleWords = () => {
-  for (let index = typingWords.value.length - 1; index > 0; index--) {
-    const randomIndex = Math.floor(Math.random() * index);
-    const tempWord = typingWords.value[index];
-    typingWords.value[index] = typingWords.value[randomIndex];
-    typingWords.value[randomIndex] = tempWord;
-  }
-};
-
 /** 単語を表示するテンプレート要素 */
 const wordsBoard = useTemplateRef("typing-panel");
 
@@ -211,7 +169,10 @@ const wordsBoard = useTemplateRef("typing-panel");
  * 「typing-panel」要素の縦幅を下回った場合、ゲームを終了する。
  */
 const checkIsTopToBottom = () => {
-  currentWords.value.forEach((_: currentWord, index: number) => {
+  currentWords.value.forEach((word: currentWord, index: number) => {
+    if (word.isBursting) {
+      return;
+    }
     // 現在表示されている単語の縦幅を取得する。
     let wordPositionTop = getCurrentWordTop(index);
     // 現在表示されている単語と「typing-panel」要素の縦幅を比較する。
@@ -296,28 +257,20 @@ const getRandomPosition = () => {
 /** 表示するタイピングの単語を追加する */
 const addWord = () => {
   if (!isAddedAllWords()) {
-    currentWords.value.push({
-      characters: typingWords.value[currentWordIndex.value].split(""),
-      classList: [],
-      balloonClass: getRandomBalloonColorClass(),
-      style: {
-        left: `${getRandomPosition()}px`,
-        top: `${getWordsBoardHeight() ?? 0}px`,
-      },
-    });
+    currentWords.value.push(
+      createCurrentWord(
+        typingWords.value[currentWordIndex.value],
+        getRandomPosition(),
+        getWordsBoardHeight() ?? 0
+      )
+    );
     currentWordIndex.value++;
   }
 };
 
 onMounted(() => {
-  shuffleWords();
-
-  if (
-    configStore.getInsertionSpeed <= 0 ||
-    configStore.getAnimationSpeed <= 0
-  ) {
-    configStore.saveGameMode(configStore.getGameMode);
-  }
+  typingWords.value = shuffleWords(typingWords.value);
+  configStore.saveGameMode(configStore.getGameMode);
 });
 onUnmounted(() => {
   stopTimers();
@@ -327,13 +280,7 @@ watch(isGameStartedFlag, (newValue, _oldValue) => {
   if (newValue) {
     stopTimers();
 
-    // 難易度が未設定なら、デフォルトでEASYを設定
-    if (
-      configStore.getInsertionSpeed <= 0 ||
-      configStore.getAnimationSpeed <= 0
-    ) {
-      configStore.saveGameMode(configStore.getGameMode);
-    }
+    configStore.saveGameMode(configStore.getGameMode);
 
     addWord();
 
@@ -357,13 +304,13 @@ watch(typeBoxValue, (newValue, oldValue) => {
   }
   if (newValue.length > oldValue.length) {
     typedCharacterCount.value += newValue.length - oldValue.length;
-    const isMiss = !hasMatchedPrefix(newValue);
+    const isMiss = !hasMatchedPrefix(currentWords.value, newValue);
     isInputMiss.value = isMiss;
     if (isMiss) {
       missCount.value++;
     }
   } else {
-    isInputMiss.value = !hasMatchedPrefix(newValue);
+    isInputMiss.value = !hasMatchedPrefix(currentWords.value, newValue);
   }
   checkWordEquality(newValue);
   checkCharacter(newValue);
@@ -376,7 +323,7 @@ watch(isResetFlag, (newValue, _oldValue) => {
     currentWords.value = [];
     currentWordIndex.value = 0;
     isInputMiss.value = false;
-    shuffleWords();
+    typingWords.value = shuffleWords(typingWords.value);
   }
 });
 </script>
