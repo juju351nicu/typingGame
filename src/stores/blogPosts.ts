@@ -52,6 +52,13 @@ export const useBlogPostsStore = defineStore("Posts", {
     },
     /**
      * 記事情報リストを取得する。
+     * @returns 記事情報リスト
+     */
+    getPostIndexList(): PostIndex[] {
+      return this.pageStatus;
+    },
+    /**
+     * 記事情報リストを取得する。
      * @param pageNumber ページ番号
      * @returns 記事情報リスト
      */

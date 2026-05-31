@@ -3,6 +3,7 @@ import Loading from "@/components/Loading.vue";
 import { computed, onBeforeMount, onUnmounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/blogPosts";
+import type { PostIndex } from "@/types/interfaces";
 import MarkdownIt from "markdown-it";
 import { sanitize } from "@markdown-design/markdown-it-sanitize";
 import hljs from "highlight.js";
@@ -36,6 +37,42 @@ const goBlogList = () => {
     query: { pageNumber: blogPostsStore.getPrevPageNo },
   });
 };
+
+/** 記事一覧 */
+const posts = computed((): PostIndex[] => {
+  return blogPostsStore.getPostIndexList;
+});
+
+/** 現在表示している記事の索引 */
+const currentIndex = computed((): number => {
+  return posts.value.findIndex((post) => {
+    return post.id === props.id && post.section === props.section;
+  });
+});
+
+/** 前の記事 */
+const prevPost = computed((): PostIndex | null => {
+  return currentIndex.value > 0 ? posts.value[currentIndex.value - 1] : null;
+});
+
+/** 次の記事 */
+const nextPost = computed((): PostIndex | null => {
+  return currentIndex.value >= 0 && currentIndex.value < posts.value.length - 1
+    ? posts.value[currentIndex.value + 1]
+    : null;
+});
+
+/** 指定した記事へ移動する */
+const goPost = (post: PostIndex) => {
+  router.push({
+    name: "BlogPost",
+    params: {
+      section: post.section,
+      id: post.id,
+    },
+  });
+};
+
 /** Htmlに表示するマークダウン情報 */
 const postHtml = ref();
 const markDownIt: MarkdownIt = new MarkdownIt({
@@ -67,16 +104,23 @@ markDownIt.use(sanitize, {
   ],
 });
 
-/* Hacky navigation when a href link is clicked within the compiled html Post */
-onBeforeRouteUpdate(async () => {
-  location.reload();
-});
+/** 記事を読み込む */
+const loadPost = async (section: string, id: string) => {
+  document.title = "ブログ記事";
+  if (blogPostsStore.postCount === 0) {
+    await blogPostsStore.recievePostIndex();
+  }
+  await blogPostsStore.recieveBlogPost(section, id);
+  postHtml.value = markDownIt.render(blogPostsStore.getPostHtml);
+};
 
 /** Htmlに表示するマークダウン情報をセットする。 */
 onBeforeMount(async () => {
-  document.title = "ブログ記事";
-  await blogPostsStore.recieveBlogPost(props.section, props.id);
-  postHtml.value = markDownIt.render(blogPostsStore.getPostHtml);
+  await loadPost(props.section, props.id);
+});
+
+onBeforeRouteUpdate(async (to) => {
+  await loadPost(String(to.params.section), String(to.params.id));
 });
 onUnmounted(() => {
   blogPostsStore.$reset();
@@ -89,11 +133,26 @@ onUnmounted(() => {
       :style="`background-color: 'blue' ; color: 'white';`"
       v-html="postHtml"
     />
-    <v-btn @click="goBlogList()"> 一覧ページに戻る </v-btn>
+    <div class="post-navigation">
+      <v-btn v-if="prevPost" variant="outlined" @click="goPost(prevPost)">
+        前の記事：{{ prevPost.title }}
+      </v-btn>
+      <v-spacer />
+      <v-btn v-if="nextPost" variant="outlined" @click="goPost(nextPost)">
+        次の記事：{{ nextPost.title }}
+      </v-btn>
+    </div>
+    <v-btn @click="goBlogList()">一覧ページに戻る</v-btn>
   </v-container>
   <Loading :isLoading="isLoading" />
 </template>
 <style scoped>
+.post-navigation {
+  display: flex;
+  gap: 12px;
+  margin: 32px 0 16px;
+}
+
 /* NOTE: VuetifyのCSS Resetで崩れる＋調整の為 */
 div :deep(hr) {
   margin: 20px 0;
@@ -183,5 +242,11 @@ div :deep(td) {
 div :deep(img) {
   max-width: 35%;
   vertical-align: middle;
+}
+
+@media (max-width: 600px) {
+  .post-navigation {
+    flex-direction: column;
+  }
 }
 </style>

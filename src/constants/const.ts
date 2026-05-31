@@ -4,8 +4,8 @@ import type { DataTableHeader } from "vuetify";
  * マークダウンブログ取得用のURL
  */
 const BLOG_PATH = {
-  POST_INDEX: "blog_store/posts_index.json",
-  POST_FOLDER: "/blog_store/posts/",
+  POST_INDEX: `${import.meta.env.BASE_URL}blog_store/posts_index.json`,
+  POST_FOLDER: `${import.meta.env.BASE_URL}blog_store/posts/`,
 };
 
 /** ブログリストの1ページあたりの表示件数（デフォルト）*/
