@@ -41,6 +41,7 @@ onMounted(() => {
           <li>スコア、WPM、正確率、正タイプ数、ミス数、ランクのリザルト表示</li>
           <li>localStorage を使ったローカルランキング保存</li>
           <li>難易度変更とスコア初期化</li>
+          <li>Markdown ブログ記事の一覧・詳細表示と前後ナビゲーション</li>
           <li>PC とスマホ幅のレスポンシブ表示</li>
         </ul>
       </section>
