@@ -3,6 +3,11 @@ import TypingPanel from "@/components/TypingPanel.vue";
 import Alerts from "@/components/Alerts.vue";
 import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
+import VirtualKeyBoard from "@/components/VirtualKeyBoard.vue";
+import {
+  isMissKey as isTypingMissKey,
+  normalizeAlphabetKey,
+} from "@/composables/useTypingKeyboard";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores";
@@ -45,6 +50,18 @@ const correctCharacterCount = ref(0);
 /** 入力中の文字が現在の単語と一致していないか */
 const isInputMiss = ref(false);
 
+/** 次に入力すべきキー */
+const nextKey = ref("");
+
+/** 実際に押したキー */
+const pressedKey = ref("");
+
+/** ミスしたキー */
+const missKey = ref("");
+
+const pressedKeyTimerId = ref<ReturnType<typeof setTimeout> | null>(null);
+const missKeyTimerId = ref<ReturnType<typeof setTimeout> | null>(null);
+
 /** 最後に取得したゲームスコア */
 const lastScore = ref<GameScore>({
   score: 0,
@@ -62,6 +79,7 @@ const saveGameScores = (): void => {
     wpm: Util.calculateWpm(correctCharacterCount.value, accumTime.value),
     accuracy: Util.calculateAccuracy(typedCharacterCount.value, missCount.value),
     missCount: missCount.value,
+    correctCharacterCount: correctCharacterCount.value,
   };
   gameScoresStore.saveGameScoreList(lastScore.value);
 };
@@ -97,6 +115,9 @@ const resetGameData = () => {
   missCount.value = 0;
   correctCharacterCount.value = 0;
   isInputMiss.value = false;
+  nextKey.value = "";
+  pressedKey.value = "";
+  missKey.value = "";
   isResetTimer.value = true;
   isGameOver.value = false;
   isGameStarted.value = false;
@@ -149,14 +170,62 @@ const handleShift = (event: any) => {
     timerComponent.value?.startTimer?.();
   }
 };
+
+const clearKeyTimers = () => {
+  if (pressedKeyTimerId.value !== null) {
+    clearTimeout(pressedKeyTimerId.value);
+    pressedKeyTimerId.value = null;
+  }
+  if (missKeyTimerId.value !== null) {
+    clearTimeout(missKeyTimerId.value);
+    missKeyTimerId.value = null;
+  }
+};
+
+const handleTypingKeydown = (event: KeyboardEvent) => {
+  if (!isGameStarted.value || isGameOver.value) {
+    return;
+  }
+
+  const key = normalizeAlphabetKey(event.key);
+  if (key === "") {
+    return;
+  }
+
+  pressedKey.value = key;
+  if (pressedKeyTimerId.value !== null) {
+    clearTimeout(pressedKeyTimerId.value);
+  }
+  pressedKeyTimerId.value = setTimeout(() => {
+    pressedKey.value = "";
+    pressedKeyTimerId.value = null;
+  }, 300);
+
+  if (isTypingMissKey(key, nextKey.value)) {
+    missKey.value = key;
+    if (missKeyTimerId.value !== null) {
+      clearTimeout(missKeyTimerId.value);
+    }
+    missKeyTimerId.value = setTimeout(() => {
+      missKey.value = "";
+      missKeyTimerId.value = null;
+    }, 600);
+  } else {
+    missKey.value = "";
+  }
+};
+
 onMounted(() => {
   window.addEventListener("keydown", handleEsc);
   window.addEventListener("keydown", handleShift);
+  window.addEventListener("keydown", handleTypingKeydown);
 });
 
 onUnmounted(() => {
   window.removeEventListener("keydown", handleEsc);
   window.removeEventListener("keydown", handleShift);
+  window.removeEventListener("keydown", handleTypingKeydown);
+  clearKeyTimers();
 });
 </script>
 <template>
@@ -182,6 +251,8 @@ onUnmounted(() => {
         "
         :isInputMiss="isInputMiss"
         @update:isInputMiss="($event) => (isInputMiss = $event)"
+        :nextKey="nextKey"
+        @update:nextKey="($event) => (nextKey = $event)"
       />
       <template v-if="isGameStarted">
         <div class="game-control-panel">
@@ -204,6 +275,13 @@ onUnmounted(() => {
               <span>{{ gameScore }}</span>
             </div>
           </div>
+          <VirtualKeyBoard
+            v-if="configStore.getIsVirtualKeyBoard"
+            class="keyboard-panel"
+            :nextKey="nextKey"
+            :pressedKey="pressedKey"
+            :missKey="missKey"
+          />
         </div>
       </template>
       <template v-else>
@@ -291,6 +369,10 @@ html {
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.keyboard-panel {
+  grid-column: 1 / -1;
 }
 
 .game-status-item {

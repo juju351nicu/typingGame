@@ -20,6 +20,7 @@ import {
   hasAnyWordReachedTop,
   moveWordsUp,
 } from "@/composables/useTypingWordPositions";
+import { getNextKey } from "@/composables/useTypingKeyboard";
 import { useConfigStore } from "@/stores/config";
 import { currentWord } from "@/types/interfaces";
 const props = defineProps([
@@ -32,6 +33,7 @@ const props = defineProps([
   "missCount",
   "correctCharacterCount",
   "isInputMiss",
+  "nextKey",
 ]);
 
 const emit = defineEmits([
@@ -42,6 +44,7 @@ const emit = defineEmits([
   "update:missCount",
   "update:correctCharacterCount",
   "update:isInputMiss",
+  "update:nextKey",
 ]);
 
 /** ゲームの設定情報に関するストア情報 */
@@ -102,12 +105,23 @@ const isInputMiss = computed({
   set: (value: boolean) => emit("update:isInputMiss", value),
 });
 
+/** 次に入力すべきキー */
+const nextKey = computed({
+  get: (): string => props.nextKey,
+  set: (value: string) => emit("update:nextKey", value),
+});
+
 /** 現在表示している単語リスト */
 const currentWords = ref<currentWord[]>([]);
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
 const checkCharacter = (typeBox: string) => {
   currentWords.value = applyCharacterFeedback(currentWords.value, typeBox);
+};
+
+/** 次に入力すべきキーを更新する */
+const updateNextKey = () => {
+  nextKey.value = getNextKey(currentWords.value, typeBoxValue.value);
 };
 
 /** 単語ごとの入力状態を返す */
@@ -159,6 +173,7 @@ const checkWordEquality = (word: string) => {
       }
       burstTimerIds.value = burstTimerIds.value.filter((id) => id !== timerId);
       checkGameCompleted();
+      updateNextKey();
     }, BURST_ANIMATION_DURATION);
     burstTimerIds.value.push(timerId);
   }
@@ -243,6 +258,7 @@ const addWord = () => {
       )
     );
     currentWordIndex.value++;
+    updateNextKey();
   }
 };
 
@@ -292,6 +308,7 @@ watch(typeBoxValue, (newValue, oldValue) => {
   }
   checkWordEquality(newValue);
   checkCharacter(newValue);
+  updateNextKey();
 });
 
 /** リセットフラグをウォッチする */
@@ -302,6 +319,7 @@ watch(isResetFlag, (newValue, _oldValue) => {
     currentWordIndex.value = 0;
     isInputMiss.value = false;
     typingWords.value = shuffleWords(typingWords.value);
+    updateNextKey();
   }
 });
 </script>

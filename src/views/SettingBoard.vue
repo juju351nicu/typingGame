@@ -13,6 +13,9 @@ const configStore = useConfigStore();
 /** 選択されたゲームの難易度 */
 const selectedOption = ref(configStore.getGameMode);
 
+/** 仮想キーボードの表示有無 */
+const isVirtualKeyboardVisible = ref(configStore.getIsVirtualKeyBoard);
+
 /** ゲーム難易度の選択項目 */
 const options = ref<any>(Const.DIFFICULTY_LEVEL);
 
@@ -22,6 +25,14 @@ const options = ref<any>(Const.DIFFICULTY_LEVEL);
  */
 const setGameMode = (mode: number) => {
   configStore.saveGameMode(mode);
+};
+
+/**
+ * 仮想キーボードの表示有無を設定する
+ * @param isVisible 表示する場合 true
+ */
+const setVirtualKeyboardVisible = (isVisible: boolean) => {
+  configStore.saveIsVertualKeyBoard(isVisible);
 };
 
 /** アラートに表示するメッセージ */
@@ -66,6 +77,24 @@ const resetModalData = () => {
           density="comfortable"
           hide-details
           @update:modelValue="setGameMode"
+          class="setting-control"
+        />
+      </section>
+
+      <section class="setting-card">
+        <div class="setting-card__body">
+          <span class="setting-label">仮想キーボード</span>
+          <p class="setting-description">
+            次に打つキー、押したキー、ミスしたキーをゲーム中に表示します。
+          </p>
+        </div>
+        <v-switch
+          v-model="isVirtualKeyboardVisible"
+          color="primary"
+          hide-details
+          inset
+          :label="isVirtualKeyboardVisible ? '表示' : '非表示'"
+          @update:modelValue="setVirtualKeyboardVisible"
           class="setting-control"
         />
       </section>

@@ -17,6 +17,7 @@ const headers = [
   { title: "スコア", align: "end", key: "score" },
   { title: "ランク", align: "center", key: "resultRank" },
   { title: "WPM", align: "end", key: "wpm" },
+  { title: "正タイプ", align: "end", key: "correctCharacterCount" },
   { title: "正確率", align: "end", key: "accuracy" },
   { title: "ミス", align: "end", key: "missCount" },
   { title: "難易度", align: "start", key: "mode" },
@@ -129,6 +130,9 @@ const getRankClass = (rank: number): string => {
         </span>
       </template>
       <template v-slot:item.wpm="{ value }">
+        <span class="metric-cell">{{ value ?? "-" }}</span>
+      </template>
+      <template v-slot:item.correctCharacterCount="{ value }">
         <span class="metric-cell">{{ value ?? "-" }}</span>
       </template>
       <template v-slot:item.accuracy="{ value }">

@@ -1,73 +1,131 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { onMounted, onUnmounted, watch } from "vue";
 import Keyboard from "simple-keyboard";
-import "simple-keyboard/build/css/index.css"; // CSSをインポート
+import "simple-keyboard/build/css/index.css";
 
-const input = ref("");
+interface Props {
+  nextKey?: string;
+  pressedKey?: string;
+  missKey?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  nextKey: "",
+  pressedKey: "",
+  missKey: "",
+});
+
 let keyboard: Keyboard | null = null;
 
-/**
- * 仮想キーボードの内容を更新
- * @param inputVal
- */
-const onChange = (inputVal: string) => {
-  input.value = inputVal;
+const keyboardLayout = {
+  default: ["q w e r t y u i o p", "a s d f g h j k l", "z x c v b n m"],
 };
 
-/**
- * 仮想キーボードの入力を処理
- * @param button
- */
-const onKeyPress = (button: string) => {
-  console.log("Button pressed", button);
+const getKeyTheme = () => {
+  const buttonTheme = [];
+
+  if (props.nextKey !== "") {
+    buttonTheme.push({
+      class: "hg-next-key",
+      buttons: props.nextKey,
+    });
+  }
+
+  if (props.pressedKey !== "") {
+    buttonTheme.push({
+      class: "hg-pressed-key",
+      buttons: props.pressedKey,
+    });
+  }
+
+  if (props.missKey !== "") {
+    buttonTheme.push({
+      class: "hg-miss-key",
+      buttons: props.missKey,
+    });
+  }
+
+  return buttonTheme;
 };
 
-/**
- * リアルタイム入力に対応
- * @param event
- */
-const onInputChange = (event: Event) => {
-  //  targetをHTMLInputElementにキャストしてvalueを取得
-  const target = event.target as HTMLInputElement;
-  console.log(input.value);
-  keyboard?.setInput(target.value);
-  input.value = target.value;
+const updateKeyTheme = () => {
+  keyboard?.setOptions({
+    buttonTheme: getKeyTheme(),
+  });
 };
 
 onMounted(() => {
-  // インスタンスを初期化
   keyboard = new Keyboard({
-    onChange: onChange,
-    onKeyPress: onKeyPress,
-    physicalKeyboardHighlight: true,
-    physicalKeyboardHighlightPress: true,
-    physicalKeyboardHighlightTextColor: "red",
-    physicalKeyboardHighlightBgColor: "yellow",
+    layout: keyboardLayout,
+    theme: "hg-theme-default learning-keyboard",
+    buttonTheme: getKeyTheme(),
   });
 });
+
+onUnmounted(() => {
+  keyboard?.destroy();
+  keyboard = null;
+});
+
+watch(
+  () => [props.nextKey, props.pressedKey, props.missKey],
+  () => {
+    updateKeyTheme();
+  }
+);
 </script>
+
 <template>
-  <div>
-    <!-- 入力フィールド -->
-    <input
-      :value="input"
-      class="input"
-      @input="onInputChange"
-      placeholder="タップして入力"
-    />
-    <!-- 仮想キーボード表示エリア -->
+  <div class="virtual-keyboard-panel">
+    <div class="keyboard-status">
+      <span>Next: {{ nextKey || "-" }}</span>
+      <span>Pressed: {{ pressedKey || "-" }}</span>
+    </div>
     <div class="simple-keyboard"></div>
   </div>
 </template>
+
 <style scoped>
-/* CSSでスタイルを調整 */
-.simple-keyboard {
-  margin-top: 20px;
+.virtual-keyboard-panel {
+  background: #ffffff;
+  border: 1px solid #e2e6ea;
+  border-radius: 8px;
+  padding: 10px;
 }
 
-.input {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
+.keyboard-status {
+  color: #555555;
+  display: flex;
+  font-size: 1.1rem;
+  font-weight: bold;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.simple-keyboard {
+  font-size: 1.1rem;
+}
+
+.simple-keyboard :deep(.hg-button) {
+  border-radius: 6px;
+  height: 32px;
+}
+
+.simple-keyboard :deep(.hg-next-key) {
+  background: #fff3bf;
+  box-shadow: inset 0 0 0 2px #f59f00;
+  color: #5c3c00;
+}
+
+.simple-keyboard :deep(.hg-pressed-key) {
+  background: #d0ebff;
+  box-shadow: inset 0 0 0 2px #339af0;
+  color: #0b7285;
+}
+
+.simple-keyboard :deep(.hg-miss-key) {
+  background: #ffe3e3;
+  box-shadow: inset 0 0 0 2px #fa5252;
+  color: #c92a2a;
 }
 </style>

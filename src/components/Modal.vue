@@ -84,6 +84,12 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
               <span class="item-value">{{ lastScore.wpm ?? 0 }}</span>
             </div>
             <div class="result-item">
+              <span class="item-label">正タイプ数</span>
+              <span class="item-value">
+                {{ lastScore.correctCharacterCount ?? 0 }}
+              </span>
+            </div>
+            <div class="result-item">
               <span class="item-label">正確率</span>
               <span class="item-value">{{ lastScore.accuracy ?? 100 }}%</span>
             </div>

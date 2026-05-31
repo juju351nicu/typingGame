@@ -23,6 +23,7 @@ export interface GameScore {
   wpm?: number;
   accuracy?: number;
   missCount?: number;
+  correctCharacterCount?: number;
 }
 /** ランキング表示用スコアのインターフェース */
 export interface RankingScore extends GameScore {

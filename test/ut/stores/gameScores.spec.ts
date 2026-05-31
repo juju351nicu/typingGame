@@ -37,6 +37,7 @@ describe("gameScores store", () => {
       wpm: 16,
       accuracy: 98,
       missCount: 1,
+      correctCharacterCount: 42,
     };
 
     gameScoresStore.saveGameScoreList(score);
