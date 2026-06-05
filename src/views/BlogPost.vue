@@ -127,30 +127,71 @@ onUnmounted(() => {
 });
 </script>
 <template>
-  <v-container style="background-color: white">
-    <div
-      class="markdown-body"
-      :style="`background-color: 'blue' ; color: 'white';`"
-      v-html="postHtml"
-    />
+  <v-container class="blog-post">
+    <div class="markdown-body" v-html="postHtml" />
     <div class="post-navigation">
-      <v-btn v-if="prevPost" variant="outlined" @click="goPost(prevPost)">
-        前の記事：{{ prevPost.title }}
+      <v-btn
+        v-if="prevPost"
+        class="post-navigation__button"
+        variant="outlined"
+        @click="goPost(prevPost)"
+      >
+        <span class="post-navigation__label">前の記事</span>
+        <span class="post-navigation__title">{{ prevPost.title }}</span>
       </v-btn>
-      <v-spacer />
-      <v-btn v-if="nextPost" variant="outlined" @click="goPost(nextPost)">
-        次の記事：{{ nextPost.title }}
+      <v-btn
+        v-if="nextPost"
+        class="post-navigation__button post-navigation__button--next"
+        variant="outlined"
+        @click="goPost(nextPost)"
+      >
+        <span class="post-navigation__label">次の記事</span>
+        <span class="post-navigation__title">{{ nextPost.title }}</span>
       </v-btn>
     </div>
-    <v-btn @click="goBlogList()">一覧ページに戻る</v-btn>
+    <div class="post-actions">
+      <v-btn variant="elevated" @click="goBlogList()">一覧ページに戻る</v-btn>
+    </div>
   </v-container>
   <Loading :isLoading="isLoading" />
 </template>
 <style scoped>
+.blog-post {
+  background-color: #ffffff;
+  padding: 24px 16px 32px;
+}
+
 .post-navigation {
   display: flex;
+  justify-content: space-between;
   gap: 12px;
   margin: 32px 0 16px;
+}
+
+.post-navigation__button {
+  flex: 1 1 0;
+  max-width: 460px;
+  min-height: 48px;
+  white-space: normal;
+}
+
+.post-navigation__button--next {
+  margin-left: auto;
+}
+
+.post-navigation__label {
+  flex: 0 0 auto;
+  margin-right: 8px;
+  color: #616161;
+}
+
+.post-navigation__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-actions {
+  margin-top: 16px;
 }
 
 /* NOTE: VuetifyのCSS Resetで崩れる＋調整の為 */
@@ -177,7 +218,7 @@ div :deep(h6) {
 div :deep(blockquote) {
   margin: 0 0 20px 0;
   padding: 10px 20px;
-  border-left: 5px solid rgb(#eee);
+  border-left: 5px solid #eeeeee;
 }
 
 div :deep(ul),
@@ -196,10 +237,8 @@ div :deep(ol ol) {
 div :deep(code) {
   padding: 2px 4px;
   font-size: 90%;
-  color: rgb(#d73a49);
-  /* <- #d73a49; <- #c7254e; */
-  background-color: rgb(#f9f2f4);
-  /* <- #f9f2f4; */
+  color: #d73a49;
+  background-color: #f9f2f4;
   border-radius: 4px;
 }
 
@@ -207,8 +246,8 @@ div :deep(pre) {
   padding: 9.5px;
   margin: 0 0 10px 0;
   word-break: break-all;
-  background-color: rgb(#f5f5f5);
-  border: 1px solid rgb(#ccc);
+  background-color: #f5f5f5;
+  border: 1px solid #cccccc;
   border-radius: 4px;
 }
 
@@ -227,16 +266,16 @@ div :deep(table) {
 
 div :deep(th) {
   padding: 8px;
-  border-bottom: 2px solid rgb(#ddd);
+  border-bottom: 2px solid #dddddd;
 }
 
 div :deep(tr:nth-child(odd) > td) {
-  background-color: rgb(#f9f9f9);
+  background-color: #f9f9f9;
 }
 
 div :deep(td) {
   padding: 8px;
-  border-top: 1px solid rgb(#ddd);
+  border-top: 1px solid #dddddd;
 }
 
 div :deep(img) {
@@ -247,6 +286,14 @@ div :deep(img) {
 @media (max-width: 600px) {
   .post-navigation {
     flex-direction: column;
+  }
+
+  .post-navigation__button {
+    max-width: none;
+  }
+
+  .post-navigation__button--next {
+    margin-left: 0;
   }
 }
 </style>

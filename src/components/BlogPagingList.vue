@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import Const from "@/constants/const";
+import type { PostIndex } from "@/types/interfaces";
+
 /** Propsインタフェース定義 */
 interface Props {
-  pageStatus: any;
+  pageStatus: PostIndex[];
   pageCounts: number;
   currentPage: number;
 }
@@ -76,21 +78,21 @@ const toNumberPage = (pageNumber: number) => {
 };
 </script>
 <template>
-  <v-container fluid>
-    <span>{{ listHeader }}</span>
-    <v-row dense>
+  <v-container fluid class="blog-list">
+    <p class="blog-list__header">{{ listHeader }}</p>
+    <v-row dense class="blog-list__items">
       <v-col v-for="entry in pageStatus" :key="entry.id" cols="12">
-        <v-card class="mx-auto" max-width="800" max-height="160" hover>
+        <v-card class="blog-card mx-auto" max-width="800" hover @click="doPostDetail(entry)">
           <v-card-item>
-            <v-card-title @click="doPostDetail(entry)">
+            <v-card-title class="blog-card__title">
               {{ entry.title }}
             </v-card-title>
-            <v-card-subtitle style="text-align: right">
+            <v-card-subtitle class="blog-card__date">
               {{ entry.date }}
             </v-card-subtitle>
           </v-card-item>
           <!-- 記事（POST)イントロダクション -->
-          <v-card-text style="color: blue">
+          <v-card-text class="blog-card__description">
             {{ entry.description }}
           </v-card-text>
         </v-card>
@@ -110,3 +112,46 @@ const toNumberPage = (pageNumber: number) => {
     </div>
   </div>
 </template>
+<style scoped>
+.blog-list {
+  padding-top: 16px;
+}
+
+.blog-list__header {
+  max-width: 800px;
+  margin: 0 auto 12px;
+  color: #424242;
+  font-size: 0.95rem;
+}
+
+.blog-list__items {
+  row-gap: 8px;
+}
+
+.blog-card {
+  cursor: pointer;
+}
+
+.blog-card__title {
+  color: #212121;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+.blog-card__date {
+  margin-top: 4px;
+  color: #757575;
+  text-align: right;
+}
+
+.blog-card__description {
+  color: #37474f;
+  line-height: 1.65;
+}
+
+@media (max-width: 600px) {
+  .blog-list {
+    padding: 12px;
+  }
+}
+</style>
