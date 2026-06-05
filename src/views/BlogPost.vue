@@ -136,8 +136,10 @@ onUnmounted(() => {
         variant="outlined"
         @click="goPost(prevPost)"
       >
-        <span class="post-navigation__label">前の記事</span>
-        <span class="post-navigation__title">{{ prevPost.title }}</span>
+        <span class="post-navigation__content">
+          <span class="post-navigation__label">前の記事</span>
+          <span class="post-navigation__title">{{ prevPost.title }}</span>
+        </span>
       </v-btn>
       <v-btn
         v-if="nextPost"
@@ -145,8 +147,10 @@ onUnmounted(() => {
         variant="outlined"
         @click="goPost(nextPost)"
       >
-        <span class="post-navigation__label">次の記事</span>
-        <span class="post-navigation__title">{{ nextPost.title }}</span>
+        <span class="post-navigation__content post-navigation__content--next">
+          <span class="post-navigation__label">次の記事</span>
+          <span class="post-navigation__title">{{ nextPost.title }}</span>
+        </span>
       </v-btn>
     </div>
     <div class="post-actions">
@@ -171,23 +175,47 @@ onUnmounted(() => {
 .post-navigation__button {
   flex: 1 1 0;
   max-width: 460px;
-  min-height: 48px;
+  min-width: 0;
+  height: auto;
+  min-height: 56px;
+  padding: 8px 12px;
   white-space: normal;
+}
+
+.post-navigation__button :deep(.v-btn__content) {
+  width: 100%;
+  min-width: 0;
 }
 
 .post-navigation__button--next {
   margin-left: auto;
 }
 
+.post-navigation__content {
+  display: flex;
+  min-width: 0;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.post-navigation__content--next {
+  align-items: flex-end;
+}
+
 .post-navigation__label {
-  flex: 0 0 auto;
-  margin-right: 8px;
   color: #616161;
+  font-size: 0.75rem;
+  line-height: 1.2;
 }
 
 .post-navigation__title {
+  display: block;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .post-actions {
