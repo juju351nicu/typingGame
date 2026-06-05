@@ -8,9 +8,29 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 
 [https://juju351nicu.github.io/typingGame/](https://juju351nicu.github.io/typingGame/)
 
-## Screenshot
+## Screenshots
 
-![ゲーム画面](./public/images/typing-baloon-demo.png)
+### Game
+
+![ゲーム画面](./public/images/readme-game.png)
+
+### Result and Ranking
+
+![ランキング画面](./public/images/readme-ranking.png)
+
+### Settings
+
+![設定画面](./public/images/readme-settings.png)
+
+### Blog
+
+![ブログ一覧](./public/images/readme-blog-list.png)
+
+![ブログ詳細](./public/images/readme-blog-detail.png)
+
+### About
+
+![About画面](./public/images/readme-about.png)
 
 ## Features
 
