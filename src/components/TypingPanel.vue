@@ -13,7 +13,6 @@ import {
   createCurrentWord,
   findCompletedWordIndex,
   getWordFeedbackClass as getTypingWordFeedbackClass,
-  hasMatchedPrefix,
   shuffleWords,
 } from "@/composables/useTypingWords";
 import {
@@ -21,6 +20,7 @@ import {
   moveWordsUp,
 } from "@/composables/useTypingWordPositions";
 import { getNextKey } from "@/composables/useTypingKeyboard";
+import { getTypingInputResult } from "@/composables/useTypingInput";
 import { useConfigStore } from "@/stores/config";
 import { currentWord } from "@/types/interfaces";
 const props = defineProps([
@@ -296,16 +296,14 @@ watch(typeBoxValue, (newValue, oldValue) => {
   if (isGameOverFlag.value) {
     return;
   }
-  if (newValue.length > oldValue.length) {
-    typedCharacterCount.value += newValue.length - oldValue.length;
-    const isMiss = !hasMatchedPrefix(currentWords.value, newValue);
-    isInputMiss.value = isMiss;
-    if (isMiss) {
-      missCount.value++;
-    }
-  } else {
-    isInputMiss.value = !hasMatchedPrefix(currentWords.value, newValue);
-  }
+  const inputResult = getTypingInputResult(
+    currentWords.value,
+    newValue,
+    oldValue
+  );
+  typedCharacterCount.value += inputResult.typedCharacterDelta;
+  missCount.value += inputResult.missCountDelta;
+  isInputMiss.value = inputResult.isInputMiss;
   checkWordEquality(newValue);
   checkCharacter(newValue);
   updateNextKey();
