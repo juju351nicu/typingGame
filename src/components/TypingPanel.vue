@@ -10,10 +10,8 @@ import {
 import { wordsData as WORD_DATAS } from "@/assets/words";
 import {
   applyCharacterFeedback,
-  createCurrentWord,
   findCompletedWordIndex,
   getWordFeedbackClass as getTypingWordFeedbackClass,
-  shuffleWords,
 } from "@/composables/useTypingWords";
 import {
   hasAnyWordReachedTop,
@@ -22,8 +20,9 @@ import {
 import { getNextKey } from "@/composables/useTypingKeyboard";
 import { getTypingInputResult } from "@/composables/useTypingInput";
 import { useTypingTimers } from "@/composables/useTypingTimers";
+import { useTypingGameWords } from "@/composables/useTypingGameWords";
 import { useConfigStore } from "@/stores/config";
-import { currentWord } from "@/types/interfaces";
+import type { currentWord } from "@/types/interfaces";
 const props = defineProps([
   "isGameStarted",
   "isResetTimer",
@@ -55,9 +54,6 @@ const configStore = useConfigStore();
 const isGameStartedFlag = computed((): boolean => {
   return props.isGameStarted;
 });
-
-/** タイピング用単語リスト */
-const typingWords = ref<string[]>(WORD_DATAS);
 
 /** リセットフラグ */
 const isResetFlag = computed((): boolean => {
@@ -112,8 +108,14 @@ const nextKey = computed({
   set: (value: string) => emit("update:nextKey", value),
 });
 
-/** 現在表示している単語リスト */
-const currentWords = ref<currentWord[]>([]);
+const {
+  currentWords,
+  shuffleTypingWords,
+  addWord: addTypingWord,
+  removeWord,
+  isGameCompleted,
+  resetWords,
+} = useTypingGameWords(WORD_DATAS);
 
 /** 入力された単語があっていた場合、CSSのクラスを設定する */
 const checkCharacter = (typeBox: string) => {
@@ -153,12 +155,7 @@ const checkWordEquality = (word: string) => {
     gameScore.value++;
     correctCharacterCount.value += targetWord.characters.length;
     registerTimeout(() => {
-      const currentIndex = currentWords.value.findIndex(
-        (item) => item === targetWord
-      );
-      if (currentIndex !== -1) {
-        currentWords.value.splice(currentIndex, 1);
-      }
+      removeWord(targetWord);
       checkGameCompleted();
       updateNextKey();
     }, BURST_ANIMATION_DURATION);
@@ -186,16 +183,9 @@ const wordsTopToBottom = () => {
   moveWordsUp(currentWords.value);
 };
 
-/** 現在表示されているの単語の索引 */
-const currentWordIndex = ref(0);
-/**  総単語数と入力完了した単語の数を比較判定する */
-const isAddedAllWords = () => {
-  return typingWords.value.length == currentWordIndex.value;
-};
-
 /** ゲームが完了したかを判定する */
 const checkGameCompleted = () => {
-  if (isAddedAllWords() && currentWords.value.length == 0) {
+  if (isGameCompleted()) {
     gameFinish();
   }
 };
@@ -232,21 +222,17 @@ const getRandomPosition = () => {
 
 /** 表示するタイピングの単語を追加する */
 const addWord = () => {
-  if (!isAddedAllWords()) {
-    currentWords.value.push(
-      createCurrentWord(
-        typingWords.value[currentWordIndex.value],
-        getRandomPosition(),
-        getWordsBoardHeight() ?? 0
-      )
-    );
-    currentWordIndex.value++;
+  const addedWord = addTypingWord(
+    getRandomPosition(),
+    getWordsBoardHeight() ?? 0
+  );
+  if (addedWord !== null) {
     updateNextKey();
   }
 };
 
 onMounted(() => {
-  typingWords.value = shuffleWords(typingWords.value);
+  shuffleTypingWords();
   configStore.saveGameMode(configStore.getGameMode);
 });
 onUnmounted(() => {
@@ -295,10 +281,8 @@ watch(typeBoxValue, (newValue, oldValue) => {
 watch(isResetFlag, (newValue, _oldValue) => {
   if (newValue) {
     stopTimers();
-    currentWords.value = [];
-    currentWordIndex.value = 0;
+    resetWords();
     isInputMiss.value = false;
-    typingWords.value = shuffleWords(typingWords.value);
     updateNextKey();
   }
 });
