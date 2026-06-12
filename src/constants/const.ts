@@ -24,7 +24,7 @@ const ALERT_TYPE = {
   INFO: "info",
   WARNING: "warning",
   ERROR: "error",
-};
+} as const;
 /** 単語挿入の速度 */
 const INTERVAL_INSERTION = {
   EASY: 4000,
