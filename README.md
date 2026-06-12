@@ -95,6 +95,21 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - スマホ幅でもゲーム画面、リザルト画面、ランキング画面が見やすいようにレスポンシブ調整
 - Vitest でユーティリティ関数、ランキング並び替え、スコア保存処理、タイピング単語処理、仮想キーボード補助処理のテストを実装
 
+## Component Design
+
+`TypingPanel.vue` に集まっていたゲーム処理を、Composition API の composable として責務ごとに分離しています。
+
+| ファイル | 役割 |
+| --- | --- |
+| `useTypingInput.ts` | 入力文字数、ミス数、ミス状態の算出 |
+| `useTypingKeyboard.ts` | 次に打つキー、押したキー、ミスキーの判定 |
+| `useTypingTimers.ts` | 単語追加・単語移動・破裂アニメーション用タイマーの管理 |
+| `useTypingGameWords.ts` | 表示中単語、出題インデックス、単語追加・削除・完了判定の管理 |
+| `useTypingWordPositions.ts` | 風船の移動、画面上部到達判定 |
+| `useTypingWords.ts` | 単語生成、文字ごとの正誤表示、入力状態クラスの生成 |
+
+画面コンポーネントは表示と各 composable の接続を担当し、入力判定・タイマー・単語管理などのロジックはテストしやすい単位に分けています。
+
 ## Development
 
 ```bash
@@ -135,16 +150,14 @@ Workflow:
 
 ### Next
 
-- 公開ページ最終確認
-  - GitHub Pages 上でゲーム、ランキング、設定、ブログ前後ナビを確認
-  - README のスクリーンショットを最新画面に差し替え
 - テスト追加
   - 設定画面のスコア初期化
   - ブログ前後ナビ
   - localStorage 復元処理
 - コード整理
-  - タイマー処理とスコア計算処理の composable 化
-  - `TypingPanel.vue` のゲーム開始 / 終了処理の責務分離
+  - スコア更新処理の composable 化
+  - `TypingPanel.vue` のゲーム開始 / 終了処理をさらに整理
+  - composable 間の命名と責務境界を見直し
 
 ### Future
 
