@@ -21,6 +21,7 @@ import {
 } from "@/composables/useTypingWordPositions";
 import { getNextKey } from "@/composables/useTypingKeyboard";
 import { getTypingInputResult } from "@/composables/useTypingInput";
+import { useTypingTimers } from "@/composables/useTypingTimers";
 import { useConfigStore } from "@/stores/config";
 import { currentWord } from "@/types/interfaces";
 const props = defineProps([
@@ -134,20 +135,7 @@ const getWordFeedbackClass = (word: currentWord): string => {
 };
 const BURST_ANIMATION_DURATION = 200;
 
-const stopTimers = () => {
-  if (addWordTimerId.value !== null) {
-    clearInterval(addWordTimerId.value);
-    addWordTimerId.value = null;
-  }
-
-  if (moveWordTimerId.value !== null) {
-    clearInterval(moveWordTimerId.value);
-    moveWordTimerId.value = null;
-  }
-
-  burstTimerIds.value.forEach((timerId) => clearTimeout(timerId));
-  burstTimerIds.value = [];
-};
+const { startTimers, stopTimers, registerTimeout } = useTypingTimers();
 /** ゲームを終了する */
 const gameFinish = () => {
   isGameOverFlag.value = true;
@@ -164,18 +152,16 @@ const checkWordEquality = (word: string) => {
     typeBoxValue.value = "";
     gameScore.value++;
     correctCharacterCount.value += targetWord.characters.length;
-    const timerId = setTimeout(() => {
+    registerTimeout(() => {
       const currentIndex = currentWords.value.findIndex(
         (item) => item === targetWord
       );
       if (currentIndex !== -1) {
         currentWords.value.splice(currentIndex, 1);
       }
-      burstTimerIds.value = burstTimerIds.value.filter((id) => id !== timerId);
       checkGameCompleted();
       updateNextKey();
     }, BURST_ANIMATION_DURATION);
-    burstTimerIds.value.push(timerId);
   }
 };
 
@@ -202,9 +188,6 @@ const wordsTopToBottom = () => {
 
 /** 現在表示されているの単語の索引 */
 const currentWordIndex = ref(0);
-const addWordTimerId = ref<ReturnType<typeof setInterval> | null>(null);
-const moveWordTimerId = ref<ReturnType<typeof setInterval> | null>(null);
-const burstTimerIds = ref<ReturnType<typeof setTimeout>[]>([]);
 /**  総単語数と入力完了した単語の数を比較判定する */
 const isAddedAllWords = () => {
   return typingWords.value.length == currentWordIndex.value;
@@ -278,14 +261,13 @@ watch(isGameStartedFlag, (newValue, _oldValue) => {
 
     addWord();
 
-    addWordTimerId.value = setInterval(() => {
-      addWord();
-    }, configStore.getInsertionSpeed);
-
-    moveWordTimerId.value = setInterval(() => {
-      wordsTopToBottom();
-      checkIsTopToBottom();
-    }, configStore.getAnimationSpeed);
+    startTimers({
+      addWord,
+      moveWords: wordsTopToBottom,
+      checkGameOver: checkIsTopToBottom,
+      addWordInterval: configStore.getInsertionSpeed,
+      moveWordInterval: configStore.getAnimationSpeed,
+    });
   } else {
     stopTimers();
   }
