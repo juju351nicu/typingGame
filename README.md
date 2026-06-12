@@ -152,13 +152,48 @@ Workflow:
 
 ## Roadmap
 
-### Next
+### Phase 1: ゲーム基本機能
 
-- コード整理
-  - `TypingPanel.vue` のゲーム開始 / 終了処理をさらに整理
-  - composable 間の命名と責務境界を見直し
+- 風船型の単語表示
+- タイピング入力の正誤判定
+- スコア表示
+- ゲームオーバー / リトライ
+- 難易度設定
 
-### Future
+Status: 完了
+
+### Phase 2: 学習補助とランキング
+
+- WPM / 正確率 / 正タイプ数 / ミス数の表示
+- localStorage によるスコア保存
+- ローカルランキング表示
+- 仮想キーボードによる次キー・押下キー・ミスキー表示
+- スコア初期化確認ダイアログ
+
+Status: 完了
+
+### Phase 3: 公開・品質改善
+
+- GitHub Pages 公開
+- GitHub Actions による test / build / deploy 自動化
+- Markdown ブログ一覧・詳細表示
+- ブログ前後ナビゲーション
+- スマホ表示対応
+- composable 化による責務分離
+- Vitest による主要ロジックのテスト
+
+Status: ほぼ完了
+
+### Phase 4: 仕上げと設計整理
+
+- `TypingPanel.vue` のゲーム開始 / 終了処理をさらに整理
+- composable 間の命名と責務境界を見直し
+- 公開ページの最終確認
+- README / スクリーンショットの最終更新
+
+Status: 次に進める作業
+
+### Phase 5: 拡張機能
 
 - タイムアタックモード
   - 30秒 / 60秒 / 90秒などの制限時間を選択
@@ -182,3 +217,5 @@ Workflow:
   - Docker Compose
   - オフライン対応
   - ホーム画面追加
+
+Status: 将来拡張
