@@ -93,7 +93,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - Markdown ブログ詳細に、posts_index.json の順序を基準にした前後記事ナビを追加
 - スコア初期化前に確認ダイアログを表示し、誤操作で履歴を消しにくいように改善
 - スマホ幅でもゲーム画面、リザルト画面、ランキング画面が見やすいようにレスポンシブ調整
-- Vitest で 12 ファイル / 53 テストを実装し、タイピング処理、ブログ前後ナビ、スコア初期化、localStorage 復元処理などを検証
+- Vitest で 13 ファイル / 56 テストを実装し、タイピング処理、ブログ前後ナビ、スコア初期化、localStorage 復元処理などを検証
 
 ## Component Design
 
@@ -102,6 +102,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 | ファイル | 役割 |
 | --- | --- |
 | `useBlogPostNavigation.ts` | ブログ記事詳細の前後ナビゲーション判定 |
+| `useCompletedWordHandler.ts` | 単語一致時の破裂、スコア加算、削除後処理の制御 |
 | `useScoreReset.ts` | 保存済みスコアの初期化と成功アラート追加 |
 | `useTypingGameWords.ts` | 表示中単語、出題インデックス、単語追加・削除・完了判定の管理 |
 | `useTypingInput.ts` | 入力文字数、ミス数、ミス状態の算出 |
