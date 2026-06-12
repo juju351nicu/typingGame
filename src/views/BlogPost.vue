@@ -4,6 +4,7 @@ import { computed, onBeforeMount, onUnmounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/blogPosts";
 import type { PostIndex } from "@/types/interfaces";
+import { getBlogPostNavigation } from "@/composables/useBlogPostNavigation";
 import MarkdownIt from "markdown-it";
 import { sanitize } from "@markdown-design/markdown-it-sanitize";
 import hljs from "highlight.js";
@@ -43,23 +44,19 @@ const posts = computed((): PostIndex[] => {
   return blogPostsStore.getPostIndexList;
 });
 
-/** 現在表示している記事の索引 */
-const currentIndex = computed((): number => {
-  return posts.value.findIndex((post) => {
-    return post.id === props.id && post.section === props.section;
-  });
+/** 前後記事ナビゲーション */
+const postNavigation = computed(() => {
+  return getBlogPostNavigation(posts.value, props.id, props.section);
 });
 
 /** 前の記事 */
 const prevPost = computed((): PostIndex | null => {
-  return currentIndex.value > 0 ? posts.value[currentIndex.value - 1] : null;
+  return postNavigation.value.prevPost;
 });
 
 /** 次の記事 */
 const nextPost = computed((): PostIndex | null => {
-  return currentIndex.value >= 0 && currentIndex.value < posts.value.length - 1
-    ? posts.value[currentIndex.value + 1]
-    : null;
+  return postNavigation.value.nextPost;
 });
 
 /** 指定した記事へ移動する */
