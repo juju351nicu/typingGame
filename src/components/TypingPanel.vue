@@ -10,7 +10,6 @@ import {
 import { wordsData as WORD_DATAS } from "@/assets/words";
 import {
   applyCharacterFeedback,
-  findCompletedWordIndex,
   getWordFeedbackClass as getTypingWordFeedbackClass,
 } from "@/composables/useTypingWords";
 import {
@@ -21,7 +20,7 @@ import { getNextKey } from "@/composables/useTypingKeyboard";
 import { getTypingInputResult } from "@/composables/useTypingInput";
 import { useTypingTimers } from "@/composables/useTypingTimers";
 import { useTypingGameWords } from "@/composables/useTypingGameWords";
-import { getCompletedWordScoreResult } from "@/composables/useTypingScore";
+import { handleCompletedWord } from "@/composables/useCompletedWordHandler";
 import { useConfigStore } from "@/stores/config";
 import type { currentWord } from "@/types/interfaces";
 const props = defineProps([
@@ -147,21 +146,22 @@ const gameFinish = () => {
 
 /** 出題された単語と入力した単語の値を比較判定する */
 const checkWordEquality = (word: string) => {
-  const index = findCompletedWordIndex(currentWords.value, word);
-  //一致した場合
-  if (index != -1) {
-    const targetWord = currentWords.value[index];
-    targetWord.isBursting = true;
-    typeBoxValue.value = "";
-    const scoreResult = getCompletedWordScoreResult(targetWord);
-    gameScore.value += scoreResult.scoreDelta;
-    correctCharacterCount.value += scoreResult.correctCharacterDelta;
-    registerTimeout(() => {
-      removeWord(targetWord);
-      checkGameCompleted();
-      updateNextKey();
-    }, BURST_ANIMATION_DURATION);
-  }
+  handleCompletedWord({
+    currentWords: currentWords.value,
+    inputValue: word,
+    burstAnimationDuration: BURST_ANIMATION_DURATION,
+    clearInput: () => {
+      typeBoxValue.value = "";
+    },
+    addScore: (scoreDelta, correctCharacterDelta) => {
+      gameScore.value += scoreDelta;
+      correctCharacterCount.value += correctCharacterDelta;
+    },
+    registerTimeout,
+    removeWord,
+    checkGameCompleted,
+    updateNextKey,
+  });
 };
 
 /** 単語を表示するテンプレート要素 */
