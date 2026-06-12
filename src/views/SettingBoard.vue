@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
 import Const from "@/constants/const";
+import { resetGameScores } from "@/composables/useScoreReset";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
@@ -42,12 +43,7 @@ const isResetDialogOpen = ref(false);
 
 /** ゲームのデータを初期化する */
 const resetModalData = () => {
-  // ローカルストレージのゲームのスコアを削除する
-  gameScoresStore.deleteGameScoreList();
-  alerts.value.push({
-    message: "スコアを初期化しました。",
-    type: Const.ALERT_TYPE.SUCCESS,
-  });
+  resetGameScores(gameScoresStore, alerts.value);
   isResetDialogOpen.value = false;
 };
 </script>
