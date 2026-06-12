@@ -21,6 +21,7 @@ import { getNextKey } from "@/composables/useTypingKeyboard";
 import { getTypingInputResult } from "@/composables/useTypingInput";
 import { useTypingTimers } from "@/composables/useTypingTimers";
 import { useTypingGameWords } from "@/composables/useTypingGameWords";
+import { getCompletedWordScoreResult } from "@/composables/useTypingScore";
 import { useConfigStore } from "@/stores/config";
 import type { currentWord } from "@/types/interfaces";
 const props = defineProps([
@@ -152,8 +153,9 @@ const checkWordEquality = (word: string) => {
     const targetWord = currentWords.value[index];
     targetWord.isBursting = true;
     typeBoxValue.value = "";
-    gameScore.value++;
-    correctCharacterCount.value += targetWord.characters.length;
+    const scoreResult = getCompletedWordScoreResult(targetWord);
+    gameScore.value += scoreResult.scoreDelta;
+    correctCharacterCount.value += scoreResult.correctCharacterDelta;
     registerTimeout(() => {
       removeWord(targetWord);
       checkGameCompleted();
