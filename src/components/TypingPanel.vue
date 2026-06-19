@@ -21,6 +21,10 @@ import { getTypingInputResult } from "@/composables/useTypingInput";
 import { useTypingTimers } from "@/composables/useTypingTimers";
 import { useTypingGameWords } from "@/composables/useTypingGameWords";
 import { handleCompletedWord } from "@/composables/useCompletedWordHandler";
+import {
+  getRandomWordLeft,
+  getResponsiveBalloonWidth,
+} from "@/composables/useTypingBoardLayout";
 import { useConfigStore } from "@/stores/config";
 import type { currentWord } from "@/types/interfaces";
 const props = defineProps([
@@ -202,24 +206,15 @@ const getWordsBoardHeight = () => {
 
 /** 画面幅に応じた風船の想定幅を取得する */
 const getBalloonWidth = (): number => {
-  const boardWidth = getWordsBoardWidth();
-  if (boardWidth !== undefined && boardWidth <= 480) {
-    return 120;
-  }
-  if (boardWidth !== undefined && boardWidth <= 760) {
-    return 140;
-  }
-  return configStore.getWordStyleWidth;
+  return getResponsiveBalloonWidth(
+    getWordsBoardWidth(),
+    configStore.getWordStyleWidth
+  );
 };
 
 /** 表示するタイピング単語の横位置を生成する */
 const getRandomPosition = () => {
-  const boardWidth = getWordsBoardWidth();
-  if (boardWidth !== undefined) {
-    const maxPosition = Math.max(boardWidth - getBalloonWidth(), 0);
-    return Math.floor(Math.random() * maxPosition);
-  }
-  return 0;
+  return getRandomWordLeft(getWordsBoardWidth(), getBalloonWidth());
 };
 
 /** 表示するタイピングの単語を追加する */
