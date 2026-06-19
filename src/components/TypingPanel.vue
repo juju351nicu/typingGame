@@ -3,7 +3,6 @@ import {
   computed,
   onMounted,
   onUnmounted,
-  ref,
   useTemplateRef,
   watch,
 } from "vue";
@@ -31,29 +30,32 @@ import {
 } from "@/composables/useTypingGameLifecycle";
 import { useConfigStore } from "@/stores/config";
 import type { currentWord } from "@/types/interfaces";
-const props = defineProps([
-  "isGameStarted",
-  "isResetTimer",
-  "gameScore",
-  "isGameOver",
-  "inputValue",
-  "typedCharacterCount",
-  "missCount",
-  "correctCharacterCount",
-  "isInputMiss",
-  "nextKey",
-]);
 
-const emit = defineEmits([
-  "update:isGameOver",
-  "update:gameScore",
-  "update:inputValue",
-  "update:typedCharacterCount",
-  "update:missCount",
-  "update:correctCharacterCount",
-  "update:isInputMiss",
-  "update:nextKey",
-]);
+interface TypingPanelProps {
+  isGameStarted: boolean;
+  isResetTimer: boolean;
+  gameScore: number;
+  isGameOver: boolean;
+  inputValue: string;
+  typedCharacterCount: number;
+  missCount: number;
+  correctCharacterCount: number;
+  isInputMiss: boolean;
+  nextKey: string;
+}
+
+const props = defineProps<TypingPanelProps>();
+
+const emit = defineEmits<{
+  "update:isGameOver": [value: boolean];
+  "update:gameScore": [value: number];
+  "update:inputValue": [value: string];
+  "update:typedCharacterCount": [value: number];
+  "update:missCount": [value: number];
+  "update:correctCharacterCount": [value: number];
+  "update:isInputMiss": [value: boolean];
+  "update:nextKey": [value: string];
+}>();
 
 /** ゲームの設定情報に関するストア情報 */
 const configStore = useConfigStore();
