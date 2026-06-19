@@ -182,16 +182,15 @@ Status: 完了
 - composable 化による責務分離
 - Vitest による主要ロジックのテスト
 
-Status: ほぼ完了
+Status: 完了
 
 ### Phase 4: 仕上げと設計整理
 
 - `TypingPanel.vue` のゲーム開始 / 終了処理をさらに整理
 - composable 間の命名と責務境界を見直し
-- 公開ページの最終確認
-- README / スクリーンショットの最終更新
+- README / スクリーンショットの最終確認
 
-Status: 次に進める作業
+Status: 仕上げ中
 
 ### Phase 5: 拡張機能
 
