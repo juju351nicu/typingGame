@@ -1,6 +1,6 @@
 import { ref } from "vue";
 
-interface TypingTimerOptions {
+export interface TypingTimerOptions {
   addWord: () => void;
   moveWords: () => void;
   checkGameOver: () => void;

@@ -25,6 +25,10 @@ import {
   getRandomWordLeft,
   getResponsiveBalloonWidth,
 } from "@/composables/useTypingBoardLayout";
+import {
+  resetTypingGame,
+  startTypingGame,
+} from "@/composables/useTypingGameLifecycle";
 import { useConfigStore } from "@/stores/config";
 import type { currentWord } from "@/types/interfaces";
 const props = defineProps([
@@ -238,13 +242,10 @@ onUnmounted(() => {
 /**  ボタンをクリックするとゲームがスタートする */
 watch(isGameStartedFlag, (newValue, _oldValue) => {
   if (newValue) {
-    stopTimers();
-
-    configStore.saveGameMode(configStore.getGameMode);
-
-    addWord();
-
-    startTimers({
+    startTypingGame({
+      stopTimers,
+      saveGameMode: () => configStore.saveGameMode(configStore.getGameMode),
+      startTimers,
       addWord,
       moveWords: wordsTopToBottom,
       checkGameOver: checkIsTopToBottom,
@@ -277,10 +278,14 @@ watch(typeBoxValue, (newValue, oldValue) => {
 /** リセットフラグをウォッチする */
 watch(isResetFlag, (newValue, _oldValue) => {
   if (newValue) {
-    stopTimers();
-    resetWords();
-    isInputMiss.value = false;
-    updateNextKey();
+    resetTypingGame({
+      stopTimers,
+      resetWords,
+      resetInputMiss: () => {
+        isInputMiss.value = false;
+      },
+      updateNextKey,
+    });
   }
 });
 </script>
