@@ -188,9 +188,8 @@ Status: 完了
 
 - `TypingPanel.vue` のゲーム開始 / 終了処理をさらに整理
 - composable 間の命名と責務境界を見直し
-- README / スクリーンショットの最終確認
 
-Status: 仕上げ中
+Status: 設計最終レビュー中
 
 ### Phase 5: 拡張機能
 
