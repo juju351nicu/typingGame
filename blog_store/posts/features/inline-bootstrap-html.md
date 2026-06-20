@@ -1,3 +1,11 @@
+---
+id: inline-bootstrap-html
+title: Use inline bootstrap-ready html
+date: 2020-01-20
+section: features
+description: Another advantage of runtime template compilation is that we can make good use of bootstrap predefined classes since our app has already loaded all its css...
+---
+
 # Use inline bootstrap-ready html
 #### January 20, 2020
 

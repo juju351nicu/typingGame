@@ -5,7 +5,8 @@
     "dev": "vite",
     "build": "vite build",
     "test": "vitest run",
-    "create-post": "node scripts/create-post.mjs"
+    "create-post": "node scripts/create-post.mjs",
+    "generate:posts": "node scripts/generate-posts.mjs"
   },
   "dependencies": {
     "@markdown-design/markdown-it-sanitize": "^0.2.0",

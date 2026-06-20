@@ -1,3 +1,11 @@
+---
+id: embed-youtube-video
+title: Testing embeded YouTube with Markdown
+date: 2020-01-24
+section: features
+description: This would be a first paragraph with some video introduction. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore dolore magna aliqua...
+---
+
 # Testing embeded YouTube with Markdown
 #### January 24, 2020
 

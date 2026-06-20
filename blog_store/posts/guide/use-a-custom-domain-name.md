@@ -1,3 +1,11 @@
+---
+id: use-a-custom-domain-name
+title: Use a custom domain name
+date: 2019-02-09
+section: guide
+description: TODO WIP
+---
+
 # Use a custom domain name Vitestを使ったモダンなJavaScriptテスト入門
 #### February 9, 2019
 

@@ -1,3 +1,11 @@
+---
+id: markdown-posts
+title: Posts are compiled with markdown-it
+date: 2020-01-07
+section: features
+description: You can simply edit your markdown files online and your blog will reflect the changes shortly after.
+---
+
 # Posts are compiled with markdown-it
 #### January 7, 2020
 

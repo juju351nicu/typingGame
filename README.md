@@ -154,7 +154,13 @@ npm run test
 npm run create-post
 ```
 
-`title`、`section`、`description` を入力すると、`blog_store/posts/{section}/{id}.md` と `blog_store/posts_index.json` が更新されます。`section` を未入力にした場合は `guide` が使われます。
+`title`、`section`、`description` を入力すると、frontmatter 付きの `blog_store/posts/{section}/{id}.md` が作成され、`blog_store/posts_index.json` が再生成されます。`section` を未入力にした場合は `guide` が使われます。
+
+```bash
+npm run generate:posts
+```
+
+`blog_store/posts_index.json` は、Markdown の frontmatter から生成するファイルです。手動編集せず、既存記事の情報を更新したい場合は Markdown 側の `id`、`title`、`date`、`section`、`description` を変更してから `npm run generate:posts` を実行します。
 
 ## Deployment
 

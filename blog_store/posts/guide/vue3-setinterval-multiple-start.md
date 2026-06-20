@@ -1,3 +1,11 @@
+---
+id: vue3-setinterval-multiple-start
+title: Vue3 の setInterval 多重起動で単語が大量生成された話
+date: 2026-05-10
+section: guide
+description: Vue3 + TypeScript でタイピングゲームを作成中に発生した、setInterval の多重起動バグについて原因と解決方法をまとめました。
+---
+
 # Vue3 の setInterval 多重起動で単語が大量生成された話
 
 ## はじめに

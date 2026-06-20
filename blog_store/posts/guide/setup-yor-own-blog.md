@@ -1,3 +1,11 @@
+---
+id: setup-yor-own-blog
+title: Setup your own Blog in under 5 minutes
+date: 2020-02-11
+section: guide
+description: This tutorial assumes you have the following installed on your system: > - An active GitHub account - GIT - NodeJS 1.- Get your own repo Login into your GitHub account and start a new repo. Use vue3-md-blog as a template Public Dir Structure 2.- Configure your .env file BASE_URL=// VUEAPPPOSTSPERPAGE=5 3.- Test locally Make sure your terminal is within your repos root folder...
+---
+
 # Setup your own Blog in under 5 minutes
 
 #### February 11, 2020

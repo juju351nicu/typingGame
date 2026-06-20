@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { createInterface } from "node:readline/promises";
+import { spawn } from "node:child_process";
 
 const BLOG_ROOT = "blog_store";
 const POSTS_ROOT = path.join(BLOG_ROOT, "posts");
@@ -16,14 +17,6 @@ const slugify = (value) => {
     .trim()
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
-};
-
-const formatPostDate = (date) => {
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
 };
 
 const readPostsIndex = async () => {
@@ -43,10 +36,16 @@ const assertUniquePost = (posts, id, markdownPath) => {
   }
 };
 
-const createMarkdown = ({ title, date, description }) => {
-  return `# ${title}
+const createMarkdown = ({ id, section, title, date, description }) => {
+  return `---
+id: ${id}
+title: ${title}
+date: ${date}
+section: ${section}
+description: ${description}
+---
 
-#### ${date}
+# ${title}
 
 ${description}
 
@@ -92,6 +91,24 @@ const createPrompt = async () => {
   };
 };
 
+const runGeneratePosts = async () => {
+  await new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, ["scripts/generate-posts.mjs"], {
+      stdio: "inherit",
+    });
+
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (code === 0) {
+        resolve();
+        return;
+      }
+
+      reject(new Error(`posts_index.json の生成に失敗しました。code: ${code}`));
+    });
+  });
+};
+
 const main = async () => {
   const prompt = await createPrompt();
 
@@ -122,32 +139,22 @@ const main = async () => {
     }
 
     const posts = await readPostsIndex();
-    const date = formatPostDate(new Date());
+    const date = new Date().toISOString().slice(0, 10);
     const markdownPath = path.posix.join(BLOG_ROOT, "posts", section, `${id}.md`);
     assertUniquePost(posts, id, markdownPath);
-
-    const post = {
-      id,
-      section,
-      date,
-      title,
-      description,
-      url: markdownPath,
-    };
 
     const markdownFilePath = path.join(POSTS_ROOT, section, `${id}.md`);
     await mkdir(path.dirname(markdownFilePath), { recursive: true });
     await writeFile(
       markdownFilePath,
-      createMarkdown({ title, date, description }),
+      createMarkdown({ id, section, title, date, description }),
       "utf8"
     );
 
-    posts.push(post);
-    await writeFile(POSTS_INDEX_PATH, `${JSON.stringify(posts, null, 2)}\n`, "utf8");
+    // Markdownを唯一の情報源にして、記事一覧は生成スクリプトで作り直す。
+    await runGeneratePosts();
 
     console.log(`Created: ${markdownFilePath}`);
-    console.log(`Updated: ${POSTS_INDEX_PATH}`);
   } finally {
     prompt.close();
   }
