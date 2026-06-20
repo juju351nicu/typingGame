@@ -25,6 +25,8 @@ export interface GameScore {
   time: string;
   score: number;
   mode: number;
+  gameRule?: GameRule;
+  timeLimitSeconds?: TimeLimitSeconds;
   date: string;
   wpm?: number;
   accuracy?: number;

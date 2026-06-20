@@ -5,10 +5,11 @@ import ResultModal from "@/components/ResultModal.vue";
 import GameTimer from "@/components/GameTimer.vue";
 import VirtualKeyboard from "@/components/VirtualKeyboard.vue";
 import { useTypingKeyboardFeedback } from "@/composables/useTypingKeyboardFeedback";
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
+import { useTimeAttackTimer } from "@/composables/useTimeAttackTimer";
 import Util from "@/utils/gameUtils";
 import Const from "@/constants/const";
 import type { Alert, GameScore } from "@/types/interfaces";
@@ -26,6 +27,14 @@ const gameScoresStore = useGameScoresStore();
 const configStore = useConfigStore();
 /** Timerコンポーネントに関する情報 */
 const timerComponent = ref<TimerExpose | null>(null);
+
+const {
+  remainingSeconds,
+  startTimeAttackTimer,
+  stopTimeAttackTimer,
+  resetTimeAttackTimer,
+} = useTimeAttackTimer();
+
 /** ゲームスタートフラグ */
 const isGameStarted = ref(false);
 
@@ -56,6 +65,16 @@ const isInputMiss = ref(false);
 /** 次に入力すべきキー */
 const nextKey = ref("");
 
+/** タイムアタックが選択されているか */
+const isTimeAttackMode = computed((): boolean => {
+  return configStore.getIsTimeAttackMode;
+});
+
+/** タイムアタックの残り時間表示 */
+const remainingTimeLabel = computed((): string => {
+  return `${remainingSeconds.value}秒`;
+});
+
 const {
   pressedKey,
   missKey,
@@ -75,6 +94,10 @@ const saveGameScores = (): void => {
   lastScore.value = {
     score: gameScore.value,
     mode: configStore.getGameMode,
+    gameRule: configStore.getGameRule,
+    timeLimitSeconds: isTimeAttackMode.value
+      ? configStore.getTimeLimitSeconds
+      : undefined,
     time: Util.getCountDownTime(accumTime.value),
     date: Util.getCurrentTime(),
     wpm: Util.calculateWpm(correctCharacterCount.value, accumTime.value),
@@ -94,6 +117,17 @@ const restartGame = () => {
 /** ボタンをクリックするとゲームがスタートする  */
 const startGame = () => {
   isGameStarted.value = true;
+
+  if (isTimeAttackMode.value) {
+    startTimeAttackTimer({
+      timeLimitSeconds: configStore.getTimeLimitSeconds,
+      onTimeUp: () => {
+        isGameOver.value = true;
+      },
+    });
+  } else {
+    resetTimeAttackTimer();
+  }
 };
 
 /** TypingPanelへリセットを通知するフラグ */
@@ -120,6 +154,7 @@ watch(isGameOver, (newValue, _oldValue) => {
   if (newValue) {
     // ゲーム終了時はタイマーを止め、リザルト保存を確定する。
     timerComponent.value?.stopTimer?.();
+    stopTimeAttackTimer();
     saveGameScores();
   }
 });
@@ -158,6 +193,7 @@ onUnmounted(() => {
   window.removeEventListener("keydown", handleEsc);
   window.removeEventListener("keydown", handleShift);
   window.removeEventListener("keydown", handleTypingKeydown);
+  resetTimeAttackTimer();
   clearKeyFeedbackTimers();
 });
 </script>
@@ -203,6 +239,10 @@ onUnmounted(() => {
           </div>
           <div class="status-panel">
             <GameTimer ref="timerComponent" v-model:accumTime="accumTime" />
+            <div v-if="isTimeAttackMode" class="game-status-item">
+              <label>残り時間</label>
+              <span>{{ remainingTimeLabel }}</span>
+            </div>
             <div class="game-status-item">
               <label>Score</label>
               <span>{{ gameScore }}</span>

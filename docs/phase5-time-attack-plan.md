@@ -123,12 +123,12 @@ timeLimitSeconds?: number;
 
 ## 実装順
 
-1. 定数と型を追加する
-2. config store にゲームルールと制限時間を追加する
-3. SettingsPage.vue にゲームモード / 制限時間の選択UIを追加する
-4. useTimeAttackTimer.ts を追加して Vitest を書く
-5. TypingPanel.vue にタイムアタック終了条件を接続する
-6. ResultModal / RankingPage に表示項目を最小追加する
+1. 定数と型を追加する: 完了
+2. config store にゲームルールと制限時間を追加する: 完了
+3. SettingsPage.vue にゲームモード / 制限時間の選択UIを追加する: 完了
+4. useTimeAttackTimer.ts を追加して Vitest を書く: 完了
+5. GamePage.vue にタイムアタック終了条件を接続する: 完了
+6. ResultModal / RankingPage に表示項目を最小追加する: ResultModal は完了、RankingPage は未対応
 7. README の Features / Roadmap を更新する
 
 ## 注意点
@@ -139,16 +139,13 @@ timeLimitSeconds?: number;
 - localStorage の既存データが壊れないよう、追加項目は optional から始める。
 - テストはまず `useTimeAttackTimer.ts` とモード判定ロジックを優先する。
 
-## 最初の実装単位
+## 次の実装単位
 
 次回は以下から着手します。
 
 ```text
-定数と型を追加する
-config store に gameRule / timeLimitSeconds を追加する
-SettingsPage.vue に選択UIを追加する
+RankingPage にゲームルール / 制限時間の表示を追加する
+必要ならランキングフィルターにタイムアタック条件を追加する
 ```
 
-この段階では、まだゲーム終了条件には接続しません。
-
-まず「設定として選べる」状態を作り、その次にタイマー処理へ接続します。
+通常モードの表示を壊さないよう、既存スコアではゲームルールを通常として扱います。

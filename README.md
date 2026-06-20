@@ -47,6 +47,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - 学習補助用の仮想キーボード表示
 - localStorage を使ったランキング表示
 - 難易度設定
+- タイムアタックモード
 - スコア履歴の localStorage 保存・初期化
 - Markdown ブログ記事の一覧・詳細表示
 - ブログ記事詳細の前後ナビゲーション
@@ -93,7 +94,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - Markdown ブログ詳細に、posts_index.json の順序を基準にした前後記事ナビを追加
 - スコア初期化前に確認ダイアログを表示し、誤操作で履歴を消しにくいように改善
 - スマホ幅でもゲーム画面、リザルト画面、ランキング画面が見やすいようにレスポンシブ調整
-- Vitest で 18 ファイル / 72 テストを実装し、タイピング処理、ブログ前後ナビ、Markdown変換、設定保存、スコア初期化、localStorage 復元処理などを検証
+- Vitest で 19 ファイル / 76 テストを実装し、タイピング処理、ブログ前後ナビ、Markdown変換、タイムアタックタイマー、設定保存、スコア初期化、localStorage 復元処理などを検証
 
 ## Component Design
 
@@ -115,6 +116,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 | `useTypingTimers.ts` | 単語追加・単語移動・破裂アニメーション用タイマーの管理 |
 | `useTypingWordPositions.ts` | 風船の移動、画面上部到達判定 |
 | `useTypingWords.ts` | 単語生成、文字ごとの正誤表示、入力状態クラスの生成 |
+| `useTimeAttackTimer.ts` | タイムアタックモードの残り時間と時間切れ処理の管理 |
 
 画面コンポーネントは表示と各 composable の接続を担当し、入力判定・タイマー・単語管理・スコア更新などのロジックはテストしやすい単位に分けています。
 
@@ -254,4 +256,4 @@ Plan: [`docs/phase5-time-attack-plan.md`](./docs/phase5-time-attack-plan.md)
   - オフライン対応
   - ホーム画面追加
 
-Status: 将来拡張
+Status: 進行中

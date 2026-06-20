@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import Util from "@/utils/gameUtils";
+import Const from "@/constants/const";
 import type { GameScore } from "@/types/interfaces";
 /** Propsインタフェース定義 */
 interface Props {
@@ -48,6 +49,20 @@ const gameModeLabel = computed((): string => {
   return Util.getLevel(lastScore.value.mode);
 });
 
+/** ゲームルール */
+const gameRuleLabel = computed((): string => {
+  return lastScore.value.gameRule === Const.GAME_RULE.TIME_ATTACK
+    ? "タイムアタック"
+    : "通常";
+});
+
+/** タイムアタックの制限時間 */
+const timeLimitLabel = computed((): string => {
+  return lastScore.value.timeLimitSeconds
+    ? `${lastScore.value.timeLimitSeconds}秒`
+    : "-";
+});
+
 /** ゲームオーバーフラグをウォッチにて判定する */
 watch(isGameOverFlag, (newValue, _oldValue) => {
   if (newValue) {
@@ -80,6 +95,17 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
             <div class="result-item">
               <span class="item-label">難易度</span>
               <span class="item-value">{{ gameModeLabel }}</span>
+            </div>
+            <div class="result-item">
+              <span class="item-label">ゲームルール</span>
+              <span class="item-value">{{ gameRuleLabel }}</span>
+            </div>
+            <div
+              v-if="lastScore.gameRule === Const.GAME_RULE.TIME_ATTACK"
+              class="result-item"
+            >
+              <span class="item-label">制限時間</span>
+              <span class="item-value">{{ timeLimitLabel }}</span>
             </div>
             <div class="result-item">
               <span class="item-label">WPM</span>
