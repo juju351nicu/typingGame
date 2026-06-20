@@ -1,8 +1,8 @@
 import { getCompletedWordScoreResult } from "@/composables/useTypingScore";
-import type { currentWord } from "@/types/interfaces";
+import type { CurrentWord } from "@/types/interfaces";
 import { describe, expect, it } from "vitest";
 
-const createWord = (word: string): currentWord => ({
+const createWord = (word: string): CurrentWord => ({
   characters: word.split(""),
   classList: [],
   balloonClass: "balloon-red",

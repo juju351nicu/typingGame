@@ -1,5 +1,5 @@
 import { ref, toRaw } from "vue";
-import type { currentWord } from "@/types/interfaces";
+import type { CurrentWord } from "@/types/interfaces";
 import { createCurrentWord, shuffleWords } from "@/composables/useTypingWords";
 
 /**
@@ -14,7 +14,7 @@ export const useTypingGameWords = (initialWords: string[]) => {
   /** タイピング用単語リスト */
   const typingWords = ref<string[]>([...initialWords]);
   /** 現在表示している単語リスト */
-  const currentWords = ref<currentWord[]>([]);
+  const currentWords = ref<CurrentWord[]>([]);
   /** 次に追加する単語の索引 */
   const currentWordIndex = ref(0);
 
@@ -40,7 +40,7 @@ export const useTypingGameWords = (initialWords: string[]) => {
    * @param top 表示開始位置の縦座標
    * @returns 追加した単語。追加対象がない場合はnull
    */
-  const addWord = (left: number, top: number): currentWord | null => {
+  const addWord = (left: number, top: number): CurrentWord | null => {
     if (isAddedAllWords()) {
       return null;
     }
@@ -61,7 +61,7 @@ export const useTypingGameWords = (initialWords: string[]) => {
    *
    * @param targetWord 削除対象の単語
    */
-  const removeWord = (targetWord: currentWord): void => {
+  const removeWord = (targetWord: CurrentWord): void => {
     // Vue の Proxy と元オブジェクトのどちらで渡されても削除できるようにする。
     const currentIndex = currentWords.value.findIndex(
       (item) => item === targetWord || toRaw(item) === targetWord

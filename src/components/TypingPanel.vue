@@ -29,7 +29,7 @@ import {
   startTypingGame,
 } from "@/composables/useTypingGameLifecycle";
 import { useConfigStore } from "@/stores/config";
-import type { currentWord } from "@/types/interfaces";
+import type { CurrentWord } from "@/types/interfaces";
 
 interface TypingPanelProps {
   isGameStarted: boolean;
@@ -138,7 +138,7 @@ const updateNextKey = () => {
 };
 
 /** 単語ごとの入力状態を返す */
-const getWordFeedbackClass = (word: currentWord): string => {
+const getWordFeedbackClass = (word: CurrentWord): string => {
   return getTypingWordFeedbackClass(
     word,
     typeBoxValue.value,

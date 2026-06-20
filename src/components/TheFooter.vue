@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { copyRightType } from "@/types/interfaces";
-const copyRight: copyRightType = {
+import type { CopyRightType } from "@/types/interfaces";
+const copyRight: CopyRightType = {
   company: "CLIP Corporation.",
   copyRight: "All Rights Reserved.",
   dateStr: new Date().toDateString().slice(-4),

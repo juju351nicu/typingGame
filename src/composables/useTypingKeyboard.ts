@@ -1,4 +1,4 @@
-import type { currentWord } from "@/types/interfaces";
+import type { CurrentWord } from "@/types/interfaces";
 
 /**
  * キー入力値を小文字アルファベット1文字に正規化する。
@@ -22,7 +22,7 @@ export const normalizeAlphabetKey = (key: string): string => {
  * @returns 次に入力すべき小文字アルファベット。対象がない場合は空文字
  */
 export const getNextKey = (
-  currentWords: currentWord[],
+  currentWords: CurrentWord[],
   inputValue: string
 ): string => {
   // 破裂中の単語は、次キー候補から外す。

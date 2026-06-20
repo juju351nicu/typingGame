@@ -1,4 +1,4 @@
-import type { currentWord } from "@/types/interfaces";
+import type { CurrentWord } from "@/types/interfaces";
 import { hasMatchedPrefix } from "@/composables/useTypingWords";
 
 /** 入力変更後にスコア系の状態へ反映する差分 */
@@ -23,7 +23,7 @@ export interface TypingInputResult {
  * @returns スコア系の状態へ反映する更新差分
  */
 export const getTypingInputResult = (
-  currentWords: currentWord[],
+  currentWords: CurrentWord[],
   newValue: string,
   oldValue: string
 ): TypingInputResult => {

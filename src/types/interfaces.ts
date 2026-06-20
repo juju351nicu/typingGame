@@ -1,5 +1,5 @@
 /** コピーライトのインターフェ-ス */
-export interface copyRightType {
+export interface CopyRightType {
   company: string;
   copyRight: string;
   dateStr: string;
@@ -52,7 +52,7 @@ export interface CurrentWordStyle {
   top: string;
 }
 /** 表示するタイピングの単語のインターフェ-ス */
-export interface currentWord {
+export interface CurrentWord {
   characters: string[];
   classList: string[];
   style: CurrentWordStyle;

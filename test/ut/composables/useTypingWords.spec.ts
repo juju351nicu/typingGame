@@ -6,10 +6,10 @@ import {
   hasMatchedPrefix,
   shuffleWords,
 } from "@/composables/useTypingWords";
-import type { currentWord } from "@/types/interfaces";
+import type { CurrentWord } from "@/types/interfaces";
 import { describe, expect, it, vi } from "vitest";
 
-const createWord = (word: string, isBursting = false): currentWord => ({
+const createWord = (word: string, isBursting = false): CurrentWord => ({
   characters: word.split(""),
   classList: [],
   balloonClass: "balloon-red",

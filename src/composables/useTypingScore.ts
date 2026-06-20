@@ -1,4 +1,4 @@
-import type { currentWord } from "@/types/interfaces";
+import type { CurrentWord } from "@/types/interfaces";
 
 export interface CompletedWordScoreResult {
   /** スコアに加算する値 */
@@ -16,7 +16,7 @@ export interface CompletedWordScoreResult {
  * @returns スコア更新に使う加算値
  */
 export const getCompletedWordScoreResult = (
-  word: currentWord
+  word: CurrentWord
 ): CompletedWordScoreResult => {
   // 現状のルールでは、1単語正解ごとにスコアを1点加算する。
   return {

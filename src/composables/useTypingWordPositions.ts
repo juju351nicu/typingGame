@@ -1,4 +1,4 @@
-import type { currentWord } from "@/types/interfaces";
+import type { CurrentWord } from "@/types/interfaces";
 
 const DEFAULT_TOP_REACHED_THRESHOLD = -120;
 
@@ -8,7 +8,7 @@ const DEFAULT_TOP_REACHED_THRESHOLD = -120;
  * @param word 位置を取得する単語
  * @returns CSSのtop値からpxを除いた数値
  */
-export const getWordTop = (word: currentWord): number => {
+export const getWordTop = (word: CurrentWord): number => {
   // style.top は "100px" の形式なので、px を外して数値化する。
   return Number(word.style.top.slice(0, -2));
 };
@@ -19,7 +19,7 @@ export const getWordTop = (word: currentWord): number => {
  * @param word 移動する単語
  * @param distance 上方向へ移動する距離
  */
-export const moveWordUp = (word: currentWord, distance = 1): void => {
+export const moveWordUp = (word: CurrentWord, distance = 1): void => {
   word.style.top = `${getWordTop(word) - distance}px`;
 };
 
@@ -29,7 +29,7 @@ export const moveWordUp = (word: currentWord, distance = 1): void => {
  * @param words 移動する単語リスト
  * @param distance 上方向へ移動する距離
  */
-export const moveWordsUp = (words: currentWord[], distance = 1): void => {
+export const moveWordsUp = (words: CurrentWord[], distance = 1): void => {
   words.forEach((word) => {
     moveWordUp(word, distance);
   });
@@ -43,7 +43,7 @@ export const moveWordsUp = (words: currentWord[], distance = 1): void => {
  * @returns 破裂中ではない単語が判定位置を超えた場合はtrue
  */
 export const hasReachedTop = (
-  word: currentWord,
+  word: CurrentWord,
   threshold = DEFAULT_TOP_REACHED_THRESHOLD
 ): boolean => {
   // 破裂中の単語はゲームオーバー判定の対象外にする。
@@ -58,7 +58,7 @@ export const hasReachedTop = (
  * @returns 到達済みの単語が1つでもある場合はtrue
  */
 export const hasAnyWordReachedTop = (
-  words: currentWord[],
+  words: CurrentWord[],
   threshold = DEFAULT_TOP_REACHED_THRESHOLD
 ): boolean => {
   return words.some((word) => hasReachedTop(word, threshold));

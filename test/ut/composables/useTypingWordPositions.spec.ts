@@ -5,10 +5,10 @@ import {
   moveWordUp,
   moveWordsUp,
 } from "@/composables/useTypingWordPositions";
-import type { currentWord } from "@/types/interfaces";
+import type { CurrentWord } from "@/types/interfaces";
 import { describe, expect, it } from "vitest";
 
-const createWord = (top: number, isBursting = false): currentWord => ({
+const createWord = (top: number, isBursting = false): CurrentWord => ({
   characters: ["a"],
   classList: [],
   balloonClass: "balloon-red",

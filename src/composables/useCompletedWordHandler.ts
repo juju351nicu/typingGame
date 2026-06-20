@@ -1,10 +1,10 @@
-import type { currentWord } from "@/types/interfaces";
+import type { CurrentWord } from "@/types/interfaces";
 import { getCompletedWordScoreResult } from "@/composables/useTypingScore";
 import { findCompletedWordIndex } from "@/composables/useTypingWords";
 
 interface CompletedWordHandlerOptions {
   /** 現在表示している単語リスト */
-  currentWords: currentWord[];
+  currentWords: CurrentWord[];
   /** 入力欄の現在値 */
   inputValue: string;
   /** 破裂アニメーションが終わるまでの待機時間 */
@@ -16,7 +16,7 @@ interface CompletedWordHandlerOptions {
   /** 遅延実行する処理をタイマー管理へ登録する処理 */
   registerTimeout: (callback: () => void, duration: number) => void;
   /** 表示中リストから単語を削除する処理 */
-  removeWord: (word: currentWord) => void;
+  removeWord: (word: CurrentWord) => void;
   /** すべての単語を処理し終えたか確認する処理 */
   checkGameCompleted: () => void;
   /** 次に入力すべきキーを更新する処理 */

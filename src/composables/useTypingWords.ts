@@ -1,4 +1,4 @@
-import type { currentWord } from "@/types/interfaces";
+import type { CurrentWord } from "@/types/interfaces";
 
 /** 風船に割り当てるCSSクラス一覧 */
 export const balloonColorClasses = [
@@ -51,7 +51,7 @@ export const createCurrentWord = (
   word: string,
   left: number,
   top: number
-): currentWord => ({
+): CurrentWord => ({
   // 文字ごとの正誤クラスを付けられるよう、単語を1文字ずつ保持する。
   characters: word.split(""),
   classList: [],
@@ -70,9 +70,9 @@ export const createCurrentWord = (
  * @returns 文字ごとの表示クラスを反映した単語リスト
  */
 export const applyCharacterFeedback = (
-  currentWords: currentWord[],
+  currentWords: CurrentWord[],
   inputValue: string
-): currentWord[] => {
+): CurrentWord[] => {
   const inputCharacters = inputValue.split("");
   currentWords.forEach((word) => {
     // 入力済みの範囲だけ correct / incorrect を付け、未入力文字は空にする。
@@ -94,7 +94,7 @@ export const applyCharacterFeedback = (
  * @returns 入力値が空、またはいずれかの単語の先頭と一致している場合はtrue
  */
 export const hasMatchedPrefix = (
-  currentWords: currentWord[],
+  currentWords: CurrentWord[],
   inputValue: string
 ): boolean => {
   if (inputValue === "") {
@@ -115,7 +115,7 @@ export const hasMatchedPrefix = (
  * @returns 完全一致した単語のインデックス。一致しない場合は -1
  */
 export const findCompletedWordIndex = (
-  currentWords: currentWord[],
+  currentWords: CurrentWord[],
   inputValue: string
 ): number => {
   // 破裂中の単語は、再度正解処理されないよう除外する。
@@ -133,7 +133,7 @@ export const findCompletedWordIndex = (
  * @returns active / miss を表すCSSクラス名。対象外の場合は空文字
  */
 export const getWordFeedbackClass = (
-  word: currentWord,
+  word: CurrentWord,
   inputValue: string,
   isInputMiss: boolean
 ): string => {
