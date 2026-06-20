@@ -7,38 +7,42 @@ import Const from "@/constants/const";
 import { resetGameScores } from "@/composables/useScoreReset";
 import type { Alert, GameRule, TimeLimitSeconds } from "@/types/interfaces";
 
+/** 難易度選択に表示する項目 */
 interface DifficultyOption {
   title: string;
   value: number;
 }
 
+/** ゲームルール選択に表示する項目 */
 interface GameRuleOption {
   title: string;
   value: GameRule;
 }
 
+/** タイムアタック制限時間の選択に表示する項目 */
 interface TimeLimitOption {
   title: string;
   value: TimeLimitSeconds;
 }
 
-//インポートした関数を呼び出してストアをインスタンス化して変数に代入
+/** 保存済みスコアを管理するストア */
 const gameScoresStore = useGameScoresStore();
-/** ゲームの設定情報に関するストア情報 */
+
+/** 難易度、ゲームルール、仮想キーボード表示などの設定を管理するストア */
 const configStore = useConfigStore();
 
-/** 選択されたゲームの難易度 */
+/** 画面で選択中の難易度 */
 const selectedOption = ref(configStore.getGameMode);
 
-/** 選択されたゲームルール */
+/** 画面で選択中のゲームルール */
 const selectedGameRule = ref<GameRule>(configStore.getGameRule);
 
-/** 選択されたタイムアタック制限時間 */
+/** 画面で選択中のタイムアタック制限時間 */
 const selectedTimeLimitSeconds = ref<TimeLimitSeconds>(
   configStore.getTimeLimitSeconds
 );
 
-/** 仮想キーボードの表示有無 */
+/** 画面で選択中の仮想キーボード表示有無 */
 const isVirtualKeyboardVisible = ref(configStore.getIsVirtualKeyBoard);
 
 /** ゲーム難易度の選択項目 */
@@ -50,13 +54,16 @@ const gameRuleOptions = ref<GameRuleOption[]>(Const.GAME_RULE_OPTIONS);
 /** タイムアタック制限時間の選択項目 */
 const timeLimitOptions = ref<TimeLimitOption[]>(Const.TIME_ATTACK_LIMITS);
 
-/** タイムアタックの設定を表示するか */
+/** タイムアタック選択時だけ制限時間の設定を表示する */
 const isTimeAttackMode = computed((): boolean => {
   return selectedGameRule.value === Const.GAME_RULE.TIME_ATTACK;
 });
 
 /**
- * ゲームの難易度設定する
+ * ゲームの難易度を保存する。
+ *
+ * 難易度は単語追加速度と風船移動速度に影響する。
+ *
  * @param mode 難易度
  */
 const setGameMode = (mode: number) => {
@@ -64,7 +71,10 @@ const setGameMode = (mode: number) => {
 };
 
 /**
- * ゲームルールを設定する
+ * ゲームルールを保存する。
+ *
+ * タイムアタックを選択した場合のみ、制限時間設定のUIを表示する。
+ *
  * @param gameRule ゲームルール
  */
 const setGameRule = (gameRule: GameRule) => {
@@ -72,7 +82,10 @@ const setGameRule = (gameRule: GameRule) => {
 };
 
 /**
- * タイムアタックの制限時間を設定する
+ * タイムアタックの制限時間を保存する。
+ *
+ * 通常モードでは使わないが、設定値として保持しておく。
+ *
  * @param seconds 制限時間（秒）
  */
 const setTimeLimitSeconds = (seconds: TimeLimitSeconds) => {
@@ -80,7 +93,10 @@ const setTimeLimitSeconds = (seconds: TimeLimitSeconds) => {
 };
 
 /**
- * 仮想キーボードの表示有無を設定する
+ * 仮想キーボードの表示有無を保存する。
+ *
+ * Vuetifyのswitchはnullを渡す可能性があるため、booleanの時だけ保存する。
+ *
  * @param isVisible 表示する場合 true
  */
 const setVirtualKeyboardVisible = (isVisible: boolean | null) => {
@@ -90,12 +106,15 @@ const setVirtualKeyboardVisible = (isVisible: boolean | null) => {
   configStore.saveIsVertualKeyBoard(isVisible);
 };
 
-/** アラートに表示するメッセージ */
+/** スコア初期化結果などを表示するアラート */
 const alerts = ref<Alert[]>([]);
-/** スコア初期化確認ダイアログ */
+
+/** スコア初期化確認ダイアログの表示状態 */
 const isResetDialogOpen = ref(false);
 
-/** ゲームのデータを初期化する */
+/**
+ * 保存済みスコアを初期化して確認ダイアログを閉じる。
+ */
 const resetModalData = () => {
   resetGameScores(gameScoresStore, alerts.value);
   isResetDialogOpen.value = false;
