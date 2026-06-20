@@ -1,6 +1,7 @@
 import { createPinia, setActivePinia } from "pinia";
 import { createPersistedState } from "pinia-plugin-persistedstate";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { App } from "vue";
 import type { GameScore } from "@/types/interfaces";
 
 const createMemoryStorage = (initialValues: Record<string, string> = {}) => {
@@ -26,12 +27,13 @@ const setupPersistedPinia = (initialValues: Record<string, string>) => {
 
   const pinia = createPinia();
   pinia.use(createPersistedState());
-  pinia.install({
+  const appMock = {
     config: {
       globalProperties: {},
     },
     provide: vi.fn(),
-  } as any);
+  } as unknown as App;
+  pinia.install(appMock);
   setActivePinia(pinia);
 };
 
