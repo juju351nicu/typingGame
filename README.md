@@ -189,10 +189,13 @@ Status: 完了
 
 ### Phase 4: 仕上げと設計整理
 
-- `TypingPanel.vue` のゲーム開始 / 終了処理をさらに整理
-- composable 間の命名と責務境界を見直し
+- `TypingPanel.vue` のゲーム開始 / リセット処理を composable 化
+- 風船の表示位置計算を composable 化
+- 仮想キーボードの押下キー / ミスキー表示管理を composable 化
+- composable 間の命名と責務境界を整理
+- JSDoc と最低限の補足コメントを整備
 
-Status: 設計最終レビュー中
+Status: 完了
 
 ### Phase 5: 拡張機能
 
