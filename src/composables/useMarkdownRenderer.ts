@@ -3,13 +3,30 @@ import hljs from "highlight.js";
 import "highlight.js/styles/github-dark.min.css";
 import MarkdownIt from "markdown-it";
 
+/**
+ * MarkdownをHTMLへ変換する markdown-it インスタンス。
+ *
+ * BlogPost.vue から Markdown 変換設定を切り離し、ブログ記事の表示仕様を
+ * このファイルに集約する。
+ */
 const markdownIt: MarkdownIt = new MarkdownIt({
   html: true,
+  /**
+   * fenced code block のシンタックスハイライトを行う。
+   *
+   * 未対応言語やハイライト失敗時は markdown-it の標準出力へ戻すため、
+   * 空文字を返して本文表示を継続する。
+   *
+   * @param sourceCode コードブロック本文
+   * @param language Markdown側で指定された言語名
+   * @returns highlight.js が生成したHTML、または空文字
+   */
   highlight: (sourceCode: string, language: string) => {
     if (language && hljs.getLanguage(language)) {
       try {
         return hljs.highlight(sourceCode, { language }).value;
       } catch (error) {
+        // ハイライト失敗だけで記事全体の表示を止めない。
         return "";
       }
     }
@@ -18,6 +35,7 @@ const markdownIt: MarkdownIt = new MarkdownIt({
   },
 });
 
+// YouTube埋め込み記事を表示できるよう、必要なiframe属性だけ許可する。
 markdownIt.use(sanitize, {
   ADD_TAGS: ["iframe"],
   ADD_ATTR: [

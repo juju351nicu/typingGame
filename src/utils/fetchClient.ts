@@ -65,10 +65,10 @@ const fetcher = async (requestDatas: RequestData): Promise<Response> => {
 /**
  * リクエスト送信の設定情報を取得する
  *
- * @param {string} uri リクエストURL
- * @param {?} reqData 送信するリクエストボディのデータ
- * @param {Headers} customHeader カスタムヘッダー
- * @param {METHOD} method Methodの定数
+ * @param uri リクエストURL
+ * @param reqData 送信するリクエストボディのデータ
+ * @param customHeader カスタムヘッダー
+ * @param method HTTPメソッド
  * @returns リクエスト送信の設定情報
  */
 const createRequestData = (
@@ -77,17 +77,9 @@ const createRequestData = (
   customHeader: HeadersInit | null,
   method: HttpMethod
 ): RequestData => {
-  // リクエストヘッダ情報作成
-  const headers = new Headers();
-  if (customHeader !== null) {
-    Object.keys(customHeader).forEach((key) => {
-      headers.set(key, customHeader[key]);
-    });
-  } else {
-    Object.keys(defaultHeader).forEach((key) => {
-      headers.set(key, defaultHeader[key]);
-    });
-  }
+  // HeadersInitは複数形式を受け取れるため、標準のHeadersに正規化して扱う。
+  const headers = new Headers(customHeader ?? defaultHeader);
+
   // optionsで HTTPMethodやHeadersを設定する
   let options: RequestInit = {};
   // HTTPメソッドがPOST・PUTの場合のみリクエストボディを追加する
