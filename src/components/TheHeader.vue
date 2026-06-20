@@ -6,13 +6,13 @@ const router = useRouter();
 /** メニュータイトル */
 const title = "Balloon Typing Game";
 /**
- * ブログ記事一覧ページに戻る
+ * 当サイトについてページへ遷移する
  */
 const goAboutUs = () => {
   router.push({ name: "AboutUs" });
 };
 /**
- * ブログ記事一覧ページに戻る
+ * ブログ記事一覧ページへ遷移する
  */
 const goBlogList = () => {
   router.push({ name: "BlogPostList" });

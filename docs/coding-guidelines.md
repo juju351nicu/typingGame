@@ -13,6 +13,10 @@
 ## Vue Components
 
 - 画面コンポーネントは表示と composable の接続を主な責務にする。
+- 画面単位の `.vue` は `GamePage.vue` / `RankingPage.vue` のように `Page` を付ける。
+- アプリ共通部品は `AppHeader` / `AppAlerts` のように `App` を付ける。
+- 用途が限定される部品は `ResultModal` / `GameTimer` のように役割が分かる名前にする。
+- 公開済みURLの path は、ファイル名や route name を整理しても安易に変えない。
 - ゲーム判定、スコア計算、タイマー、入力フィードバックなどの処理は composable に分ける。
 - コンポーネント参照を使う場合は、`ref<any>` ではなく `TimerExpose` のような最小限の型を定義する。
 - デバッグ用の `console.log` は残さない。
