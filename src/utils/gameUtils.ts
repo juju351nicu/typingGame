@@ -245,6 +245,37 @@ const getTimeLimitLabel = (score: GameScore): string => {
 };
 
 /**
+ * ランキングサマリー用にスコアの補足情報を整形する。
+ * @param score ランキング表示用スコア
+ * @param options ゲームルールを表示するかどうか
+ * @returns ランク、難易度、必要に応じたルール、タイムをまとめた表示文字列
+ */
+const getRankingScoreSummary = (
+  score: RankingScore,
+  options: { withGameRule?: boolean } = {}
+): string => {
+  const items = [
+    `${score.resultRank}ランク`,
+    getLevel(score.mode),
+  ];
+
+  if (options.withGameRule) {
+    const ruleLabel = getScoreGameRuleLabel(score);
+    const ruleSummary =
+      getGameRule(score) === Const.GAME_RULE.TIME_ATTACK
+        ? `${ruleLabel} ${getTimeLimitLabel(score)}`
+        : ruleLabel;
+
+    items.push(ruleSummary);
+  } else if (getGameRule(score) === Const.GAME_RULE.TIME_ATTACK) {
+    items.push(getTimeLimitLabel(score));
+  }
+
+  items.push(score.time);
+  return items.join(" / ");
+};
+
+/**
  * 現在の時刻を取得する
  * @returns 現在の時刻
  */
@@ -307,6 +338,7 @@ export default {
   getGameRuleLabel,
   getScoreGameRuleLabel,
   getTimeLimitLabel,
+  getRankingScoreSummary,
   getColor,
   getLevel,
   getCurrentTime,

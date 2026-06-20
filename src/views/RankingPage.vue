@@ -124,14 +124,8 @@ const bestScoreSummary = computed((): string => {
     return "No records";
   }
 
-  const ruleLabel = Util.getScoreGameRuleLabel(bestScore.value);
-  const ruleSummary =
-    Util.getGameRule(bestScore.value) === Const.GAME_RULE.TIME_ATTACK
-      ? `${ruleLabel} ${Util.getTimeLimitLabel(bestScore.value)}`
-      : ruleLabel;
-
   // ランク・難易度・ルール・タイムを1行で確認できるようにする。
-  return `${bestScore.value.resultRank}ランク / ${Util.getLevel(bestScore.value.mode)} / ${ruleSummary} / ${bestScore.value.time}`;
+  return Util.getRankingScoreSummary(bestScore.value, { withGameRule: true });
 });
 
 /** 通常モード最高スコアの補足表示 */
@@ -140,7 +134,7 @@ const normalBestScoreSummary = computed((): string => {
     return "No records";
   }
 
-  return `${normalBestScore.value.resultRank}ランク / ${Util.getLevel(normalBestScore.value.mode)} / ${normalBestScore.value.time}`;
+  return Util.getRankingScoreSummary(normalBestScore.value);
 });
 
 /** タイムアタック最高スコアの補足表示 */
@@ -149,7 +143,7 @@ const timeAttackBestScoreSummary = computed((): string => {
     return "No records";
   }
 
-  return `${timeAttackBestScore.value.resultRank}ランク / ${Util.getLevel(timeAttackBestScore.value.mode)} / ${Util.getTimeLimitLabel(timeAttackBestScore.value)} / ${timeAttackBestScore.value.time}`;
+  return Util.getRankingScoreSummary(timeAttackBestScore.value);
 });
 
 /** ランク表示用CSSクラス */
