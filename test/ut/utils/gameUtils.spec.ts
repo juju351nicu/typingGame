@@ -1,5 +1,6 @@
 import Util from "@/utils/gameUtils";
-import { GameScore } from "@/types/interfaces";
+import Const from "@/constants/const";
+import type { GameScore } from "@/types/interfaces";
 import { describe, expect, it } from "vitest";
 
 describe("isEmpty", () => {
@@ -104,5 +105,56 @@ describe("createRankingScores", () => {
     expect(result).toHaveLength(1);
     expect(result[0].mode).toBe(2);
     expect(result[0].rank).toBe(1);
+  });
+
+  it("ゲームルールでランキングを絞り込む", () => {
+    const timeAttackScore: GameScore = {
+      score: 20,
+      mode: 2,
+      gameRule: Const.GAME_RULE.TIME_ATTACK,
+      timeLimitSeconds: 60,
+      time: "00:01:00.00",
+      date: "2026-06-20 10:00:00",
+    };
+
+    const result = Util.createRankingScores(
+      [...scores, timeAttackScore],
+      null,
+      Const.GAME_RULE.TIME_ATTACK
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].gameRule).toBe(Const.GAME_RULE.TIME_ATTACK);
+    expect(result[0].rank).toBe(1);
+  });
+});
+
+describe("game rule label", () => {
+  it("既存スコアは通常モードとして扱う", () => {
+    const score: GameScore = {
+      score: 10,
+      mode: 1,
+      time: "00:00:30.00",
+      date: "2026-06-20 10:00:00",
+    };
+
+    expect(Util.getGameRule(score)).toBe(Const.GAME_RULE.NORMAL);
+    expect(Util.getScoreGameRuleLabel(score)).toBe("通常");
+    expect(Util.getTimeLimitLabel(score)).toBe("-");
+  });
+
+  it("タイムアタックスコアの表示名と制限時間を返す", () => {
+    const score: GameScore = {
+      score: 10,
+      mode: 1,
+      gameRule: Const.GAME_RULE.TIME_ATTACK,
+      timeLimitSeconds: 90,
+      time: "00:01:30.00",
+      date: "2026-06-20 10:00:00",
+    };
+
+    expect(Util.getGameRule(score)).toBe(Const.GAME_RULE.TIME_ATTACK);
+    expect(Util.getScoreGameRuleLabel(score)).toBe("タイムアタック");
+    expect(Util.getTimeLimitLabel(score)).toBe("90秒");
   });
 });

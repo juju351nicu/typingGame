@@ -3,7 +3,7 @@ import { useGameScoresStore } from "@/stores/gameScores";
 import { computed, ref } from "vue";
 import Const from "@/constants/const";
 import Util from "@/utils/gameUtils";
-import { GameScore, RankingScore } from "@/types/interfaces";
+import type { GameRule, GameScore, RankingScore } from "@/types/interfaces";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
@@ -21,6 +21,8 @@ const headers = [
   { title: "正確率", align: "end", key: "accuracy" },
   { title: "ミス", align: "end", key: "missCount" },
   { title: "難易度", align: "start", key: "mode" },
+  { title: "ルール", align: "start", key: "gameRule" },
+  { title: "制限時間", align: "start", key: "timeLimitSeconds" },
   { title: "タイム", align: "start", key: "time" },
   { title: "日付", align: "end", key: "date" },
 ] as const;
@@ -28,8 +30,17 @@ const headers = [
 /** 難易度フィルター */
 const selectedMode = ref<number | null>(null);
 
+/** ゲームルールフィルター */
+const selectedGameRule = ref<GameRule | null>(null);
+
 /** 難易度フィルターの選択肢 */
 const modeOptions = [{ title: "All", value: null }, ...Const.DIFFICULTY_LEVEL];
+
+/** ゲームルールフィルターの選択肢 */
+const gameRuleOptions = [
+  { title: "All", value: null },
+  ...Const.GAME_RULE_OPTIONS,
+];
 
 /** スコア一覧 */
 const gameScores = computed((): GameScore[] => {
@@ -38,7 +49,11 @@ const gameScores = computed((): GameScore[] => {
 
 /** ランキング用スコア一覧 */
 const rankingItems = computed((): RankingScore[] => {
-  return Util.createRankingScores(gameScores.value, selectedMode.value);
+  return Util.createRankingScores(
+    gameScores.value,
+    selectedMode.value,
+    selectedGameRule.value
+  );
 });
 
 /** 最高スコア */
@@ -73,6 +88,17 @@ const getRankClass = (rank: number): string => {
         item-title="title"
         item-value="value"
         label="難易度"
+        variant="outlined"
+        density="comfortable"
+        hide-details
+        class="mode-filter"
+      />
+      <v-select
+        v-model="selectedGameRule"
+        :items="gameRuleOptions"
+        item-title="title"
+        item-value="value"
+        label="ルール"
         variant="outlined"
         density="comfortable"
         hide-details
@@ -146,6 +172,21 @@ const getRankClass = (rank: number): string => {
           {{ Util.getLevel(value) }}
         </v-chip>
       </template>
+      <template v-slot:item.gameRule="{ item }">
+        <v-chip
+          :color="
+            Util.getGameRule(item) === Const.GAME_RULE.TIME_ATTACK
+              ? 'deep-purple'
+              : 'grey'
+          "
+          variant="tonal"
+        >
+          {{ Util.getScoreGameRuleLabel(item) }}
+        </v-chip>
+      </template>
+      <template v-slot:item.timeLimitSeconds="{ item }">
+        <span class="metric-cell">{{ Util.getTimeLimitLabel(item) }}</span>
+      </template>
     </v-data-table>
   </v-container>
 </template>
@@ -157,6 +198,7 @@ const getRankClass = (rank: number): string => {
 .score-header {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 24px;
@@ -177,6 +219,7 @@ const getRankClass = (rank: number): string => {
 }
 
 .mode-filter {
+  flex: 1 1 180px;
   max-width: 220px;
 }
 

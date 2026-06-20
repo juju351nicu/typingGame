@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import Const from "@/constants/const";
-import type { GameScore, RankingScore } from "@/types/interfaces";
+import type { GameRule, GameScore, RankingScore } from "@/types/interfaces";
 /**
  * 値があるかどうか判定する。
  * リストの場合は空かどうかを判定する。
@@ -158,14 +158,20 @@ const getResultRankColor = (rank: string): string => {
  * スコア一覧をランキング表示用に整形する。
  * @param scores スコア一覧
  * @param selectedMode 絞り込み対象の難易度
+ * @param selectedGameRule 絞り込み対象のゲームルール
  * @returns ランキング表示用スコア一覧
  */
 const createRankingScores = (
   scores: GameScore[],
-  selectedMode: number | null = null
+  selectedMode: number | null = null,
+  selectedGameRule: GameRule | null = null
 ): RankingScore[] => {
   return scores
     .filter((item) => selectedMode === null || item.mode === selectedMode)
+    .filter(
+      (item) =>
+        selectedGameRule === null || getGameRule(item) === selectedGameRule
+    )
     .slice()
     .sort((a, b) => {
       if (b.score !== a.score) {
@@ -181,6 +187,49 @@ const createRankingScores = (
       rank: index + 1,
       resultRank: getResultRank(item.score),
     }));
+};
+
+/**
+ * スコアに保存されたゲームルールを取得する。
+ *
+ * 既存の保存済みスコアには gameRule が無いため、通常モードとして扱う。
+ *
+ * @param score スコア情報
+ * @returns ゲームルール
+ */
+const getGameRule = (score: GameScore): GameRule => {
+  return score.gameRule ?? Const.GAME_RULE.NORMAL;
+};
+
+/**
+ * ゲームルールの表示名を取得する。
+ * @param gameRule ゲームルール
+ * @returns 表示名
+ */
+const getGameRuleLabel = (gameRule: GameRule): string => {
+  return gameRule === Const.GAME_RULE.TIME_ATTACK ? "タイムアタック" : "通常";
+};
+
+/**
+ * スコア情報からゲームルールの表示名を取得する。
+ * @param score スコア情報
+ * @returns 表示名
+ */
+const getScoreGameRuleLabel = (score: GameScore): string => {
+  return getGameRuleLabel(getGameRule(score));
+};
+
+/**
+ * タイムアタックの制限時間を表示用に整形する。
+ * @param score スコア情報
+ * @returns 制限時間表示
+ */
+const getTimeLimitLabel = (score: GameScore): string => {
+  if (getGameRule(score) !== Const.GAME_RULE.TIME_ATTACK) {
+    return "-";
+  }
+
+  return score.timeLimitSeconds ? `${score.timeLimitSeconds}秒` : "-";
 };
 
 /**
@@ -242,6 +291,10 @@ export default {
   getResultRank,
   getResultRankColor,
   createRankingScores,
+  getGameRule,
+  getGameRuleLabel,
+  getScoreGameRuleLabel,
+  getTimeLimitLabel,
   getColor,
   getLevel,
   getCurrentTime,

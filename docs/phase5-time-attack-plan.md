@@ -128,8 +128,8 @@ timeLimitSeconds?: number;
 3. SettingsPage.vue にゲームモード / 制限時間の選択UIを追加する: 完了
 4. useTimeAttackTimer.ts を追加して Vitest を書く: 完了
 5. GamePage.vue にタイムアタック終了条件を接続する: 完了
-6. ResultModal / RankingPage に表示項目を最小追加する: ResultModal は完了、RankingPage は未対応
-7. README の Features / Roadmap を更新する
+6. ResultModal / RankingPage に表示項目を最小追加する: 完了
+7. README の Features / Roadmap を更新する: 完了
 
 ## 注意点
 
@@ -144,8 +144,8 @@ timeLimitSeconds?: number;
 次回は以下から着手します。
 
 ```text
-RankingPage にゲームルール / 制限時間の表示を追加する
-必要ならランキングフィルターにタイムアタック条件を追加する
+実機で通常モード / タイムアタックモードを確認する
+必要ならタイムアタックのUI文言やランキング表示を微調整する
 ```
 
 通常モードの表示を壊さないよう、既存スコアではゲームルールを通常として扱います。
