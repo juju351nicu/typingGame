@@ -71,6 +71,8 @@ describe("persisted stores", () => {
     setupPersistedPinia({
       config: JSON.stringify({
         mode: 2,
+        gameRule: "timeAttack",
+        timeLimitSeconds: 90,
         isDarkMode: false,
         isVirtualKeyBoard: true,
         wordStyleWidth: 200,
@@ -83,6 +85,9 @@ describe("persisted stores", () => {
     const configStore = useConfigStore();
 
     expect(configStore.getGameMode).toBe(2);
+    expect(configStore.getGameRule).toBe("timeAttack");
+    expect(configStore.getTimeLimitSeconds).toBe(90);
+    expect(configStore.getIsTimeAttackMode).toBe(true);
     expect(configStore.getIsVirtualKeyBoard).toBe(true);
     expect(configStore.getInsertionSpeed).toBe(2000);
     expect(configStore.getAnimationSpeed).toBe(15);

@@ -1,15 +1,25 @@
 <script setup lang="ts">
 import AppAlerts from "@/components/AppAlerts.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
 import Const from "@/constants/const";
 import { resetGameScores } from "@/composables/useScoreReset";
-import type { Alert } from "@/types/interfaces";
+import type { Alert, GameRule, TimeLimitSeconds } from "@/types/interfaces";
 
 interface DifficultyOption {
   title: string;
   value: number;
+}
+
+interface GameRuleOption {
+  title: string;
+  value: GameRule;
+}
+
+interface TimeLimitOption {
+  title: string;
+  value: TimeLimitSeconds;
 }
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
@@ -20,11 +30,30 @@ const configStore = useConfigStore();
 /** 選択されたゲームの難易度 */
 const selectedOption = ref(configStore.getGameMode);
 
+/** 選択されたゲームルール */
+const selectedGameRule = ref<GameRule>(configStore.getGameRule);
+
+/** 選択されたタイムアタック制限時間 */
+const selectedTimeLimitSeconds = ref<TimeLimitSeconds>(
+  configStore.getTimeLimitSeconds
+);
+
 /** 仮想キーボードの表示有無 */
 const isVirtualKeyboardVisible = ref(configStore.getIsVirtualKeyBoard);
 
 /** ゲーム難易度の選択項目 */
 const options = ref<DifficultyOption[]>(Const.DIFFICULTY_LEVEL);
+
+/** ゲームルールの選択項目 */
+const gameRuleOptions = ref<GameRuleOption[]>(Const.GAME_RULE_OPTIONS);
+
+/** タイムアタック制限時間の選択項目 */
+const timeLimitOptions = ref<TimeLimitOption[]>(Const.TIME_ATTACK_LIMITS);
+
+/** タイムアタックの設定を表示するか */
+const isTimeAttackMode = computed((): boolean => {
+  return selectedGameRule.value === Const.GAME_RULE.TIME_ATTACK;
+});
 
 /**
  * ゲームの難易度設定する
@@ -32,6 +61,22 @@ const options = ref<DifficultyOption[]>(Const.DIFFICULTY_LEVEL);
  */
 const setGameMode = (mode: number) => {
   configStore.saveGameMode(mode);
+};
+
+/**
+ * ゲームルールを設定する
+ * @param gameRule ゲームルール
+ */
+const setGameRule = (gameRule: GameRule) => {
+  configStore.saveGameRule(gameRule);
+};
+
+/**
+ * タイムアタックの制限時間を設定する
+ * @param seconds 制限時間（秒）
+ */
+const setTimeLimitSeconds = (seconds: TimeLimitSeconds) => {
+  configStore.saveTimeLimitSeconds(seconds);
 };
 
 /**
@@ -82,6 +127,48 @@ const resetModalData = () => {
           density="comfortable"
           hide-details
           @update:modelValue="setGameMode"
+          class="setting-control"
+        />
+      </section>
+
+      <section class="setting-card">
+        <div class="setting-card__body">
+          <span class="setting-label">ゲームルール</span>
+          <p class="setting-description">
+            通常モードか、制限時間内のスコアを競うモードを選びます。
+          </p>
+        </div>
+        <v-select
+          v-model="selectedGameRule"
+          :items="gameRuleOptions"
+          item-title="title"
+          item-value="value"
+          label="Rule"
+          variant="outlined"
+          density="comfortable"
+          hide-details
+          @update:modelValue="setGameRule"
+          class="setting-control"
+        />
+      </section>
+
+      <section v-if="isTimeAttackMode" class="setting-card">
+        <div class="setting-card__body">
+          <span class="setting-label">制限時間</span>
+          <p class="setting-description">
+            タイムアタックモードのプレイ時間を選びます。
+          </p>
+        </div>
+        <v-select
+          v-model="selectedTimeLimitSeconds"
+          :items="timeLimitOptions"
+          item-title="title"
+          item-value="value"
+          label="Time Limit"
+          variant="outlined"
+          density="comfortable"
+          hide-details
+          @update:modelValue="setTimeLimitSeconds"
           class="setting-control"
         />
       </section>

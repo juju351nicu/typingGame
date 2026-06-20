@@ -1,10 +1,13 @@
 import { defineStore } from "pinia";
 import Const from "@/constants/const";
+import type { GameRule, TimeLimitSeconds } from "@/types/interfaces";
 /**
  * 設定のストアで使用する型定義
  */
 interface ConfigState {
   mode: number;
+  gameRule: GameRule;
+  timeLimitSeconds: TimeLimitSeconds;
   isDarkMode: boolean;
   isVirtualKeyBoard: boolean;
   wordStyleWidth: number;
@@ -18,6 +21,10 @@ export const useConfigStore = defineStore("config", {
   state: (): ConfigState => ({
     /** ゲームの難易度 */
     mode: 0,
+    /** ゲーム終了条件の種類 */
+    gameRule: Const.GAME_RULE.NORMAL,
+    /** タイムアタックの制限時間 */
+    timeLimitSeconds: 60,
     /** ディスプレイモードの値 */
     isDarkMode: false,
     /** 仮想キーボードの表示有無 */
@@ -33,6 +40,27 @@ export const useConfigStore = defineStore("config", {
      */
     getGameMode(): number {
       return this.mode;
+    },
+    /**
+     * ゲームルールを取得する
+     * @returns 通常モードまたはタイムアタック
+     */
+    getGameRule(): GameRule {
+      return this.gameRule;
+    },
+    /**
+     * タイムアタックの制限時間を取得する
+     * @returns 制限時間（秒）
+     */
+    getTimeLimitSeconds(): TimeLimitSeconds {
+      return this.timeLimitSeconds;
+    },
+    /**
+     * タイムアタックが選択されているか
+     * @returns タイムアタックの場合 true
+     */
+    getIsTimeAttackMode(): boolean {
+      return this.gameRule === Const.GAME_RULE.TIME_ATTACK;
     },
     /**
      * ダークモード等のディスプレイの値
@@ -87,6 +115,20 @@ export const useConfigStore = defineStore("config", {
           // break;
           throw new Error(`不明なステータスです: ${selectedGameMode}`);
       }
+    },
+    /**
+     * ゲームルールを設定する
+     * @param selectedGameRule ゲームルール
+     */
+    saveGameRule(selectedGameRule: GameRule) {
+      this.gameRule = selectedGameRule;
+    },
+    /**
+     * タイムアタックの制限時間を設定する
+     * @param selectedTimeLimitSeconds 制限時間（秒）
+     */
+    saveTimeLimitSeconds(selectedTimeLimitSeconds: TimeLimitSeconds) {
+      this.timeLimitSeconds = selectedTimeLimitSeconds;
     },
     /**
      * ディスプレイモードの値を設定する

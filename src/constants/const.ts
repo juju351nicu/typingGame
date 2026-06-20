@@ -1,4 +1,5 @@
 import type { DataTableHeader } from "vuetify";
+import type { GameRule, TimeLimitSeconds } from "@/types/interfaces";
 
 /**
  * マークダウンブログ取得用のURL
@@ -43,6 +44,25 @@ const DIFFICULTY_LEVEL = [
   { title: "Normal", value: 1 },
   { title: "Hard", value: 2 },
 ];
+
+/** ゲーム終了条件の種類 */
+const GAME_RULE = {
+  NORMAL: "normal",
+  TIME_ATTACK: "timeAttack",
+} as const satisfies Record<string, GameRule>;
+
+/** ゲームルールの選択リスト */
+const GAME_RULE_OPTIONS: { title: string; value: GameRule }[] = [
+  { title: "通常モード", value: GAME_RULE.NORMAL },
+  { title: "タイムアタック", value: GAME_RULE.TIME_ATTACK },
+];
+
+/** タイムアタックの制限時間選択リスト */
+const TIME_ATTACK_LIMITS: { title: string; value: TimeLimitSeconds }[] = [
+  { title: "30秒", value: 30 },
+  { title: "60秒", value: 60 },
+  { title: "90秒", value: 90 },
+];
 /** data-tableの1ページあたりの表示件数（デフォルト）*/
 const NUMBER_OF_ITEMS = 5;
 
@@ -74,6 +94,9 @@ export default {
   INTERVAL_ANIMATION,
   INTERVAL_INSERTION,
   DIFFICULTY_LEVEL,
+  GAME_RULE,
+  GAME_RULE_OPTIONS,
+  TIME_ATTACK_LIMITS,
   NUMBER_OF_ITEMS,
   DATA_TABLE_PAGES,
   OPTIONS_OF_HEADERS,

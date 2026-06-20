@@ -14,6 +14,12 @@ export interface Alert {
   message: string;
   type?: "success" | "info" | "warning" | "error" | undefined;
 }
+/** ゲームルールの種類 */
+export type GameRule = "normal" | "timeAttack";
+
+/** タイムアタックの制限時間（秒） */
+export type TimeLimitSeconds = 30 | 60 | 90;
+
 /** ゲームスコアのインターフェ-ス */
 export interface GameScore {
   time: string;
