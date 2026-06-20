@@ -5,10 +5,7 @@ import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/blogPosts";
 import type { PostIndex } from "@/types/interfaces";
 import { getBlogPostNavigation } from "@/composables/useBlogPostNavigation";
-import MarkdownIt from "markdown-it";
-import { sanitize } from "@markdown-design/markdown-it-sanitize";
-import hljs from "highlight.js";
-import "highlight.js/styles/github-dark.min.css";
+import { renderMarkdown } from "@/composables/useMarkdownRenderer";
 
 /** Propsインタフェース定義 */
 interface Props {
@@ -71,35 +68,7 @@ const goPost = (post: PostIndex) => {
 };
 
 /** Htmlに表示するマークダウン情報 */
-const postHtml = ref();
-const markDownIt: MarkdownIt = new MarkdownIt({
-  html: true,
-  highlight: (str: string, lang: string) => {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return hljs.highlight(str, { language: lang }).value;
-        // return '<pre class="hljs"><code>' + hljs.highlight(str, { language: lang, ignoreIllegals: true }).value + '</code></pre>'
-        /* c8 ignore start */
-      } catch (__) {}
-    }
-    return "";
-    // return '<pre class="hljs"><code>' + markDownIt.utils.escapeHtml(str) + '</code></pre>'
-    /* c8 ignore stop */
-  },
-});
-markDownIt.use(sanitize, {
-  ADD_TAGS: ["iframe"],
-  ADD_ATTR: [
-    "allow",
-    "allowfullscreen",
-    "frameborder",
-    "scrolling",
-    "src",
-    "width",
-    "height",
-    "style", //必要に応じて
-  ],
-});
+const postHtml = ref("");
 
 /** 記事を読み込む */
 const loadPost = async (section: string, id: string) => {
@@ -108,7 +77,7 @@ const loadPost = async (section: string, id: string) => {
     await blogPostsStore.recievePostIndex();
   }
   await blogPostsStore.recieveBlogPost(section, id);
-  postHtml.value = markDownIt.render(blogPostsStore.getPostHtml);
+  postHtml.value = renderMarkdown(blogPostsStore.getPostHtml);
 };
 
 /** Htmlに表示するマークダウン情報をセットする。 */
