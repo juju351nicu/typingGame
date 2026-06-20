@@ -1,5 +1,13 @@
 [
   {
+    "id": "nodejs-generate-posts-index",
+    "section": "guide",
+    "date": "2026-06-20",
+    "title": "Node.js で Markdown ブログの posts_index.json を自動生成した話",
+    "description": "Vue3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts_index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。",
+    "url": "blog_store/posts/guide/nodejs-generate-posts-index.md"
+  },
+  {
     "id": "vue3-setinterval-multiple-start",
     "section": "guide",
     "date": "2026-05-10",
