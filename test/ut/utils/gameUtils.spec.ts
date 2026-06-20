@@ -127,6 +127,38 @@ describe("createRankingScores", () => {
     expect(result[0].gameRule).toBe(Const.GAME_RULE.TIME_ATTACK);
     expect(result[0].rank).toBe(1);
   });
+
+  it("タイムアタックの制限時間でランキングを絞り込む", () => {
+    const timeAttackScores: GameScore[] = [
+      {
+        score: 18,
+        mode: 2,
+        gameRule: Const.GAME_RULE.TIME_ATTACK,
+        timeLimitSeconds: 30,
+        time: "00:00:30.00",
+        date: "2026-06-20 10:00:00",
+      },
+      {
+        score: 24,
+        mode: 2,
+        gameRule: Const.GAME_RULE.TIME_ATTACK,
+        timeLimitSeconds: 60,
+        time: "00:01:00.00",
+        date: "2026-06-20 10:10:00",
+      },
+    ];
+
+    const result = Util.createRankingScores(
+      timeAttackScores,
+      null,
+      Const.GAME_RULE.TIME_ATTACK,
+      30
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].timeLimitSeconds).toBe(30);
+    expect(result[0].rank).toBe(1);
+  });
 });
 
 describe("game rule label", () => {

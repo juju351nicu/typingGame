@@ -1,6 +1,11 @@
 import dayjs from "dayjs";
 import Const from "@/constants/const";
-import type { GameRule, GameScore, RankingScore } from "@/types/interfaces";
+import type {
+  GameRule,
+  GameScore,
+  RankingScore,
+  TimeLimitSeconds,
+} from "@/types/interfaces";
 /**
  * 値があるかどうか判定する。
  * リストの場合は空かどうかを判定する。
@@ -159,18 +164,25 @@ const getResultRankColor = (rank: string): string => {
  * @param scores スコア一覧
  * @param selectedMode 絞り込み対象の難易度
  * @param selectedGameRule 絞り込み対象のゲームルール
+ * @param selectedTimeLimitSeconds 絞り込み対象のタイムアタック制限時間
  * @returns ランキング表示用スコア一覧
  */
 const createRankingScores = (
   scores: GameScore[],
   selectedMode: number | null = null,
-  selectedGameRule: GameRule | null = null
+  selectedGameRule: GameRule | null = null,
+  selectedTimeLimitSeconds: TimeLimitSeconds | null = null
 ): RankingScore[] => {
   return scores
     .filter((item) => selectedMode === null || item.mode === selectedMode)
     .filter(
       (item) =>
         selectedGameRule === null || getGameRule(item) === selectedGameRule
+    )
+    .filter(
+      (item) =>
+        selectedTimeLimitSeconds === null ||
+        item.timeLimitSeconds === selectedTimeLimitSeconds
     )
     .slice()
     .sort((a, b) => {

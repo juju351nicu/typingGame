@@ -3,7 +3,12 @@ import { useGameScoresStore } from "@/stores/gameScores";
 import { computed, ref } from "vue";
 import Const from "@/constants/const";
 import Util from "@/utils/gameUtils";
-import type { GameRule, GameScore, RankingScore } from "@/types/interfaces";
+import type {
+  GameRule,
+  GameScore,
+  RankingScore,
+  TimeLimitSeconds,
+} from "@/types/interfaces";
 
 /** 保存済みスコアを管理するストア */
 const gameScoresStore = useGameScoresStore();
@@ -36,6 +41,9 @@ const selectedMode = ref<number | null>(null);
 /** ゲームルールフィルター */
 const selectedGameRule = ref<GameRule | null>(null);
 
+/** タイムアタック制限時間フィルター */
+const selectedTimeLimitSeconds = ref<TimeLimitSeconds | null>(null);
+
 /** 難易度フィルターの選択肢 */
 const modeOptions = [{ title: "All", value: null }, ...Const.DIFFICULTY_LEVEL];
 
@@ -44,6 +52,22 @@ const gameRuleOptions = [
   { title: "All", value: null },
   ...Const.GAME_RULE_OPTIONS,
 ];
+
+/** 制限時間フィルターの選択肢 */
+const timeLimitOptions = [
+  { title: "All", value: null },
+  ...Const.TIME_ATTACK_LIMITS,
+];
+
+/** 制限時間フィルターを表示するか */
+const isTimeAttackSelected = computed((): boolean => {
+  return selectedGameRule.value === Const.GAME_RULE.TIME_ATTACK;
+});
+
+/** ランキング絞り込みに使う制限時間 */
+const activeTimeLimitSeconds = computed((): TimeLimitSeconds | null => {
+  return isTimeAttackSelected.value ? selectedTimeLimitSeconds.value : null;
+});
 
 /** スコア一覧 */
 const gameScores = computed((): GameScore[] => {
@@ -55,7 +79,8 @@ const rankingItems = computed((): RankingScore[] => {
   return Util.createRankingScores(
     gameScores.value,
     selectedMode.value,
-    selectedGameRule.value
+    selectedGameRule.value,
+    activeTimeLimitSeconds.value
   );
 });
 
@@ -118,6 +143,18 @@ const getRankClass = (rank: number): string => {
         item-title="title"
         item-value="value"
         label="ルール"
+        variant="outlined"
+        density="comfortable"
+        hide-details
+        class="ranking-filter"
+      />
+      <v-select
+        v-if="isTimeAttackSelected"
+        v-model="selectedTimeLimitSeconds"
+        :items="timeLimitOptions"
+        item-title="title"
+        item-value="value"
+        label="制限時間"
         variant="outlined"
         density="comfortable"
         hide-details
