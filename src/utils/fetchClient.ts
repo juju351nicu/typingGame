@@ -6,25 +6,29 @@ const METHOD = {
   POST: "POST",
   PUT: "PUT",
   DELETE: "DELETE",
-};
-type HeaderType = {
-  [K in string]: string;
-};
+} as const;
+
+type HttpMethod = (typeof METHOD)[keyof typeof METHOD];
+
+interface RequestData {
+  requestUrl: string;
+  options: RequestInit;
+}
+
 /**
  * デフォルトのリクエストヘッダ情報
  */
-const defaultHeader: HeaderType = {
+const defaultHeader: Record<string, string> = {
   Accept: "application/json",
   "Content-Type": "application/json",
 };
 
 /**
  * GET送信の結果
- * @param {string} uri リクエストURL
- * @param {Array} reqestData 送信するリクエストボディのデータ
+ * @param uri リクエストURL
  * @returns fetch結果
  */
-const getRequest = (uri: string) => {
+const getRequest = (uri: string): Promise<Response> => {
   // HttpMeshodに Getを設定する
   const method = METHOD.GET;
   // リクエストデータ作成
@@ -35,11 +39,11 @@ const getRequest = (uri: string) => {
 
 /**
  * POST送信の結果
- * @param {string} uri リクエストURL
- * @param {Array} reqestData 送信するリクエストボディのデータ
+ * @param uri リクエストURL
+ * @param reqestData 送信するリクエストボディのデータ
  * @returns fetch結果
  */
-const postRequest = (uri: string, reqestData: any) => {
+const postRequest = (uri: string, reqestData: unknown): Promise<Response> => {
   // HttpMeshodに Postを設定する
   const method = METHOD.POST;
   // リクエストデータ作成
@@ -53,7 +57,7 @@ const postRequest = (uri: string, reqestData: any) => {
  * @param {Object} requestDatas リクエスト送信の設定情報
  * @returns fetch結果
  */
-const fetcher = async (requestDatas: { requestUrl: string; options: any }) => {
+const fetcher = async (requestDatas: RequestData): Promise<Response> => {
   const response = await fetch(requestDatas.requestUrl, requestDatas.options);
   return response;
 };
@@ -69,10 +73,10 @@ const fetcher = async (requestDatas: { requestUrl: string; options: any }) => {
  */
 const createRequestData = (
   uri: string,
-  reqData: any,
-  customHeader: any,
-  method: string
-) => {
+  reqData: unknown,
+  customHeader: HeadersInit | null,
+  method: HttpMethod
+): RequestData => {
   // リクエストヘッダ情報作成
   const headers = new Headers();
   if (customHeader !== null) {
@@ -85,7 +89,7 @@ const createRequestData = (
     });
   }
   // optionsで HTTPMethodやHeadersを設定する
-  let options = {};
+  let options: RequestInit = {};
   // HTTPメソッドがPOST・PUTの場合のみリクエストボディを追加する
   if (method === METHOD.POST || method === METHOD.PUT) {
     const body = JSON.stringify(reqData);

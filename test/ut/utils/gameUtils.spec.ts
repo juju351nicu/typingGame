@@ -1,4 +1,4 @@
-import Util from "@/utils/util";
+import Util from "@/utils/gameUtils";
 import { GameScore } from "@/types/interfaces";
 import { describe, expect, it } from "vitest";
 

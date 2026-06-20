@@ -9,7 +9,7 @@ import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
-import Util from "@/utils/util";
+import Util from "@/utils/gameUtils";
 import Const from "@/constants/const";
 import type { Alert, GameScore } from "@/types/interfaces";
 

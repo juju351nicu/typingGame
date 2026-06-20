@@ -1,6 +1,6 @@
 import type { PostIndex } from "@/types/interfaces";
 import { defineStore } from "pinia";
-import Fetcher from "@/utils/rest";
+import Fetcher from "@/utils/fetchClient";
 import Const from "@/constants/const";
 /**
  * BlogPostsストアで使用する変数の型定義

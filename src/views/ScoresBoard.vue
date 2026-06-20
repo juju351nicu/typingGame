@@ -2,7 +2,7 @@
 import { useGameScoresStore } from "@/stores/gameScores";
 import { computed, ref } from "vue";
 import Const from "@/constants/const";
-import Util from "@/utils/util";
+import Util from "@/utils/gameUtils";
 import { GameScore, RankingScore } from "@/types/interfaces";
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入

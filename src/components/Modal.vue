@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import Util from "@/utils/util";
+import Util from "@/utils/gameUtils";
 import type { GameScore } from "@/types/interfaces";
 /** Propsインタフェース定義 */
 interface Props {
