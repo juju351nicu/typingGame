@@ -1,9 +1,23 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 
-const props = defineProps(["drawer"]);
+interface SideMenuProps {
+  drawer: boolean;
+}
 
-const emit = defineEmits(["update:drawer"]);
+interface MenuLink {
+  to: {
+    name: string;
+  };
+  title: string;
+  icon: string;
+}
+
+const props = defineProps<SideMenuProps>();
+
+const emit = defineEmits<{
+  "update:drawer": [value: boolean];
+}>();
 /** サイドメニューフラグ */
 const drawer = computed({
   get: (): boolean => props.drawer,
@@ -11,7 +25,7 @@ const drawer = computed({
 });
 
 /** サイドメニュー */
-const links = ref([
+const links = ref<MenuLink[]>([
   {
     to: { name: "DashBoard" },
     title: "ダッシュボード",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import Util from "@/utils/util";
-import { GameScore } from "@/types/interfaces";
+import type { GameScore } from "@/types/interfaces";
 /** Propsインタフェース定義 */
 interface Props {
   isGameOver: boolean;
@@ -10,7 +10,9 @@ interface Props {
 
 /** Propsオブジェクトの設定 */
 const props = defineProps<Props>();
-const emit = defineEmits(["restart-game"]);
+const emit = defineEmits<{
+  "restart-game": [];
+}>();
 
 /** ゲームオーバーフラグ */
 const isGameOverFlag = computed((): boolean => {
