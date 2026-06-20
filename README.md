@@ -177,6 +177,8 @@ npm run check:posts
 
 `master` ブランチへ push すると、GitHub Actions で test / build が実行され、GitHub Pages に自動デプロイされます。
 
+GitHub リポジトリ名 `typingGame` のリネームは急ぎではありません。GitHub Pages の公開URL、Vite の `base`、README 内の Demo URL、スクリーンショット、外部ポートフォリオからのリンクに影響するため、Phase5 のタイムアタックモードが落ち着き、公開URLをまとめて見直すタイミングで検討します。
+
 Workflow:
 
 1. `npm ci`
