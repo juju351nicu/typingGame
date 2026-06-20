@@ -11,7 +11,13 @@ import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
 import Util from "@/utils/util";
 import Const from "@/constants/const";
-import { GameScore } from "@/types/interfaces";
+import type { Alert, GameScore } from "@/types/interfaces";
+
+interface TimerExpose {
+  startTimer: () => void;
+  stopTimer: () => void;
+}
+
 const router = useRouter();
 /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
@@ -19,7 +25,7 @@ const gameScoresStore = useGameScoresStore();
 /** ゲーム難易度に関するストア情報 */
 const configStore = useConfigStore();
 /** Timerコンポーネントに関する情報 */
-const timerComponent = ref();
+const timerComponent = ref<TimerExpose | null>(null);
 /** ゲームスタートフラグ */
 const isGameStarted = ref(false);
 
@@ -81,18 +87,8 @@ const saveGameScores = (): void => {
 
 /** モーダルにてリセットボタン押下時、データをリセットする */
 const restartGame = () => {
-  // resetGameData();
-  // setModalDisplay();
   // 現在のページをリロードする
   router.go(0);
-};
-
-/** モーダル表示フラグ */
-const modalDisplayStatus = ref(false);
-
-/**  モーダル表示有無を設定する */
-const setModalDisplay = () => {
-  modalDisplayStatus.value = !modalDisplayStatus.value;
 };
 
 /** ボタンをクリックするとゲームがスタートする  */
@@ -100,26 +96,11 @@ const startGame = () => {
   isGameStarted.value = true;
 };
 
-/** リセットタイマーのフラグ */
+/** TypingPanelへリセットを通知するフラグ */
 const isResetTimer = ref(false);
 
-/** ゲームのデータをリセットする */
-const resetGameData = () => {
-  gameScore.value = 0;
-  typedCharacterCount.value = 0;
-  missCount.value = 0;
-  correctCharacterCount.value = 0;
-  isInputMiss.value = false;
-  nextKey.value = "";
-  pressedKey.value = "";
-  missKey.value = "";
-  isResetTimer.value = true;
-  isGameOver.value = false;
-  isGameStarted.value = false;
-  inputValue.value = "";
-};
 /** アラートに表示するメッセージ */
-const alerts = ref<any>([]);
+const alerts = ref<Alert[]>([]);
 onMounted(() => {
   if (!Util.isLocalStorage()) {
     alerts.value.push({
@@ -137,30 +118,23 @@ onMounted(() => {
 /** ゲームオーバーフラグ */
 watch(isGameOver, (newValue, _oldValue) => {
   if (newValue) {
-    // 子コンポーネントのメソッドを呼び出す
+    // ゲーム終了時はタイマーを止め、リザルト保存を確定する。
     timerComponent.value?.stopTimer?.();
     saveGameScores();
-    setTimeout(() => {
-      setModalDisplay();
-    }, 500);
   }
 });
 
-const clickChildButton = () => {
-  // 子コンポーネントのメソッドを呼び出す
+/** Escapeキーでタイマーを停止する */
+const stopTimerByKeyboard = () => {
   timerComponent.value?.stopTimer?.();
 };
-const handleEscape = () => {
-  console.log("子コンポーネントのメソッドを呼び出す");
-  clickChildButton();
-};
 
-const handleEsc = (event: any) => {
+const handleEsc = (event: KeyboardEvent) => {
   if (event.key === "Escape") {
-    handleEscape();
+    stopTimerByKeyboard();
   }
 };
-const handleShift = (event: any) => {
+const handleShift = (event: KeyboardEvent) => {
   if (event.key === "Shift" && isGameStarted.value && !isGameOver.value) {
     timerComponent.value?.startTimer?.();
   }

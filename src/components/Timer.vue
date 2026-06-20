@@ -2,9 +2,15 @@
 import { computed, ref, onMounted, onUnmounted } from "vue";
 import Util from "@/utils/util";
 
-const props = defineProps(["accumTime"]);
+interface TimerProps {
+  accumTime: number;
+}
 
-const emit = defineEmits(["update:accumTime"]);
+const props = defineProps<TimerProps>();
+
+const emit = defineEmits<{
+  "update:accumTime": [value: number];
+}>();
 
 /** 計測時間 */
 const accumTime = computed({
@@ -20,26 +26,28 @@ const getTimeStr = computed(() => {
 });
 
 /** スタートを押した時刻 */
-const startTime = ref<any>(null);
+const startTime = ref<number | null>(null);
 
 /** ストップ時間 */
 const stopTime = ref(0);
 
 /** setInterval()の格納用 */
-const timerId = ref<any>(null);
+const timerId = ref<ReturnType<typeof setInterval> | null>(null);
 
 const isRunning = ref<boolean>(false);
 /**
  * タイマーの時間を計算する
  */
 const checkTime = () => {
+  if (startTime.value === null) {
+    return;
+  }
   accumTime.value = Date.now() - startTime.value + stopTime.value;
 };
 /**
  * スタートボタンを押下した際にインターバルを開始する。
  */
 const startTimer = () => {
-  console.log("スタートボタンを押下した際にインターバルを開始する。");
   if (isRunning.value) {
     return;
   }
@@ -54,7 +62,6 @@ const startTimer = () => {
  * ストップボタンを押下した際にインターバルをストップする。
  */
 const stopTimer = () => {
-  console.log("ストップボタンを押下した際にインターバルをストップする。");
   isRunning.value = false;
   if (timerId.value) {
     clearInterval(timerId.value);

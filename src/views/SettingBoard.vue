@@ -5,6 +5,12 @@ import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
 import Const from "@/constants/const";
 import { resetGameScores } from "@/composables/useScoreReset";
+import type { Alert } from "@/types/interfaces";
+
+interface DifficultyOption {
+  title: string;
+  value: number;
+}
 
 //インポートした関数を呼び出してストアをインスタンス化して変数に代入
 const gameScoresStore = useGameScoresStore();
@@ -18,7 +24,7 @@ const selectedOption = ref(configStore.getGameMode);
 const isVirtualKeyboardVisible = ref(configStore.getIsVirtualKeyBoard);
 
 /** ゲーム難易度の選択項目 */
-const options = ref<any>(Const.DIFFICULTY_LEVEL);
+const options = ref<DifficultyOption[]>(Const.DIFFICULTY_LEVEL);
 
 /**
  * ゲームの難易度設定する
@@ -32,12 +38,15 @@ const setGameMode = (mode: number) => {
  * 仮想キーボードの表示有無を設定する
  * @param isVisible 表示する場合 true
  */
-const setVirtualKeyboardVisible = (isVisible: boolean) => {
+const setVirtualKeyboardVisible = (isVisible: boolean | null) => {
+  if (isVisible === null) {
+    return;
+  }
   configStore.saveIsVertualKeyBoard(isVisible);
 };
 
 /** アラートに表示するメッセージ */
-const alerts = ref<any[]>([]);
+const alerts = ref<Alert[]>([]);
 /** スコア初期化確認ダイアログ */
 const isResetDialogOpen = ref(false);
 
