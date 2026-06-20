@@ -95,6 +95,29 @@ const bestScore = computed((): RankingScore | null => {
   return rankingItems.value[0] ?? null;
 });
 
+/** 通常モードの最高スコア */
+const normalBestScore = computed((): RankingScore | null => {
+  return (
+    Util.createRankingScores(
+      gameScores.value,
+      selectedMode.value,
+      Const.GAME_RULE.NORMAL
+    )[0] ?? null
+  );
+});
+
+/** タイムアタックの最高スコア */
+const timeAttackBestScore = computed((): RankingScore | null => {
+  return (
+    Util.createRankingScores(
+      gameScores.value,
+      selectedMode.value,
+      Const.GAME_RULE.TIME_ATTACK,
+      activeTimeLimitSeconds.value
+    )[0] ?? null
+  );
+});
+
 /** 最高スコアの補足表示 */
 const bestScoreSummary = computed((): string => {
   if (!bestScore.value) {
@@ -109,6 +132,24 @@ const bestScoreSummary = computed((): string => {
 
   // ランク・難易度・ルール・タイムを1行で確認できるようにする。
   return `${bestScore.value.resultRank}ランク / ${Util.getLevel(bestScore.value.mode)} / ${ruleSummary} / ${bestScore.value.time}`;
+});
+
+/** 通常モード最高スコアの補足表示 */
+const normalBestScoreSummary = computed((): string => {
+  if (!normalBestScore.value) {
+    return "No records";
+  }
+
+  return `${normalBestScore.value.resultRank}ランク / ${Util.getLevel(normalBestScore.value.mode)} / ${normalBestScore.value.time}`;
+});
+
+/** タイムアタック最高スコアの補足表示 */
+const timeAttackBestScoreSummary = computed((): string => {
+  if (!timeAttackBestScore.value) {
+    return "No records";
+  }
+
+  return `${timeAttackBestScore.value.resultRank}ランク / ${Util.getLevel(timeAttackBestScore.value.mode)} / ${Util.getTimeLimitLabel(timeAttackBestScore.value)} / ${timeAttackBestScore.value.time}`;
 });
 
 /** ランク表示用CSSクラス */
@@ -173,6 +214,18 @@ const getRankClass = (rank: number): string => {
         <span class="summary-label">Best Score</span>
         <span class="summary-value">{{ bestScore?.score ?? "-" }}</span>
         <span class="summary-note">{{ bestScoreSummary }}</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Normal Best</span>
+        <span class="summary-value">{{ normalBestScore?.score ?? "-" }}</span>
+        <span class="summary-note">{{ normalBestScoreSummary }}</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Time Attack Best</span>
+        <span class="summary-value">
+          {{ timeAttackBestScore?.score ?? "-" }}
+        </span>
+        <span class="summary-note">{{ timeAttackBestScoreSummary }}</span>
       </div>
       <div class="summary-card">
         <span class="summary-label">Plays</span>
@@ -282,7 +335,7 @@ const getRankClass = (rank: number): string => {
 .summary-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   margin-bottom: 24px;
 }
 
