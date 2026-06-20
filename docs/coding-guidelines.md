@@ -46,3 +46,9 @@
 
 - 機能を追加・整理したら、README の Features / Highlights / Component Design / Roadmap のズレを確認する。
 - テストファイル数やテスト数を README に書いている場合は、追加後に更新する。
+
+## Blog
+
+- `blog_store/posts_index.json` は手動編集せず、Markdown の frontmatter から生成する。
+- ブログ記事を追加・更新したら `npm run generate:posts` を実行する。
+- コミット前に `npm run check:posts` を実行し、Markdown と `posts_index.json` のズレがないことを確認する。
