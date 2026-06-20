@@ -162,6 +162,8 @@ npm run generate:posts
 
 `blog_store/posts_index.json` は、Markdown の frontmatter から生成するファイルです。手動編集せず、既存記事の情報を更新したい場合は Markdown 側の `id`、`title`、`date`、`section`、`description` を変更してから `npm run generate:posts` を実行します。
 
+`posts_index.json` という名前は、既存のブログ取得処理と公開URLに紐づいているため現時点では維持します。将来リネームする場合は、ルーティング、取得定数、記事取得処理、README の説明をまとめて見直すタイミングで検討します。
+
 ## Deployment
 
 `master` ブランチへ push すると、GitHub Actions で test / build が実行され、GitHub Pages に自動デプロイされます。

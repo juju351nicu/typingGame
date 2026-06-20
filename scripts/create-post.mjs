@@ -10,6 +10,15 @@ const POSTS_ROOT = path.join(BLOG_ROOT, "posts");
 const POSTS_INDEX_PATH = path.join(BLOG_ROOT, "posts_index.json");
 const DEFAULT_SECTION = "guide";
 
+/**
+ * Converts a title or section label into a URL-safe slug.
+ *
+ * The blog currently supports ASCII slugs only. If a Japanese title becomes an
+ * empty slug, the caller asks the user to enter an id manually.
+ *
+ * @param {string} value Source text.
+ * @returns {string} Lowercase slug joined with hyphens.
+ */
 const slugify = (value) => {
   return value
     .toLowerCase()
@@ -19,11 +28,24 @@ const slugify = (value) => {
     .replace(/-+/g, "-");
 };
 
+/**
+ * Reads the current generated post index for duplicate checks.
+ *
+ * @returns {Promise<Array<{ id: string, url: string }>>} Existing post index.
+ */
 const readPostsIndex = async () => {
   const postsIndexText = await readFile(POSTS_INDEX_PATH, "utf8");
   return JSON.parse(postsIndexText);
 };
 
+/**
+ * Ensures the new article does not conflict with an existing id or Markdown path.
+ *
+ * @param {Array<{ id: string, url: string }>} posts Existing post index.
+ * @param {string} id New article id.
+ * @param {string} markdownPath New Markdown path stored in posts_index.json.
+ * @throws {Error} When the id or Markdown path already exists.
+ */
 const assertUniquePost = (posts, id, markdownPath) => {
   const hasSameId = posts.some((post) => post.id === id);
   if (hasSameId) {
@@ -36,6 +58,16 @@ const assertUniquePost = (posts, id, markdownPath) => {
   }
 };
 
+/**
+ * Builds the initial Markdown body for a new blog post.
+ *
+ * The generated frontmatter is used by scripts/generate-posts.mjs, so
+ * posts_index.json can be recreated from Markdown files instead of being edited
+ * by hand.
+ *
+ * @param {{ id: string, section: string, title: string, date: string, description: string }} post New post values.
+ * @returns {string} Markdown content with required frontmatter.
+ */
 const createMarkdown = ({ id, section, title, date, description }) => {
   return `---
 id: ${id}
@@ -57,6 +89,14 @@ ${description}
 `;
 };
 
+/**
+ * Creates an input helper for interactive terminals and piped test input.
+ *
+ * Non-TTY input is supported so the script can be smoke-tested with printf in
+ * local verification.
+ *
+ * @returns {Promise<{ ask: (message: string) => Promise<string>, close: () => void }>} Prompt helper.
+ */
 const createPrompt = async () => {
   if (!process.stdin.isTTY) {
     const input = readFileSync(0, "utf8");
@@ -91,6 +131,11 @@ const createPrompt = async () => {
   };
 };
 
+/**
+ * Rebuilds posts_index.json after a Markdown file has been created.
+ *
+ * @returns {Promise<void>}
+ */
 const runGeneratePosts = async () => {
   await new Promise((resolve, reject) => {
     const child = spawn(process.execPath, ["scripts/generate-posts.mjs"], {
@@ -109,6 +154,11 @@ const runGeneratePosts = async () => {
   });
 };
 
+/**
+ * Prompts for article metadata, creates a Markdown file, and regenerates the index.
+ *
+ * @returns {Promise<void>}
+ */
 const main = async () => {
   const prompt = await createPrompt();
 
