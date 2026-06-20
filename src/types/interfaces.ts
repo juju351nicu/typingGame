@@ -46,11 +46,16 @@ export interface PostIndex {
   title: string;
   url: string;
 }
+/** 表示中単語の位置指定スタイル */
+export interface CurrentWordStyle {
+  left: string;
+  top: string;
+}
 /** 表示するタイピングの単語のインターフェ-ス */
 export interface currentWord {
   characters: string[];
   classList: string[];
-  style: any;
+  style: CurrentWordStyle;
   balloonClass: string;
   isBursting?: boolean;
 }

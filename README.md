@@ -119,6 +119,12 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 
 ## Development
 
+Coding guidelines:
+
+```text
+docs/coding-guidelines.md
+```
+
 ```bash
 npm install
 npm run dev
