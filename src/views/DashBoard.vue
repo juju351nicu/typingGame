@@ -4,10 +4,7 @@ import Alerts from "@/components/Alerts.vue";
 import Modal from "@/components/Modal.vue";
 import Timer from "@/components/Timer.vue";
 import VirtualKeyBoard from "@/components/VirtualKeyBoard.vue";
-import {
-  isMissKey as isTypingMissKey,
-  normalizeAlphabetKey,
-} from "@/composables/useTypingKeyboard";
+import { useTypingKeyboardFeedback } from "@/composables/useTypingKeyboardFeedback";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useGameScoresStore } from "@/stores/gameScores";
@@ -53,14 +50,12 @@ const isInputMiss = ref(false);
 /** 次に入力すべきキー */
 const nextKey = ref("");
 
-/** 実際に押したキー */
-const pressedKey = ref("");
-
-/** ミスしたキー */
-const missKey = ref("");
-
-const pressedKeyTimerId = ref<ReturnType<typeof setTimeout> | null>(null);
-const missKeyTimerId = ref<ReturnType<typeof setTimeout> | null>(null);
+const {
+  pressedKey,
+  missKey,
+  updateKeyFeedback,
+  clearKeyFeedbackTimers,
+} = useTypingKeyboardFeedback();
 
 /** 最後に取得したゲームスコア */
 const lastScore = ref<GameScore>({
@@ -171,48 +166,12 @@ const handleShift = (event: any) => {
   }
 };
 
-const clearKeyTimers = () => {
-  if (pressedKeyTimerId.value !== null) {
-    clearTimeout(pressedKeyTimerId.value);
-    pressedKeyTimerId.value = null;
-  }
-  if (missKeyTimerId.value !== null) {
-    clearTimeout(missKeyTimerId.value);
-    missKeyTimerId.value = null;
-  }
-};
-
 const handleTypingKeydown = (event: KeyboardEvent) => {
   if (!isGameStarted.value || isGameOver.value) {
     return;
   }
 
-  const key = normalizeAlphabetKey(event.key);
-  if (key === "") {
-    return;
-  }
-
-  pressedKey.value = key;
-  if (pressedKeyTimerId.value !== null) {
-    clearTimeout(pressedKeyTimerId.value);
-  }
-  pressedKeyTimerId.value = setTimeout(() => {
-    pressedKey.value = "";
-    pressedKeyTimerId.value = null;
-  }, 300);
-
-  if (isTypingMissKey(key, nextKey.value)) {
-    missKey.value = key;
-    if (missKeyTimerId.value !== null) {
-      clearTimeout(missKeyTimerId.value);
-    }
-    missKeyTimerId.value = setTimeout(() => {
-      missKey.value = "";
-      missKeyTimerId.value = null;
-    }, 600);
-  } else {
-    missKey.value = "";
-  }
+  updateKeyFeedback(event.key, nextKey.value);
 };
 
 onMounted(() => {
@@ -225,7 +184,7 @@ onUnmounted(() => {
   window.removeEventListener("keydown", handleEsc);
   window.removeEventListener("keydown", handleShift);
   window.removeEventListener("keydown", handleTypingKeydown);
-  clearKeyTimers();
+  clearKeyFeedbackTimers();
 });
 </script>
 <template>

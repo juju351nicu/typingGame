@@ -1,8 +1,11 @@
 import type { PostIndex } from "@/types/interfaces";
 
 export interface BlogPostNavigation {
+  /** 現在の記事が posts_index.json の何番目にあるか */
   currentIndex: number;
+  /** 現在の記事より1つ前の記事。先頭記事の場合はnull */
   prevPost: PostIndex | null;
+  /** 現在の記事より1つ後の記事。末尾記事の場合はnull */
   nextPost: PostIndex | null;
 }
 
@@ -19,12 +22,14 @@ export const getBlogPostNavigation = (
   currentId: string,
   currentSection: string
 ): BlogPostNavigation => {
+  // id と section の組み合わせで、現在表示中の記事を特定する。
   const currentIndex = posts.findIndex((post) => {
     return post.id === currentId && post.section === currentSection;
   });
 
   return {
     currentIndex,
+    // 配列順をそのまま前後ナビゲーションの基準にする。
     prevPost: currentIndex > 0 ? posts[currentIndex - 1] : null,
     nextPost:
       currentIndex >= 0 && currentIndex < posts.length - 1

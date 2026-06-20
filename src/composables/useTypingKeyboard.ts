@@ -25,7 +25,10 @@ export const getNextKey = (
   currentWords: currentWord[],
   inputValue: string
 ): string => {
+  // 破裂中の単語は、次キー候補から外す。
   const visibleWords = currentWords.filter((word) => !word.isBursting);
+
+  // 入力中の単語があればそれを優先し、なければ先頭の表示単語を案内する。
   const targetWord = visibleWords.find((word) => {
     return !word.isBursting && word.characters.join("").startsWith(inputValue);
   }) ?? visibleWords[0];
@@ -38,6 +41,7 @@ export const getNextKey = (
     .slice(0, inputValue.length)
     .findIndex((character, index) => character !== inputValue[index]);
 
+  // 入力途中で食い違った場合は、食い違った位置の正しいキーを返す。
   return normalizeAlphabetKey(
     targetWord.characters[nextIndex === -1 ? inputValue.length : nextIndex] ??
       ""
@@ -52,6 +56,7 @@ export const getNextKey = (
  * @returns どちらもアルファベットで、かつ一致しない場合はtrue
  */
 export const isMissKey = (pressedKey: string, nextKey: string): boolean => {
+  // Shift や記号など、対象外キーはミス扱いにしない。
   const normalizedPressedKey = normalizeAlphabetKey(pressedKey);
   const normalizedNextKey = normalizeAlphabetKey(nextKey);
 

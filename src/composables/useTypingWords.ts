@@ -15,6 +15,7 @@ export const balloonColorClasses = [
  * @returns 風船色を表すCSSクラス名
  */
 export const getRandomBalloonColorClass = (): string => {
+  // 色は見た目だけのランダム要素なので、ゲーム判定には影響させない。
   const index = Math.floor(Math.random() * balloonColorClasses.length);
   return balloonColorClasses[index];
 };
@@ -27,6 +28,8 @@ export const getRandomBalloonColorClass = (): string => {
  */
 export const shuffleWords = (words: string[]): string[] => {
   const shuffledWords = [...words];
+
+  // Fisher-Yates で元配列を変更せずにシャッフルする。
   for (let index = shuffledWords.length - 1; index > 0; index--) {
     const randomIndex = Math.floor(Math.random() * (index + 1));
     const tempWord = shuffledWords[index];
@@ -49,6 +52,7 @@ export const createCurrentWord = (
   left: number,
   top: number
 ): currentWord => ({
+  // 文字ごとの正誤クラスを付けられるよう、単語を1文字ずつ保持する。
   characters: word.split(""),
   classList: [],
   balloonClass: getRandomBalloonColorClass(),
@@ -71,6 +75,7 @@ export const applyCharacterFeedback = (
 ): currentWord[] => {
   const inputCharacters = inputValue.split("");
   currentWords.forEach((word) => {
+    // 入力済みの範囲だけ correct / incorrect を付け、未入力文字は空にする。
     word.classList = word.characters.map((character, index) => {
       if (inputCharacters[index] == null) {
         return "";
@@ -95,6 +100,7 @@ export const hasMatchedPrefix = (
   if (inputValue === "") {
     return true;
   }
+  // 破裂中の単語は、入力候補として扱わない。
   return currentWords.some(
     (word) =>
       !word.isBursting && word.characters.join("").startsWith(inputValue)
@@ -112,6 +118,7 @@ export const findCompletedWordIndex = (
   currentWords: currentWord[],
   inputValue: string
 ): number => {
+  // 破裂中の単語は、再度正解処理されないよう除外する。
   return currentWords.findIndex(
     (word) => !word.isBursting && word.characters.join("") === inputValue
   );
@@ -133,6 +140,7 @@ export const getWordFeedbackClass = (
   if (inputValue === "" || word.isBursting) {
     return "";
   }
+  // 入力が先頭一致している単語を操作中の単語として強調する。
   if (word.characters.join("").startsWith(inputValue)) {
     return "word-active";
   }

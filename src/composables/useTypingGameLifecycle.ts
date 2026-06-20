@@ -1,14 +1,22 @@
 import type { TypingTimerOptions } from "@/composables/useTypingTimers";
 
 interface TypingGameStartOptions extends TypingTimerOptions {
+  /** 既存のゲーム用タイマーを停止する処理 */
   stopTimers: () => void;
+  /** 開始時点のゲーム設定を保存する処理 */
   saveGameMode: () => void;
+  /** 単語追加・単語移動タイマーを開始する処理 */
+  startTimers: (options: TypingTimerOptions) => void;
 }
 
 interface TypingGameResetOptions {
+  /** 既存のゲーム用タイマーを停止する処理 */
   stopTimers: () => void;
+  /** 表示中単語と出題順を初期化する処理 */
   resetWords: () => void;
+  /** 入力ミス状態を解除する処理 */
   resetInputMiss: () => void;
+  /** 次に打つキー表示を更新する処理 */
   updateNextKey: () => void;
 }
 
@@ -21,9 +29,16 @@ interface TypingGameResetOptions {
  * @param options ゲーム開始に必要なコールバックとタイマー設定
  */
 export const startTypingGame = (options: TypingGameStartOptions): void => {
+  // 古い interval が残っていると単語追加や移動が二重に走るため、開始前に必ず止める。
   options.stopTimers();
+
+  // 開始時点の難易度を保存し、プレイ中に設定変更しても今回の速度を固定する。
   options.saveGameMode();
+
+  // 最初の単語はタイマーを待たずに即表示する。
   options.addWord();
+
+  // 以降の単語追加と風船移動はタイマー管理 composable に任せる。
   options.startTimers({
     addWord: options.addWord,
     moveWords: options.moveWords,
@@ -39,8 +54,13 @@ export const startTypingGame = (options: TypingGameStartOptions): void => {
  * @param options リセット時に必要なコールバック
  */
 export const resetTypingGame = (options: TypingGameResetOptions): void => {
+  // リセット後に古いタイマーが動き続けないよう、先に停止する。
   options.stopTimers();
+
+  // 表示中の単語と入力状態を初期状態へ戻す。
   options.resetWords();
   options.resetInputMiss();
+
+  // 画面上の次キー表示も空の状態に同期する。
   options.updateNextKey();
 };

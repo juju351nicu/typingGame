@@ -9,6 +9,7 @@ const DEFAULT_TOP_REACHED_THRESHOLD = -120;
  * @returns CSSのtop値からpxを除いた数値
  */
 export const getWordTop = (word: currentWord): number => {
+  // style.top は "100px" の形式なので、px を外して数値化する。
   return Number(word.style.top.slice(0, -2));
 };
 
@@ -45,6 +46,7 @@ export const hasReachedTop = (
   word: currentWord,
   threshold = DEFAULT_TOP_REACHED_THRESHOLD
 ): boolean => {
+  // 破裂中の単語はゲームオーバー判定の対象外にする。
   return !word.isBursting && getWordTop(word) < threshold;
 };
 

@@ -1,7 +1,9 @@
 import type { currentWord } from "@/types/interfaces";
 
 export interface CompletedWordScoreResult {
+  /** スコアに加算する値 */
   scoreDelta: number;
+  /** 正タイプ数に加算する文字数 */
   correctCharacterDelta: number;
 }
 
@@ -16,6 +18,7 @@ export interface CompletedWordScoreResult {
 export const getCompletedWordScoreResult = (
   word: currentWord
 ): CompletedWordScoreResult => {
+  // 現状のルールでは、1単語正解ごとにスコアを1点加算する。
   return {
     scoreDelta: 1,
     correctCharacterDelta: word.characters.length,

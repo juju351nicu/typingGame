@@ -9,6 +9,7 @@ export const getResponsiveBalloonWidth = (
   boardWidth: number | undefined,
   defaultWidth: number
 ): number => {
+  // 狭い画面では風船を小さめに見積もり、右端にはみ出しにくくする。
   if (boardWidth !== undefined && boardWidth <= 480) {
     return 120;
   }
@@ -38,6 +39,7 @@ export const getRandomWordLeft = (
     return 0;
   }
 
+  // 風船幅が表示エリア以上でも、負の座標にならないようにする。
   const maxPosition = Math.max(boardWidth - balloonWidth, 0);
   return Math.floor(random() * maxPosition);
 };

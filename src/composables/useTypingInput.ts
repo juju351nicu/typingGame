@@ -27,8 +27,10 @@ export const getTypingInputResult = (
   newValue: string,
   oldValue: string
 ): TypingInputResult => {
+  // 現在の入力値がどの表示中単語の先頭にも一致しなければミス状態にする。
   const isInputMiss = !hasMatchedPrefix(currentWords, newValue);
 
+  // Backspace や変換中の短縮では、入力数とミス数を増やさない。
   if (newValue.length <= oldValue.length) {
     return {
       typedCharacterDelta: 0,

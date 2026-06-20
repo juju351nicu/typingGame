@@ -1,10 +1,15 @@
 import { ref } from "vue";
 
 export interface TypingTimerOptions {
+  /** 一定間隔で単語を追加する処理 */
   addWord: () => void;
+  /** 表示中の単語を移動する処理 */
   moveWords: () => void;
+  /** ゲームオーバー到達を確認する処理 */
   checkGameOver: () => void;
+  /** 単語追加 interval の実行間隔 */
   addWordInterval: number;
+  /** 単語移動 interval の実行間隔 */
   moveWordInterval: number;
 }
 
@@ -41,8 +46,10 @@ export const useTypingTimers = () => {
    * @param options タイマー実行時のコールバックと実行間隔
    */
   const startTimers = (options: TypingTimerOptions): void => {
+    // 二重起動を防ぐため、開始前に既存タイマーを必ず止める。
     stopTimers();
 
+    // 単語追加と単語移動は別 interval として管理する。
     addWordTimerId.value = setInterval(() => {
       options.addWord();
     }, options.addWordInterval);
@@ -68,6 +75,7 @@ export const useTypingTimers = () => {
   ): ReturnType<typeof setTimeout> => {
     const timerId = setTimeout(() => {
       callback();
+      // 実行済みの timeout は管理対象から外し、停止時の掃除対象を減らす。
       burstTimerIds.value = burstTimerIds.value.filter((id) => id !== timerId);
     }, duration);
     burstTimerIds.value.push(timerId);

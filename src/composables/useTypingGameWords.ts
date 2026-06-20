@@ -20,6 +20,7 @@ export const useTypingGameWords = (initialWords: string[]) => {
 
   /** 単語リストをシャッフルする。 */
   const shuffleTypingWords = (): void => {
+    // 元の単語順に偏らないよう、出題前に表示順を入れ替える。
     typingWords.value = shuffleWords(typingWords.value);
   };
 
@@ -44,6 +45,7 @@ export const useTypingGameWords = (initialWords: string[]) => {
       return null;
     }
 
+    // currentWordIndex が指す次の単語を、画面表示用の形へ変換する。
     const word = createCurrentWord(
       typingWords.value[currentWordIndex.value],
       left,
@@ -60,6 +62,7 @@ export const useTypingGameWords = (initialWords: string[]) => {
    * @param targetWord 削除対象の単語
    */
   const removeWord = (targetWord: currentWord): void => {
+    // Vue の Proxy と元オブジェクトのどちらで渡されても削除できるようにする。
     const currentIndex = currentWords.value.findIndex(
       (item) => item === targetWord || toRaw(item) === targetWord
     );
@@ -79,6 +82,7 @@ export const useTypingGameWords = (initialWords: string[]) => {
 
   /** 表示中単語と出題インデックスを初期化し、単語リストをシャッフルする。 */
   const resetWords = (): void => {
+    // リトライ時に前回の表示中単語や出題位置を持ち越さないよう初期化する。
     currentWords.value = [];
     currentWordIndex.value = 0;
     shuffleTypingWords();
