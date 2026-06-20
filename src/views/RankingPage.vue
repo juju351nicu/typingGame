@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGameScoresStore } from "@/stores/gameScores";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import Const from "@/constants/const";
 import Util from "@/utils/gameUtils";
 import type {
@@ -67,6 +67,12 @@ const isTimeAttackSelected = computed((): boolean => {
 /** ランキング絞り込みに使う制限時間 */
 const activeTimeLimitSeconds = computed((): TimeLimitSeconds | null => {
   return isTimeAttackSelected.value ? selectedTimeLimitSeconds.value : null;
+});
+
+watch(isTimeAttackSelected, (isSelected) => {
+  if (!isSelected) {
+    selectedTimeLimitSeconds.value = null;
+  }
 });
 
 /** スコア一覧 */
