@@ -4,6 +4,7 @@ import {
   hasReachedTop,
   moveWordUp,
   moveWordsUp,
+  shouldFinishByWordReachedTop,
 } from "@/composables/useTypingWordPositions";
 import type { CurrentWord } from "@/types/interfaces";
 import { describe, expect, it } from "vitest";
@@ -64,5 +65,17 @@ describe("useTypingWordPositions", () => {
     expect(hasAnyWordReachedTop([createWord(80), createWord(-40)])).toBe(
       false
     );
+  });
+
+  it("上端到達を終了条件にする場合はゲーム終了扱いにする", () => {
+    const words = [createWord(80), createWord(-121)];
+
+    expect(shouldFinishByWordReachedTop(words, true)).toBe(true);
+  });
+
+  it("上端到達を終了条件にしない場合はゲーム終了扱いにしない", () => {
+    const words = [createWord(80), createWord(-121)];
+
+    expect(shouldFinishByWordReachedTop(words, false)).toBe(false);
   });
 });

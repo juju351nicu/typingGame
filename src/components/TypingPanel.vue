@@ -12,8 +12,8 @@ import {
   getWordFeedbackClass as getTypingWordFeedbackClass,
 } from "@/composables/useTypingWords";
 import {
-  hasAnyWordReachedTop,
   moveWordsUp,
+  shouldFinishByWordReachedTop,
 } from "@/composables/useTypingWordPositions";
 import { getNextKey } from "@/composables/useTypingKeyboard";
 import { getTypingInputResult } from "@/composables/useTypingInput";
@@ -34,6 +34,7 @@ import type { CurrentWord } from "@/types/interfaces";
 interface TypingPanelProps {
   isGameStarted: boolean;
   isResetTimer: boolean;
+  shouldFinishOnWordReachedTop: boolean;
   gameScore: number;
   isGameOver: boolean;
   inputValue: string;
@@ -68,6 +69,11 @@ const isGameStartedFlag = computed((): boolean => {
 /** リセットフラグ */
 const isResetFlag = computed((): boolean => {
   return props.isResetTimer;
+});
+
+/** 風船が画面上部に到達したときにゲーム終了するか */
+const shouldFinishOnWordReachedTop = computed((): boolean => {
+  return props.shouldFinishOnWordReachedTop;
 });
 
 /** ゲームスコア */
@@ -183,7 +189,12 @@ const wordsBoard = useTemplateRef("typing-panel");
  * 「typing-panel」要素の縦幅を下回った場合、ゲームを終了する。
  */
 const checkIsTopToBottom = () => {
-  if (hasAnyWordReachedTop(currentWords.value)) {
+  if (
+    shouldFinishByWordReachedTop(
+      currentWords.value,
+      shouldFinishOnWordReachedTop.value
+    )
+  ) {
     gameFinish();
   }
 };

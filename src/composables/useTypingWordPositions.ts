@@ -63,3 +63,24 @@ export const hasAnyWordReachedTop = (
 ): boolean => {
   return words.some((word) => hasReachedTop(word, threshold));
 };
+
+/**
+ * 風船の上部到達によってゲーム終了するか判定する。
+ *
+ * 通常モードでは上部到達をゲーム終了条件にし、
+ * タイムアタックでは制限時間を優先するため上部到達では終了しない。
+ *
+ * @param words 判定対象の単語リスト
+ * @param shouldFinishOnWordReachedTop 上部到達を終了条件にするか
+ * @param threshold 到達判定に使う縦位置
+ * @returns ゲーム終了する場合はtrue
+ */
+export const shouldFinishByWordReachedTop = (
+  words: CurrentWord[],
+  shouldFinishOnWordReachedTop: boolean,
+  threshold = DEFAULT_TOP_REACHED_THRESHOLD
+): boolean => {
+  return (
+    shouldFinishOnWordReachedTop && hasAnyWordReachedTop(words, threshold)
+  );
+};

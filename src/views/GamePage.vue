@@ -76,6 +76,11 @@ const remainingTimeLabel = computed((): string => {
   return `${remainingSeconds.value}秒`;
 });
 
+/** 風船が画面上部に到達したときにゲーム終了するか */
+const shouldFinishOnWordReachedTop = computed((): boolean => {
+  return !isTimeAttackMode.value;
+});
+
 const {
   pressedKey,
   missKey,
@@ -211,6 +216,7 @@ onUnmounted(() => {
       <TypingPanel
         :isGameStarted="isGameStarted"
         :isResetTimer="isResetTimer"
+        :shouldFinishOnWordReachedTop="shouldFinishOnWordReachedTop"
         :gameScore="gameScore"
         @update:gameScore="($event) => (gameScore = $event)"
         :isGameOver="isGameOver"
