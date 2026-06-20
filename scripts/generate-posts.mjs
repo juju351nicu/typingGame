@@ -15,33 +15,33 @@ const REQUIRED_FRONTMATTER_KEYS = [
 ];
 
 /**
- * Normalizes path separators for browser and GitHub Pages URLs.
+ * ブラウザやGitHub Pagesで扱いやすいようにパス区切りを正規化する。
  *
- * @param {string} filePath File path from Node.js path utilities.
- * @returns {string} Path with forward slashes.
+ * @param {string} filePath Node.jsのpath関数から得たファイルパス
+ * @returns {string} 区切り文字をスラッシュに統一したパス
  */
 const normalizePath = (filePath) => {
   return filePath.replace(/\\/g, "/");
 };
 
 /**
- * Creates a project-relative URL from the actual Markdown file path.
+ * 実際のMarkdownファイル位置からプロジェクト相対URLを生成する。
  *
- * The URL is intentionally based on the real file location, not on frontmatter
- * values, so deeper future directory structures still generate correct paths.
+ * frontmatterの値ではなく実ファイル位置を基準にすることで、
+ * 将来ディレクトリ階層が深くなっても正しいURLを生成できる。
  *
- * @param {string} fullPath Absolute Markdown file path.
- * @returns {string} Project-relative URL for posts_index.json.
+ * @param {string} fullPath Markdownファイルの絶対パス
+ * @returns {string} posts_index.json に保存するプロジェクト相対URL
  */
 const getRelativeUrl = (fullPath) => {
   return normalizePath(path.relative(ROOT_DIR, fullPath));
 };
 
 /**
- * Recursively collects Markdown files below the posts directory.
+ * postsディレクトリ配下のMarkdownファイルを再帰的に収集する。
  *
- * @param {string} directory Directory to scan.
- * @returns {Promise<string[]>} Absolute paths to Markdown files.
+ * @param {string} directory 探索対象ディレクトリ
+ * @returns {Promise<string[]>} Markdownファイルの絶対パス一覧
  */
 const findMarkdownFiles = async (directory) => {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -61,12 +61,12 @@ const findMarkdownFiles = async (directory) => {
 };
 
 /**
- * Extracts simple key-value frontmatter from a Markdown document.
+ * Markdown本文から単純なkey-value形式のfrontmatterを抽出する。
  *
- * @param {string} markdown Markdown file content.
- * @param {string} filePath Markdown file path used for error messages.
- * @returns {Record<string, string>} Parsed frontmatter values.
- * @throws {Error} When the Markdown file does not start with frontmatter.
+ * @param {string} markdown Markdownファイル本文
+ * @param {string} filePath エラーメッセージ用のMarkdownファイルパス
+ * @returns {Record<string, string>} 解析したfrontmatterの値
+ * @throws {Error} Markdownファイルがfrontmatterで始まっていない場合
  */
 const parseFrontmatter = (markdown, filePath) => {
   const match = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
@@ -88,11 +88,11 @@ const parseFrontmatter = (markdown, filePath) => {
 };
 
 /**
- * Stops generation when required metadata is missing.
+ * 必須メタデータが不足している場合に生成処理を停止する。
  *
- * @param {Record<string, string>} frontmatter Parsed frontmatter values.
- * @param {string} filePath Markdown file path used for error messages.
- * @throws {Error} When one or more required fields are missing.
+ * @param {Record<string, string>} frontmatter 解析済みfrontmatter
+ * @param {string} filePath エラーメッセージ用のMarkdownファイルパス
+ * @throws {Error} 必須項目が1つ以上不足している場合
  */
 const assertRequiredFrontmatter = (frontmatter, filePath) => {
   const missingKeys = REQUIRED_FRONTMATTER_KEYS.filter(
@@ -109,12 +109,12 @@ const assertRequiredFrontmatter = (frontmatter, filePath) => {
 };
 
 /**
- * Ensures generated index entries are unique.
+ * 生成する記事インデックスのidとurlが重複していないことを確認する。
  *
- * @param {Array<{ id: string, url: string }>} posts Generated posts so far.
- * @param {{ id: string, url: string }} post New post entry.
- * @param {string} filePath Markdown file path used for error messages.
- * @throws {Error} When id or url duplicates an existing entry.
+ * @param {Array<{ id: string, url: string }>} posts ここまでに生成した記事一覧
+ * @param {{ id: string, url: string }} post 新しく追加する記事
+ * @param {string} filePath エラーメッセージ用のMarkdownファイルパス
+ * @throws {Error} idまたはurlが既存記事と重複している場合
  */
 const assertUniquePost = (posts, post, filePath) => {
   const duplicatedId = posts.find((item) => item.id === post.id);
@@ -133,11 +133,11 @@ const assertUniquePost = (posts, post, filePath) => {
 };
 
 /**
- * Converts a post date into a sortable timestamp.
+ * 記事の日付をソート用のタイムスタンプへ変換する。
  *
- * @param {{ id: string, date: string }} post Post entry.
- * @returns {number} Timestamp used for descending sort.
- * @throws {Error} When the date cannot be parsed by Date.
+ * @param {{ id: string, date: string }} post 記事情報
+ * @returns {number} 降順ソートに使うタイムスタンプ
+ * @throws {Error} Dateで解析できない日付の場合
  */
 const getPostTimestamp = (post) => {
   const timestamp = new Date(post.date).getTime();
@@ -149,11 +149,11 @@ const getPostTimestamp = (post) => {
 };
 
 /**
- * Builds one posts_index.json entry from frontmatter and the actual file path.
+ * frontmatterと実ファイルパスから posts_index.json の1件分を生成する。
  *
- * @param {Record<string, string>} frontmatter Parsed frontmatter values.
- * @param {string} filePath Absolute Markdown file path.
- * @returns {{ id: string, section: string, date: string, title: string, description: string, url: string }} Post index entry.
+ * @param {Record<string, string>} frontmatter 解析済みfrontmatter
+ * @param {string} filePath Markdownファイルの絶対パス
+ * @returns {{ id: string, section: string, date: string, title: string, description: string, url: string }} 記事インデックス1件分
  */
 const createPostIndex = (frontmatter, filePath) => {
   return {
@@ -167,7 +167,7 @@ const createPostIndex = (frontmatter, filePath) => {
 };
 
 /**
- * Regenerates blog_store/posts_index.json from Markdown frontmatter.
+ * Markdownのfrontmatterから blog_store/posts_index.json を再生成する。
  *
  * @returns {Promise<void>}
  */

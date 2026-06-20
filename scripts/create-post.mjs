@@ -11,13 +11,13 @@ const POSTS_INDEX_PATH = path.join(BLOG_ROOT, "posts_index.json");
 const DEFAULT_SECTION = "guide";
 
 /**
- * Converts a title or section label into a URL-safe slug.
+ * タイトルやセクション名をURLで扱いやすいslugへ変換する。
  *
- * The blog currently supports ASCII slugs only. If a Japanese title becomes an
- * empty slug, the caller asks the user to enter an id manually.
+ * 現在のブログでは英数字slugを前提にしている。
+ * 日本語タイトルなどで空文字になった場合は、呼び出し元でidを手入力させる。
  *
- * @param {string} value Source text.
- * @returns {string} Lowercase slug joined with hyphens.
+ * @param {string} value 変換元の文字列
+ * @returns {string} 小文字化し、ハイフン区切りにしたslug
  */
 const slugify = (value) => {
   return value
@@ -29,9 +29,9 @@ const slugify = (value) => {
 };
 
 /**
- * Reads the current generated post index for duplicate checks.
+ * 重複チェック用に現在の生成済み記事インデックスを読み込む。
  *
- * @returns {Promise<Array<{ id: string, url: string }>>} Existing post index.
+ * @returns {Promise<Array<{ id: string, url: string }>>} 既存の記事インデックス
  */
 const readPostsIndex = async () => {
   const postsIndexText = await readFile(POSTS_INDEX_PATH, "utf8");
@@ -39,12 +39,12 @@ const readPostsIndex = async () => {
 };
 
 /**
- * Ensures the new article does not conflict with an existing id or Markdown path.
+ * 新規記事のidやMarkdownパスが既存記事と重複しないことを確認する。
  *
- * @param {Array<{ id: string, url: string }>} posts Existing post index.
- * @param {string} id New article id.
- * @param {string} markdownPath New Markdown path stored in posts_index.json.
- * @throws {Error} When the id or Markdown path already exists.
+ * @param {Array<{ id: string, url: string }>} posts 既存の記事インデックス
+ * @param {string} id 新規記事のid
+ * @param {string} markdownPath posts_index.json に保存する新規Markdownパス
+ * @throws {Error} idまたはMarkdownパスが既に存在する場合
  */
 const assertUniquePost = (posts, id, markdownPath) => {
   const hasSameId = posts.some((post) => post.id === id);
@@ -59,14 +59,13 @@ const assertUniquePost = (posts, id, markdownPath) => {
 };
 
 /**
- * Builds the initial Markdown body for a new blog post.
+ * 新規ブログ記事の初期Markdown本文を生成する。
  *
- * The generated frontmatter is used by scripts/generate-posts.mjs, so
- * posts_index.json can be recreated from Markdown files instead of being edited
- * by hand.
+ * 生成したfrontmatterは scripts/generate-posts.mjs が読み取る。
+ * これにより posts_index.json を手動編集せず、Markdownから再生成できる。
  *
- * @param {{ id: string, section: string, title: string, date: string, description: string }} post New post values.
- * @returns {string} Markdown content with required frontmatter.
+ * @param {{ id: string, section: string, title: string, date: string, description: string }} post 新規記事の値
+ * @returns {string} 必須frontmatter付きのMarkdown本文
  */
 const createMarkdown = ({ id, section, title, date, description }) => {
   return `---
@@ -90,12 +89,11 @@ ${description}
 };
 
 /**
- * Creates an input helper for interactive terminals and piped test input.
+ * 対話入力とパイプ入力の両方に対応した入力ヘルパーを作成する。
  *
- * Non-TTY input is supported so the script can be smoke-tested with printf in
- * local verification.
+ * 非TTY入力にも対応し、ローカル検証時にprintfで簡易確認できるようにする。
  *
- * @returns {Promise<{ ask: (message: string) => Promise<string>, close: () => void }>} Prompt helper.
+ * @returns {Promise<{ ask: (message: string) => Promise<string>, close: () => void }>} 入力ヘルパー
  */
 const createPrompt = async () => {
   if (!process.stdin.isTTY) {
@@ -132,7 +130,7 @@ const createPrompt = async () => {
 };
 
 /**
- * Rebuilds posts_index.json after a Markdown file has been created.
+ * Markdownファイル作成後に posts_index.json を再生成する。
  *
  * @returns {Promise<void>}
  */
@@ -155,7 +153,7 @@ const runGeneratePosts = async () => {
 };
 
 /**
- * Prompts for article metadata, creates a Markdown file, and regenerates the index.
+ * 記事情報を入力し、Markdownファイル作成とインデックス再生成を行う。
  *
  * @returns {Promise<void>}
  */
