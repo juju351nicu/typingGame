@@ -148,6 +148,14 @@ npm run build
 npm run test
 ```
 
+## Blog Post
+
+```bash
+npm run create-post
+```
+
+`title`、`section`、`description` を入力すると、`blog_store/posts/{section}/{id}.md` と `blog_store/posts_index.json` が更新されます。`section` を未入力にした場合は `guide` が使われます。
+
 ## Deployment
 
 `master` ブランチへ push すると、GitHub Actions で test / build が実行され、GitHub Pages に自動デプロイされます。
