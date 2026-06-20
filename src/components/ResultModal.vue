@@ -51,16 +51,17 @@ const gameModeLabel = computed((): string => {
 
 /** ゲームルール */
 const gameRuleLabel = computed((): string => {
-  return lastScore.value.gameRule === Const.GAME_RULE.TIME_ATTACK
-    ? "タイムアタック"
-    : "通常";
+  return Util.getScoreGameRuleLabel(lastScore.value);
 });
 
 /** タイムアタックの制限時間 */
 const timeLimitLabel = computed((): string => {
-  return lastScore.value.timeLimitSeconds
-    ? `${lastScore.value.timeLimitSeconds}秒`
-    : "-";
+  return Util.getTimeLimitLabel(lastScore.value);
+});
+
+/** タイムアタックの結果かどうか */
+const isTimeAttackResult = computed((): boolean => {
+  return Util.getGameRule(lastScore.value) === Const.GAME_RULE.TIME_ATTACK;
 });
 
 /** ゲームオーバーフラグをウォッチにて判定する */
@@ -100,10 +101,7 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
               <span class="item-label">ゲームルール</span>
               <span class="item-value">{{ gameRuleLabel }}</span>
             </div>
-            <div
-              v-if="lastScore.gameRule === Const.GAME_RULE.TIME_ATTACK"
-              class="result-item"
-            >
+            <div v-if="isTimeAttackResult" class="result-item">
               <span class="item-label">制限時間</span>
               <span class="item-value">{{ timeLimitLabel }}</span>
             </div>

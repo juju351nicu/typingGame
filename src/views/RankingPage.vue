@@ -5,13 +5,16 @@ import Const from "@/constants/const";
 import Util from "@/utils/gameUtils";
 import type { GameRule, GameScore, RankingScore } from "@/types/interfaces";
 
-//インポートした関数を呼び出してストアをインスタンス化して変数に代入
+/** 保存済みスコアを管理するストア */
 const gameScoresStore = useGameScoresStore();
-/** data-tableの1ページあたりの表示件数（デフォルト）*/
+
+/** ランキング表の1ページあたりの表示件数 */
 const itemsPerPage = ref(Const.NUMBER_OF_ITEMS);
-/** data-tableの表示件数の選択リスト */
+
+/** ランキング表の表示件数の選択肢 */
 const pages = Const.DATA_TABLE_PAGES;
-/** テーブルの関連するラベル・プロパティ等の情報 */
+
+/** ランキング表の列定義 */
 const headers = [
   { title: "順位", align: "start", key: "rank" },
   { title: "スコア", align: "end", key: "score" },
@@ -61,6 +64,22 @@ const bestScore = computed((): RankingScore | null => {
   return rankingItems.value[0] ?? null;
 });
 
+/** 最高スコアの補足表示 */
+const bestScoreSummary = computed((): string => {
+  if (!bestScore.value) {
+    return "No records";
+  }
+
+  const ruleLabel = Util.getScoreGameRuleLabel(bestScore.value);
+  const ruleSummary =
+    Util.getGameRule(bestScore.value) === Const.GAME_RULE.TIME_ATTACK
+      ? `${ruleLabel} ${Util.getTimeLimitLabel(bestScore.value)}`
+      : ruleLabel;
+
+  // ランク・難易度・ルール・タイムを1行で確認できるようにする。
+  return `${bestScore.value.resultRank}ランク / ${Util.getLevel(bestScore.value.mode)} / ${ruleSummary} / ${bestScore.value.time}`;
+});
+
 /** ランク表示用CSSクラス */
 const getRankClass = (rank: number): string => {
   if (rank === 1) {
@@ -91,7 +110,7 @@ const getRankClass = (rank: number): string => {
         variant="outlined"
         density="comfortable"
         hide-details
-        class="mode-filter"
+        class="ranking-filter"
       />
       <v-select
         v-model="selectedGameRule"
@@ -102,7 +121,7 @@ const getRankClass = (rank: number): string => {
         variant="outlined"
         density="comfortable"
         hide-details
-        class="mode-filter"
+        class="ranking-filter"
       />
     </div>
 
@@ -110,13 +129,7 @@ const getRankClass = (rank: number): string => {
       <div class="summary-card best-score-card">
         <span class="summary-label">Best Score</span>
         <span class="summary-value">{{ bestScore?.score ?? "-" }}</span>
-        <span class="summary-note">
-          {{
-            bestScore
-              ? `${bestScore.resultRank}ランク / ${Util.getLevel(bestScore.mode)} / ${bestScore.time}`
-              : "No records"
-          }}
-        </span>
+        <span class="summary-note">{{ bestScoreSummary }}</span>
       </div>
       <div class="summary-card">
         <span class="summary-label">Plays</span>
@@ -218,7 +231,7 @@ const getRankClass = (rank: number): string => {
   margin: 8px 0 0;
 }
 
-.mode-filter {
+.ranking-filter {
   flex: 1 1 180px;
   max-width: 220px;
 }
