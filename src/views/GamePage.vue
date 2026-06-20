@@ -31,6 +31,7 @@ const timerComponent = ref<TimerExpose | null>(null);
 const {
   remainingSeconds,
   startTimeAttackTimer,
+  resumeTimeAttackTimer,
   stopTimeAttackTimer,
   resetTimeAttackTimer,
 } = useTimeAttackTimer();
@@ -162,6 +163,9 @@ watch(isGameOver, (newValue, _oldValue) => {
 /** Escapeキーでタイマーを停止する */
 const stopTimerByKeyboard = () => {
   timerComponent.value?.stopTimer?.();
+  if (isTimeAttackMode.value) {
+    stopTimeAttackTimer();
+  }
 };
 
 const handleEsc = (event: KeyboardEvent) => {
@@ -172,6 +176,9 @@ const handleEsc = (event: KeyboardEvent) => {
 const handleShift = (event: KeyboardEvent) => {
   if (event.key === "Shift" && isGameStarted.value && !isGameOver.value) {
     timerComponent.value?.startTimer?.();
+    if (isTimeAttackMode.value) {
+      resumeTimeAttackTimer();
+    }
   }
 };
 

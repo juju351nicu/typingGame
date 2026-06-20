@@ -135,6 +135,7 @@ timeLimitSeconds?: number;
 
 - `useTypingTimers.ts` にタイムアタックの interval を混ぜすぎない。
 - タイムアタック終了時も `stopTimers()` を必ず呼び、既存 interval を残さない。
+- Escape / Shift の一時停止・再開操作では、通常タイマーとタイムアタックの残り時間を同時に止める。
 - 通常モードの終了条件を変えない。
 - localStorage の既存データが壊れないよう、追加項目は optional から始める。
 - テストはまず `useTimeAttackTimer.ts` とモード判定ロジックを優先する。
