@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Alerts from "@/components/Alerts.vue";
+import AppAlerts from "@/components/AppAlerts.vue";
 import { ref } from "vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
@@ -58,7 +58,7 @@ const resetModalData = () => {
 </script>
 <template>
   <v-container class="settings-page">
-    <Alerts :alerts="alerts" />
+    <AppAlerts :alerts="alerts" />
     <section class="settings-header">
       <h1>Settings</h1>
       <p>ゲームの難易度と保存済みスコアを管理できます。</p>

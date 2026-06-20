@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import DashBoard from "@/views/DashBoard.vue";
-import ScoresBoard from "@/views/ScoresBoard.vue";
-import SettingBoard from "@/views/SettingBoard.vue";
+import GamePage from "@/views/GamePage.vue";
+import RankingPage from "@/views/RankingPage.vue";
+import SettingsPage from "@/views/SettingsPage.vue";
 import BlogPostList from "@/views/BlogPostList.vue";
 import BlogPost from "@/views/BlogPost.vue";
 import AboutUs from "@/views/AboutUs.vue";
@@ -10,20 +10,20 @@ const routeSetting: RouteRecordRaw[] = [
   {
     /** トップページ */
     path: "/",
-    name: "DashBoard",
-    component: DashBoard,
+    name: "GamePage",
+    component: GamePage,
   },
   {
     /** スコア一覧 */
     path: "/scoresBoard",
-    name: "ScoresBoard",
-    component: ScoresBoard,
+    name: "RankingPage",
+    component: RankingPage,
   },
   {
     /** 設定画面 */
     path: "/settingBoard",
-    name: "SettingBoard",
-    component: SettingBoard,
+    name: "SettingsPage",
+    component: SettingsPage,
   },
   {
     /** ブログ記事一覧 */

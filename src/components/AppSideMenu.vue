@@ -27,17 +27,17 @@ const drawer = computed({
 /** サイドメニュー */
 const links = ref<MenuLink[]>([
   {
-    to: { name: "DashBoard" },
+    to: { name: "GamePage" },
     title: "ダッシュボード",
     icon: "mdi-home",
   },
   {
-    to: { name: "ScoresBoard" },
+    to: { name: "RankingPage" },
     title: "スコア一覧",
     icon: "mdi-account",
   },
   {
-    to: { name: "SettingBoard" },
+    to: { name: "SettingsPage" },
     title: "設定画面",
     icon: "mdi-cog-outline",
   },

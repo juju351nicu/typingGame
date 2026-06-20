@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import TypingPanel from "@/components/TypingPanel.vue";
-import Alerts from "@/components/Alerts.vue";
-import Modal from "@/components/Modal.vue";
-import Timer from "@/components/Timer.vue";
-import VirtualKeyBoard from "@/components/VirtualKeyBoard.vue";
+import AppAlerts from "@/components/AppAlerts.vue";
+import ResultModal from "@/components/ResultModal.vue";
+import GameTimer from "@/components/GameTimer.vue";
+import VirtualKeyboard from "@/components/VirtualKeyboard.vue";
 import { useTypingKeyboardFeedback } from "@/composables/useTypingKeyboardFeedback";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -163,7 +163,7 @@ onUnmounted(() => {
 </script>
 <template>
   <v-container class="game-page">
-    <Alerts :alerts="alerts" />
+    <AppAlerts :alerts="alerts" />
     <div class="game-board">
       <TypingPanel
         :isGameStarted="isGameStarted"
@@ -202,13 +202,13 @@ onUnmounted(() => {
             />
           </div>
           <div class="status-panel">
-            <Timer ref="timerComponent" v-model:accumTime="accumTime" />
+            <GameTimer ref="timerComponent" v-model:accumTime="accumTime" />
             <div class="game-status-item">
               <label>Score</label>
               <span>{{ gameScore }}</span>
             </div>
           </div>
-          <VirtualKeyBoard
+          <VirtualKeyboard
             v-if="configStore.getIsVirtualKeyBoard"
             class="keyboard-panel"
             :nextKey="nextKey"
@@ -226,7 +226,7 @@ onUnmounted(() => {
       </template>
     </div>
   </v-container>
-  <Modal
+  <ResultModal
     :lastScore="lastScore"
     :isGameOver="isGameOver"
     @restart-game="restartGame"

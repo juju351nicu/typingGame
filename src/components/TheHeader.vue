@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SideMenu from "@/components/SideMenu.vue";
+import AppSideMenu from "@/components/AppSideMenu.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -35,7 +35,7 @@ const drawer = ref(false);
       <v-btn class="mr-10 header_list" @click="goBlogList()">ブログ</v-btn>
     </div>
   </v-app-bar>
-  <SideMenu v-model:drawer="drawer" />
+  <AppSideMenu v-model:drawer="drawer" />
 </template>
 <style scoped>
 .app-title {
