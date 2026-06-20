@@ -228,6 +228,8 @@ Status: 完了
 
 ### Phase 5: 拡張機能
 
+Plan: [`docs/phase5-time-attack-plan.md`](./docs/phase5-time-attack-plan.md)
+
 - タイムアタックモード
   - 30秒 / 60秒 / 90秒などの制限時間を選択
   - 通常モードとは別のゲームモードとして実装
