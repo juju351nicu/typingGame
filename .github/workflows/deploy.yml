@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -46,7 +48,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add blog_store/posts_index.json
           git commit -m "chore: regenerate blog post index"
-          git push
+          git push origin HEAD:${{ github.ref_name }}
 
       - name: Check blog post index
         run: npm run check:posts

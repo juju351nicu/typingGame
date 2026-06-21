@@ -339,6 +339,11 @@ GitHub Pages へ deploy
 ここに `npm run generate:posts` を追加すれば、deploy 前に必ず記事一覧を最新化できます。
 
 ```yaml
+- name: Checkout
+  uses: actions/checkout@v4
+  with:
+    ref: ${{ github.ref_name }}
+
 - name: Generate blog post index
   run: npm run generate:posts
 ```
@@ -361,10 +366,14 @@ GitHub Pages へ deploy
     git config user.email "github-actions[bot]@users.noreply.github.com"
     git add blog_store/posts_index.json
     git commit -m "chore: regenerate blog post index"
-    git push
+    git push origin HEAD:${{ github.ref_name }}
 ```
 
 これで、Markdown の frontmatter を直しただけでも、Actions 側で `posts_index.json` が最新化されます。
+
+`checkout` では `ref: ${{ github.ref_name }}` を指定し、push 先も `HEAD:${{ github.ref_name }}` と明示しています。
+
+これにより、Actions上で現在のブランチが分かりにくい状態でも、意図したブランチへ `posts_index.json` の更新を反映しやすくなります。
 
 ---
 
