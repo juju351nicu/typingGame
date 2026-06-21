@@ -171,6 +171,8 @@ npm run check:posts
 
 `check:posts` は `posts_index.json` を再生成し、生成結果がコミット済みの内容とズレていないか確認します。GitHub Actions でも実行し、ブログ記事とインデックスの不整合を検知します。
 
+GitHub Actions では deploy 前に `npm run generate:posts` を実行し、`posts_index.json` に差分があれば `github-actions[bot]` が自動コミットします。これにより、Markdown 記事を追加・更新した際のインデックス更新漏れを防ぎます。
+
 `posts_index.json` という名前は、既存のブログ取得処理と公開URLに紐づいているため現時点では維持します。将来リネームする場合は、ルーティング、取得定数、記事取得処理、README の説明をまとめて見直すタイミングで検討します。
 
 ## Deployment
@@ -182,10 +184,12 @@ GitHub リポジトリ名 `typingGame` のリネームは急ぎではありま�
 Workflow:
 
 1. `npm ci`
-2. `npm run check:posts`
-3. `npm run test`
-4. `npm run build`
-5. `dist` を GitHub Pages へデプロイ
+2. `npm run generate:posts`
+3. `posts_index.json` に差分があれば自動コミット
+4. `npm run check:posts`
+5. `npm run test`
+6. `npm run build`
+7. `dist` を GitHub Pages へデプロイ
 
 ## Roadmap
 

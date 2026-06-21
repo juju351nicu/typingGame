@@ -304,6 +304,171 @@ const removeFrontmatter = (markdown: string): string => {
 
 ---
 
+## GitHub Actions でも posts_index.json を自動生成する
+
+ここまでで、ローカルでは `npm run generate:posts` を実行すれば `posts_index.json` を再生成できるようになりました。
+
+ただし、運用を考えるともう1つ課題があります。
+
+Markdown 記事を追加・更新したあとに、毎回ローカルで `npm run generate:posts` を実行して `posts_index.json` をコミットする必要があります。
+
+これは手動編集よりはかなり楽ですが、それでも次のようなミスは残ります。
+
+- Markdown だけコミットして `posts_index.json` の更新を忘れる
+- 記事本文を少し直しただけだと思い、一覧用の description や date の変更を反映し忘れる
+- GitHub Pages へデプロイする前に、記事一覧と Markdown の状態がズレる
+
+そこで、GitHub Actions の deploy workflow にも `npm run generate:posts` を組み込みました。
+
+---
+
+## 既存の deploy workflow に組み込む
+
+今回は、ブログインデックス生成専用の workflow を新しく作るのではなく、既存の GitHub Pages deploy workflow に組み込みました。
+
+理由は、既存の deploy workflow ではすでに次の処理を行っていたからです。
+
+```text
+npm ci
+npm run check:posts
+npm run test
+npm run build
+GitHub Pages へ deploy
+```
+
+ここに `npm run generate:posts` を追加すれば、deploy 前に必ず記事一覧を最新化できます。
+
+```yaml
+- name: Generate blog post index
+  run: npm run generate:posts
+```
+
+その後、`blog_store/posts_index.json` に差分があるかを確認します。
+
+差分がなければ何もせず、そのまま `check:posts`、`test`、`build` へ進みます。
+
+差分があれば、`github-actions[bot]` として `posts_index.json` をコミットします。
+
+```yaml
+- name: Commit generated blog post index
+  run: |
+    if git diff --quiet -- blog_store/posts_index.json; then
+      echo "posts_index.json is up to date."
+      exit 0
+    fi
+
+    git config user.name "github-actions[bot]"
+    git config user.email "github-actions[bot]@users.noreply.github.com"
+    git add blog_store/posts_index.json
+    git commit -m "chore: regenerate blog post index"
+    git push
+```
+
+これで、Markdown の frontmatter を直しただけでも、Actions 側で `posts_index.json` が最新化されます。
+
+---
+
+## contents: write が必要
+
+GitHub Actions からコミットして push するためには、workflow の `permissions` で `contents: write` が必要です。
+
+もともとの GitHub Pages deploy では、リポジトリ内容を読むだけなら `contents: read` で足ります。
+
+しかし今回は、Actions が `posts_index.json` をコミットします。
+
+そのため、次のように変更しました。
+
+```yaml
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+```
+
+`pages: write` と `id-token: write` は GitHub Pages へのデプロイに必要です。
+
+`contents: write` は、生成された `posts_index.json` をリポジトリへ反映するために必要です。
+
+---
+
+## check:posts は残しておく
+
+`generate:posts` を Actions で実行するなら、`check:posts` は不要に見えるかもしれません。
+
+しかし、今回は `check:posts` も残しました。
+
+```yaml
+- name: Check blog post index
+  run: npm run check:posts
+```
+
+理由は、`generate:posts` 後の状態が本当に安定しているかを確認するためです。
+
+`check:posts` は内部で再度 `posts_index.json` を生成し、差分が残っていないかを確認します。
+
+つまり、次のような二段構えにしています。
+
+```text
+1. generate:posts
+   posts_index.json を最新化する
+
+2. 必要なら自動コミット
+   Markdown と posts_index.json のズレをリポジトリへ反映する
+
+3. check:posts
+   再生成しても差分が出ないことを確認する
+```
+
+自動生成だけで終わらせず、最後に検査を残しておくことで、壊れた状態のまま build / deploy に進みにくくしています。
+
+---
+
+## 自動コミットと deploy の流れ
+
+最終的な流れは次のようになります。
+
+```text
+Markdown 記事を追加・更新
+↓
+master に push
+↓
+GitHub Actions が npm run generate:posts を実行
+↓
+posts_index.json に差分があれば自動コミット
+↓
+npm run check:posts
+↓
+npm run test
+↓
+npm run build
+↓
+GitHub Pages へ deploy
+```
+
+ローカルで `npm run generate:posts` を実行してからコミットする運用もできます。
+
+一方で、もし忘れても GitHub Actions 側で補正できるようになりました。
+
+---
+
+## 注意点
+
+自動コミットは便利ですが、何でも自動化すればよいわけではありません。
+
+今回は対象を `blog_store/posts_index.json` だけに限定しました。
+
+```bash
+git add blog_store/posts_index.json
+```
+
+こうしておくことで、意図しないファイルまで Actions がコミットしてしまうリスクを避けられます。
+
+また、記事本文の Markdown 自体は自動生成しません。
+
+記事本文は人が書き、記事一覧用のインデックスだけを自動生成する、という責務分担にしています。
+
+---
+
 ## 確認したこと
 
 実装後、次の確認を行いました。
@@ -335,6 +500,17 @@ npm run build
 
 テストとビルドが通ることで、ブログ表示やゲーム側の処理に大きな影響が出ていないことを確認できました。
 
+GitHub Actions 側では、deploy workflow に `npm run generate:posts` と自動コミット処理を追加しました。
+
+ローカルでは次のコマンドで、生成処理と既存ビルドに問題がないことを確認しました。
+
+```bash
+npm run generate:posts
+npm run check:posts
+npm run test
+npm run build
+```
+
 ---
 
 ## まとめ
@@ -346,3 +522,7 @@ npm run build
 また、`url` を実ファイルパスから生成するようにしたことで、将来ディレクトリ構成を変えた場合にも壊れにくくなりました。
 
 小さな Node.js スクリプトですが、ブログ機能の運用をかなり楽にしてくれる改善になりました。
+
+さらに GitHub Actions に組み込んだことで、`posts_index.json` の更新漏れを CI/CD 側でも防げるようになりました。
+
+ローカル作業では記事を書くことに集中し、一覧生成とデプロイ前の整合性確認は自動化に任せられる形になりました。
