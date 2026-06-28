@@ -7,6 +7,7 @@ import type {
   GameRule,
   GameScore,
   RankingScore,
+  ScoreTrendItem,
   TimeLimitSeconds,
 } from "@/types/interfaces";
 
@@ -88,6 +89,11 @@ const rankingItems = computed((): RankingScore[] => {
     selectedGameRule.value,
     activeTimeLimitSeconds.value
   );
+});
+
+/** 直近プレイのスコア推移 */
+const scoreTrendItems = computed((): ScoreTrendItem[] => {
+  return Util.createScoreTrendItems(gameScores.value);
 });
 
 /** 最高スコア */
@@ -233,6 +239,32 @@ const getRankClass = (rank: number): string => {
       </div>
     </div>
 
+    <section class="trend-panel">
+      <div class="trend-panel__header">
+        <h2>直近スコア推移</h2>
+        <p>保存済みプレイ履歴の新しい5件を、プレイ順に表示します。</p>
+      </div>
+      <div v-if="scoreTrendItems.length > 0" class="trend-bars">
+        <div
+          v-for="item in scoreTrendItems"
+          :key="`${item.date}-${item.score}-${item.time}`"
+          class="trend-item"
+        >
+          <span class="trend-score">{{ item.score }}</span>
+          <div class="trend-bar-track">
+            <div
+              class="trend-bar"
+              :style="{ height: `${item.barRatio}%` }"
+            />
+          </div>
+          <span class="trend-label">{{ item.playNumber }}回目</span>
+        </div>
+      </div>
+      <p v-else class="trend-empty">
+        まだスコアがありません。ゲームをプレイすると推移が表示されます。
+      </p>
+    </section>
+
     <v-data-table
       v-model:items-per-page="itemsPerPage"
       :headers="headers"
@@ -367,6 +399,83 @@ const getRankClass = (rank: number): string => {
   margin-top: 8px;
 }
 
+.trend-panel {
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+  padding: 20px;
+}
+
+.trend-panel__header {
+  margin-bottom: 18px;
+}
+
+.trend-panel__header h2 {
+  color: #222222;
+  font-size: 2rem;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.trend-panel__header p {
+  color: #666666;
+  font-size: 1.3rem;
+  margin: 6px 0 0;
+}
+
+.trend-bars {
+  align-items: end;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(5, minmax(56px, 1fr));
+  min-height: 180px;
+}
+
+.trend-item {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.trend-score {
+  color: #222222;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.trend-bar-track {
+  align-items: end;
+  background: #f1f3f5;
+  border-radius: 8px;
+  display: flex;
+  height: 120px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.trend-bar {
+  background: linear-gradient(180deg, #7e57c2 0%, #43a047 100%);
+  border-radius: 8px 8px 0 0;
+  min-height: 4px;
+  width: 100%;
+}
+
+.trend-label {
+  color: #666666;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.trend-empty {
+  color: #666666;
+  font-size: 1.3rem;
+  margin: 0;
+}
+
 .ranking-table {
   border-radius: 8px;
   overflow: hidden;
@@ -470,6 +579,21 @@ const getRankClass = (rank: number): string => {
 
   .summary-value {
     font-size: 2.6rem;
+  }
+
+  .trend-panel {
+    margin-bottom: 18px;
+    padding: 16px;
+  }
+
+  .trend-bars {
+    gap: 10px;
+    grid-template-columns: repeat(5, minmax(44px, 1fr));
+    min-height: 150px;
+  }
+
+  .trend-bar-track {
+    height: 96px;
   }
 
   .ranking-table :deep(table) {
