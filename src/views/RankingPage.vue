@@ -45,6 +45,9 @@ const selectedGameRule = ref<GameRule | null>(null);
 /** タイムアタック制限時間フィルター */
 const selectedTimeLimitSeconds = ref<TimeLimitSeconds | null>(null);
 
+/** ランキング画面で選択中の表示タブ */
+const selectedRankingTab = ref("summary");
+
 /** 難易度フィルターの選択肢 */
 const modeOptions = [{ title: "すべて", value: null }, ...Const.DIFFICULTY_LEVEL];
 
@@ -209,120 +212,142 @@ const getRankClass = (rank: number): string => {
       />
     </div>
 
-    <div class="summary-grid">
-      <div class="summary-card best-score-card">
-        <span class="summary-label">最高スコア</span>
-        <span class="summary-value">{{ bestScore?.score ?? "-" }}</span>
-        <span class="summary-note">{{ bestScoreSummary }}</span>
-      </div>
-      <div class="summary-card">
-        <span class="summary-label">通常ベスト</span>
-        <span class="summary-value">{{ normalBestScore?.score ?? "-" }}</span>
-        <span class="summary-note">{{ normalBestScoreSummary }}</span>
-      </div>
-      <div class="summary-card">
-        <span class="summary-label">タイムアタックベスト</span>
-        <span class="summary-value">
-          {{ timeAttackBestScore?.score ?? "-" }}
-        </span>
-        <span class="summary-note">{{ timeAttackBestScoreSummary }}</span>
-      </div>
-      <div class="summary-card">
-        <span class="summary-label">プレイ回数</span>
-        <span class="summary-value">{{ gameScores.length }}</span>
-        <span class="summary-note">保存済みプレイ回数</span>
-      </div>
-      <div class="summary-card">
-        <span class="summary-label">表示件数</span>
-        <span class="summary-value">{{ rankingItems.length }}</span>
-        <span class="summary-note">現在の表示件数</span>
-      </div>
-    </div>
+    <section class="ranking-tabs-panel">
+      <v-tabs v-model="selectedRankingTab" color="primary" grow>
+        <v-tab value="summary">サマリー</v-tab>
+        <v-tab value="trend">スコア推移</v-tab>
+        <v-tab value="table">ランキング表</v-tab>
+      </v-tabs>
 
-    <section class="trend-panel">
-      <div class="trend-panel__header">
-        <h2>直近スコア推移</h2>
-        <p>保存済みプレイ履歴の新しい5件を、プレイ順に表示します。</p>
-      </div>
-      <div v-if="scoreTrendItems.length > 0" class="trend-bars">
-        <div
-          v-for="item in scoreTrendItems"
-          :key="`${item.date}-${item.score}-${item.time}`"
-          class="trend-item"
-        >
-          <span class="trend-score">{{ item.score }}</span>
-          <div class="trend-bar-track">
-            <div
-              class="trend-bar"
-              :style="{ height: `${item.barRatio}%` }"
-            />
+      <v-window v-model="selectedRankingTab" class="ranking-window">
+        <v-window-item value="summary">
+          <div class="summary-grid">
+            <div class="summary-card best-score-card">
+              <span class="summary-label">最高スコア</span>
+              <span class="summary-value">{{ bestScore?.score ?? "-" }}</span>
+              <span class="summary-note">{{ bestScoreSummary }}</span>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">通常ベスト</span>
+              <span class="summary-value">
+                {{ normalBestScore?.score ?? "-" }}
+              </span>
+              <span class="summary-note">{{ normalBestScoreSummary }}</span>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">タイムアタックベスト</span>
+              <span class="summary-value">
+                {{ timeAttackBestScore?.score ?? "-" }}
+              </span>
+              <span class="summary-note">{{ timeAttackBestScoreSummary }}</span>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">プレイ回数</span>
+              <span class="summary-value">{{ gameScores.length }}</span>
+              <span class="summary-note">保存済みプレイ回数</span>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">表示件数</span>
+              <span class="summary-value">{{ rankingItems.length }}</span>
+              <span class="summary-note">現在の表示件数</span>
+            </div>
           </div>
-          <span class="trend-label">{{ item.playNumber }}回目</span>
-        </div>
-      </div>
-      <p v-else class="trend-empty">
-        まだスコアがありません。ゲームをプレイすると推移が表示されます。
-      </p>
-    </section>
+        </v-window-item>
 
-    <v-data-table
-      v-model:items-per-page="itemsPerPage"
-      :headers="headers"
-      :items="rankingItems"
-      :items-per-page-options="pages"
-      items-per-page-text="表示行数"
-      no-data-text="まだスコアがありません。ゲームをプレイするとここに表示されます。"
-      class="ranking-table elevation-1"
-    >
-      <template v-slot:item.rank="{ value }">
-        <span class="rank-badge" :class="getRankClass(value)">
-          {{ value }}位
-        </span>
-      </template>
-      <template v-slot:item.score="{ value }">
-        <span class="score-cell">{{ value }}</span>
-      </template>
-      <template v-slot:item.resultRank="{ value }">
-        <span
-          class="result-rank-badge"
-          :style="{ backgroundColor: Util.getResultRankColor(value) }"
-        >
-          {{ value }}
-        </span>
-      </template>
-      <template v-slot:item.wpm="{ value }">
-        <span class="metric-cell">{{ value ?? "-" }}</span>
-      </template>
-      <template v-slot:item.correctCharacterCount="{ value }">
-        <span class="metric-cell">{{ value ?? "-" }}</span>
-      </template>
-      <template v-slot:item.accuracy="{ value }">
-        <span class="metric-cell">{{ value != null ? `${value}%` : "-" }}</span>
-      </template>
-      <template v-slot:item.missCount="{ value }">
-        <span class="metric-cell">{{ value ?? "-" }}</span>
-      </template>
-      <template v-slot:item.mode="{ value }">
-        <v-chip :color="Util.getColor(value)">
-          {{ Util.getLevel(value) }}
-        </v-chip>
-      </template>
-      <template v-slot:item.gameRule="{ item }">
-        <v-chip
-          :color="
-            Util.getGameRule(item) === Const.GAME_RULE.TIME_ATTACK
-              ? 'deep-purple'
-              : 'grey'
-          "
-          variant="tonal"
-        >
-          {{ Util.getScoreGameRuleLabel(item) }}
-        </v-chip>
-      </template>
-      <template v-slot:item.timeLimitSeconds="{ item }">
-        <span class="metric-cell">{{ Util.getTimeLimitLabel(item) }}</span>
-      </template>
-    </v-data-table>
+        <v-window-item value="trend">
+          <section class="trend-panel">
+            <div class="trend-panel__header">
+              <h2>直近スコア推移</h2>
+              <p>
+                保存済みプレイ履歴の新しい5件を、プレイ順に表示します。
+              </p>
+            </div>
+            <div v-if="scoreTrendItems.length > 0" class="trend-bars">
+              <div
+                v-for="item in scoreTrendItems"
+                :key="`${item.date}-${item.score}-${item.time}`"
+                class="trend-item"
+              >
+                <span class="trend-score">{{ item.score }}</span>
+                <div class="trend-bar-track">
+                  <div
+                    class="trend-bar"
+                    :style="{ height: `${item.barRatio}%` }"
+                  />
+                </div>
+                <span class="trend-label">{{ item.playNumber }}回目</span>
+              </div>
+            </div>
+            <p v-else class="trend-empty">
+              まだスコアがありません。ゲームをプレイすると推移が表示されます。
+            </p>
+          </section>
+        </v-window-item>
+
+        <v-window-item value="table">
+          <v-data-table
+            v-model:items-per-page="itemsPerPage"
+            :headers="headers"
+            :items="rankingItems"
+            :items-per-page-options="pages"
+            items-per-page-text="表示行数"
+            no-data-text="まだスコアがありません。ゲームをプレイするとここに表示されます。"
+            class="ranking-table elevation-1"
+          >
+            <template v-slot:item.rank="{ value }">
+              <span class="rank-badge" :class="getRankClass(value)">
+                {{ value }}位
+              </span>
+            </template>
+            <template v-slot:item.score="{ value }">
+              <span class="score-cell">{{ value }}</span>
+            </template>
+            <template v-slot:item.resultRank="{ value }">
+              <span
+                class="result-rank-badge"
+                :style="{ backgroundColor: Util.getResultRankColor(value) }"
+              >
+                {{ value }}
+              </span>
+            </template>
+            <template v-slot:item.wpm="{ value }">
+              <span class="metric-cell">{{ value ?? "-" }}</span>
+            </template>
+            <template v-slot:item.correctCharacterCount="{ value }">
+              <span class="metric-cell">{{ value ?? "-" }}</span>
+            </template>
+            <template v-slot:item.accuracy="{ value }">
+              <span class="metric-cell">
+                {{ value != null ? `${value}%` : "-" }}
+              </span>
+            </template>
+            <template v-slot:item.missCount="{ value }">
+              <span class="metric-cell">{{ value ?? "-" }}</span>
+            </template>
+            <template v-slot:item.mode="{ value }">
+              <v-chip :color="Util.getColor(value)">
+                {{ Util.getLevel(value) }}
+              </v-chip>
+            </template>
+            <template v-slot:item.gameRule="{ item }">
+              <v-chip
+                :color="
+                  Util.getGameRule(item) === Const.GAME_RULE.TIME_ATTACK
+                    ? 'deep-purple'
+                    : 'grey'
+                "
+                variant="tonal"
+              >
+                {{ Util.getScoreGameRuleLabel(item) }}
+              </v-chip>
+            </template>
+            <template v-slot:item.timeLimitSeconds="{ item }">
+              <span class="metric-cell">{{ Util.getTimeLimitLabel(item) }}</span>
+            </template>
+          </v-data-table>
+        </v-window-item>
+      </v-window>
+    </section>
   </v-container>
 </template>
 <style scoped>
@@ -358,11 +383,22 @@ const getRankClass = (rank: number): string => {
   max-width: 220px;
 }
 
+.ranking-tabs-panel {
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.ranking-window {
+  padding: 24px;
+}
+
 .summary-grid {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  margin-bottom: 24px;
 }
 
 .summary-card {
@@ -401,11 +437,6 @@ const getRankClass = (rank: number): string => {
 
 .trend-panel {
   background: #ffffff;
-  border: 1px solid #e6e6e6;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  margin-bottom: 24px;
-  padding: 20px;
 }
 
 .trend-panel__header {
@@ -567,10 +598,17 @@ const getRankClass = (rank: number): string => {
     max-width: none;
   }
 
+  .ranking-filter {
+    max-width: none;
+  }
+
+  .ranking-window {
+    padding: 16px;
+  }
+
   .summary-grid {
     gap: 10px;
     grid-template-columns: 1fr;
-    margin-bottom: 18px;
   }
 
   .summary-card {
@@ -582,8 +620,7 @@ const getRankClass = (rank: number): string => {
   }
 
   .trend-panel {
-    margin-bottom: 18px;
-    padding: 16px;
+    padding: 0;
   }
 
   .trend-bars {
