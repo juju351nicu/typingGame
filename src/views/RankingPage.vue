@@ -213,7 +213,13 @@ const getRankClass = (rank: number): string => {
     </div>
 
     <section class="ranking-tabs-panel">
-      <v-tabs v-model="selectedRankingTab" color="primary" grow>
+      <v-tabs
+        v-model="selectedRankingTab"
+        align-tabs="start"
+        class="ranking-tabs"
+        color="primary"
+        density="comfortable"
+      >
         <v-tab value="summary">サマリー</v-tab>
         <v-tab value="trend">スコア推移</v-tab>
         <v-tab value="table">ランキング表</v-tab>
@@ -384,15 +390,31 @@ const getRankClass = (rank: number): string => {
 }
 
 .ranking-tabs-panel {
+  margin-bottom: 24px;
+}
+
+.ranking-tabs {
   background: #ffffff;
   border: 1px solid #e6e6e6;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
+  margin-bottom: 14px;
+  padding: 0 12px;
+}
+
+.ranking-tabs :deep(.v-tab) {
+  font-size: 1.3rem;
+  font-weight: bold;
+  min-width: 112px;
+  text-transform: none;
 }
 
 .ranking-window {
-  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 22px;
 }
 
 .summary-grid {
@@ -440,12 +462,12 @@ const getRankClass = (rank: number): string => {
 }
 
 .trend-panel__header {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .trend-panel__header h2 {
   color: #222222;
-  font-size: 2rem;
+  font-size: 1.8rem;
   line-height: 1.3;
   margin: 0;
 }
@@ -459,9 +481,10 @@ const getRankClass = (rank: number): string => {
 .trend-bars {
   align-items: end;
   display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(5, minmax(56px, 1fr));
-  min-height: 180px;
+  gap: 12px;
+  grid-template-columns: repeat(5, minmax(54px, 1fr));
+  max-width: 760px;
+  min-height: 132px;
 }
 
 .trend-item {
@@ -483,13 +506,13 @@ const getRankClass = (rank: number): string => {
   background: #f1f3f5;
   border-radius: 8px;
   display: flex;
-  height: 120px;
+  height: 88px;
   overflow: hidden;
   width: 100%;
 }
 
 .trend-bar {
-  background: linear-gradient(180deg, #7e57c2 0%, #43a047 100%);
+  background: #673ab7;
   border-radius: 8px 8px 0 0;
   min-height: 4px;
   width: 100%;
@@ -606,6 +629,15 @@ const getRankClass = (rank: number): string => {
     padding: 16px;
   }
 
+  .ranking-tabs {
+    overflow-x: auto;
+    padding: 0 8px;
+  }
+
+  .ranking-tabs :deep(.v-tab) {
+    min-width: 104px;
+  }
+
   .summary-grid {
     gap: 10px;
     grid-template-columns: 1fr;
@@ -626,11 +658,11 @@ const getRankClass = (rank: number): string => {
   .trend-bars {
     gap: 10px;
     grid-template-columns: repeat(5, minmax(44px, 1fr));
-    min-height: 150px;
+    min-height: 118px;
   }
 
   .trend-bar-track {
-    height: 96px;
+    height: 78px;
   }
 
   .ranking-table :deep(table) {
