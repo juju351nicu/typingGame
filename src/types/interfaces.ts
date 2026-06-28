@@ -38,6 +38,11 @@ export interface RankingScore extends GameScore {
   rank: number;
   resultRank: string;
 }
+/** スコア推移グラフ表示用データ */
+export interface ScoreTrendItem extends GameScore {
+  barRatio: number;
+  playNumber: number;
+}
 export interface Item {
   title: string;
   value: number;

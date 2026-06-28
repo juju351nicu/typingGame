@@ -4,6 +4,7 @@ import type {
   GameRule,
   GameScore,
   RankingScore,
+  ScoreTrendItem,
   TimeLimitSeconds,
 } from "@/types/interfaces";
 /**
@@ -276,6 +277,35 @@ const getRankingScoreSummary = (
 };
 
 /**
+ * 直近プレイのスコア推移グラフ用データを作成する。
+ *
+ * ランキング順位ではなく、プレイ日時の新しいものから指定件数を取り出し、
+ * 画面では古い順に左から表示できるように並べ直す。
+ *
+ * @param scores スコア一覧
+ * @param limit 表示する件数
+ * @returns スコア推移グラフ用データ
+ */
+const createScoreTrendItems = (
+  scores: GameScore[],
+  limit = 5
+): ScoreTrendItem[] => {
+  const recentScores = scores
+    .slice()
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, limit)
+    .reverse();
+
+  const maxScore = Math.max(...recentScores.map((item) => item.score), 0);
+
+  return recentScores.map((item, index) => ({
+    ...item,
+    playNumber: index + 1,
+    barRatio: maxScore > 0 ? Math.round((item.score / maxScore) * 100) : 0,
+  }));
+};
+
+/**
  * 現在の時刻を取得する
  * @returns 現在の時刻
  */
@@ -339,6 +369,7 @@ export default {
   getScoreGameRuleLabel,
   getTimeLimitLabel,
   getRankingScoreSummary,
+  createScoreTrendItems,
   getColor,
   getLevel,
   getCurrentTime,

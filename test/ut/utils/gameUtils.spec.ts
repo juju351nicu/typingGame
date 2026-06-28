@@ -230,3 +230,50 @@ describe("getRankingScoreSummary", () => {
     ).toBe("Sランク / 難 / タイムアタック 60秒 / 00:01:00.00");
   });
 });
+
+describe("createScoreTrendItems", () => {
+  it("直近スコアを古い順に並べ、最大スコア基準の割合を付ける", () => {
+    const scores: GameScore[] = [
+      {
+        score: 5,
+        mode: 0,
+        time: "00:00:20.00",
+        date: "2026-06-20 10:00:00",
+      },
+      {
+        score: 10,
+        mode: 1,
+        time: "00:00:25.00",
+        date: "2026-06-20 10:10:00",
+      },
+      {
+        score: 20,
+        mode: 2,
+        time: "00:00:30.00",
+        date: "2026-06-20 10:20:00",
+      },
+    ];
+
+    const result = Util.createScoreTrendItems(scores, 2);
+
+    expect(result.map((item) => item.score)).toEqual([10, 20]);
+    expect(result.map((item) => item.barRatio)).toEqual([50, 100]);
+    expect(result.map((item) => item.playNumber)).toEqual([1, 2]);
+  });
+
+  it("スコアが0の場合は割合を0にする", () => {
+    const result = Util.createScoreTrendItems(
+      [
+        {
+          score: 0,
+          mode: 0,
+          time: "00:00:00.00",
+          date: "2026-06-20 10:00:00",
+        },
+      ],
+      5
+    );
+
+    expect(result[0].barRatio).toBe(0);
+  });
+});
