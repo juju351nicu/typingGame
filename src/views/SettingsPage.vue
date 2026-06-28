@@ -125,7 +125,7 @@ const resetModalData = () => {
     <AppAlerts :alerts="alerts" />
     <section class="settings-header">
       <h1>Settings</h1>
-      <p>ゲームの難易度と保存済みスコアを管理できます。</p>
+      <p>ゲームの難易度、ルール、表示補助、保存済みスコアを管理できます。</p>
     </section>
 
     <div class="settings-grid">
@@ -141,7 +141,7 @@ const resetModalData = () => {
           :items="options"
           item-title="title"
           item-value="value"
-          label="Game Mode"
+          label="難易度"
           variant="outlined"
           density="comfortable"
           hide-details
@@ -162,7 +162,7 @@ const resetModalData = () => {
           :items="gameRuleOptions"
           item-title="title"
           item-value="value"
-          label="Rule"
+          label="ゲームルール"
           variant="outlined"
           density="comfortable"
           hide-details
@@ -183,7 +183,7 @@ const resetModalData = () => {
           :items="timeLimitOptions"
           item-title="title"
           item-value="value"
-          label="Time Limit"
+          label="制限時間"
           variant="outlined"
           density="comfortable"
           hide-details
