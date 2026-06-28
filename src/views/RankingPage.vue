@@ -45,17 +45,17 @@ const selectedGameRule = ref<GameRule | null>(null);
 const selectedTimeLimitSeconds = ref<TimeLimitSeconds | null>(null);
 
 /** 難易度フィルターの選択肢 */
-const modeOptions = [{ title: "All", value: null }, ...Const.DIFFICULTY_LEVEL];
+const modeOptions = [{ title: "すべて", value: null }, ...Const.DIFFICULTY_LEVEL];
 
 /** ゲームルールフィルターの選択肢 */
 const gameRuleOptions = [
-  { title: "All", value: null },
+  { title: "すべて", value: null },
   ...Const.GAME_RULE_OPTIONS,
 ];
 
 /** 制限時間フィルターの選択肢 */
 const timeLimitOptions = [
-  { title: "All", value: null },
+  { title: "すべて", value: null },
   ...Const.TIME_ATTACK_LIMITS,
 ];
 
@@ -121,7 +121,7 @@ const timeAttackBestScore = computed((): RankingScore | null => {
 /** 最高スコアの補足表示 */
 const bestScoreSummary = computed((): string => {
   if (!bestScore.value) {
-    return "No records";
+    return "記録なし";
   }
 
   // ランク・難易度・ルール・タイムを1行で確認できるようにする。
@@ -131,7 +131,7 @@ const bestScoreSummary = computed((): string => {
 /** 通常モード最高スコアの補足表示 */
 const normalBestScoreSummary = computed((): string => {
   if (!normalBestScore.value) {
-    return "No records";
+    return "記録なし";
   }
 
   return Util.getRankingScoreSummary(normalBestScore.value);
@@ -140,7 +140,7 @@ const normalBestScoreSummary = computed((): string => {
 /** タイムアタック最高スコアの補足表示 */
 const timeAttackBestScoreSummary = computed((): string => {
   if (!timeAttackBestScore.value) {
-    return "No records";
+    return "記録なし";
   }
 
   return Util.getRankingScoreSummary(timeAttackBestScore.value);
@@ -205,29 +205,29 @@ const getRankClass = (rank: number): string => {
 
     <div class="summary-grid">
       <div class="summary-card best-score-card">
-        <span class="summary-label">Best Score</span>
+        <span class="summary-label">最高スコア</span>
         <span class="summary-value">{{ bestScore?.score ?? "-" }}</span>
         <span class="summary-note">{{ bestScoreSummary }}</span>
       </div>
       <div class="summary-card">
-        <span class="summary-label">Normal Best</span>
+        <span class="summary-label">通常ベスト</span>
         <span class="summary-value">{{ normalBestScore?.score ?? "-" }}</span>
         <span class="summary-note">{{ normalBestScoreSummary }}</span>
       </div>
       <div class="summary-card">
-        <span class="summary-label">Time Attack Best</span>
+        <span class="summary-label">タイムアタックベスト</span>
         <span class="summary-value">
           {{ timeAttackBestScore?.score ?? "-" }}
         </span>
         <span class="summary-note">{{ timeAttackBestScoreSummary }}</span>
       </div>
       <div class="summary-card">
-        <span class="summary-label">Plays</span>
+        <span class="summary-label">プレイ回数</span>
         <span class="summary-value">{{ gameScores.length }}</span>
         <span class="summary-note">保存済みプレイ回数</span>
       </div>
       <div class="summary-card">
-        <span class="summary-label">Showing</span>
+        <span class="summary-label">表示件数</span>
         <span class="summary-value">{{ rankingItems.length }}</span>
         <span class="summary-note">現在の表示件数</span>
       </div>
