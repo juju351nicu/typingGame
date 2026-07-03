@@ -58,4 +58,15 @@ describe("config store", () => {
 
     expect(configStore.getDisplayMode).toBe(true);
   });
+
+  it("仮想キーボード表示の設定を保存する", async () => {
+    const { useConfigStore } = await import("@/stores/config");
+    const configStore = useConfigStore();
+
+    expect(configStore.getIsVirtualKeyBoard).toBe(false);
+
+    configStore.saveIsVirtualKeyboard(true);
+
+    expect(configStore.getIsVirtualKeyBoard).toBe(true);
+  });
 });

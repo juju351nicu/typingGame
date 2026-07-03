@@ -106,7 +106,7 @@ const setVirtualKeyboardVisible = (isVisible: boolean | null) => {
   if (isVisible === null) {
     return;
   }
-  configStore.saveIsVertualKeyBoard(isVisible);
+  configStore.saveIsVirtualKeyboard(isVisible);
 };
 
 /**
