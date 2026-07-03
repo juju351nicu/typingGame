@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppStateMessage from "@/components/AppStateMessage.vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { computed, ref, watch } from "vue";
 import Const from "@/constants/const";
@@ -337,9 +338,12 @@ const getRankClass = (rank: number): string => {
                 <span class="trend-label">{{ item.playNumber }}回目</span>
               </div>
             </div>
-            <p v-else class="trend-empty">
-              表示できる履歴がありません。ゲームをプレイすると推移が表示されます。
-            </p>
+            <AppStateMessage
+              v-else
+              type="empty"
+              title="表示できる履歴がありません"
+              message="ゲームをプレイすると推移が表示されます。"
+            />
           </section>
         </v-window-item>
 
@@ -584,12 +588,6 @@ const getRankClass = (rank: number): string => {
   color: #666666;
   font-size: 1.2rem;
   text-align: center;
-}
-
-.trend-empty {
-  color: #666666;
-  font-size: 1.3rem;
-  margin: 0;
 }
 
 .ranking-table {

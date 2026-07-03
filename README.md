@@ -96,10 +96,11 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - 設定画面で難易度、通常 / タイムアタック、制限時間、仮想キーボード表示を変更可能
 - Markdown ブログ詳細に、posts_index.json の順序を基準にした前後記事ナビを追加
 - スコア保存処理をservice層へ分離し、将来のAPI保存へ差し替えやすい構成に整理
-- fetchClient でHTTPエラーを共通例外として扱い、API接続時の失敗検知を整理
+- fetchClient でHTTPエラーを共通例外として扱い、JSON helper も追加してAPI接続時の失敗検知と取得処理を整理
+- ブログとランキングの error / empty 表示を共通コンポーネントへ整理
 - スコア初期化前に確認ダイアログを表示し、誤操作で履歴を消しにくいように改善
 - スマホ幅でもゲーム画面、リザルト画面、ランキング画面が見やすいようにレスポンシブ調整
-- Vitest で 22 ファイル / 101 テストを実装し、タイピング処理、ブログ前後ナビ、Markdown変換、frontmatter除去、fetchClient、タイムアタックタイマー、ランキング絞り込み、パフォーマンス推移、スコア保存、設定保存、スコア初期化、localStorage 復元処理などを検証
+- Vitest で 22 ファイル / 103 テストを実装し、タイピング処理、ブログ前後ナビ、Markdown変換、frontmatter除去、fetchClient、タイムアタックタイマー、ランキング絞り込み、パフォーマンス推移、スコア保存、設定保存、スコア初期化、localStorage 復元処理などを検証
 
 ## Component Design
 
@@ -263,6 +264,13 @@ Frontend cleanup before backend work: [`docs/frontend-pre-backend-plan.md`](./do
   - Chart.js 導入検討: 折れ線、複数指標の同時表示、期間指定へ広げるタイミング
   - プレイ回数
   - 苦手キー
+
+Status: 進行中
+
+### Phase 6: バックエンドAPI連携
+
+Plan: [`docs/phase6-backend-api-plan.md`](./docs/phase6-backend-api-plan.md)
+
 - Spring Boot API
   - スコア保存API
   - ランキング取得API
@@ -276,4 +284,4 @@ Frontend cleanup before backend work: [`docs/frontend-pre-backend-plan.md`](./do
   - オフライン対応
   - ホーム画面追加
 
-Status: 進行中
+Status: 計画中

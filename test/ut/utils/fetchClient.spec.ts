@@ -25,6 +25,20 @@ describe("fetchClient", () => {
     );
   });
 
+  it("GETリクエストのJSONレスポンスを取得する", async () => {
+    const responseBody = { scores: [{ score: 10 }] };
+    const response = new Response(JSON.stringify(responseBody), {
+      status: 200,
+      statusText: "OK",
+    });
+    const fetchMock = vi.fn().mockResolvedValue(response);
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await Fetcher.getJson<typeof responseBody>("/api/scores");
+
+    expect(result).toEqual(responseBody);
+  });
+
   it("POSTリクエストをJSON文字列で送信する", async () => {
     const response = new Response("{}", {
       status: 200,
@@ -42,6 +56,22 @@ describe("fetchClient", () => {
         method: "POST",
       })
     );
+  });
+
+  it("POSTリクエストのJSONレスポンスを取得する", async () => {
+    const responseBody = { id: 1, score: 10 };
+    const response = new Response(JSON.stringify(responseBody), {
+      status: 200,
+      statusText: "OK",
+    });
+    const fetchMock = vi.fn().mockResolvedValue(response);
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await Fetcher.postJson<typeof responseBody>("/api/scores", {
+      score: 10,
+    });
+
+    expect(result).toEqual(responseBody);
   });
 
   it("HTTPエラーの場合はHttpErrorを投げる", async () => {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Loading from "@/components/Loading.vue";
+import AppStateMessage from "@/components/AppStateMessage.vue";
 import BlogPagingList from "@/components/BlogPagingList.vue";
 import { computed, onBeforeMount, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -22,6 +23,11 @@ const pageCounts = computed((): number => {
 /** データ取得中フラグ */
 const isLoading = computed((): boolean => {
   return blogPostsStore.getLoading;
+});
+
+/** エラーメッセージ */
+const errorMessage = computed((): string => {
+  return blogPostsStore.getErrorMessage;
 });
 
 /** 現在のページ */
@@ -53,19 +59,31 @@ onBeforeMount(async () => {
     currentPage.value = Number(queryName);
     console.info("ここを通りました。" + route.query.pageNumber);
   }
-  await blogPostsStore.recievePostIndex();
+  await blogPostsStore.receivePostIndex();
   pageStatus.value = blogPostsStore.getPostRageByPage(currentPage.value);
   console.info("BlogPostList: Component about to be mounted.");
 });
 </script>
 <template>
   <BlogPagingList
-    v-if="!isLoading"
+    v-if="!isLoading && !errorMessage && pageCounts > 0"
     :pageStatus="pageStatus"
     :pageCounts="pageCounts"
     :currentPage="currentPage"
     @doPostDetail="doPostDetail"
     @toNumberPage="searchPaging"
+  />
+  <AppStateMessage
+    v-else-if="!isLoading && errorMessage"
+    type="error"
+    title="記事一覧を表示できません"
+    :message="errorMessage"
+  />
+  <AppStateMessage
+    v-else-if="!isLoading"
+    type="empty"
+    title="記事がありません"
+    message="記事を追加するとここに一覧が表示されます。"
   />
   <Loading :isLoading="isLoading" />
 </template>

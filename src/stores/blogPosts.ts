@@ -13,6 +13,7 @@ interface PostsState {
   pageStatus: PostIndex[];
   postHtml: string;
   isLoading: boolean;
+  errorMessage: string;
 }
 
 /**
@@ -24,6 +25,7 @@ export const useBlogPostsStore = defineStore("Posts", {
     isLoading: true,
     pageStatus: [],
     postHtml: "",
+    errorMessage: "",
   }),
   getters: {
     /**
@@ -39,6 +41,13 @@ export const useBlogPostsStore = defineStore("Posts", {
      */
     getLoading(): boolean {
       return this.isLoading;
+    },
+    /**
+     * エラーメッセージを取得する
+     * @returns エラーメッセージ
+     */
+    getErrorMessage(): string {
+      return this.errorMessage;
     },
     /**
      * 記事のマークダウン情報を取得する
@@ -87,10 +96,13 @@ export const useBlogPostsStore = defineStore("Posts", {
     /**
      * 記事のJSON一覧を取得する
      */
-    async recievePostIndex(): Promise<void> {
+    async receivePostIndex(): Promise<void> {
       this.isLoading = true;
+      this.errorMessage = "";
       try {
         this.pageStatus = await fetchPostIndex();
+      } catch (error) {
+        this.errorMessage = "記事一覧の取得に失敗しました。";
       } finally {
         this.isLoading = false;
       }
@@ -100,10 +112,13 @@ export const useBlogPostsStore = defineStore("Posts", {
      * @param section
      * @param id
      */
-    async recieveBlogPost(section: string, id: string): Promise<void> {
+    async receiveBlogPost(section: string, id: string): Promise<void> {
       this.isLoading = true;
+      this.errorMessage = "";
       try {
         this.postHtml = await fetchBlogPostBody(this.pageStatus, section, id);
+      } catch (error) {
+        this.errorMessage = "記事本文の取得に失敗しました。";
       } finally {
         this.isLoading = false;
       }

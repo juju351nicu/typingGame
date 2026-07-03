@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Loading from "@/components/Loading.vue";
+import AppStateMessage from "@/components/AppStateMessage.vue";
 import { computed, onBeforeMount, onUnmounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/blogPosts";
@@ -24,6 +25,11 @@ const blogPostsStore = useBlogPostsStore();
 /** データ取得中フラグ */
 const isLoading = computed((): boolean => {
   return blogPostsStore.getLoading;
+});
+
+/** エラーメッセージ */
+const errorMessage = computed((): string => {
+  return blogPostsStore.getErrorMessage;
 });
 
 /**
@@ -74,10 +80,16 @@ const postHtml = ref("");
 const loadPost = async (section: string, id: string) => {
   document.title = "ブログ記事";
   if (blogPostsStore.postCount === 0) {
-    await blogPostsStore.recievePostIndex();
+    await blogPostsStore.receivePostIndex();
+    if (blogPostsStore.getErrorMessage) {
+      postHtml.value = "";
+      return;
+    }
   }
-  await blogPostsStore.recieveBlogPost(section, id);
-  postHtml.value = renderMarkdown(blogPostsStore.getPostHtml);
+  await blogPostsStore.receiveBlogPost(section, id);
+  postHtml.value = blogPostsStore.getErrorMessage
+    ? ""
+    : renderMarkdown(blogPostsStore.getPostHtml);
 };
 
 /** Htmlに表示するマークダウン情報をセットする。 */
@@ -93,7 +105,13 @@ onUnmounted(() => {
 });
 </script>
 <template>
-  <v-container class="blog-post">
+  <AppStateMessage
+    v-if="!isLoading && errorMessage"
+    type="error"
+    title="記事を表示できません"
+    :message="errorMessage"
+  />
+  <v-container v-else class="blog-post">
     <div class="markdown-body" v-html="postHtml" />
     <div class="post-navigation">
       <v-btn

@@ -57,6 +57,16 @@ const getRequest = (uri: string): Promise<Response> => {
 };
 
 /**
+ * GET送信のJSONレスポンスを取得する。
+ * @param uri リクエストURL
+ * @returns JSONレスポンス
+ */
+const getJson = async <T>(uri: string): Promise<T> => {
+  const response = await getRequest(uri);
+  return response.json();
+};
+
+/**
  * POST送信の結果
  * @param uri リクエストURL
  * @param reqestData 送信するリクエストボディのデータ
@@ -69,6 +79,20 @@ const postRequest = (uri: string, reqestData: unknown): Promise<Response> => {
   const requestDatas = createRequestData(uri, reqestData, null, method);
   // fetch返却
   return fetcher(requestDatas);
+};
+
+/**
+ * POST送信のJSONレスポンスを取得する。
+ * @param uri リクエストURL
+ * @param reqestData 送信するリクエストボディのデータ
+ * @returns JSONレスポンス
+ */
+const postJson = async <T>(
+  uri: string,
+  reqestData: unknown
+): Promise<T> => {
+  const response = await postRequest(uri, reqestData);
+  return response.json();
 };
 
 /**
@@ -119,5 +143,7 @@ const createRequestData = (
 };
 export default {
   getRequest,
+  getJson,
   postRequest,
+  postJson,
 };

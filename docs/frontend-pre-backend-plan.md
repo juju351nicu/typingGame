@@ -49,8 +49,8 @@ refactor: スコア保存処理をservice層へ分離
 
 対応状況:
 
-- HTTPエラーの共通例外化は完了。
-- 今後、必要に応じて JSON helper やエラー表示連携を追加する。
+- 完了。
+- HTTPエラーの共通例外化と JSON helper 追加まで対応済み。
 
 関連ファイル:
 
@@ -97,35 +97,37 @@ PerformanceTrendItem
 
 ```text
 src/components/AppStateMessage.vue
-src/components/AppLoadingState.vue
 ```
+
+対応状況:
+
+- 一部完了。
+- ブログ一覧、ブログ詳細、ランキング分析の error / empty 表示に `AppStateMessage.vue` を適用済み。
+- loading は既存の `Loading.vue` を継続利用する。
 
 検討ポイント:
 
-- まずは共通コンポーネント化するか、文言やクラスだけ揃えるかを決める。
-- ランキング画面の空表示、ブログ一覧の取得失敗表示、記事詳細の取得失敗表示を候補にする。
+- API画面が増えた段階で、`Loading.vue` と `AppStateMessage.vue` の統合や配置ルールを再検討する。
+- ランキング表の no-data 表示を Vuetify 標準のままにするか、共通表示へ寄せるか検討する。
 
 ## P1: 今のFE品質を上げる
 
-### 5. `recieve` typo を `receive` へ安全に移行
+### 5. `receive` 系メソッド名の維持
 
 目的:
 
-- store action のスペルミスを今のうちに解消する。
+- store action のスペルミスを解消した状態を維持する。
 - バックエンドAPI接続時の命名を読みやすくする。
 
-対象候補:
+対応状況:
 
 ```text
-recievePostIndex
-recieveBlogPost
+receivePostIndex
+receiveBlogPost
 ```
 
-対応案:
-
-- 呼び出し元をすべて `receive...` に修正する。
-- 必要なら一時的に旧名を alias として残す。
-- 影響範囲が小さければ、旧名を残さず一括修正する。
+- 完了。
+- 呼び出し元も `receive...` へ修正済み。
 
 コミット例:
 
@@ -165,7 +167,6 @@ fetchClient
 追加候補:
 
 - `blogPostService` の取得URL組み立てテスト
-- `fetchClient` の JSON helper 追加時のテスト
 - APIレスポンス変換用 mapper を追加した場合のテスト
 
 ### 8. README / docs のPhase整理
@@ -217,11 +218,10 @@ fetchClient
 
 ## 推奨する次の作業順
 
-1. `recieve` typo を `receive` へ安全に移行する。
-2. loading / error / empty 表示の共通方針を決める。
-3. `fetchClient` に `getJson<T>()` / `postJson<T>()` を追加するか検討する。
-4. Phase5 / Phase6 のREADMEとdocsを整理する。
-5. 余力があれば chunk size warning と導線確認を進める。
+1. Phase5 / Phase6 のREADMEとdocsを整理する。
+2. API接続を見越した型整理を進める。
+3. loading / error / empty 表示の適用範囲を広げる。
+4. 余力があれば chunk size warning と導線確認を進める。
 
 ## バックエンド着手時の入口
 

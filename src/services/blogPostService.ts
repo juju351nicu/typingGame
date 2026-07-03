@@ -8,8 +8,7 @@ import { removeFrontmatter } from "@/utils/markdownUtils";
  * @returns 記事情報リスト
  */
 export const fetchPostIndex = async (): Promise<PostIndex[]> => {
-  const response = await Fetcher.getRequest(Const.BLOG_PATH.POST_INDEX);
-  return response.json();
+  return Fetcher.getJson<PostIndex[]>(Const.BLOG_PATH.POST_INDEX);
 };
 
 /**
