@@ -5,8 +5,7 @@ import ResultModal from "@/components/ResultModal.vue";
 import GameTimer from "@/components/GameTimer.vue";
 import VirtualKeyboard from "@/components/VirtualKeyboard.vue";
 import { useTypingKeyboardFeedback } from "@/composables/useTypingKeyboardFeedback";
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
 import { useTimeAttackTimer } from "@/composables/useTimeAttackTimer";
@@ -17,9 +16,9 @@ import type { Alert, GameScore } from "@/types/interfaces";
 interface TimerExpose {
   startTimer: () => void;
   stopTimer: () => void;
+  resetTimer: () => void;
 }
 
-const router = useRouter();
 /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
 
@@ -66,6 +65,17 @@ const isInputMiss = ref(false);
 /** 次に入力すべきキー */
 const nextKey = ref("");
 
+/**
+ * 初期状態のゲームスコアを生成する
+ * @returns 初期状態のゲームスコア
+ */
+const createEmptyGameScore = (): GameScore => ({
+  score: 0,
+  mode: 0,
+  time: "",
+  date: "",
+});
+
 /** タイムアタックが選択されているか */
 const isTimeAttackMode = computed((): boolean => {
   return configStore.getIsTimeAttackMode;
@@ -89,12 +99,7 @@ const {
 } = useTypingKeyboardFeedback();
 
 /** 最後に取得したゲームスコア */
-const lastScore = ref<GameScore>({
-  score: 0,
-  mode: 0,
-  time: "",
-  date: "",
-});
+const lastScore = ref<GameScore>(createEmptyGameScore());
 /** ゲームの時間・スコア・モードを保存する */
 const saveGameScores = (): void => {
   lastScore.value = {
@@ -112,12 +117,6 @@ const saveGameScores = (): void => {
     correctCharacterCount: correctCharacterCount.value,
   };
   gameScoresStore.saveGameScoreList(lastScore.value);
-};
-
-/** モーダルにてリセットボタン押下時、データをリセットする */
-const restartGame = () => {
-  // 現在のページをリロードする
-  router.go(0);
 };
 
 /** ボタンをクリックするとゲームがスタートする  */
@@ -138,6 +137,44 @@ const startGame = () => {
 
 /** TypingPanelへリセットを通知するフラグ */
 const isResetTimer = ref(false);
+
+/**
+ * TypingPanelへリセットを通知する
+ *
+ * trueにした後で次の描画タイミングにfalseへ戻し、
+ * 子コンポーネント側のwatchが次回リトライでも反応できる状態に戻す。
+ */
+const resetTypingPanel = async (): Promise<void> => {
+  isResetTimer.value = true;
+  await nextTick();
+  isResetTimer.value = false;
+};
+
+/**
+ * モーダルにてリセットボタン押下時、データをリセットする
+ *
+ * ページリロードではなく、親コンポーネントで保持しているゲーム状態と
+ * 子コンポーネントのタイマー・入力状態を初期化する。
+ */
+const restartGame = async (): Promise<void> => {
+  timerComponent.value?.resetTimer?.();
+  resetTimeAttackTimer();
+  clearKeyFeedbackTimers();
+
+  isGameStarted.value = false;
+  accumTime.value = 0;
+  inputValue.value = "";
+  isGameOver.value = false;
+  gameScore.value = 0;
+  typedCharacterCount.value = 0;
+  missCount.value = 0;
+  correctCharacterCount.value = 0;
+  isInputMiss.value = false;
+  nextKey.value = "";
+  lastScore.value = createEmptyGameScore();
+
+  await resetTypingPanel();
+};
 
 /** アラートに表示するメッセージ */
 const alerts = ref<Alert[]>([]);
