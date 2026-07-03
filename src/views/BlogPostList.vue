@@ -46,7 +46,7 @@ const doPostDetail = (section: string, id: string): void => {
 /** ページ遷移 */
 const searchPaging = (pageNumber: number) => {
   currentPage.value = pageNumber;
-  pageStatus.value = blogPostsStore.getPostRageByPage(pageNumber);
+  pageStatus.value = blogPostsStore.getPostRangeByPage(pageNumber);
   console.info(pageNumber);
 };
 
@@ -60,7 +60,7 @@ onBeforeMount(async () => {
     console.info("ここを通りました。" + route.query.pageNumber);
   }
   await blogPostsStore.receivePostIndex();
-  pageStatus.value = blogPostsStore.getPostRageByPage(currentPage.value);
+  pageStatus.value = blogPostsStore.getPostRangeByPage(currentPage.value);
   console.info("BlogPostList: Component about to be mounted.");
 });
 </script>

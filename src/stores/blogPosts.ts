@@ -71,11 +71,11 @@ export const useBlogPostsStore = defineStore("Posts", {
       return this.pageStatus;
     },
     /**
-     * 記事情報リストを取得する。
+     * 指定ページに表示する記事情報リストを取得する。
      * @param pageNumber ページ番号
-     * @returns 記事情報リスト
+     * @returns 指定ページの記事情報リスト
      */
-    getPostRageByPage: (state) => {
+    getPostRangeByPage: (state) => {
       return (pageNumber: number): PostIndex[] => {
         const SIZE = Const.NUMBER_OF_BLOGS;
         return state.pageStatus.slice(
@@ -83,6 +83,16 @@ export const useBlogPostsStore = defineStore("Posts", {
           (pageNumber - 1) * SIZE + SIZE
         );
       };
+    },
+    /**
+     * 指定ページに表示する記事情報リストを取得する。
+     *
+     * @deprecated `getPostRangeByPage` を使用してください。
+     * @param pageNumber ページ番号
+     * @returns 指定ページの記事情報リスト
+     */
+    getPostRageByPage(): (pageNumber: number) => PostIndex[] {
+      return this.getPostRangeByPage;
     },
   },
   actions: {
