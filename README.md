@@ -133,6 +133,12 @@ Coding guidelines:
 docs/coding-guidelines.md
 ```
 
+Frontend cleanup plan before backend work:
+
+```text
+docs/frontend-pre-backend-plan.md
+```
+
 ```bash
 npm install
 npm run dev
@@ -243,6 +249,8 @@ Status: 完了
 ### Phase 5: 拡張機能
 
 Plan: [`docs/phase5-time-attack-plan.md`](./docs/phase5-time-attack-plan.md)
+
+Frontend cleanup before backend work: [`docs/frontend-pre-backend-plan.md`](./docs/frontend-pre-backend-plan.md)
 
 - タイムアタックモード
   - 30秒 / 60秒 / 90秒などの制限時間を選択
