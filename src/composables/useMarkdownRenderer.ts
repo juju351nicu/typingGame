@@ -1,7 +1,35 @@
 import { sanitize } from "@markdown-design/markdown-it-sanitize";
-import hljs from "highlight.js";
+import hljs from "highlight.js/lib/core";
+import bash from "highlight.js/lib/languages/bash";
+import javascript from "highlight.js/lib/languages/javascript";
+import markdown from "highlight.js/lib/languages/markdown";
+import plaintext from "highlight.js/lib/languages/plaintext";
+import typescript from "highlight.js/lib/languages/typescript";
+import xml from "highlight.js/lib/languages/xml";
+import yaml from "highlight.js/lib/languages/yaml";
 import "highlight.js/styles/github-dark.min.css";
 import MarkdownIt from "markdown-it";
+
+hljs.registerLanguage("bash", bash);
+hljs.registerLanguage("javascript", javascript);
+hljs.registerLanguage("markdown", markdown);
+hljs.registerLanguage("plaintext", plaintext);
+hljs.registerLanguage("typescript", typescript);
+hljs.registerLanguage("xml", xml);
+hljs.registerLanguage("yaml", yaml);
+
+/**
+ * Markdownのコードフェンス言語名をhighlight.js用に整える。
+ *
+ * `javascript:package.json` のようにファイル名を付けている場合は、
+ * コロンより前の言語名だけを使ってハイライトする。
+ *
+ * @param language Markdownコードフェンスの言語名
+ * @returns highlight.jsへ渡す言語名
+ */
+const normalizeHighlightLanguage = (language: string): string => {
+  return language.split(":")[0];
+};
 
 /**
  * MarkdownをHTMLへ変換する markdown-it インスタンス。
@@ -22,9 +50,13 @@ const markdownIt: MarkdownIt = new MarkdownIt({
    * @returns highlight.js が生成したHTML、または空文字
    */
   highlight: (sourceCode: string, language: string) => {
-    if (language && hljs.getLanguage(language)) {
+    const normalizedLanguage = normalizeHighlightLanguage(language);
+
+    if (normalizedLanguage && hljs.getLanguage(normalizedLanguage)) {
       try {
-        return hljs.highlight(sourceCode, { language }).value;
+        return hljs.highlight(sourceCode, {
+          language: normalizedLanguage,
+        }).value;
       } catch (error) {
         // ハイライト失敗だけで記事全体の表示を止めない。
         return "";

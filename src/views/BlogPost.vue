@@ -6,7 +6,6 @@ import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/blogPosts";
 import type { PostIndex } from "@/types/interfaces";
 import { getBlogPostNavigation } from "@/composables/useBlogPostNavigation";
-import { renderMarkdown } from "@/composables/useMarkdownRenderer";
 
 /** Propsインタフェース定義 */
 interface Props {
@@ -87,9 +86,13 @@ const loadPost = async (section: string, id: string) => {
     }
   }
   await blogPostsStore.receiveBlogPost(section, id);
-  postHtml.value = blogPostsStore.getErrorMessage
-    ? ""
-    : renderMarkdown(blogPostsStore.getPostHtml);
+  if (blogPostsStore.getErrorMessage) {
+    postHtml.value = "";
+    return;
+  }
+
+  const { renderMarkdown } = await import("@/composables/useMarkdownRenderer");
+  postHtml.value = renderMarkdown(blogPostsStore.getPostHtml);
 };
 
 /** Htmlに表示するマークダウン情報をセットする。 */

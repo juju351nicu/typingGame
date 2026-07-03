@@ -1,54 +1,47 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import GamePage from "@/views/GamePage.vue";
-import RankingPage from "@/views/RankingPage.vue";
-import SettingsPage from "@/views/SettingsPage.vue";
-import BlogPostList from "@/views/BlogPostList.vue";
-import BlogPost from "@/views/BlogPost.vue";
-import AboutUs from "@/views/AboutUs.vue";
-import NotFound from "@/views/NotFound.vue";
 const routeSetting: RouteRecordRaw[] = [
   {
     /** トップページ */
     path: "/",
     name: "GamePage",
-    component: GamePage,
+    component: () => import("@/views/GamePage.vue"),
   },
   {
     /** スコア一覧 */
     path: "/scoresBoard",
     name: "RankingPage",
-    component: RankingPage,
+    component: () => import("@/views/RankingPage.vue"),
   },
   {
     /** 設定画面 */
     path: "/settingBoard",
     name: "SettingsPage",
-    component: SettingsPage,
+    component: () => import("@/views/SettingsPage.vue"),
   },
   {
     /** ブログ記事一覧 */
     path: "/blogPostList",
     name: "BlogPostList",
-    component: BlogPostList,
+    component: () => import("@/views/BlogPostList.vue"),
   },
   {
     /** ブログ詳細情報 */
     path: "/:section/:id",
     name: "BlogPost",
-    component: BlogPost,
+    component: () => import("@/views/BlogPost.vue"),
     props: true,
   },
   {
     /** 当サイトについて */
     path: "/aboutUs",
     name: "AboutUs",
-    component: AboutUs,
+    component: () => import("@/views/AboutUs.vue"),
   },
   {
     /** 存在しないURLにアクセスした場合 */
     path: "/:pathMatch(.*)*",
     name: "NotFound",
-    component: NotFound,
+    component: () => import("@/views/NotFound.vue"),
   },
 ];
 

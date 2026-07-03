@@ -14,6 +14,16 @@ describe("useMarkdownRenderer", () => {
     expect(html).toContain("value");
   });
 
+  it("ファイル名付きコードブロックも言語名部分でハイライトする", () => {
+    const html = renderMarkdown(
+      "```javascript:package.json\nconst value = 1;\n```"
+    );
+
+    expect(html).toContain("<pre>");
+    expect(html).toContain("const");
+    expect(html).toContain("value");
+  });
+
   it("未対応言語のコードブロックもHTMLへ変換する", () => {
     const html = renderMarkdown("```unknown\nsample\n```");
 

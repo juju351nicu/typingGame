@@ -210,9 +210,17 @@ fetchClient
 - Markdown / ブログ関連の分割
 - Vuetify の読み込み見直し
 
-注意:
+対応状況:
 
-- 現時点では警告であり、バックエンド着手前の必須作業ではない。
+- 一部完了。
+- ルート単位の dynamic import を適用済み。
+- ブログ詳細の Markdown renderer を記事本文取得後に遅延読み込みする形へ変更済み。
+- `highlight.js` は全体 import をやめ、記事で使用する言語だけを登録する形へ変更済み。
+- `npm run build` の chunk size warning は解消済み。
+
+残件:
+
+- CSS bundle や Vuetify の読み込み最適化は、公開速度をさらに詰める段階で検討する。
 
 ### 10. E2E寄りの最低限確認
 
@@ -234,7 +242,7 @@ fetchClient
 1. Phase5 / Phase6 のREADMEとdocsを整理する。
 2. API接続を見越した型整理を進める。
 3. loading / error / empty 表示の適用範囲を広げる。
-4. 余力があれば chunk size warning と導線確認を進める。
+4. 余力があれば導線確認を進める。
 
 ## バックエンド着手時の入口
 
