@@ -1,30 +1,14 @@
 <script setup lang="ts">
 import TheHeader from "@/components/TheHeader.vue";
 import TheFooter from "@/components/TheFooter.vue";
-import { computed, watch } from "vue";
 import { useConfigStore } from "@/stores/config";
 import { useTheme } from "vuetify";
-import Const from "@/constants/const";
+import { useDisplayTheme } from "@/composables/useDisplayTheme";
 /** ゲームの設定情報に関するストア情報 */
 const configStore = useConfigStore();
 const theme = useTheme();
 
-/** ダークモードが選択されているか */
-const isDarkMode = computed((): boolean => {
-  return configStore.getDisplayMode;
-});
-
-watch(
-  isDarkMode,
-  (newValue) => {
-    theme.global.name.value = newValue
-      ? Const.DISPLAY_THEME.DARK
-      : Const.DISPLAY_THEME.LIGHT;
-  },
-  {
-    immediate: true,
-  }
-);
+const { isDarkMode } = useDisplayTheme(configStore, theme);
 </script>
 <template>
   <v-app class="app-shell" :class="{ 'app-shell--dark': isDarkMode }">
