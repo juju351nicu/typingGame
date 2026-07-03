@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import Util from "@/utils/gameUtils";
-import Const from "@/constants/const";
+import { useResultModalState } from "@/composables/useResultModalState";
 import type { GameScore } from "@/types/interfaces";
 /** Propsインタフェース定義 */
 interface Props {
@@ -34,35 +33,18 @@ const restartGame = () => {
   dialog.value = false;
 };
 
-/** ランク */
-const resultRank = computed((): string => {
-  return Util.getResultRank(lastScore.value.score);
-});
-
-/** ランク色 */
-const rankColor = computed((): string => {
-  return Util.getResultRankColor(resultRank.value);
-});
-
-/** 難易度 */
-const gameModeLabel = computed((): string => {
-  return Util.getLevel(lastScore.value.mode);
-});
-
-/** ゲームルール */
-const gameRuleLabel = computed((): string => {
-  return Util.getScoreGameRuleLabel(lastScore.value);
-});
-
-/** タイムアタックの制限時間 */
-const timeLimitLabel = computed((): string => {
-  return Util.getTimeLimitLabel(lastScore.value);
-});
-
-/** タイムアタックの結果かどうか */
-const isTimeAttackResult = computed((): boolean => {
-  return Util.getGameRule(lastScore.value) === Const.GAME_RULE.TIME_ATTACK;
-});
+const {
+  accuracyLabel,
+  correctCharacterCountLabel,
+  gameModeLabel,
+  gameRuleLabel,
+  isTimeAttackResult,
+  missCountLabel,
+  rankColor,
+  resultRank,
+  timeLimitLabel,
+  wpmLabel,
+} = useResultModalState(lastScore);
 
 /** ゲームオーバーフラグをウォッチにて判定する */
 watch(isGameOverFlag, (newValue, _oldValue) => {
@@ -107,21 +89,19 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
             </div>
             <div class="result-item">
               <span class="item-label">WPM</span>
-              <span class="item-value">{{ lastScore.wpm ?? 0 }}</span>
+              <span class="item-value">{{ wpmLabel }}</span>
             </div>
             <div class="result-item">
               <span class="item-label">正タイプ数</span>
-              <span class="item-value">
-                {{ lastScore.correctCharacterCount ?? 0 }}
-              </span>
+              <span class="item-value">{{ correctCharacterCountLabel }}</span>
             </div>
             <div class="result-item">
               <span class="item-label">正確率</span>
-              <span class="item-value">{{ lastScore.accuracy ?? 100 }}%</span>
+              <span class="item-value">{{ accuracyLabel }}%</span>
             </div>
             <div class="result-item">
               <span class="item-label">ミス数</span>
-              <span class="item-value">{{ lastScore.missCount ?? 0 }}</span>
+              <span class="item-value">{{ missCountLabel }}</span>
             </div>
             <div class="result-item">
               <span class="item-label">プレイ日時</span>
