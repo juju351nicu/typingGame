@@ -27,7 +27,7 @@ export const fetchBlogPostBody = async (
     return postIndex.section === section && postIndex.id === id;
   });
 
-  // posts_index.jsonにurlがある場合は、実ファイル由来のURLを優先して読み込む。
+  // posts-index.jsonにurlがある場合は、実ファイル由来のURLを優先して読み込む。
   const postUrl = post?.url
     ? `${import.meta.env.BASE_URL}${post.url}`
     : Const.BLOG_PATH.POST_FOLDER + section + "/" + id + ".md";

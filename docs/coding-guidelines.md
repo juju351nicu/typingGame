@@ -50,6 +50,6 @@
 
 ## Blog
 
-- `blog_store/posts_index.json` は手動編集せず、Markdown の frontmatter から生成する。
+- `blog_store/posts-index.json` は手動編集せず、Markdown の frontmatter から生成する。
 - ブログ記事を追加・更新したら `npm run generate:posts` を実行する。
-- コミット前に `npm run check:posts` を実行し、Markdown と `posts_index.json` のズレがないことを確認する。
+- コミット前に `npm run check:posts` を実行し、Markdown と `posts-index.json` のズレがないことを確認する。

@@ -5,7 +5,7 @@ import process from "node:process";
 const ROOT_DIR = process.cwd();
 const BLOG_ROOT = path.join(ROOT_DIR, "blog_store");
 const POSTS_ROOT = path.join(BLOG_ROOT, "posts");
-const POSTS_INDEX_PATH = path.join(BLOG_ROOT, "posts_index.json");
+const POSTS_INDEX_PATH = path.join(BLOG_ROOT, "posts-index.json");
 const REQUIRED_FRONTMATTER_KEYS = [
   "id",
   "title",
@@ -31,7 +31,7 @@ const normalizePath = (filePath) => {
  * 将来ディレクトリ階層が深くなっても正しいURLを生成できる。
  *
  * @param {string} fullPath Markdownファイルの絶対パス
- * @returns {string} posts_index.json に保存するプロジェクト相対URL
+ * @returns {string} posts-index.json に保存するプロジェクト相対URL
  */
 const getRelativeUrl = (fullPath) => {
   return normalizePath(path.relative(ROOT_DIR, fullPath));
@@ -149,7 +149,7 @@ const getPostTimestamp = (post) => {
 };
 
 /**
- * frontmatterと実ファイルパスから posts_index.json の1件分を生成する。
+ * frontmatterと実ファイルパスから posts-index.json の1件分を生成する。
  *
  * @param {Record<string, string>} frontmatter 解析済みfrontmatter
  * @param {string} filePath Markdownファイルの絶対パス
@@ -167,7 +167,7 @@ const createPostIndex = (frontmatter, filePath) => {
 };
 
 /**
- * Markdownのfrontmatterから blog_store/posts_index.json を再生成する。
+ * Markdownのfrontmatterから blog_store/posts-index.json を再生成する。
  *
  * @returns {Promise<void>}
  */

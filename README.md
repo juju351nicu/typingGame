@@ -94,7 +94,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - ランキング画面で直近5件のスコア / WPM / 正確率推移を表示
 - 分析グラフは現時点ではCSSの棒グラフで実装し、折れ線、複数指標の同時表示、期間指定へ広げる段階で Chart.js の導入を検討
 - 設定画面で難易度、通常 / タイムアタック、制限時間、仮想キーボード表示、ライト / ダークテーマを変更可能
-- Markdown ブログ詳細に、posts_index.json の順序を基準にした前後記事ナビを追加
+- Markdown ブログ詳細に、posts-index.json の順序を基準にした前後記事ナビを追加
 - スコア保存処理をservice層へ分離し、将来のAPI保存へ差し替えやすい構成に整理
 - スコアAPI接続を見越して保存リクエスト / APIレスポンス型と変換処理を追加
 - fetchClient でHTTPエラーを共通例外として扱い、JSON helper も追加してAPI接続時の失敗検知と取得処理を整理
@@ -175,23 +175,23 @@ npm run test
 npm run create-post
 ```
 
-`title`、`section`、`description` を入力すると、frontmatter 付きの `blog_store/posts/{section}/{id}.md` が作成され、`blog_store/posts_index.json` が再生成されます。`section` を未入力にした場合は `guide` が使われます。
+`title`、`section`、`description` を入力すると、frontmatter 付きの `blog_store/posts/{section}/{id}.md` が作成され、`blog_store/posts-index.json` が再生成されます。`section` を未入力にした場合は `guide` が使われます。
 
 ```bash
 npm run generate:posts
 ```
 
-`blog_store/posts_index.json` は、Markdown の frontmatter から生成するファイルです。手動編集せず、既存記事の情報を更新したい場合は Markdown 側の `id`、`title`、`date`、`section`、`description` を変更してから `npm run generate:posts` を実行します。
+`blog_store/posts-index.json` は、Markdown の frontmatter から生成するファイルです。手動編集せず、既存記事の情報を更新したい場合は Markdown 側の `id`、`title`、`date`、`section`、`description` を変更してから `npm run generate:posts` を実行します。
 
 ```bash
 npm run check:posts
 ```
 
-`check:posts` は `posts_index.json` を再生成し、生成結果がコミット済みの内容とズレていないか確認します。GitHub Actions でも実行し、ブログ記事とインデックスの不整合を検知します。
+`check:posts` は `posts-index.json` を再生成し、生成結果がコミット済みの内容とズレていないか確認します。GitHub Actions でも実行し、ブログ記事とインデックスの不整合を検知します。
 
-GitHub Actions では deploy 前に `npm run generate:posts` を実行し、`posts_index.json` に差分があれば `github-actions[bot]` が自動コミットします。これにより、Markdown 記事を追加・更新した際のインデックス更新漏れを防ぎます。
+GitHub Actions では deploy 前に `npm run generate:posts` を実行し、`posts-index.json` に差分があれば `github-actions[bot]` が自動コミットします。これにより、Markdown 記事を追加・更新した際のインデックス更新漏れを防ぎます。
 
-`posts_index.json` という名前は、既存のブログ取得処理と公開URLに紐づいているため現時点では維持します。将来リネームする場合は、ルーティング、取得定数、記事取得処理、README の説明をまとめて見直すタイミングで検討します。
+記事一覧インデックスは `posts-index.json` に統一しています。公開URLとして扱う静的ファイルのため、kebab-case に寄せています。
 
 ## Deployment
 
@@ -203,7 +203,7 @@ Workflow:
 
 1. `npm ci`
 2. `npm run generate:posts`
-3. `posts_index.json` に差分があれば自動コミット
+3. `posts-index.json` に差分があれば自動コミット
 4. `npm run check:posts`
 5. `npm run test`
 6. `npm run build`

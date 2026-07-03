@@ -1,27 +1,27 @@
 ---
 id: nodejs-generate-posts-index
-title: Node.js で Markdown ブログの posts_index.json を自動生成した話
+title: Node.js で Markdown ブログの posts-index.json を自動生成した話
 date: 2026-06-20
 section: guide
-description: Vue3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts_index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。
+description: Vue3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。
 ---
 
-# Node.js で Markdown ブログの posts_index.json を自動生成した話
+# Node.js で Markdown ブログの posts-index.json を自動生成した話
 
 ## はじめに
 
 このタイピングゲームには、Vue3 + Vite + TypeScript で作った技術ブログ機能があります。
 
-記事本文は Markdown ファイルとして管理し、記事一覧や記事詳細画面では `posts_index.json` を読み込んで、タイトル、説明文、日付、記事URLなどを表示しています。
+記事本文は Markdown ファイルとして管理し、記事一覧や記事詳細画面では `posts-index.json` を読み込んで、タイトル、説明文、日付、記事URLなどを表示しています。
 
-もともとは `posts_index.json` を手動で編集していましたが、記事が増えるにつれて次のような問題が出やすくなります。
+もともとは `posts-index.json` を手動で編集していましたが、記事が増えるにつれて次のような問題が出やすくなります。
 
-- Markdown を追加したのに `posts_index.json` への追記を忘れる
+- Markdown を追加したのに `posts-index.json` への追記を忘れる
 - `id` や `section` の入力ミスで記事詳細へ遷移できなくなる
 - Markdown の実ファイル位置と `url` がズレる
 - 日付順の並び替えを毎回手で直す必要がある
 
-そこで、`posts_index.json` を手動編集するファイルではなく、Markdown から生成するファイルとして扱うようにしました。
+そこで、`posts-index.json` を手動編集するファイルではなく、Markdown から生成するファイルとして扱うようにしました。
 
 ---
 
@@ -30,7 +30,7 @@ description: Vue3 + Vite + TypeScript の技術ブログで、Markdown の front
 今回やりたかったことは、次の2つです。
 
 1. 新しい記事を簡単に作成できるようにする
-2. Markdown の情報から `posts_index.json` を安全に再生成できるようにする
+2. Markdown の情報から `posts-index.json` を安全に再生成できるようにする
 
 そのために、Node.js のスクリプトを2つ用意しました。
 
@@ -45,7 +45,7 @@ scripts/generate-posts.mjs
 npm run create-post
 ```
 
-`generate-posts.mjs` は既存の Markdown を走査して `posts_index.json` を再生成するためのスクリプトです。
+`generate-posts.mjs` は既存の Markdown を走査して `posts-index.json` を再生成するためのスクリプトです。
 
 ```bash
 npm run generate:posts
@@ -57,20 +57,20 @@ npm run generate:posts
 
 ## Markdown に frontmatter を追加する
 
-`posts_index.json` を生成するには、各記事に必要なメタ情報が必要です。
+`posts-index.json` を生成するには、各記事に必要なメタ情報が必要です。
 
 そこで、Markdown の先頭に frontmatter を追加しました。
 
 ```md
 ---
 id: nodejs-generate-posts-index
-title: Node.js で Markdown ブログの posts_index.json を自動生成した話
+title: Node.js で Markdown ブログの posts-index.json を自動生成した話
 date: 2026-06-20
 section: guide
-description: Vue3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts_index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。
+description: Vue3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。
 ---
 
-# Node.js で Markdown ブログの posts_index.json を自動生成した話
+# Node.js で Markdown ブログの posts-index.json を自動生成した話
 ```
 
 今回必須にした項目は以下です。
@@ -85,13 +85,13 @@ description
 
 この5つが揃っていれば、記事一覧に必要な情報を Markdown 側から作れます。
 
-逆に、どれか1つでも欠けている場合は、`posts_index.json` を生成しないようにしました。
+逆に、どれか1つでも欠けている場合は、`posts-index.json` を生成しないようにしました。
 
 ---
 
 ## frontmatter 不足は警告ではなくエラーにする
 
-ブログ記事のメタ情報が不足している状態で `posts_index.json` を生成してしまうと、壊れた記事一覧が公開される可能性があります。
+ブログ記事のメタ情報が不足している状態で `posts-index.json` を生成してしまうと、壊れた記事一覧が公開される可能性があります。
 
 たとえば `id` が無い記事が混ざると、記事詳細ページへの遷移ができません。
 
@@ -123,7 +123,7 @@ const assertRequiredFrontmatter = (frontmatter, filePath) => {
 };
 ```
 
-ポイントは、壊れた状態の `posts_index.json` を作らないことです。
+ポイントは、壊れた状態の `posts-index.json` を作らないことです。
 
 生成スクリプトは便利ですが、間違ったデータを自動で広げてしまうと逆に危険です。
 
@@ -165,7 +165,7 @@ const getRelativeUrl = (fullPath) => {
 .replace(/\\/g, "/")
 ```
 
-これで `posts_index.json` の `url` は、frontmatter から推測した値ではなく、実ファイル由来の値になります。
+これで `posts-index.json` の `url` は、frontmatter から推測した値ではなく、実ファイル由来の値になります。
 
 ---
 
@@ -272,7 +272,7 @@ description: Temporary description
 Temporary description
 ```
 
-そして、Markdown 作成後に `generate-posts.mjs` を呼び出して、`posts_index.json` を再生成します。
+そして、Markdown 作成後に `generate-posts.mjs` を呼び出して、`posts-index.json` を再生成します。
 
 つまり、記事一覧の情報源は常に Markdown です。
 
@@ -282,9 +282,9 @@ Temporary description
 
 今回の目的は、ブログ画面の大きなリファクタリングではありません。
 
-あくまで `posts_index.json` の手動管理をなくすことが目的です。
+あくまで `posts-index.json` の手動管理をなくすことが目的です。
 
-そのため、既存のブログ一覧・記事詳細画面は、これまで通り `posts_index.json` を読み込む構成のままにしました。
+そのため、既存のブログ一覧・記事詳細画面は、これまで通り `posts-index.json` を読み込む構成のままにしました。
 
 変更したのは、記事詳細で Markdown を読み込むときの処理です。
 
@@ -298,23 +298,23 @@ const removeFrontmatter = (markdown: string): string => {
 };
 ```
 
-また、記事詳細の Markdown 取得時は、`section` と `id` からURLを組み立てるだけでなく、`posts_index.json` の `url` があればそれを優先するようにしました。
+また、記事詳細の Markdown 取得時は、`section` と `id` からURLを組み立てるだけでなく、`posts-index.json` の `url` があればそれを優先するようにしました。
 
-これにより、将来 Markdown の階層が深くなっても、`posts_index.json` の `url` を正しく生成できていれば画面側は追従できます。
+これにより、将来 Markdown の階層が深くなっても、`posts-index.json` の `url` を正しく生成できていれば画面側は追従できます。
 
 ---
 
-## GitHub Actions でも posts_index.json を自動生成する
+## GitHub Actions でも posts-index.json を自動生成する
 
-ここまでで、ローカルでは `npm run generate:posts` を実行すれば `posts_index.json` を再生成できるようになりました。
+ここまでで、ローカルでは `npm run generate:posts` を実行すれば `posts-index.json` を再生成できるようになりました。
 
 ただし、運用を考えるともう1つ課題があります。
 
-Markdown 記事を追加・更新したあとに、毎回ローカルで `npm run generate:posts` を実行して `posts_index.json` をコミットする必要があります。
+Markdown 記事を追加・更新したあとに、毎回ローカルで `npm run generate:posts` を実行して `posts-index.json` をコミットする必要があります。
 
 これは手動編集よりはかなり楽ですが、それでも次のようなミスは残ります。
 
-- Markdown だけコミットして `posts_index.json` の更新を忘れる
+- Markdown だけコミットして `posts-index.json` の更新を忘れる
 - 記事本文を少し直しただけだと思い、一覧用の description や date の変更を反映し忘れる
 - GitHub Pages へデプロイする前に、記事一覧と Markdown の状態がズレる
 
@@ -348,32 +348,32 @@ GitHub Pages へ deploy
   run: npm run generate:posts
 ```
 
-その後、`blog_store/posts_index.json` に差分があるかを確認します。
+その後、`blog_store/posts-index.json` に差分があるかを確認します。
 
 差分がなければ何もせず、そのまま `check:posts`、`test`、`build` へ進みます。
 
-差分があれば、`github-actions[bot]` として `posts_index.json` をコミットします。
+差分があれば、`github-actions[bot]` として `posts-index.json` をコミットします。
 
 ```yaml
 - name: Commit generated blog post index
   run: |
-    if git diff --quiet -- blog_store/posts_index.json; then
-      echo "posts_index.json is up to date."
+    if git diff --quiet -- blog_store/posts-index.json; then
+      echo "posts-index.json is up to date."
       exit 0
     fi
 
     git config user.name "github-actions[bot]"
     git config user.email "github-actions[bot]@users.noreply.github.com"
-    git add blog_store/posts_index.json
+    git add blog_store/posts-index.json
     git commit -m "chore: regenerate blog post index"
     git push origin HEAD:${{ github.ref_name }}
 ```
 
-これで、Markdown の frontmatter を直しただけでも、Actions 側で `posts_index.json` が最新化されます。
+これで、Markdown の frontmatter を直しただけでも、Actions 側で `posts-index.json` が最新化されます。
 
 `checkout` では `ref: ${{ github.ref_name }}` を指定し、push 先も `HEAD:${{ github.ref_name }}` と明示しています。
 
-これにより、Actions上で現在のブランチが分かりにくい状態でも、意図したブランチへ `posts_index.json` の更新を反映しやすくなります。
+これにより、Actions上で現在のブランチが分かりにくい状態でも、意図したブランチへ `posts-index.json` の更新を反映しやすくなります。
 
 ---
 
@@ -383,7 +383,7 @@ GitHub Actions からコミットして push するためには、workflow の `
 
 もともとの GitHub Pages deploy では、リポジトリ内容を読むだけなら `contents: read` で足ります。
 
-しかし今回は、Actions が `posts_index.json` をコミットします。
+しかし今回は、Actions が `posts-index.json` をコミットします。
 
 そのため、次のように変更しました。
 
@@ -396,7 +396,7 @@ permissions:
 
 `pages: write` と `id-token: write` は GitHub Pages へのデプロイに必要です。
 
-`contents: write` は、生成された `posts_index.json` をリポジトリへ反映するために必要です。
+`contents: write` は、生成された `posts-index.json` をリポジトリへ反映するために必要です。
 
 ---
 
@@ -413,16 +413,16 @@ permissions:
 
 理由は、`generate:posts` 後の状態が本当に安定しているかを確認するためです。
 
-`check:posts` は内部で再度 `posts_index.json` を生成し、差分が残っていないかを確認します。
+`check:posts` は内部で再度 `posts-index.json` を生成し、差分が残っていないかを確認します。
 
 つまり、次のような二段構えにしています。
 
 ```text
 1. generate:posts
-   posts_index.json を最新化する
+   posts-index.json を最新化する
 
 2. 必要なら自動コミット
-   Markdown と posts_index.json のズレをリポジトリへ反映する
+   Markdown と posts-index.json のズレをリポジトリへ反映する
 
 3. check:posts
    再生成しても差分が出ないことを確認する
@@ -443,7 +443,7 @@ master に push
 ↓
 GitHub Actions が npm run generate:posts を実行
 ↓
-posts_index.json に差分があれば自動コミット
+posts-index.json に差分があれば自動コミット
 ↓
 npm run check:posts
 ↓
@@ -464,10 +464,10 @@ GitHub Pages へ deploy
 
 自動コミットは便利ですが、何でも自動化すればよいわけではありません。
 
-今回は対象を `blog_store/posts_index.json` だけに限定しました。
+今回は対象を `blog_store/posts-index.json` だけに限定しました。
 
 ```bash
-git add blog_store/posts_index.json
+git add blog_store/posts-index.json
 ```
 
 こうしておくことで、意図しないファイルまで Actions がコミットしてしまうリスクを避けられます。
@@ -486,13 +486,13 @@ git add blog_store/posts_index.json
 npm run generate:posts
 ```
 
-Markdown の frontmatter から `posts_index.json` が生成されることを確認しました。
+Markdown の frontmatter から `posts-index.json` が生成されることを確認しました。
 
 ```bash
 npm run create-post
 ```
 
-新規記事作成後に、`posts_index.json` が再生成されることを確認しました。
+新規記事作成後に、`posts-index.json` が再生成されることを確認しました。
 
 frontmatter が不足した Markdown を一時的に追加し、エラーで停止することも確認しました。
 
@@ -524,7 +524,7 @@ npm run build
 
 ## まとめ
 
-今回の対応で、`posts_index.json` は手動編集するファイルではなく、Markdown から生成するファイルになりました。
+今回の対応で、`posts-index.json` は手動編集するファイルではなく、Markdown から生成するファイルになりました。
 
 手動管理を減らすことで、記事追加時のミスを減らせます。
 
@@ -532,6 +532,6 @@ npm run build
 
 小さな Node.js スクリプトですが、ブログ機能の運用をかなり楽にしてくれる改善になりました。
 
-さらに GitHub Actions に組み込んだことで、`posts_index.json` の更新漏れを CI/CD 側でも防げるようになりました。
+さらに GitHub Actions に組み込んだことで、`posts-index.json` の更新漏れを CI/CD 側でも防げるようになりました。
 
 ローカル作業では記事を書くことに集中し、一覧生成とデプロイ前の整合性確認は自動化に任せられる形になりました。

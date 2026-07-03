@@ -44,11 +44,11 @@ describe("blogPostService", () => {
 
     expect(result).toEqual(postIndex);
     expect(mockedFetcher.getJson).toHaveBeenCalledWith(
-      "/blog_store/posts_index.json"
+      "/blog_store/posts-index.json"
     );
   });
 
-  it("posts_index.jsonにurlがある場合はurlを優先してMarkdown本文を取得する", async () => {
+  it("posts-index.jsonにurlがある場合はurlを優先してMarkdown本文を取得する", async () => {
     const pageStatus: PostIndex[] = [
       {
         date: "2026-06-01",
@@ -71,7 +71,7 @@ describe("blogPostService", () => {
     );
   });
 
-  it("posts_index.jsonに一致する記事がない場合はsectionとidからMarkdown本文URLを組み立てる", async () => {
+  it("posts-index.jsonに一致する記事がない場合はsectionとidからMarkdown本文URLを組み立てる", async () => {
     mockedFetcher.getRequest.mockResolvedValue(createResponse("# 本文"));
 
     const result = await fetchBlogPostBody([], "guide", "missing-post");

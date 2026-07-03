@@ -7,7 +7,7 @@ import { spawn } from "node:child_process";
 
 const BLOG_ROOT = "blog_store";
 const POSTS_ROOT = path.join(BLOG_ROOT, "posts");
-const POSTS_INDEX_PATH = path.join(BLOG_ROOT, "posts_index.json");
+const POSTS_INDEX_PATH = path.join(BLOG_ROOT, "posts-index.json");
 const DEFAULT_SECTION = "guide";
 
 /**
@@ -43,7 +43,7 @@ const readPostsIndex = async () => {
  *
  * @param {Array<{ id: string, url: string }>} posts 既存の記事インデックス
  * @param {string} id 新規記事のid
- * @param {string} markdownPath posts_index.json に保存する新規Markdownパス
+ * @param {string} markdownPath posts-index.json に保存する新規Markdownパス
  * @throws {Error} idまたはMarkdownパスが既に存在する場合
  */
 const assertUniquePost = (posts, id, markdownPath) => {
@@ -62,7 +62,7 @@ const assertUniquePost = (posts, id, markdownPath) => {
  * 新規ブログ記事の初期Markdown本文を生成する。
  *
  * 生成したfrontmatterは scripts/generate-posts.mjs が読み取る。
- * これにより posts_index.json を手動編集せず、Markdownから再生成できる。
+ * これにより posts-index.json を手動編集せず、Markdownから再生成できる。
  *
  * @param {{ id: string, section: string, title: string, date: string, description: string }} post 新規記事の値
  * @returns {string} 必須frontmatter付きのMarkdown本文
@@ -130,7 +130,7 @@ const createPrompt = async () => {
 };
 
 /**
- * Markdownファイル作成後に posts_index.json を再生成する。
+ * Markdownファイル作成後に posts-index.json を再生成する。
  *
  * @returns {Promise<void>}
  */
@@ -147,7 +147,7 @@ const runGeneratePosts = async () => {
         return;
       }
 
-      reject(new Error(`posts_index.json の生成に失敗しました。code: ${code}`));
+      reject(new Error(`posts-index.json の生成に失敗しました。code: ${code}`));
     });
   });
 };

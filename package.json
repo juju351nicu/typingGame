@@ -7,7 +7,7 @@
     "test": "vitest run",
     "create-post": "node scripts/create-post.mjs",
     "generate:posts": "node scripts/generate-posts.mjs",
-    "check:posts": "npm run generate:posts && git diff --exit-code blog_store/posts_index.json"
+    "check:posts": "npm run generate:posts && git diff --exit-code blog_store/posts-index.json"
   },
   "dependencies": {
     "@markdown-design/markdown-it-sanitize": "^0.2.0",

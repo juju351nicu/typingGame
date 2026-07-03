@@ -1,7 +1,7 @@
 import type { PostIndex } from "@/types/interfaces";
 
 export interface BlogPostNavigation {
-  /** 現在の記事が posts_index.json の何番目にあるか */
+  /** 現在の記事が posts-index.json の何番目にあるか */
   currentIndex: number;
   /** 現在の記事より1つ前の記事。先頭記事の場合はnull */
   prevPost: PostIndex | null;
@@ -12,7 +12,7 @@ export interface BlogPostNavigation {
 /**
  * 記事一覧の順序を基準に、現在の記事と前後の記事を取得する。
  *
- * @param posts posts_index.json 由来の記事一覧
+ * @param posts posts-index.json 由来の記事一覧
  * @param currentId 現在表示している記事ID
  * @param currentSection 現在表示している記事セクション
  * @returns 現在位置、前の記事、次の記事

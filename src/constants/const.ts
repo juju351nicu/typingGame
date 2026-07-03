@@ -5,7 +5,7 @@ import type { GameRule, TimeLimitSeconds } from "@/types/interfaces";
  * マークダウンブログ取得用のURL
  */
 const BLOG_PATH = {
-  POST_INDEX: `${import.meta.env.BASE_URL}blog_store/posts_index.json`,
+  POST_INDEX: `${import.meta.env.BASE_URL}blog_store/posts-index.json`,
   POST_FOLDER: `${import.meta.env.BASE_URL}blog_store/posts/`,
 };
 
