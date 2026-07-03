@@ -84,7 +84,16 @@ describe("useRankingPageState", () => {
     expect(rankingState.trendTitle.value).toBe("直近正確率推移");
     expect(
       rankingState.getTrendValueLabel({
-        label: "1",
+        score: 200,
+        mode: 1,
+        gameRule: Const.GAME_RULE.TIME_ATTACK,
+        timeLimitSeconds: 60,
+        time: "00:01:00",
+        date: "2026-07-02 10:00:00",
+        wpm: 50,
+        accuracy: 95,
+        missCount: 1,
+        correctCharacterCount: 50,
         barRatio: 100,
         metricValue: 95,
         playNumber: 1,
