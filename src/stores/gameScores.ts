@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import type { GameScore } from "@/types/interfaces";
+import { deleteGameScores, saveGameScore } from "@/services/scoreService";
 /**
  * ゲームスコアのストアで使用する型定義
  */
@@ -32,13 +33,13 @@ export const useGameScoresStore = defineStore("gameScores", {
      * @param {*} data
      */
     saveGameScoreList(data: GameScore) {
-      this.scores.push(data);
+      this.scores = saveGameScore(this.scores, data);
     },
     /**
      * ストレージにあるスコア情報を削除する。
      */
     deleteGameScoreList() {
-      this.scores = [];
+      this.scores = deleteGameScores();
     },
   },
   // LocalStorageに保存する場合
