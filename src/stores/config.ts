@@ -64,7 +64,7 @@ export const useConfigStore = defineStore("config", {
     },
     /**
      * ダークモード等のディスプレイの値
-     * @returns 'light'か'dark'モード
+     * @returns ダークモードの場合 true
      */
     getDisplayMode(): boolean {
       return this.isDarkMode;

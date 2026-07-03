@@ -88,6 +88,7 @@ describe("persisted stores", () => {
     expect(configStore.getGameRule).toBe("timeAttack");
     expect(configStore.getTimeLimitSeconds).toBe(90);
     expect(configStore.getIsTimeAttackMode).toBe(true);
+    expect(configStore.getDisplayMode).toBe(false);
     expect(configStore.getIsVirtualKeyBoard).toBe(true);
     expect(configStore.getInsertionSpeed).toBe(2000);
     expect(configStore.getAnimationSpeed).toBe(15);

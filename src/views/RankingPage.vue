@@ -428,7 +428,7 @@ const getRankClass = (rank: number): string => {
 }
 
 .score-title {
-  color: #222222;
+  color: var(--app-text);
   font-size: 3.2rem;
   font-weight: bold;
   line-height: 1.2;
@@ -436,7 +436,7 @@ const getRankClass = (rank: number): string => {
 }
 
 .score-subtitle {
-  color: #666666;
+  color: var(--app-text-muted);
   font-size: 1.4rem;
   margin: 8px 0 0;
 }
@@ -451,10 +451,10 @@ const getRankClass = (rank: number): string => {
 }
 
 .ranking-tabs {
-  background: #ffffff;
-  border: 1px solid #e6e6e6;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--app-shadow);
   margin-bottom: 14px;
   padding: 0 12px;
 }
@@ -467,10 +467,10 @@ const getRankClass = (rank: number): string => {
 }
 
 .ranking-window {
-  background: #ffffff;
-  border: 1px solid #e6e6e6;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--app-shadow);
   padding: 22px;
 }
 
@@ -481,10 +481,10 @@ const getRankClass = (rank: number): string => {
 }
 
 .summary-card {
-  background: #ffffff;
-  border: 1px solid #e6e6e6;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--app-shadow);
   padding: 18px 20px;
 }
 
@@ -493,14 +493,14 @@ const getRankClass = (rank: number): string => {
 }
 
 .summary-label {
-  color: #666666;
+  color: var(--app-text-muted);
   display: block;
   font-size: 1.3rem;
   margin-bottom: 6px;
 }
 
 .summary-value {
-  color: #222222;
+  color: var(--app-text);
   display: block;
   font-size: 3.2rem;
   font-weight: bold;
@@ -508,14 +508,14 @@ const getRankClass = (rank: number): string => {
 }
 
 .summary-note {
-  color: #666666;
+  color: var(--app-text-muted);
   display: block;
   font-size: 1.3rem;
   margin-top: 8px;
 }
 
 .trend-panel {
-  background: #ffffff;
+  background: var(--app-surface);
 }
 
 .trend-panel__header {
@@ -523,14 +523,14 @@ const getRankClass = (rank: number): string => {
 }
 
 .trend-panel__header h2 {
-  color: #222222;
+  color: var(--app-text);
   font-size: 1.8rem;
   line-height: 1.3;
   margin: 0;
 }
 
 .trend-panel__header p {
-  color: #666666;
+  color: var(--app-text-muted);
   font-size: 1.3rem;
   margin: 6px 0 0;
 }
@@ -562,14 +562,14 @@ const getRankClass = (rank: number): string => {
 }
 
 .trend-value {
-  color: #222222;
+  color: var(--app-text);
   font-size: 1.4rem;
   font-weight: bold;
 }
 
 .trend-bar-track {
   align-items: end;
-  background: #f1f3f5;
+  background: var(--app-track-bg);
   border-radius: 8px;
   display: flex;
   height: 88px;
@@ -585,7 +585,7 @@ const getRankClass = (rank: number): string => {
 }
 
 .trend-label {
-  color: #666666;
+  color: var(--app-text-muted);
   font-size: 1.2rem;
   text-align: center;
 }
@@ -652,7 +652,7 @@ const getRankClass = (rank: number): string => {
 }
 
 .metric-cell {
-  color: #333333;
+  color: var(--app-text);
   font-weight: bold;
 }
 

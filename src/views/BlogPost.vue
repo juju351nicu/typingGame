@@ -148,7 +148,8 @@ onUnmounted(() => {
 </template>
 <style scoped>
 .blog-post {
-  background-color: #ffffff;
+  background-color: var(--app-surface);
+  color: var(--app-text);
   padding: 24px 16px 32px;
 }
 
@@ -192,7 +193,7 @@ onUnmounted(() => {
 }
 
 .post-navigation__label {
-  color: #616161;
+  color: var(--app-text-muted);
   font-size: 0.75rem;
   line-height: 1.2;
 }
@@ -233,7 +234,7 @@ div :deep(h6) {
 div :deep(blockquote) {
   margin: 0 0 20px 0;
   padding: 10px 20px;
-  border-left: 5px solid #eeeeee;
+  border-left: 5px solid var(--app-border);
 }
 
 div :deep(ul),
@@ -253,7 +254,7 @@ div :deep(code) {
   padding: 2px 4px;
   font-size: 90%;
   color: #d73a49;
-  background-color: #f9f2f4;
+  background-color: var(--app-code-bg);
   border-radius: 4px;
 }
 
@@ -261,8 +262,8 @@ div :deep(pre) {
   padding: 9.5px;
   margin: 0 0 10px 0;
   word-break: break-all;
-  background-color: #f5f5f5;
-  border: 1px solid #cccccc;
+  background-color: var(--app-pre-bg);
+  border: 1px solid var(--app-border);
   border-radius: 4px;
 }
 
@@ -281,16 +282,16 @@ div :deep(table) {
 
 div :deep(th) {
   padding: 8px;
-  border-bottom: 2px solid #dddddd;
+  border-bottom: 2px solid var(--app-border);
 }
 
 div :deep(tr:nth-child(odd) > td) {
-  background-color: #f9f9f9;
+  background-color: var(--app-row-alt-bg);
 }
 
 div :deep(td) {
   padding: 8px;
-  border-top: 1px solid #dddddd;
+  border-top: 1px solid var(--app-border);
 }
 
 div :deep(img) {

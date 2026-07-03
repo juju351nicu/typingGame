@@ -47,4 +47,15 @@ describe("config store", () => {
     expect(configStore.getTimeLimitSeconds).toBe(90);
     expect(configStore.getIsTimeAttackMode).toBe(true);
   });
+
+  it("表示テーマの設定を保存する", async () => {
+    const { useConfigStore } = await import("@/stores/config");
+    const configStore = useConfigStore();
+
+    expect(configStore.getDisplayMode).toBe(false);
+
+    configStore.saveDisplayMode(true);
+
+    expect(configStore.getDisplayMode).toBe(true);
+  });
 });

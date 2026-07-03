@@ -87,14 +87,14 @@ watch(
 
 <style scoped>
 .virtual-keyboard-panel {
-  background: #ffffff;
-  border: 1px solid #e2e6ea;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: 8px;
   padding: 10px;
 }
 
 .keyboard-status {
-  color: #555555;
+  color: var(--app-text-muted);
   display: flex;
   font-size: 1.1rem;
   font-weight: bold;

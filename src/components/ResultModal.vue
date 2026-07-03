@@ -180,13 +180,13 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
 }
 
 .score-label {
-  color: #666666;
+  color: var(--app-text-muted);
   font-size: 1.6rem;
   margin-right: 16px;
 }
 
 .score-value {
-  color: #2f2f2f;
+  color: var(--app-text);
   font-size: 5.2rem;
   font-weight: bold;
   line-height: 1;
@@ -199,21 +199,21 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
 }
 
 .result-item {
-  background: #f5f5f5;
+  background: var(--app-surface-muted);
   border-radius: 8px;
   padding: 14px 16px;
   text-align: left;
 }
 
 .item-label {
-  color: #666666;
+  color: var(--app-text-muted);
   display: block;
   font-size: 1.3rem;
   margin-bottom: 6px;
 }
 
 .item-value {
-  color: #222222;
+  color: var(--app-text);
   display: block;
   font-size: 1.8rem;
   font-weight: bold;

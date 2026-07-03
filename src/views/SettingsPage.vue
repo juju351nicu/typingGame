@@ -45,6 +45,9 @@ const selectedTimeLimitSeconds = ref<TimeLimitSeconds>(
 /** 画面で選択中の仮想キーボード表示有無 */
 const isVirtualKeyboardVisible = ref(configStore.getIsVirtualKeyBoard);
 
+/** 画面で選択中のダークモード有無 */
+const isDarkMode = ref(configStore.getDisplayMode);
+
 /** ゲーム難易度の選択項目 */
 const options = ref<DifficultyOption[]>(Const.DIFFICULTY_LEVEL);
 
@@ -104,6 +107,20 @@ const setVirtualKeyboardVisible = (isVisible: boolean | null) => {
     return;
   }
   configStore.saveIsVertualKeyBoard(isVisible);
+};
+
+/**
+ * 表示テーマを保存する。
+ *
+ * Vuetifyのswitchはnullを渡す可能性があるため、booleanの時だけ保存する。
+ *
+ * @param isDark ダークモードにする場合 true
+ */
+const setDisplayMode = (isDark: boolean | null) => {
+  if (isDark === null) {
+    return;
+  }
+  configStore.saveDisplayMode(isDark);
 };
 
 /** スコア初期化結果などを表示するアラート */
@@ -210,6 +227,24 @@ const resetModalData = () => {
         />
       </section>
 
+      <section class="setting-card">
+        <div class="setting-card__body">
+          <span class="setting-label">表示テーマ</span>
+          <p class="setting-description">
+            画面全体の明るさをライト / ダークで切り替えます。
+          </p>
+        </div>
+        <v-switch
+          v-model="isDarkMode"
+          color="primary"
+          hide-details
+          inset
+          :label="isDarkMode ? 'ダーク' : 'ライト'"
+          @update:modelValue="setDisplayMode"
+          class="setting-control"
+        />
+      </section>
+
       <section class="setting-card danger-card">
         <div class="setting-card__body">
           <span class="setting-label">スコア初期化</span>
@@ -252,7 +287,7 @@ const resetModalData = () => {
 }
 
 .settings-header h1 {
-  color: #222222;
+  color: var(--app-text);
   font-size: 3rem;
   font-weight: bold;
   line-height: 1.2;
@@ -260,7 +295,7 @@ const resetModalData = () => {
 }
 
 .settings-header p {
-  color: #666666;
+  color: var(--app-text-muted);
   font-size: 1.3rem;
   margin: 8px 0 0;
 }
@@ -273,10 +308,10 @@ const resetModalData = () => {
 
 .setting-card {
   align-items: center;
-  background: #ffffff;
-  border: 1px solid #e6e6e6;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--app-shadow);
   display: flex;
   gap: 20px;
   justify-content: space-between;
@@ -292,7 +327,7 @@ const resetModalData = () => {
 }
 
 .setting-label {
-  color: #222222;
+  color: var(--app-text);
   display: block;
   font-size: 1.4rem;
   font-weight: bold;
@@ -300,7 +335,7 @@ const resetModalData = () => {
 }
 
 .setting-description {
-  color: #666666;
+  color: var(--app-text-muted);
   font-size: 1.1rem;
   margin: 0;
 }

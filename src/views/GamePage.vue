@@ -332,9 +332,9 @@ html {
 }
 
 .game-board {
-  background: #ffffff;
+  background: var(--app-surface);
   border-radius: 8px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--app-shadow-strong);
   display: flex;
   flex-direction: column;
   height: min(78vh, 760px);
@@ -345,8 +345,8 @@ html {
 
 .game-control-panel {
   align-items: stretch;
-  background: #f8f9fa;
-  border-top: 1px solid #d9dee2;
+  background: var(--app-surface-muted);
+  border-top: 1px solid var(--app-border);
   display: grid;
   gap: 16px;
   grid-template-columns: minmax(260px, 1fr) minmax(360px, 380px);
@@ -367,7 +367,7 @@ html {
 }
 
 .game-text-field-error .v-field {
-  background: #fff5f5;
+  background: var(--app-input-error-bg);
 }
 
 @keyframes inputMissShake {
@@ -399,15 +399,15 @@ html {
 }
 
 .game-status-item {
-  background: #ffffff;
-  border: 1px solid #e2e6ea;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: 8px;
   min-width: 0;
   padding: 12px 14px;
 }
 
 .game-status-item label {
-  color: #666666;
+  color: var(--app-text-muted);
   display: block;
   font-size: 1.2rem;
   font-weight: bold;
@@ -415,7 +415,7 @@ html {
 }
 
 .game-status-item span {
-  color: #222222;
+  color: var(--app-text);
   display: block;
   font-size: 1.9rem;
   font-weight: bold;
@@ -426,8 +426,8 @@ html {
 
 .start-panel {
   align-items: center;
-  background: #f8f9fa;
-  border-top: 1px solid #d9dee2;
+  background: var(--app-surface-muted);
+  border-top: 1px solid var(--app-border);
   display: flex;
   justify-content: center;
   min-height: 112px;
