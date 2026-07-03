@@ -14,6 +14,8 @@ Phase5 までに以下は完了しています。
 - ランキング画面の通常 / タイムアタック対応
 - スコア / WPM / 正確率推移
 - `scoreService` へのスコア保存処理分離
+- スコア保存API向けの `SaveGameScoreRequest`
+- スコア取得API向けの `GameScoreResponse`
 - `fetchClient` のHTTPエラー共通化
 - `fetchClient` の JSON helper
 - ブログ記事取得処理の service 分離
@@ -46,18 +48,10 @@ src/views/GamePage.vue
 検討する入力:
 
 ```ts
-{
-  score: number;
-  mode: number;
-  gameRule: "normal" | "timeAttack";
-  timeLimitSeconds?: 30 | 60 | 90;
-  time: string;
-  wpm?: number;
-  accuracy?: number;
-  missCount?: number;
-  correctCharacterCount?: number;
-}
+SaveGameScoreRequest
 ```
+
+フロントエンドでは、既存の `GameScore` から `scoreService.toSaveGameScoreRequest` で `date` を除外して送信する想定です。
 
 ### GET /api/scores
 
@@ -71,6 +65,7 @@ src/views/GamePage.vue
 - localStorage の既存スコアを残すか、API取得へ完全移行するか。
 - API失敗時に localStorage のスコアをフォールバック表示するか。
 - ページングや期間指定をどの段階で入れるか。
+- APIレスポンスは `GameScoreResponse` として受け取り、`scoreService.toGameScore` で既存画面用の `GameScore` へ変換する。
 
 ### GET /api/rankings
 

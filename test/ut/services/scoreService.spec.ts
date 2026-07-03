@@ -1,5 +1,10 @@
-import { deleteGameScores, saveGameScore } from "@/services/scoreService";
-import type { GameScore } from "@/types/interfaces";
+import {
+  deleteGameScores,
+  saveGameScore,
+  toGameScore,
+  toSaveGameScoreRequest,
+} from "@/services/scoreService";
+import type { GameScore, GameScoreResponse } from "@/types/interfaces";
 import { describe, expect, it } from "vitest";
 
 describe("scoreService", () => {
@@ -37,5 +42,33 @@ describe("scoreService", () => {
 
   it("保存済みスコアを空にする", () => {
     expect(deleteGameScores()).toEqual([]);
+  });
+
+  it("保存APIリクエストではdateを除外する", () => {
+    expect(toSaveGameScoreRequest(newScore)).toEqual({
+      score: 12,
+      mode: 2,
+      time: "00:00:28.00",
+      wpm: 32,
+      accuracy: 96,
+      missCount: 2,
+      correctCharacterCount: 80,
+    });
+  });
+
+  it("APIレスポンスをゲームスコアに変換する", () => {
+    const response: GameScoreResponse = {
+      id: 1,
+      score: 12,
+      mode: 2,
+      time: "00:00:28.00",
+      date: "2026-07-04 10:10:00",
+      wpm: 32,
+      accuracy: 96,
+      missCount: 2,
+      correctCharacterCount: 80,
+    };
+
+    expect(toGameScore(response)).toEqual(newScore);
   });
 });

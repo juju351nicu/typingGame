@@ -1,4 +1,8 @@
-import type { GameScore } from "@/types/interfaces";
+import type {
+  GameScore,
+  GameScoreResponse,
+  SaveGameScoreRequest,
+} from "@/types/interfaces";
 
 /**
  * スコア一覧に新しいスコアを追加する。
@@ -19,4 +23,26 @@ export const saveGameScore = (
  */
 export const deleteGameScores = (): GameScore[] => {
   return [];
+};
+
+/**
+ * ゲームスコアを保存APIのリクエスト形式へ変換する。
+ * @param score ゲームスコア
+ * @returns 保存APIリクエスト
+ */
+export const toSaveGameScoreRequest = (
+  score: GameScore
+): SaveGameScoreRequest => {
+  const { date: _date, ...request } = score;
+  return request;
+};
+
+/**
+ * APIレスポンスを画面・localStorageで扱うゲームスコアへ変換する。
+ * @param response ゲームスコアAPIレスポンス
+ * @returns ゲームスコア
+ */
+export const toGameScore = (response: GameScoreResponse): GameScore => {
+  const { id: _id, ...score } = response;
+  return score;
 };

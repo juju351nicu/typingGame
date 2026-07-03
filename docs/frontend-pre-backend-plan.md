@@ -76,15 +76,23 @@ refactor: fetchClientのHTTPエラー処理を整理
 
 ```text
 GameScore
+GameScoreBase
+SaveGameScoreRequest
+GameScoreResponse
 RankingScore
 PerformanceTrendItem
 ```
 
+対応状況:
+
+- 初期整理は完了。
+- 既存画面で使う `GameScore` は維持し、保存API向けの `SaveGameScoreRequest` と取得API向けの `GameScoreResponse` を追加済み。
+- `scoreService` に API 境界で使う変換関数を追加済み。
+
 検討ポイント:
 
-- APIから返すスコアと、画面用に rank / resultRank を付与したスコアを分ける。
-- `gameRule` や `timeLimitSeconds` の optional 扱いを、既存localStorage互換とAPI新規保存でどう扱うか決める。
-- API保存時の request 型と response 型を別にするか検討する。
+- APIから返すスコアと、画面用に rank / resultRank を付与したスコアを引き続き分けて扱う。
+- `gameRule` や `timeLimitSeconds` の optional 扱いを、既存localStorage互換とAPI新規保存でどう扱うかバックエンド実装時に最終決定する。
 
 ### 4. loading / error / empty 表示の共通化
 

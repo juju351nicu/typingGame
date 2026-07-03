@@ -20,18 +20,31 @@ export type GameRule = "normal" | "timeAttack";
 /** タイムアタックの制限時間（秒） */
 export type TimeLimitSeconds = 30 | 60 | 90;
 
-/** ゲームスコアのインターフェ-ス */
-export interface GameScore {
+/** ゲームスコアの基本項目 */
+export interface GameScoreBase {
   time: string;
   score: number;
   mode: number;
   gameRule?: GameRule;
   timeLimitSeconds?: TimeLimitSeconds;
-  date: string;
   wpm?: number;
   accuracy?: number;
   missCount?: number;
   correctCharacterCount?: number;
+}
+
+/** ゲームスコア保存APIのリクエスト */
+export interface SaveGameScoreRequest extends GameScoreBase {}
+
+/** ゲームスコアAPIのレスポンス */
+export interface GameScoreResponse extends GameScoreBase {
+  id?: number;
+  date: string;
+}
+
+/** ゲームスコアのインターフェ-ス */
+export interface GameScore extends GameScoreBase {
+  date: string;
 }
 /** ランキング表示用スコアのインターフェース */
 export interface RankingScore extends GameScore {
