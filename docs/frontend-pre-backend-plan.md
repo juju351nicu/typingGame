@@ -190,6 +190,12 @@ fetchClient
 - Phase6: Spring Boot API、JWTログイン、ユーザー別スコア管理
 - Phase7: Docker / PWA / 公開構成見直し
 
+対応状況:
+
+- Phase5 / Phase6 の入口整理は一部完了。
+- アラート通知は通知ごとの表示状態と自動非表示タイマーを持つ形に修正済み。
+- リトライ処理はページリロードではなく、ゲーム状態・タイマー・TypingPanel のリセットで完結する形に修正済み。
+
 ## P2: 余力があれば
 
 ### 9. chunk size warning 対策

@@ -29,7 +29,7 @@ const lastScore = computed((): GameScore => {
 const dialog = ref(false);
 
 /** ゲームを再スタートする */
-const reStartGame = () => {
+const restartGame = () => {
   emit("restart-game");
   dialog.value = false;
 };
@@ -131,7 +131,7 @@ watch(isGameOverFlag, (newValue, _oldValue) => {
         </v-card-text>
 
         <v-card-actions class="result-actions">
-          <v-btn color="success" size="large" block @click="reStartGame">
+          <v-btn color="success" size="large" block @click="restartGame">
             リトライ
           </v-btn>
         </v-card-actions>
