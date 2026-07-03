@@ -257,6 +257,8 @@ Plan: [`docs/phase5-time-attack-plan.md`](./docs/phase5-time-attack-plan.md)
 
 Frontend cleanup before backend work: [`docs/frontend-pre-backend-plan.md`](./docs/frontend-pre-backend-plan.md)
 
+Frontend smoke test checklist: [`docs/frontend-smoke-test-checklist.md`](./docs/frontend-smoke-test-checklist.md)
+
 - タイムアタックモード
   - 30秒 / 60秒 / 90秒などの制限時間を選択
   - 通常モードとは別のゲームモードとして実装

@@ -218,6 +218,14 @@ fetchClient
 - `highlight.js` は全体 import をやめ、記事で使用する言語だけを登録する形へ変更済み。
 - `npm run build` の chunk size warning は解消済み。
 
+build結果の変化:
+
+| 対象 | 対応前 | 対応後 | メモ |
+| --- | ---: | ---: | --- |
+| 初期 `index` JS | 1,590.58 kB / gzip 549.76 kB | 242.70 kB / gzip 87.83 kB | ルート単位の dynamic import で各画面を分割 |
+| `BlogPost` JS | 1,058.91 kB / gzip 367.55 kB | 2.90 kB / gzip 1.42 kB | Markdown renderer を記事本文取得後に遅延読み込み |
+| `useMarkdownRenderer` JS | 1,056.34 kB / gzip 366.41 kB | 160.74 kB / gzip 69.64 kB | `highlight.js` の全体 import をやめ、必要言語だけ登録 |
+
 残件:
 
 - CSS bundle や Vuetify の読み込み最適化は、公開速度をさらに詰める段階で検討する。
@@ -228,6 +236,10 @@ fetchClient
 
 - バックエンド接続前後で壊れていないか確認する導線を明確にする。
 
+対応状況:
+
+- 手動確認用の `docs/frontend-smoke-test-checklist.md` を追加済み。
+
 候補導線:
 
 - Play -> Result -> Ranking
@@ -235,14 +247,14 @@ fetchClient
 - Blog list -> Blog detail -> Previous / Next navigation
 - Settings -> Score reset -> Ranking empty state
 
-まずは自動化ではなく、手順書化でもよい。
+まずは自動化ではなく、手順書化で運用する。
 
 ## 推奨する次の作業順
 
 1. Phase5 / Phase6 のREADMEとdocsを整理する。
 2. API接続を見越した型整理を進める。
 3. loading / error / empty 表示の適用範囲を広げる。
-4. 余力があれば導線確認を進める。
+4. バックエンド接続前後で `docs/frontend-smoke-test-checklist.md` に沿って導線確認する。
 
 ## バックエンド着手時の入口
 
