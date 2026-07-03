@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import Loading from "@/components/Loading.vue";
 import AppStateMessage from "@/components/AppStateMessage.vue";
-import { computed, onBeforeMount, onUnmounted, ref } from "vue";
+import { computed, onBeforeMount, onUnmounted } from "vue";
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/blogPosts";
 import type { PostIndex } from "@/types/interfaces";
 import { getBlogPostNavigation } from "@/composables/useBlogPostNavigation";
+import { useBlogPostPageState } from "@/composables/useBlogPostPageState";
 
 /** Propsインタフェース定義 */
 interface Props {
@@ -20,6 +21,9 @@ const router = useRouter();
 
 /** ブログのストア情報取得 */
 const blogPostsStore = useBlogPostsStore();
+
+const { createBlogPostRoute, loadPost, postHtml } =
+  useBlogPostPageState(blogPostsStore);
 
 /** データ取得中フラグ */
 const isLoading = computed((): boolean => {
@@ -63,36 +67,7 @@ const nextPost = computed((): PostIndex | null => {
 
 /** 指定した記事へ移動する */
 const goPost = (post: PostIndex) => {
-  router.push({
-    name: "BlogPost",
-    params: {
-      section: post.section,
-      id: post.id,
-    },
-  });
-};
-
-/** Htmlに表示するマークダウン情報 */
-const postHtml = ref("");
-
-/** 記事を読み込む */
-const loadPost = async (section: string, id: string) => {
-  document.title = "ブログ記事";
-  if (blogPostsStore.postCount === 0) {
-    await blogPostsStore.receivePostIndex();
-    if (blogPostsStore.getErrorMessage) {
-      postHtml.value = "";
-      return;
-    }
-  }
-  await blogPostsStore.receiveBlogPost(section, id);
-  if (blogPostsStore.getErrorMessage) {
-    postHtml.value = "";
-    return;
-  }
-
-  const { renderMarkdown } = await import("@/composables/useMarkdownRenderer");
-  postHtml.value = renderMarkdown(blogPostsStore.getPostHtml);
+  router.push(createBlogPostRoute(post));
 };
 
 /** Htmlに表示するマークダウン情報をセットする。 */
