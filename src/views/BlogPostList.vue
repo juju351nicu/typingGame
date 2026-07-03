@@ -2,18 +2,24 @@
 import Loading from "@/components/Loading.vue";
 import AppStateMessage from "@/components/AppStateMessage.vue";
 import BlogPagingList from "@/components/BlogPagingList.vue";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/blogPosts";
-import { PostIndex } from "@/types/interfaces";
+import { useBlogPostListPageState } from "@/composables/useBlogPostListPageState";
 
 const router = useRouter();
 
 /** ブログのストア情報取得 */
 const blogPostsStore = useBlogPostsStore();
 
-/** 記事の一覧情報 */
-const pageStatus = ref<PostIndex[]>([]);
+const {
+  createPostDetailRoute,
+  currentPage,
+  loadCurrentPage,
+  pageStatus,
+  setPage,
+  setPageFromQuery,
+} = useBlogPostListPageState(blogPostsStore);
 
 /** 記事の総件数 */
 const pageCounts = computed((): number => {
@@ -30,38 +36,27 @@ const errorMessage = computed((): string => {
   return blogPostsStore.getErrorMessage;
 });
 
-/** 現在のページ */
-const currentPage = ref<number>(1);
-
 /**
  * 記事の詳細ページに遷移する
  * @param section
  * @param id
  */
 const doPostDetail = (section: string, id: string): void => {
-  blogPostsStore.savePrevPageNo(currentPage.value);
-  router.push({ name: "BlogPost", params: { section: section, id: id } });
+  router.push(createPostDetailRoute(section, id));
 };
 
 /** ページ遷移 */
 const searchPaging = (pageNumber: number) => {
-  currentPage.value = pageNumber;
-  pageStatus.value = blogPostsStore.getPostRangeByPage(pageNumber);
-  console.info(pageNumber);
+  setPage(pageNumber);
 };
 
 /** 記事の一覧情報をセットする。 */
 onBeforeMount(async () => {
   document.title = "ブログの一覧";
   const route = useRoute();
-  const queryName = route.query.pageNumber;
-  if (queryName !== null && queryName !== undefined) {
-    currentPage.value = Number(queryName);
-    console.info("ここを通りました。" + route.query.pageNumber);
-  }
+  setPageFromQuery(route.query.pageNumber);
   await blogPostsStore.receivePostIndex();
-  pageStatus.value = blogPostsStore.getPostRangeByPage(currentPage.value);
-  console.info("BlogPostList: Component about to be mounted.");
+  loadCurrentPage();
 });
 </script>
 <template>

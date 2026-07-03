@@ -10,6 +10,10 @@ import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
 import { useTimeAttackTimer } from "@/composables/useTimeAttackTimer";
 import { useGamePageState } from "@/composables/useGamePageState";
+import {
+  createGamePageScore,
+  saveGamePageScore,
+} from "@/composables/useGamePageScore";
 import Util from "@/utils/gameUtils";
 import Const from "@/constants/const";
 import type { Alert } from "@/types/interfaces";
@@ -75,21 +79,18 @@ const {
 
 /** ゲームの時間・スコア・モードを保存する */
 const saveGameScores = (): void => {
-  lastScore.value = {
+  lastScore.value = createGamePageScore({
     score: gameScore.value,
     mode: configStore.getGameMode,
     gameRule: configStore.getGameRule,
-    timeLimitSeconds: isTimeAttackMode.value
-      ? configStore.getTimeLimitSeconds
-      : undefined,
-    time: Util.getCountDownTime(accumTime.value),
-    date: Util.getCurrentTime(),
-    wpm: Util.calculateWpm(correctCharacterCount.value, accumTime.value),
-    accuracy: Util.calculateAccuracy(typedCharacterCount.value, missCount.value),
+    timeLimitSeconds: configStore.getTimeLimitSeconds,
+    isTimeAttackMode: isTimeAttackMode.value,
+    accumTime: accumTime.value,
+    typedCharacterCount: typedCharacterCount.value,
     missCount: missCount.value,
     correctCharacterCount: correctCharacterCount.value,
-  };
-  gameScoresStore.saveGameScoreList(lastScore.value);
+  });
+  saveGamePageScore(gameScoresStore, lastScore.value);
 };
 
 /** ボタンをクリックするとゲームがスタートする  */
