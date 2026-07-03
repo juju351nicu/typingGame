@@ -104,7 +104,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - ルート単位の遅延読み込みと Markdown renderer の分割により、初期JSと blog chunk の肥大化を軽減
 - スコア初期化前に確認ダイアログを表示し、誤操作で履歴を消しにくいように改善
 - スマホ幅でもゲーム画面、リザルト画面、ランキング画面が見やすいようにレスポンシブ調整
-- Vitest で 24 ファイル / 113 テストを実装し、タイピング処理、ブログ前後ナビ、Markdown変換、frontmatter除去、fetchClient、blogPostService、タイムアタックタイマー、ランキング絞り込み、パフォーマンス推移、スコア保存、設定保存、テーマ切替、仮想キーボード表示設定、スコア初期化、localStorage 復元処理などを検証
+- Vitest で 25 ファイル / 117 テストを実装し、タイピング処理、ブログ前後ナビ、Markdown変換、frontmatter除去、fetchClient、blogPostService、タイムアタックタイマー、ランキング絞り込み、ランキング画面状態、パフォーマンス推移、スコア保存、設定保存、テーマ切替、仮想キーボード表示設定、スコア初期化、localStorage 復元処理などを検証
 
 ## Component Design
 
@@ -116,6 +116,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 | `useCompletedWordHandler.ts` | 単語一致時の破裂、スコア加算、削除後処理の制御 |
 | `useDisplayTheme.ts` | Piniaの表示設定とVuetifyテーマの同期 |
 | `useMarkdownRenderer.ts` | Markdown本文のHTML変換、コードハイライト、許可HTMLタグの設定 |
+| `useRankingPageState.ts` | ランキング画面のフィルター、集計、推移表示状態の管理 |
 | `useScoreReset.ts` | 保存済みスコアの初期化と成功アラート追加 |
 | `useTypingGameWords.ts` | 表示中単語、出題インデックス、単語追加・削除・完了判定の管理 |
 | `useTypingInput.ts` | 入力文字数、ミス数、ミス状態の算出 |

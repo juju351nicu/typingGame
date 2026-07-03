@@ -1,210 +1,46 @@
 <script setup lang="ts">
 import AppStateMessage from "@/components/AppStateMessage.vue";
 import { useGameScoresStore } from "@/stores/gameScores";
-import { computed, ref, watch } from "vue";
-import Const from "@/constants/const";
 import Util from "@/utils/gameUtils";
-import type {
-  GameRule,
-  GameScore,
-  PerformanceTrendItem,
-  PerformanceTrendMetric,
-  RankingScore,
-  TimeLimitSeconds,
-} from "@/types/interfaces";
+import {
+  getRankingRankClass,
+  useRankingPageState,
+} from "@/composables/useRankingPageState";
 
 /** 保存済みスコアを管理するストア */
 const gameScoresStore = useGameScoresStore();
 
-/** ランキング表の1ページあたりの表示件数 */
-const itemsPerPage = ref(Const.NUMBER_OF_ITEMS);
-
-/** ランキング表の表示件数の選択肢 */
-const pages = Const.DATA_TABLE_PAGES;
-
-/** ランキング表の列定義 */
-const headers = [
-  { title: "順位", align: "start", key: "rank" },
-  { title: "スコア", align: "end", key: "score" },
-  { title: "ランク", align: "center", key: "resultRank" },
-  { title: "WPM", align: "end", key: "wpm" },
-  { title: "正タイプ", align: "end", key: "correctCharacterCount" },
-  { title: "正確率", align: "end", key: "accuracy" },
-  { title: "ミス", align: "end", key: "missCount" },
-  { title: "難易度", align: "start", key: "mode" },
-  { title: "ルール", align: "start", key: "gameRule" },
-  { title: "制限時間", align: "start", key: "timeLimitSeconds" },
-  { title: "タイム", align: "start", key: "time" },
-  { title: "日付", align: "end", key: "date" },
-] as const;
-
-/** 難易度フィルター */
-const selectedMode = ref<number | null>(null);
-
-/** ゲームルールフィルター */
-const selectedGameRule = ref<GameRule | null>(null);
-
-/** タイムアタック制限時間フィルター */
-const selectedTimeLimitSeconds = ref<TimeLimitSeconds | null>(null);
-
-/** ランキング画面で選択中の表示タブ */
-const selectedRankingTab = ref("summary");
-
-/** パフォーマンス推移で選択中の指標 */
-const selectedTrendMetric = ref<PerformanceTrendMetric>("score");
-
-/** 難易度フィルターの選択肢 */
-const modeOptions = [{ title: "すべて", value: null }, ...Const.DIFFICULTY_LEVEL];
-
-/** ゲームルールフィルターの選択肢 */
-const gameRuleOptions = [
-  { title: "すべて", value: null },
-  ...Const.GAME_RULE_OPTIONS,
-];
-
-/** 制限時間フィルターの選択肢 */
-const timeLimitOptions = [
-  { title: "すべて", value: null },
-  ...Const.TIME_ATTACK_LIMITS,
-];
-
-/** 推移グラフの指標選択肢 */
-const trendMetricOptions: {
-  title: string;
-  value: PerformanceTrendMetric;
-  unit: string;
-}[] = [
-  { title: "スコア", value: "score", unit: "" },
-  { title: "WPM", value: "wpm", unit: "" },
-  { title: "正確率", value: "accuracy", unit: "%" },
-];
-
-/** 制限時間フィルターを表示するか */
-const isTimeAttackSelected = computed((): boolean => {
-  return selectedGameRule.value === Const.GAME_RULE.TIME_ATTACK;
-});
-
-/** ランキング絞り込みに使う制限時間 */
-const activeTimeLimitSeconds = computed((): TimeLimitSeconds | null => {
-  return isTimeAttackSelected.value ? selectedTimeLimitSeconds.value : null;
-});
-
-watch(isTimeAttackSelected, (isSelected) => {
-  if (!isSelected) {
-    selectedTimeLimitSeconds.value = null;
-  }
-});
-
-/** スコア一覧 */
-const gameScores = computed((): GameScore[] => {
-  return gameScoresStore.getGameScoreList;
-});
-
-/** ランキング用スコア一覧 */
-const rankingItems = computed((): RankingScore[] => {
-  return Util.createRankingScores(
-    gameScores.value,
-    selectedMode.value,
-    selectedGameRule.value,
-    activeTimeLimitSeconds.value
-  );
-});
-
-/** 直近プレイのパフォーマンス推移 */
-const performanceTrendItems = computed((): PerformanceTrendItem[] => {
-  return Util.createPerformanceTrendItems(
-    rankingItems.value,
-    selectedTrendMetric.value
-  );
-});
-
-/** 選択中の推移グラフ指標 */
-const selectedTrendMetricOption = computed(() => {
-  return (
-    trendMetricOptions.find(
-      (item) => item.value === selectedTrendMetric.value
-    ) ?? trendMetricOptions[0]
-  );
-});
-
-/** 推移グラフの見出し */
-const trendTitle = computed((): string => {
-  return `直近${selectedTrendMetricOption.value.title}推移`;
-});
-
-/** 推移グラフ値の表示 */
-const getTrendValueLabel = (item: PerformanceTrendItem): string => {
-  return `${item.metricValue}${selectedTrendMetricOption.value.unit}`;
-};
-
-/** 最高スコア */
-const bestScore = computed((): RankingScore | null => {
-  return rankingItems.value[0] ?? null;
-});
-
-/** 通常モードの最高スコア */
-const normalBestScore = computed((): RankingScore | null => {
-  return (
-    Util.createRankingScores(
-      gameScores.value,
-      selectedMode.value,
-      Const.GAME_RULE.NORMAL
-    )[0] ?? null
-  );
-});
-
-/** タイムアタックの最高スコア */
-const timeAttackBestScore = computed((): RankingScore | null => {
-  return (
-    Util.createRankingScores(
-      gameScores.value,
-      selectedMode.value,
-      Const.GAME_RULE.TIME_ATTACK,
-      activeTimeLimitSeconds.value
-    )[0] ?? null
-  );
-});
-
-/** 最高スコアの補足表示 */
-const bestScoreSummary = computed((): string => {
-  if (!bestScore.value) {
-    return "記録なし";
-  }
-
-  // ランク・難易度・ルール・タイムを1行で確認できるようにする。
-  return Util.getRankingScoreSummary(bestScore.value, { withGameRule: true });
-});
-
-/** 通常モード最高スコアの補足表示 */
-const normalBestScoreSummary = computed((): string => {
-  if (!normalBestScore.value) {
-    return "記録なし";
-  }
-
-  return Util.getRankingScoreSummary(normalBestScore.value);
-});
-
-/** タイムアタック最高スコアの補足表示 */
-const timeAttackBestScoreSummary = computed((): string => {
-  if (!timeAttackBestScore.value) {
-    return "記録なし";
-  }
-
-  return Util.getRankingScoreSummary(timeAttackBestScore.value);
-});
+const {
+  bestScore,
+  bestScoreSummary,
+  gameRuleOptions,
+  gameScores,
+  getTrendValueLabel,
+  headers,
+  isTimeAttackSelected,
+  itemsPerPage,
+  modeOptions,
+  normalBestScore,
+  normalBestScoreSummary,
+  pages,
+  performanceTrendItems,
+  rankingItems,
+  selectedGameRule,
+  selectedMode,
+  selectedRankingTab,
+  selectedTimeLimitSeconds,
+  selectedTrendMetric,
+  timeAttackBestScore,
+  timeAttackBestScoreSummary,
+  timeAttackGameRule,
+  timeLimitOptions,
+  trendMetricOptions,
+  trendTitle,
+} = useRankingPageState(gameScoresStore);
 
 /** ランク表示用CSSクラス */
 const getRankClass = (rank: number): string => {
-  if (rank === 1) {
-    return "rank-first";
-  }
-  if (rank === 2) {
-    return "rank-second";
-  }
-  if (rank === 3) {
-    return "rank-third";
-  }
-  return "rank-normal";
+  return getRankingRankClass(rank);
 };
 </script>
 <template>
@@ -395,7 +231,7 @@ const getRankClass = (rank: number): string => {
             <template v-slot:item.gameRule="{ item }">
               <v-chip
                 :color="
-                  Util.getGameRule(item) === Const.GAME_RULE.TIME_ATTACK
+                  Util.getGameRule(item) === timeAttackGameRule
                     ? 'deep-purple'
                     : 'grey'
                 "
