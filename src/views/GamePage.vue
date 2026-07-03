@@ -9,9 +9,10 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
 import { useTimeAttackTimer } from "@/composables/useTimeAttackTimer";
+import { useGamePageState } from "@/composables/useGamePageState";
 import Util from "@/utils/gameUtils";
 import Const from "@/constants/const";
-import type { Alert, GameScore } from "@/types/interfaces";
+import type { Alert } from "@/types/interfaces";
 
 interface TimerExpose {
   startTimer: () => void;
@@ -35,46 +36,20 @@ const {
   resetTimeAttackTimer,
 } = useTimeAttackTimer();
 
-/** ゲームスタートフラグ */
-const isGameStarted = ref(false);
-
-/** 経過時間 */
-const accumTime = ref(0);
-
-/** タイピングされている単語 */
-const inputValue = ref("");
-
-/** ゲームオーバー判定フラグ */
-const isGameOver = ref(false);
-
-/** ゲームスコア */
-const gameScore = ref(0);
-
-/** 入力した文字数 */
-const typedCharacterCount = ref(0);
-
-/** ミスした文字数 */
-const missCount = ref(0);
-
-/** 正しく入力した文字数 */
-const correctCharacterCount = ref(0);
-
-/** 入力中の文字が現在の単語と一致していないか */
-const isInputMiss = ref(false);
-
-/** 次に入力すべきキー */
-const nextKey = ref("");
-
-/**
- * 初期状態のゲームスコアを生成する
- * @returns 初期状態のゲームスコア
- */
-const createEmptyGameScore = (): GameScore => ({
-  score: 0,
-  mode: 0,
-  time: "",
-  date: "",
-});
+const {
+  accumTime,
+  correctCharacterCount,
+  gameScore,
+  inputValue,
+  isGameOver,
+  isGameStarted,
+  isInputMiss,
+  lastScore,
+  missCount,
+  nextKey,
+  resetGamePageState,
+  typedCharacterCount,
+} = useGamePageState();
 
 /** タイムアタックが選択されているか */
 const isTimeAttackMode = computed((): boolean => {
@@ -98,8 +73,6 @@ const {
   clearKeyFeedbackTimers,
 } = useTypingKeyboardFeedback();
 
-/** 最後に取得したゲームスコア */
-const lastScore = ref<GameScore>(createEmptyGameScore());
 /** ゲームの時間・スコア・モードを保存する */
 const saveGameScores = (): void => {
   lastScore.value = {
@@ -161,17 +134,7 @@ const restartGame = async (): Promise<void> => {
   resetTimeAttackTimer();
   clearKeyFeedbackTimers();
 
-  isGameStarted.value = false;
-  accumTime.value = 0;
-  inputValue.value = "";
-  isGameOver.value = false;
-  gameScore.value = 0;
-  typedCharacterCount.value = 0;
-  missCount.value = 0;
-  correctCharacterCount.value = 0;
-  isInputMiss.value = false;
-  nextKey.value = "";
-  lastScore.value = createEmptyGameScore();
+  resetGamePageState();
 
   await resetTypingPanel();
 };
