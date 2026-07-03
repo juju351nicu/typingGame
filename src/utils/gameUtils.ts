@@ -3,8 +3,9 @@ import Const from "@/constants/const";
 import type {
   GameRule,
   GameScore,
+  PerformanceTrendItem,
+  PerformanceTrendMetric,
   RankingScore,
-  ScoreTrendItem,
   TimeLimitSeconds,
 } from "@/types/interfaces";
 /**
@@ -277,11 +278,44 @@ const getRankingScoreSummary = (
 };
 
 /**
- * 直近プレイのスコア推移グラフ用データを作成する。
+ * 直近プレイのパフォーマンス推移グラフ用データを作成する。
  *
  * ランキング順位ではなく、プレイ日時の新しいものから指定件数を取り出し、
  * 画面では古い順に左から表示できるように並べ直す。
  *
+ * @param scores スコア一覧
+ * @param metric 表示する指標
+ * @param limit 表示する件数
+ * @returns パフォーマンス推移グラフ用データ
+ */
+const createPerformanceTrendItems = (
+  scores: GameScore[],
+  metric: PerformanceTrendMetric = "score",
+  limit = 5
+): PerformanceTrendItem[] => {
+  const recentScores = scores
+    .filter((item) => item[metric] != null)
+    .slice()
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, limit)
+    .reverse();
+
+  const maxValue = Math.max(
+    ...recentScores.map((item) => item[metric] ?? 0),
+    0
+  );
+
+  return recentScores.map((item, index) => ({
+    ...item,
+    playNumber: index + 1,
+    metricValue: item[metric] ?? 0,
+    barRatio:
+      maxValue > 0 ? Math.round(((item[metric] ?? 0) / maxValue) * 100) : 0,
+  }));
+};
+
+/**
+ * 直近プレイのスコア推移グラフ用データを作成する。
  * @param scores スコア一覧
  * @param limit 表示する件数
  * @returns スコア推移グラフ用データ
@@ -289,20 +323,8 @@ const getRankingScoreSummary = (
 const createScoreTrendItems = (
   scores: GameScore[],
   limit = 5
-): ScoreTrendItem[] => {
-  const recentScores = scores
-    .slice()
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .slice(0, limit)
-    .reverse();
-
-  const maxScore = Math.max(...recentScores.map((item) => item.score), 0);
-
-  return recentScores.map((item, index) => ({
-    ...item,
-    playNumber: index + 1,
-    barRatio: maxScore > 0 ? Math.round((item.score / maxScore) * 100) : 0,
-  }));
+): PerformanceTrendItem[] => {
+  return createPerformanceTrendItems(scores, "score", limit);
 };
 
 /**
@@ -369,6 +391,7 @@ export default {
   getScoreGameRuleLabel,
   getTimeLimitLabel,
   getRankingScoreSummary,
+  createPerformanceTrendItems,
   createScoreTrendItems,
   getColor,
   getLevel,

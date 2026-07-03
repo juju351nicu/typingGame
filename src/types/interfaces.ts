@@ -38,9 +38,13 @@ export interface RankingScore extends GameScore {
   rank: number;
   resultRank: string;
 }
-/** スコア推移グラフ表示用データ */
-export interface ScoreTrendItem extends GameScore {
+/** パフォーマンス推移グラフの指標 */
+export type PerformanceTrendMetric = "score" | "wpm" | "accuracy";
+
+/** パフォーマンス推移グラフ表示用データ */
+export interface PerformanceTrendItem extends GameScore {
   barRatio: number;
+  metricValue: number;
   playNumber: number;
 }
 export interface Item {

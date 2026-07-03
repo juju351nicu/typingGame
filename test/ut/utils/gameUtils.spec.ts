@@ -277,3 +277,58 @@ describe("createScoreTrendItems", () => {
     expect(result[0].barRatio).toBe(0);
   });
 });
+
+describe("createPerformanceTrendItems", () => {
+  const scores: GameScore[] = [
+    {
+      score: 5,
+      mode: 0,
+      time: "00:00:20.00",
+      date: "2026-06-20 10:00:00",
+      wpm: 12,
+      accuracy: 90,
+    },
+    {
+      score: 10,
+      mode: 1,
+      time: "00:00:25.00",
+      date: "2026-06-20 10:10:00",
+      wpm: 20,
+      accuracy: 95,
+    },
+    {
+      score: 20,
+      mode: 2,
+      time: "00:00:30.00",
+      date: "2026-06-20 10:20:00",
+      wpm: 40,
+      accuracy: 100,
+    },
+  ];
+
+  it("指定した指標で直近データを作成する", () => {
+    const result = Util.createPerformanceTrendItems(scores, "wpm", 2);
+
+    expect(result.map((item) => item.metricValue)).toEqual([20, 40]);
+    expect(result.map((item) => item.barRatio)).toEqual([50, 100]);
+    expect(result.map((item) => item.playNumber)).toEqual([1, 2]);
+  });
+
+  it("指標が未保存の履歴は対象外にする", () => {
+    const result = Util.createPerformanceTrendItems(
+      [
+        ...scores,
+        {
+          score: 30,
+          mode: 2,
+          time: "00:00:35.00",
+          date: "2026-06-20 10:30:00",
+        },
+      ],
+      "accuracy",
+      5
+    );
+
+    expect(result.map((item) => item.metricValue)).toEqual([90, 95, 100]);
+  });
+});

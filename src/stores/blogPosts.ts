@@ -1,7 +1,10 @@
 import type { PostIndex } from "@/types/interfaces";
 import { defineStore } from "pinia";
-import Fetcher from "@/utils/fetchClient";
 import Const from "@/constants/const";
+import {
+  fetchBlogPostBody,
+  fetchPostIndex,
+} from "@/services/blogPostService";
 /**
  * BlogPostsストアで使用する変数の型定義
  */
@@ -12,14 +15,6 @@ interface PostsState {
   isLoading: boolean;
 }
 
-/**
- * Markdown本文から記事管理用のfrontmatterを取り除く
- * @param markdown Markdown本文
- * @returns 表示用Markdown本文
- */
-const removeFrontmatter = (markdown: string): string => {
-  return markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
-};
 /**
  * BlogPostsストア情報
  */
@@ -94,13 +89,11 @@ export const useBlogPostsStore = defineStore("Posts", {
      */
     async recievePostIndex(): Promise<void> {
       this.isLoading = true;
-      const response = await Fetcher.getRequest(
-        Const.BLOG_PATH.POST_INDEX
-      ).then((response) => {
-        return response.json();
-      });
-      this.pageStatus = response;
-      this.isLoading = false;
+      try {
+        this.pageStatus = await fetchPostIndex();
+      } finally {
+        this.isLoading = false;
+      }
     },
     /**
      * 記事のマークダウン情報を取得する
@@ -109,22 +102,11 @@ export const useBlogPostsStore = defineStore("Posts", {
      */
     async recieveBlogPost(section: string, id: string): Promise<void> {
       this.isLoading = true;
-      const post = this.pageStatus.find((postIndex) => {
-        return postIndex.section === section && postIndex.id === id;
-      });
-      // posts_index.jsonにurlがある場合は、実ファイル由来のURLを優先して読み込む。
-      const postUrl = post?.url
-        ? `${import.meta.env.BASE_URL}${post.url}`
-        : Const.BLOG_PATH.POST_FOLDER + section + "/" + id + ".md";
-      const response = await Fetcher.getRequest(postUrl)
-        .then((response) => {
-          return response.text();
-        })
-        .then((body) => {
-          return removeFrontmatter(body);
-        });
-      this.postHtml = response;
-      this.isLoading = false;
+      try {
+        this.postHtml = await fetchBlogPostBody(this.pageStatus, section, id);
+      } finally {
+        this.isLoading = false;
+      }
     },
   },
 });

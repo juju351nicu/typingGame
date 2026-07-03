@@ -6,8 +6,9 @@ import Util from "@/utils/gameUtils";
 import type {
   GameRule,
   GameScore,
+  PerformanceTrendItem,
+  PerformanceTrendMetric,
   RankingScore,
-  ScoreTrendItem,
   TimeLimitSeconds,
 } from "@/types/interfaces";
 
@@ -48,6 +49,9 @@ const selectedTimeLimitSeconds = ref<TimeLimitSeconds | null>(null);
 /** ランキング画面で選択中の表示タブ */
 const selectedRankingTab = ref("summary");
 
+/** パフォーマンス推移で選択中の指標 */
+const selectedTrendMetric = ref<PerformanceTrendMetric>("score");
+
 /** 難易度フィルターの選択肢 */
 const modeOptions = [{ title: "すべて", value: null }, ...Const.DIFFICULTY_LEVEL];
 
@@ -61,6 +65,17 @@ const gameRuleOptions = [
 const timeLimitOptions = [
   { title: "すべて", value: null },
   ...Const.TIME_ATTACK_LIMITS,
+];
+
+/** 推移グラフの指標選択肢 */
+const trendMetricOptions: {
+  title: string;
+  value: PerformanceTrendMetric;
+  unit: string;
+}[] = [
+  { title: "スコア", value: "score", unit: "" },
+  { title: "WPM", value: "wpm", unit: "" },
+  { title: "正確率", value: "accuracy", unit: "%" },
 ];
 
 /** 制限時間フィルターを表示するか */
@@ -94,10 +109,32 @@ const rankingItems = computed((): RankingScore[] => {
   );
 });
 
-/** 直近プレイのスコア推移 */
-const scoreTrendItems = computed((): ScoreTrendItem[] => {
-  return Util.createScoreTrendItems(gameScores.value);
+/** 直近プレイのパフォーマンス推移 */
+const performanceTrendItems = computed((): PerformanceTrendItem[] => {
+  return Util.createPerformanceTrendItems(
+    rankingItems.value,
+    selectedTrendMetric.value
+  );
 });
+
+/** 選択中の推移グラフ指標 */
+const selectedTrendMetricOption = computed(() => {
+  return (
+    trendMetricOptions.find(
+      (item) => item.value === selectedTrendMetric.value
+    ) ?? trendMetricOptions[0]
+  );
+});
+
+/** 推移グラフの見出し */
+const trendTitle = computed((): string => {
+  return `直近${selectedTrendMetricOption.value.title}推移`;
+});
+
+/** 推移グラフ値の表示 */
+const getTrendValueLabel = (item: PerformanceTrendItem): string => {
+  return `${item.metricValue}${selectedTrendMetricOption.value.unit}`;
+};
 
 /** 最高スコア */
 const bestScore = computed((): RankingScore | null => {
@@ -221,7 +258,7 @@ const getRankClass = (rank: number): string => {
         density="comfortable"
       >
         <v-tab value="summary">サマリー</v-tab>
-        <v-tab value="trend">スコア推移</v-tab>
+        <v-tab value="trend">分析</v-tab>
         <v-tab value="table">ランキング表</v-tab>
       </v-tabs>
 
@@ -263,18 +300,34 @@ const getRankClass = (rank: number): string => {
         <v-window-item value="trend">
           <section class="trend-panel">
             <div class="trend-panel__header">
-              <h2>直近スコア推移</h2>
+              <h2>{{ trendTitle }}</h2>
               <p>
-                保存済みプレイ履歴の新しい5件を、プレイ順に表示します。
+                現在のフィルターに一致する新しい5件を、プレイ順に表示します。
               </p>
             </div>
-            <div v-if="scoreTrendItems.length > 0" class="trend-bars">
+            <v-btn-toggle
+              v-model="selectedTrendMetric"
+              class="trend-metric-toggle"
+              color="primary"
+              density="comfortable"
+              mandatory
+              variant="outlined"
+            >
+              <v-btn
+                v-for="option in trendMetricOptions"
+                :key="option.value"
+                :value="option.value"
+              >
+                {{ option.title }}
+              </v-btn>
+            </v-btn-toggle>
+            <div v-if="performanceTrendItems.length > 0" class="trend-bars">
               <div
-                v-for="item in scoreTrendItems"
+                v-for="item in performanceTrendItems"
                 :key="`${item.date}-${item.score}-${item.time}`"
                 class="trend-item"
               >
-                <span class="trend-score">{{ item.score }}</span>
+                <span class="trend-value">{{ getTrendValueLabel(item) }}</span>
                 <div class="trend-bar-track">
                   <div
                     class="trend-bar"
@@ -285,7 +338,7 @@ const getRankClass = (rank: number): string => {
               </div>
             </div>
             <p v-else class="trend-empty">
-              まだスコアがありません。ゲームをプレイすると推移が表示されます。
+              表示できる履歴がありません。ゲームをプレイすると推移が表示されます。
             </p>
           </section>
         </v-window-item>
@@ -478,6 +531,15 @@ const getRankClass = (rank: number): string => {
   margin: 6px 0 0;
 }
 
+.trend-metric-toggle {
+  margin-bottom: 18px;
+}
+
+.trend-metric-toggle :deep(.v-btn) {
+  min-width: 92px;
+  text-transform: none;
+}
+
 .trend-bars {
   align-items: end;
   display: grid;
@@ -495,7 +557,7 @@ const getRankClass = (rank: number): string => {
   min-width: 0;
 }
 
-.trend-score {
+.trend-value {
   color: #222222;
   font-size: 1.4rem;
   font-weight: bold;
@@ -653,6 +715,11 @@ const getRankClass = (rank: number): string => {
 
   .trend-panel {
     padding: 0;
+  }
+
+  .trend-metric-toggle {
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   .trend-bars {
