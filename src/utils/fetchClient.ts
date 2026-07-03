@@ -16,6 +16,25 @@ interface RequestData {
 }
 
 /**
+ * HTTPエラー時に送出する例外。
+ */
+export class HttpError extends Error {
+  status: number;
+  statusText: string;
+  url: string;
+
+  constructor(response: Response) {
+    super(
+      `HTTP request failed: ${response.status} ${response.statusText} (${response.url})`
+    );
+    this.name = "HttpError";
+    this.status = response.status;
+    this.statusText = response.statusText;
+    this.url = response.url;
+  }
+}
+
+/**
  * デフォルトのリクエストヘッダ情報
  */
 const defaultHeader: Record<string, string> = {
@@ -59,6 +78,9 @@ const postRequest = (uri: string, reqestData: unknown): Promise<Response> => {
  */
 const fetcher = async (requestDatas: RequestData): Promise<Response> => {
   const response = await fetch(requestDatas.requestUrl, requestDatas.options);
+  if (!response.ok) {
+    throw new HttpError(response);
+  }
   return response;
 };
 
