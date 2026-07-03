@@ -167,14 +167,13 @@ refactor: ブログ記事取得メソッド名をreceiveへ修正
 
 ```text
 scoreService
-blogPostService の一部責務分離
+blogPostService
 markdownUtils
 fetchClient
 ```
 
 追加候補:
 
-- `blogPostService` の取得URL組み立てテスト
 - APIレスポンス変換用 mapper を追加した場合のテスト
 
 ### 8. README / docs のPhase整理
