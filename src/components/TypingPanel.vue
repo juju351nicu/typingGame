@@ -21,13 +21,10 @@ import { useTypingTimers } from "@/composables/useTypingTimers";
 import { useTypingGameWords } from "@/composables/useTypingGameWords";
 import { handleCompletedWord } from "@/composables/useCompletedWordHandler";
 import {
-  getRandomWordLeft,
-  getResponsiveBalloonWidth,
-} from "@/composables/useTypingBoardLayout";
-import {
   resetTypingGame,
   startTypingGame,
 } from "@/composables/useTypingGameLifecycle";
+import { useTypingWordSpawner } from "@/composables/useTypingWordSpawner";
 import { useConfigStore } from "@/stores/config";
 import type { CurrentWord } from "@/types/interfaces";
 
@@ -213,37 +210,12 @@ const checkGameCompleted = () => {
   }
 };
 
-/** 「typing-panel」要素の横幅を取得する */
-const getWordsBoardWidth = () => {
-  return wordsBoard.value?.offsetWidth;
-};
-const getWordsBoardHeight = () => {
-  return wordsBoard.value?.offsetHeight;
-};
-
-/** 画面幅に応じた風船の想定幅を取得する */
-const getBalloonWidth = (): number => {
-  return getResponsiveBalloonWidth(
-    getWordsBoardWidth(),
-    configStore.getWordStyleWidth
-  );
-};
-
-/** 表示するタイピング単語の横位置を生成する */
-const getRandomPosition = () => {
-  return getRandomWordLeft(getWordsBoardWidth(), getBalloonWidth());
-};
-
-/** 表示するタイピングの単語を追加する */
-const addWord = () => {
-  const addedWord = addTypingWord(
-    getRandomPosition(),
-    getWordsBoardHeight() ?? 0
-  );
-  if (addedWord !== null) {
-    updateNextKey();
-  }
-};
+const { addWord } = useTypingWordSpawner({
+  wordsBoard,
+  defaultBalloonWidth: () => configStore.getWordStyleWidth,
+  addTypingWord,
+  updateNextKey,
+});
 
 onMounted(() => {
   shuffleTypingWords();
