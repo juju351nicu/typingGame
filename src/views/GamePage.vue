@@ -200,10 +200,6 @@ onUnmounted(() => {
   />
 </template>
 <style>
-html {
-  font-size: 10px;
-}
-
 .game-page {
   max-width: 1080px;
 }
