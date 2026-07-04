@@ -152,28 +152,23 @@ watch(isGameOver, (newValue, _oldValue) => {
   }
 });
 
-const { handleEsc, handleShift, handleTypingKeydown } =
-  useGamePageKeyboardHandlers({
-    timerComponent,
-    isGameStarted,
-    isGameOver,
-    isTimeAttackMode,
-    nextKey,
-    stopTimeAttackTimer,
-    resumeTimeAttackTimer,
-    updateKeyFeedback,
-  });
+const { handleKeydown } = useGamePageKeyboardHandlers({
+  timerComponent,
+  isGameStarted,
+  isGameOver,
+  isTimeAttackMode,
+  nextKey,
+  stopTimeAttackTimer,
+  resumeTimeAttackTimer,
+  updateKeyFeedback,
+});
 
 onMounted(() => {
-  window.addEventListener("keydown", handleEsc);
-  window.addEventListener("keydown", handleShift);
-  window.addEventListener("keydown", handleTypingKeydown);
+  window.addEventListener("keydown", handleKeydown);
 });
 
 onUnmounted(() => {
-  window.removeEventListener("keydown", handleEsc);
-  window.removeEventListener("keydown", handleShift);
-  window.removeEventListener("keydown", handleTypingKeydown);
+  window.removeEventListener("keydown", handleKeydown);
   resetTimeAttackTimer();
   clearKeyFeedbackTimers();
 });

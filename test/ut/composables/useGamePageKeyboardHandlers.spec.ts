@@ -92,6 +92,20 @@ describe("useGamePageKeyboardHandlers", () => {
     expect(state.updateKeyFeedback).toHaveBeenCalledWith("b", "a");
   });
 
+  it("keydownイベントをまとめて処理する", () => {
+    const { handlers, state } = createState();
+
+    handlers.handleKeydown(createKeyboardEvent("Escape"));
+    handlers.handleKeydown(createKeyboardEvent("Shift"));
+    handlers.handleKeydown(createKeyboardEvent("b"));
+
+    expect(state.timerComponent.value.stopTimer).toHaveBeenCalledTimes(1);
+    expect(state.timerComponent.value.startTimer).toHaveBeenCalledTimes(1);
+    expect(state.updateKeyFeedback).toHaveBeenCalledWith("Escape", "a");
+    expect(state.updateKeyFeedback).toHaveBeenCalledWith("Shift", "a");
+    expect(state.updateKeyFeedback).toHaveBeenCalledWith("b", "a");
+  });
+
   it("ゲーム未開始またはゲームオーバー時はキー入力を反映しない", () => {
     const { handlers, state } = createState();
     state.isGameStarted.value = false;

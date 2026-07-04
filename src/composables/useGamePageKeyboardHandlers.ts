@@ -89,8 +89,20 @@ export const useGamePageKeyboardHandlers = (
     options.updateKeyFeedback(event.key, options.nextKey.value);
   };
 
+  /**
+   * ゲーム画面のkeydownイベントをまとめて処理する。
+   *
+   * @param event キーボードイベント
+   */
+  const handleKeydown = (event: KeyboardEvent): void => {
+    handleEsc(event);
+    handleShift(event);
+    handleTypingKeydown(event);
+  };
+
   return {
     handleEsc,
+    handleKeydown,
     handleShift,
     handleTypingKeydown,
     stopTimerByKeyboard,
