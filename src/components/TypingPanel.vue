@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  computed,
   onMounted,
   onUnmounted,
   useTemplateRef,
@@ -25,24 +24,14 @@ import {
   startTypingGame,
 } from "@/composables/useTypingGameLifecycle";
 import { useTypingWordSpawner } from "@/composables/useTypingWordSpawner";
+import {
+  useTypingPanelModels,
+  type TypingPanelModelProps,
+} from "@/composables/useTypingPanelModels";
 import { useConfigStore } from "@/stores/config";
 import type { CurrentWord } from "@/types/interfaces";
 
-interface TypingPanelProps {
-  isGameStarted: boolean;
-  isResetTimer: boolean;
-  shouldFinishOnWordReachedTop: boolean;
-  gameScore: number;
-  isGameOver: boolean;
-  inputValue: string;
-  typedCharacterCount: number;
-  missCount: number;
-  correctCharacterCount: number;
-  isInputMiss: boolean;
-  nextKey: string;
-}
-
-const props = defineProps<TypingPanelProps>();
+const props = defineProps<TypingPanelModelProps>();
 
 const emit = defineEmits<{
   "update:isGameOver": [value: boolean];
@@ -58,68 +47,19 @@ const emit = defineEmits<{
 /** ゲームの設定情報に関するストア情報 */
 const configStore = useConfigStore();
 
-/** ゲームスタートフラグ */
-const isGameStartedFlag = computed((): boolean => {
-  return props.isGameStarted;
-});
-
-/** リセットフラグ */
-const isResetFlag = computed((): boolean => {
-  return props.isResetTimer;
-});
-
-/** 風船が画面上部に到達したときにゲーム終了するか */
-const shouldFinishOnWordReachedTop = computed((): boolean => {
-  return props.shouldFinishOnWordReachedTop;
-});
-
-/** ゲームスコア */
-const gameScore = computed({
-  get: (): number => props.gameScore,
-  set: (value: number) => emit("update:gameScore", value),
-});
-
-/** ゲームオーバーフラグ */
-const isGameOverFlag = computed({
-  get: (): boolean => props.isGameOver,
-  set: (value: boolean) => emit("update:isGameOver", value),
-});
-
-/** テキストボックスに入力された値 */
-const typeBoxValue = computed({
-  get: (): string => props.inputValue,
-  set: (value: string) => emit("update:inputValue", value),
-});
-
-/** 入力した文字数 */
-const typedCharacterCount = computed({
-  get: (): number => props.typedCharacterCount,
-  set: (value: number) => emit("update:typedCharacterCount", value),
-});
-
-/** ミスした文字数 */
-const missCount = computed({
-  get: (): number => props.missCount,
-  set: (value: number) => emit("update:missCount", value),
-});
-
-/** 正しく入力した文字数 */
-const correctCharacterCount = computed({
-  get: (): number => props.correctCharacterCount,
-  set: (value: number) => emit("update:correctCharacterCount", value),
-});
-
-/** 入力が現在の単語と一致していないか */
-const isInputMiss = computed({
-  get: (): boolean => props.isInputMiss,
-  set: (value: boolean) => emit("update:isInputMiss", value),
-});
-
-/** 次に入力すべきキー */
-const nextKey = computed({
-  get: (): string => props.nextKey,
-  set: (value: string) => emit("update:nextKey", value),
-});
+const {
+  correctCharacterCount,
+  gameScore,
+  isGameOverFlag,
+  isGameStartedFlag,
+  isInputMiss,
+  isResetFlag,
+  missCount,
+  nextKey,
+  shouldFinishOnWordReachedTop,
+  typeBoxValue,
+  typedCharacterCount,
+} = useTypingPanelModels(props, emit);
 
 const {
   currentWords,
