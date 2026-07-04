@@ -1,5 +1,5 @@
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { GameScore } from "@/types/interfaces";
 
 const createMemoryStorage = (): Storage => {
@@ -26,7 +26,31 @@ describe("gameScores store", () => {
     setActivePinia(createPinia());
   });
 
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("スコアを保存できる", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: 1,
+          score: 11,
+          mode: 1,
+          time: "00:00:33.70",
+          date: "2026-05-24 12:29:45",
+          wpm: 16,
+          accuracy: 98,
+          missCount: 1,
+          correctCharacterCount: 42,
+        }),
+        {
+          status: 201,
+          statusText: "Created",
+        }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
     const { useGameScoresStore } = await import("@/stores/gameScores");
     const gameScoresStore = useGameScoresStore();
     const score: GameScore = {
@@ -40,16 +64,34 @@ describe("gameScores store", () => {
       correctCharacterCount: 42,
     };
 
-    gameScoresStore.saveGameScoreList(score);
+    await gameScoresStore.saveGameScoreList(score);
+
+    expect(gameScoresStore.getGameScoreList).toEqual([score]);
+    expect(fetchMock).toHaveBeenCalled();
+  });
+
+  it("API保存に失敗してもスコアを保存できる", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("API error")));
+    const { useGameScoresStore } = await import("@/stores/gameScores");
+    const gameScoresStore = useGameScoresStore();
+    const score: GameScore = {
+      score: 11,
+      mode: 1,
+      time: "00:00:33.70",
+      date: "2026-05-24 12:29:45",
+    };
+
+    await gameScoresStore.saveGameScoreList(score);
 
     expect(gameScoresStore.getGameScoreList).toEqual([score]);
   });
 
   it("保存済みスコアを削除できる", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("API error")));
     const { useGameScoresStore } = await import("@/stores/gameScores");
     const gameScoresStore = useGameScoresStore();
 
-    gameScoresStore.saveGameScoreList({
+    await gameScoresStore.saveGameScoreList({
       score: 11,
       mode: 1,
       time: "00:00:33.70",

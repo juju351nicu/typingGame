@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import type { GameScore } from "@/types/interfaces";
-import { deleteGameScores, saveGameScore } from "@/services/scoreService";
+import {
+  deleteGameScores,
+  saveGameScore,
+  saveGameScoreApi,
+} from "@/services/scoreService";
 /**
  * ゲームスコアのストアで使用する型定義
  */
@@ -30,10 +34,16 @@ export const useGameScoresStore = defineStore("gameScores", {
   actions: {
     /**
      * 難易度・スコア・タイマーのオブジェクトを保存する。
-     * @param {*} data
+     * @param data ゲームスコア
      */
-    saveGameScoreList(data: GameScore) {
+    async saveGameScoreList(data: GameScore): Promise<void> {
       this.scores = saveGameScore(this.scores, data);
+
+      try {
+        await saveGameScoreApi(data);
+      } catch {
+        // API保存に失敗してもlocalStorage保存済みのプレイ結果は維持する。
+      }
     },
     /**
      * ストレージにあるスコア情報を削除する。
