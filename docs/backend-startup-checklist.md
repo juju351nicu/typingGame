@@ -9,6 +9,8 @@
 - フロントエンドの localStorage 保存はすぐに捨てず、API失敗時の退避先として残す。
 - API DTO と画面表示用の `GameScore` を混ぜない。
 
+既存の `/Users/shintaniken/Documents/workspace/todo-backend` の流用可否は [`todo-backend-reuse-assessment.md`](./todo-backend-reuse-assessment.md) に整理しています。
+
 ## 最初に作るAPI
 
 ```text
