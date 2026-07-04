@@ -8,13 +8,12 @@ import type { PostIndex } from "@/types/interfaces";
 import { getBlogPostNavigation } from "@/composables/useBlogPostNavigation";
 import { useBlogPostPageState } from "@/composables/useBlogPostPageState";
 
-/** Propsインタフェース定義 */
+/** ブログ詳細ページのルートパラメータ */
 interface Props {
   section: string;
   id: string;
 }
 
-/** Propsインタフェース定義 */
 const props = defineProps<Props>();
 
 const router = useRouter();
@@ -35,9 +34,7 @@ const errorMessage = computed((): string => {
   return blogPostsStore.getErrorMessage;
 });
 
-/**
- * ブログ記事一覧ページに戻る
- */
+/** ブログ記事一覧ページに戻る。 */
 const goBlogList = () => {
   router.push({
     path: "/blogPostList",
@@ -70,14 +67,16 @@ const goPost = (post: PostIndex) => {
   router.push(createBlogPostRoute(post));
 };
 
-/** Htmlに表示するマークダウン情報をセットする。 */
+/** 初期表示時に記事本文を読み込む。 */
 onBeforeMount(async () => {
   await loadPost(props.section, props.id);
 });
 
+/** 詳細ページ間の遷移時に記事本文を読み直す。 */
 onBeforeRouteUpdate(async (to) => {
   await loadPost(String(to.params.section), String(to.params.id));
 });
+
 onUnmounted(() => {
   blogPostsStore.$reset();
 });

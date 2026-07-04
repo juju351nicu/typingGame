@@ -191,9 +191,12 @@ fetchClient
 
 対応状況:
 
-- Phase5 / Phase6 の入口整理は一部完了。
+- Phase5 / Phase6 の入口整理は完了。
 - アラート通知は通知ごとの表示状態と自動非表示タイマーを持つ形に修正済み。
 - リトライ処理はページリロードではなく、ゲーム状態・タイマー・TypingPanel のリセットで完結する形に修正済み。
+- RankingPage はサマリー、推移、テーブル表示をコンポーネント分割済み。
+- TypingPanel は単語表示と watch 副作用を分離済み。
+- BlogPost / ResultModal はコメントと責務境界を軽く整理済み。
 
 ## P2: 余力があれば
 
@@ -251,10 +254,9 @@ build結果の変化:
 
 ## 推奨する次の作業順
 
-1. Phase5 / Phase6 のREADMEとdocsを整理する。
-2. API接続を見越した型整理を進める。
-3. loading / error / empty 表示の適用範囲を広げる。
-4. バックエンド接続前後で `docs/frontend-smoke-test-checklist.md` に沿って導線確認する。
+1. API接続を見越した型整理を進める。
+2. loading / error / empty 表示の適用範囲を広げる。
+3. バックエンド接続前後で `docs/frontend-smoke-test-checklist.md` に沿って導線確認する。
 
 ## バックエンド着手時の入口
 

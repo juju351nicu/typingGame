@@ -3,14 +3,15 @@ import { computed } from "vue";
 import { useResultModalDialog } from "@/composables/useResultModalDialog";
 import { useResultModalState } from "@/composables/useResultModalState";
 import type { GameScore } from "@/types/interfaces";
-/** Propsインタフェース定義 */
+
+/** リザルトモーダルの表示に必要な情報 */
 interface Props {
   isGameOver: boolean;
   lastScore: GameScore;
 }
 
-/** Propsオブジェクトの設定 */
 const props = defineProps<Props>();
+
 const emit = defineEmits<{
   "restart-game": [];
 }>();
@@ -45,7 +46,6 @@ const {
   timeLimitLabel,
   wpmLabel,
 } = useResultModalState(lastScore);
-
 </script>
 <template>
   <div class="text-center">

@@ -273,7 +273,7 @@ Frontend smoke test checklist: [`docs/frontend-smoke-test-checklist.md`](./docs/
   - プレイ回数
   - 苦手キー
 
-Status: 進行中
+Status: 主要機能は完了。Chart.js を使う高度な分析、プレイ回数、苦手キーは後続候補。
 
 ### Phase 6: バックエンドAPI連携
 
