@@ -1,8 +1,22 @@
 import {
+  finishTypingGame,
+  finishTypingGameIfCompleted,
+  finishTypingGameIfWordReachedTop,
   resetTypingGame,
   startTypingGame,
 } from "@/composables/useTypingGameLifecycle";
+import type { CurrentWord } from "@/types/interfaces";
 import { describe, expect, it, vi } from "vitest";
+
+const createWord = (top: number): CurrentWord => ({
+  characters: ["a"],
+  classList: [],
+  balloonClass: "balloon-red",
+  style: {
+    left: "0px",
+    top: `${top}px`,
+  },
+});
 
 describe("useTypingGameLifecycle", () => {
   it("ゲーム開始時に既存タイマー停止、設定保存、初回単語追加、タイマー開始を順番に実行する", () => {
@@ -56,5 +70,74 @@ describe("useTypingGameLifecycle", () => {
       "resetInputMiss",
       "updateNextKey",
     ]);
+  });
+
+  it("ゲーム終了時にゲームオーバー状態へ更新してタイマーを停止する", () => {
+    const calls: string[] = [];
+
+    finishTypingGame({
+      setGameOver: vi.fn(() => calls.push("setGameOver")),
+      stopTimers: vi.fn(() => calls.push("stopTimers")),
+    });
+
+    expect(calls).toEqual(["setGameOver", "stopTimers"]);
+  });
+
+  it("単語が上部到達した場合にゲームを終了する", () => {
+    const setGameOver = vi.fn();
+    const stopTimers = vi.fn();
+
+    finishTypingGameIfWordReachedTop({
+      currentWords: [createWord(-121)],
+      shouldFinishOnWordReachedTop: true,
+      setGameOver,
+      stopTimers,
+    });
+
+    expect(setGameOver).toHaveBeenCalledTimes(1);
+    expect(stopTimers).toHaveBeenCalledTimes(1);
+  });
+
+  it("上部到達を終了条件にしない場合はゲームを終了しない", () => {
+    const setGameOver = vi.fn();
+    const stopTimers = vi.fn();
+
+    finishTypingGameIfWordReachedTop({
+      currentWords: [createWord(-121)],
+      shouldFinishOnWordReachedTop: false,
+      setGameOver,
+      stopTimers,
+    });
+
+    expect(setGameOver).not.toHaveBeenCalled();
+    expect(stopTimers).not.toHaveBeenCalled();
+  });
+
+  it("すべての単語を処理し終えた場合にゲームを終了する", () => {
+    const setGameOver = vi.fn();
+    const stopTimers = vi.fn();
+
+    finishTypingGameIfCompleted({
+      isGameCompleted: () => true,
+      setGameOver,
+      stopTimers,
+    });
+
+    expect(setGameOver).toHaveBeenCalledTimes(1);
+    expect(stopTimers).toHaveBeenCalledTimes(1);
+  });
+
+  it("単語が残っている場合は完了扱いでゲームを終了しない", () => {
+    const setGameOver = vi.fn();
+    const stopTimers = vi.fn();
+
+    finishTypingGameIfCompleted({
+      isGameCompleted: () => false,
+      setGameOver,
+      stopTimers,
+    });
+
+    expect(setGameOver).not.toHaveBeenCalled();
+    expect(stopTimers).not.toHaveBeenCalled();
   });
 });

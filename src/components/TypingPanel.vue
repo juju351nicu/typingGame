@@ -11,16 +11,16 @@ import {
   applyCharacterFeedback,
   getWordFeedbackClass as getTypingWordFeedbackClass,
 } from "@/composables/useTypingWords";
-import {
-  moveWordsUp,
-  shouldFinishByWordReachedTop,
-} from "@/composables/useTypingWordPositions";
+import { moveWordsUp } from "@/composables/useTypingWordPositions";
 import { getNextKey } from "@/composables/useTypingKeyboard";
 import { handleTypingInputChange } from "@/composables/useTypingInputChange";
 import { useTypingTimers } from "@/composables/useTypingTimers";
 import { useTypingGameWords } from "@/composables/useTypingGameWords";
 import { handleCompletedWord } from "@/composables/useCompletedWordHandler";
 import {
+  finishTypingGame,
+  finishTypingGameIfCompleted,
+  finishTypingGameIfWordReachedTop,
   resetTypingGame,
   startTypingGame,
 } from "@/composables/useTypingGameLifecycle";
@@ -153,8 +153,12 @@ const BURST_ANIMATION_DURATION = 200;
 const { startTimers, stopTimers, registerTimeout } = useTypingTimers();
 /** ゲームを終了する */
 const gameFinish = () => {
-  isGameOverFlag.value = true;
-  stopTimers();
+  finishTypingGame({
+    setGameOver: () => {
+      isGameOverFlag.value = true;
+    },
+    stopTimers,
+  });
 };
 
 /** 出題された単語と入力した単語の値を比較判定する */
@@ -186,14 +190,14 @@ const wordsBoard = useTemplateRef("typing-panel");
  * 「typing-panel」要素の縦幅を下回った場合、ゲームを終了する。
  */
 const checkIsTopToBottom = () => {
-  if (
-    shouldFinishByWordReachedTop(
-      currentWords.value,
-      shouldFinishOnWordReachedTop.value
-    )
-  ) {
-    gameFinish();
-  }
+  finishTypingGameIfWordReachedTop({
+    currentWords: currentWords.value,
+    shouldFinishOnWordReachedTop: shouldFinishOnWordReachedTop.value,
+    setGameOver: () => {
+      isGameOverFlag.value = true;
+    },
+    stopTimers,
+  });
 };
 
 /**
@@ -205,9 +209,13 @@ const wordsTopToBottom = () => {
 
 /** ゲームが完了したかを判定する */
 const checkGameCompleted = () => {
-  if (isGameCompleted()) {
-    gameFinish();
-  }
+  finishTypingGameIfCompleted({
+    isGameCompleted,
+    setGameOver: () => {
+      isGameOverFlag.value = true;
+    },
+    stopTimers,
+  });
 };
 
 const { addWord } = useTypingWordSpawner({
