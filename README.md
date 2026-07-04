@@ -279,6 +279,8 @@ Status: 主要機能は完了。Chart.js を使う高度な分析、プレイ回
 
 Plan: [`docs/phase6-backend-api-plan.md`](./docs/phase6-backend-api-plan.md)
 
+Backend startup checklist: [`docs/backend-startup-checklist.md`](./docs/backend-startup-checklist.md)
+
 - Spring Boot API
   - スコア保存API
   - ランキング取得API

@@ -31,6 +31,8 @@ GET /api/scores
 GET /api/rankings
 ```
 
+具体的な着手チェックリストは [`backend-startup-checklist.md`](./backend-startup-checklist.md) にまとめています。
+
 ### POST /api/scores
 
 目的:
