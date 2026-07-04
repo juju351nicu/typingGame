@@ -3,7 +3,6 @@ import {
   onMounted,
   onUnmounted,
   useTemplateRef,
-  watch,
 } from "vue";
 import TypingWordsBoard from "@/components/TypingWordsBoard.vue";
 import { wordsData as WORD_DATAS } from "@/assets/words";
@@ -13,18 +12,15 @@ import {
 } from "@/composables/useTypingWords";
 import { moveWordsUp } from "@/composables/useTypingWordPositions";
 import { getNextKey } from "@/composables/useTypingKeyboard";
-import { handleTypingInputChange } from "@/composables/useTypingInputChange";
 import { useTypingTimers } from "@/composables/useTypingTimers";
 import { useTypingGameWords } from "@/composables/useTypingGameWords";
 import { completeTypingWord } from "@/composables/useTypingWordCompletion";
 import {
-  finishTypingGame,
   finishTypingGameIfCompleted,
   finishTypingGameIfWordReachedTop,
-  resetTypingGame,
-  startTypingGame,
 } from "@/composables/useTypingGameLifecycle";
 import { useTypingWordSpawner } from "@/composables/useTypingWordSpawner";
+import { useTypingPanelWatchers } from "@/composables/useTypingPanelWatchers";
 import {
   useTypingPanelModels,
   type TypingPanelModelProps,
@@ -92,15 +88,6 @@ const getWordFeedbackClass = (word: CurrentWord): string => {
 const BURST_ANIMATION_DURATION = 200;
 
 const { startTimers, stopTimers, registerTimeout } = useTypingTimers();
-/** ゲームを終了する */
-const gameFinish = () => {
-  finishTypingGame({
-    setGameOver: () => {
-      isGameOverFlag.value = true;
-    },
-    stopTimers,
-  });
-};
 
 /** 出題された単語と入力した単語の値を比較判定する */
 const checkWordEquality = (word: string) => {
@@ -175,58 +162,28 @@ onMounted(() => {
 onUnmounted(() => {
   stopTimers();
 });
-/**  ボタンをクリックするとゲームがスタートする */
-watch(isGameStartedFlag, (newValue, _oldValue) => {
-  if (newValue) {
-    startTypingGame({
-      stopTimers,
-      saveGameMode: () => configStore.saveGameMode(configStore.getGameMode),
-      startTimers,
-      addWord,
-      moveWords: wordsTopToBottom,
-      checkGameOver: checkIsTopToBottom,
-      addWordInterval: configStore.getInsertionSpeed,
-      moveWordInterval: configStore.getAnimationSpeed,
-    });
-  } else {
-    stopTimers();
-  }
-});
 
-/** 入力された単語をウォッチする */
-watch(typeBoxValue, (newValue, oldValue) => {
-  handleTypingInputChange({
-    currentWords: currentWords.value,
-    newValue,
-    oldValue,
-    isGameOver: isGameOverFlag.value,
-    addTypedCharacterCount: (delta) => {
-      typedCharacterCount.value += delta;
-    },
-    addMissCount: (delta) => {
-      missCount.value += delta;
-    },
-    setInputMiss: (value) => {
-      isInputMiss.value = value;
-    },
-    checkWordEquality,
-    checkCharacter,
-    updateNextKey,
-  });
-});
-
-/** リセットフラグをウォッチする */
-watch(isResetFlag, (newValue, _oldValue) => {
-  if (newValue) {
-    resetTypingGame({
-      stopTimers,
-      resetWords,
-      resetInputMiss: () => {
-        isInputMiss.value = false;
-      },
-      updateNextKey,
-    });
-  }
+useTypingPanelWatchers({
+  isGameStartedFlag,
+  isResetFlag,
+  typeBoxValue,
+  currentWords,
+  isGameOverFlag,
+  typedCharacterCount,
+  missCount,
+  isInputMiss,
+  stopTimers,
+  saveGameMode: () => configStore.saveGameMode(configStore.getGameMode),
+  startTimers,
+  addWord,
+  moveWords: wordsTopToBottom,
+  checkGameOver: checkIsTopToBottom,
+  getAddWordInterval: () => configStore.getInsertionSpeed,
+  getMoveWordInterval: () => configStore.getAnimationSpeed,
+  resetWords,
+  updateNextKey,
+  checkWordEquality,
+  checkCharacter,
 });
 </script>
 <template>
