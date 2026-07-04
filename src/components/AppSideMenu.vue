@@ -2,6 +2,7 @@
 import { computed, ref } from "vue";
 
 interface SideMenuProps {
+  /** サイドメニューを開いているか */
   drawer: boolean;
 }
 
@@ -18,13 +19,14 @@ const props = defineProps<SideMenuProps>();
 const emit = defineEmits<{
   "update:drawer": [value: boolean];
 }>();
-/** サイドメニューフラグ */
+
+/** 親コンポーネントと同期するサイドメニューの開閉状態 */
 const drawer = computed({
   get: (): boolean => props.drawer,
   set: (value: boolean) => emit("update:drawer", value),
 });
 
-/** サイドメニュー */
+/** サイドメニューに表示するページリンク */
 const links = ref<MenuLink[]>([
   {
     to: { name: "GamePage" },
@@ -55,5 +57,3 @@ const links = ref<MenuLink[]>([
     </v-list>
   </v-navigation-drawer>
 </template>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>

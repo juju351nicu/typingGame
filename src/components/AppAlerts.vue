@@ -3,12 +3,11 @@ import { computed } from "vue";
 import type { Alert } from "@/types/interfaces";
 import { useAppAlertVisibility } from "@/composables/useAppAlertVisibility";
 
-/** Propsインタフェース定義 */
 interface Props {
+  /** 画面上部に表示するアラート一覧 */
   alerts: Alert[];
 }
 
-/** Propsオブジェクトの設定 */
 const props = defineProps<Props>();
 
 /** メッセージ情報 */
