@@ -16,7 +16,7 @@ import {
   shouldFinishByWordReachedTop,
 } from "@/composables/useTypingWordPositions";
 import { getNextKey } from "@/composables/useTypingKeyboard";
-import { getTypingInputResult } from "@/composables/useTypingInput";
+import { handleTypingInputChange } from "@/composables/useTypingInputChange";
 import { useTypingTimers } from "@/composables/useTypingTimers";
 import { useTypingGameWords } from "@/composables/useTypingGameWords";
 import { handleCompletedWord } from "@/composables/useCompletedWordHandler";
@@ -244,20 +244,24 @@ watch(isGameStartedFlag, (newValue, _oldValue) => {
 
 /** 入力された単語をウォッチする */
 watch(typeBoxValue, (newValue, oldValue) => {
-  if (isGameOverFlag.value) {
-    return;
-  }
-  const inputResult = getTypingInputResult(
-    currentWords.value,
+  handleTypingInputChange({
+    currentWords: currentWords.value,
     newValue,
-    oldValue
-  );
-  typedCharacterCount.value += inputResult.typedCharacterDelta;
-  missCount.value += inputResult.missCountDelta;
-  isInputMiss.value = inputResult.isInputMiss;
-  checkWordEquality(newValue);
-  checkCharacter(newValue);
-  updateNextKey();
+    oldValue,
+    isGameOver: isGameOverFlag.value,
+    addTypedCharacterCount: (delta) => {
+      typedCharacterCount.value += delta;
+    },
+    addMissCount: (delta) => {
+      missCount.value += delta;
+    },
+    setInputMiss: (value) => {
+      isInputMiss.value = value;
+    },
+    checkWordEquality,
+    checkCharacter,
+    updateNextKey,
+  });
 });
 
 /** リセットフラグをウォッチする */
