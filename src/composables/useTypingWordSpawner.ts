@@ -5,9 +5,16 @@ import {
 } from "@/composables/useTypingBoardLayout";
 import type { Ref } from "vue";
 
+export interface TypingWordsBoardSize {
+  /** 単語表示エリアの横幅 */
+  offsetWidth?: number;
+  /** 単語表示エリアの縦幅 */
+  offsetHeight?: number;
+}
+
 interface TypingWordSpawnerOptions {
   /** 単語表示エリアの要素参照 */
-  wordsBoard: Readonly<Ref<HTMLElement | null>>;
+  wordsBoard: Readonly<Ref<TypingWordsBoardSize | null>>;
   /** PC幅で使用する風船幅 */
   defaultBalloonWidth: () => number;
   /** 表示中単語リストへ単語を追加する処理 */
