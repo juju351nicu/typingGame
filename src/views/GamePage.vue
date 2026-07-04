@@ -11,6 +11,10 @@ import { useConfigStore } from "@/stores/config";
 import { useTimeAttackTimer } from "@/composables/useTimeAttackTimer";
 import { useGamePageState } from "@/composables/useGamePageState";
 import {
+  useGamePageKeyboardHandlers,
+  type GameTimerControl,
+} from "@/composables/useGamePageKeyboardHandlers";
+import {
   createGamePageScore,
   saveGamePageScore,
 } from "@/composables/useGamePageScore";
@@ -18,19 +22,13 @@ import Util from "@/utils/gameUtils";
 import Const from "@/constants/const";
 import type { Alert } from "@/types/interfaces";
 
-interface TimerExpose {
-  startTimer: () => void;
-  stopTimer: () => void;
-  resetTimer: () => void;
-}
-
 /** ゲームスコアに関するストア情報 */
 const gameScoresStore = useGameScoresStore();
 
 /** ゲーム難易度に関するストア情報 */
 const configStore = useConfigStore();
 /** Timerコンポーネントに関する情報 */
-const timerComponent = ref<TimerExpose | null>(null);
+const timerComponent = ref<GameTimerControl | null>(null);
 
 const {
   remainingSeconds,
@@ -166,35 +164,17 @@ watch(isGameOver, (newValue, _oldValue) => {
   }
 });
 
-/** Escapeキーでタイマーを停止する */
-const stopTimerByKeyboard = () => {
-  timerComponent.value?.stopTimer?.();
-  if (isTimeAttackMode.value) {
-    stopTimeAttackTimer();
-  }
-};
-
-const handleEsc = (event: KeyboardEvent) => {
-  if (event.key === "Escape") {
-    stopTimerByKeyboard();
-  }
-};
-const handleShift = (event: KeyboardEvent) => {
-  if (event.key === "Shift" && isGameStarted.value && !isGameOver.value) {
-    timerComponent.value?.startTimer?.();
-    if (isTimeAttackMode.value) {
-      resumeTimeAttackTimer();
-    }
-  }
-};
-
-const handleTypingKeydown = (event: KeyboardEvent) => {
-  if (!isGameStarted.value || isGameOver.value) {
-    return;
-  }
-
-  updateKeyFeedback(event.key, nextKey.value);
-};
+const { handleEsc, handleShift, handleTypingKeydown } =
+  useGamePageKeyboardHandlers({
+    timerComponent,
+    isGameStarted,
+    isGameOver,
+    isTimeAttackMode,
+    nextKey,
+    stopTimeAttackTimer,
+    resumeTimeAttackTimer,
+    updateKeyFeedback,
+  });
 
 onMounted(() => {
   window.addEventListener("keydown", handleEsc);
