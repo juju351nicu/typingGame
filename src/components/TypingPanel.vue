@@ -114,12 +114,8 @@ const checkWordEquality = (word: string) => {
 /** 単語を表示するテンプレート要素 */
 const wordsBoard = useTemplateRef("typing-panel");
 
-/**
- *  表示される単語のHTML要素の高さを比較判定する。
- *  現在表示されている単語と「typing-panel」要素の縦幅を比較する。
- * 「typing-panel」要素の縦幅を下回った場合、ゲームを終了する。
- */
-const checkIsTopToBottom = () => {
+/** 単語が上端到達した場合にゲームを終了する。 */
+const checkWordReachedTop = () => {
   finishTypingGameIfWordReachedTop({
     currentWords: currentWords.value,
     shouldFinishOnWordReachedTop: shouldFinishOnWordReachedTop.value,
@@ -177,7 +173,7 @@ useTypingPanelWatchers({
   startTimers,
   addWord,
   moveWords: wordsTopToBottom,
-  checkGameOver: checkIsTopToBottom,
+  checkGameOver: checkWordReachedTop,
   getAddWordInterval: () => configStore.getInsertionSpeed,
   getMoveWordInterval: () => configStore.getAnimationSpeed,
   resetWords,
