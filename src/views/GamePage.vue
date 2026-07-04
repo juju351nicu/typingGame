@@ -5,7 +5,7 @@ import ResultModal from "@/components/ResultModal.vue";
 import GameTimer from "@/components/GameTimer.vue";
 import VirtualKeyboard from "@/components/VirtualKeyboard.vue";
 import { useTypingKeyboardFeedback } from "@/composables/useTypingKeyboardFeedback";
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
 import { useTimeAttackTimer } from "@/composables/useTimeAttackTimer";
@@ -16,10 +16,7 @@ import {
 } from "@/composables/useGamePageKeyboardHandlers";
 import { createGamePageEnvironmentAlerts } from "@/composables/useGamePageEnvironmentAlerts";
 import { useGamePageRestart } from "@/composables/useGamePageRestart";
-import {
-  createGamePageScore,
-  saveGamePageScore,
-} from "@/composables/useGamePageScore";
+import { useGamePageSession } from "@/composables/useGamePageSession";
 import type { Alert } from "@/types/interfaces";
 
 /** ゲームスコアに関するストア情報 */
@@ -75,37 +72,23 @@ const {
   clearKeyFeedbackTimers,
 } = useTypingKeyboardFeedback();
 
-/** ゲームの時間・スコア・モードを保存する */
-const saveGameScores = (): void => {
-  lastScore.value = createGamePageScore({
-    score: gameScore.value,
-    mode: configStore.getGameMode,
-    gameRule: configStore.getGameRule,
-    timeLimitSeconds: configStore.getTimeLimitSeconds,
-    isTimeAttackMode: isTimeAttackMode.value,
-    accumTime: accumTime.value,
-    typedCharacterCount: typedCharacterCount.value,
-    missCount: missCount.value,
-    correctCharacterCount: correctCharacterCount.value,
-  });
-  saveGamePageScore(gameScoresStore, lastScore.value);
-};
-
-/** ボタンをクリックするとゲームがスタートする  */
-const startGame = () => {
-  isGameStarted.value = true;
-
-  if (isTimeAttackMode.value) {
-    startTimeAttackTimer({
-      timeLimitSeconds: configStore.getTimeLimitSeconds,
-      onTimeUp: () => {
-        isGameOver.value = true;
-      },
-    });
-  } else {
-    resetTimeAttackTimer();
-  }
-};
+const { startGame } = useGamePageSession({
+  gameScoresStore,
+  configStore,
+  timerComponent,
+  isTimeAttackMode,
+  accumTime,
+  correctCharacterCount,
+  gameScore,
+  isGameOver,
+  isGameStarted,
+  lastScore,
+  missCount,
+  typedCharacterCount,
+  startTimeAttackTimer,
+  stopTimeAttackTimer,
+  resetTimeAttackTimer,
+});
 
 const { isResetTimer, restartGame } = useGamePageRestart({
   timerComponent,
@@ -119,16 +102,6 @@ const alerts = ref<Alert[]>([]);
 onMounted(() => {
   alerts.value.push(...createGamePageEnvironmentAlerts());
 });
-/** ゲームオーバーフラグ */
-watch(isGameOver, (newValue, _oldValue) => {
-  if (newValue) {
-    // ゲーム終了時はタイマーを止め、リザルト保存を確定する。
-    timerComponent.value?.stopTimer?.();
-    stopTimeAttackTimer();
-    saveGameScores();
-  }
-});
-
 const { handleKeydown } = useGamePageKeyboardHandlers({
   timerComponent,
   isGameStarted,
