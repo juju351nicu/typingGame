@@ -61,6 +61,30 @@ export const getRankingRankClass = (rank: number): string => {
 };
 
 /**
+ * 未保存のメトリクス値をハイフン表示へ変換する。
+ *
+ * @param value 表示対象の値
+ * @returns 表示用文字列
+ */
+export const formatNullableMetric = (
+  value: number | string | null | undefined
+): string => {
+  return value != null ? String(value) : "-";
+};
+
+/**
+ * 正確率を表示用文字列へ変換する。
+ *
+ * @param value 正確率
+ * @returns 表示用文字列
+ */
+export const formatAccuracyMetric = (
+  value: number | null | undefined
+): string => {
+  return value != null ? `${value}%` : "-";
+};
+
+/**
  * ランキング画面の表示状態と集計値を管理する。
  *
  * フィルター、ランキング一覧、最高スコア、パフォーマンス推移をまとめ、
@@ -225,12 +249,50 @@ export const useRankingPageState = (gameScoresStore: GameScoresReader) => {
     return `${item.metricValue}${selectedTrendMetricOption.value.unit}`;
   };
 
+  /** リザルトランクの色を取得する。 */
+  const getResultRankColor = (rank: string): string => {
+    return Util.getResultRankColor(rank);
+  };
+
+  /** 難易度の色を取得する。 */
+  const getModeColor = (mode: number): string => {
+    return Util.getColor(mode);
+  };
+
+  /** 難易度の表示名を取得する。 */
+  const getModeLabel = (mode: number): string => {
+    return Util.getLevel(mode);
+  };
+
+  /** スコアに保存されたゲームルールを取得する。 */
+  const getScoreGameRule = (score: GameScore): GameRule => {
+    return Util.getGameRule(score);
+  };
+
+  /** スコアに保存されたゲームルールの表示名を取得する。 */
+  const getScoreGameRuleLabel = (score: GameScore): string => {
+    return Util.getScoreGameRuleLabel(score);
+  };
+
+  /** タイムアタック制限時間の表示名を取得する。 */
+  const getTimeLimitLabel = (score: GameScore): string => {
+    return Util.getTimeLimitLabel(score);
+  };
+
   return {
     activeTimeLimitSeconds,
     bestScore,
     bestScoreSummary,
     gameRuleOptions,
     gameScores,
+    formatAccuracyMetric,
+    formatNullableMetric,
+    getModeColor,
+    getModeLabel,
+    getResultRankColor,
+    getScoreGameRule,
+    getScoreGameRuleLabel,
+    getTimeLimitLabel,
     getTrendValueLabel,
     headers: rankingHeaders,
     isTimeAttackSelected,

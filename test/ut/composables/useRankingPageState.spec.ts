@@ -1,4 +1,6 @@
 import {
+  formatAccuracyMetric,
+  formatNullableMetric,
   getRankingRankClass,
   useRankingPageState,
 } from "@/composables/useRankingPageState";
@@ -106,5 +108,30 @@ describe("useRankingPageState", () => {
     expect(getRankingRankClass(2)).toBe("rank-second");
     expect(getRankingRankClass(3)).toBe("rank-third");
     expect(getRankingRankClass(4)).toBe("rank-normal");
+  });
+
+  it("ランキング表のメトリクス表示値を整形する", () => {
+    expect(formatNullableMetric(20)).toBe("20");
+    expect(formatNullableMetric("30")).toBe("30");
+    expect(formatNullableMetric(null)).toBe("-");
+    expect(formatNullableMetric(undefined)).toBe("-");
+    expect(formatAccuracyMetric(95)).toBe("95%");
+    expect(formatAccuracyMetric(null)).toBe("-");
+    expect(formatAccuracyMetric(undefined)).toBe("-");
+  });
+
+  it("ランキング表のチップ表示に使う値を返す", () => {
+    const store = reactive({ getGameScoreList: scores });
+    const rankingState = useRankingPageState(store);
+    const score = scores[0];
+
+    expect(rankingState.getResultRankColor("A")).toBe("#4dabf7");
+    expect(rankingState.getModeColor(1)).toBe("#ff00ff");
+    expect(rankingState.getModeLabel(1)).toBe("普");
+    expect(rankingState.getScoreGameRule(score)).toBe(
+      Const.GAME_RULE.TIME_ATTACK
+    );
+    expect(rankingState.getScoreGameRuleLabel(score)).toBe("タイムアタック");
+    expect(rankingState.getTimeLimitLabel(score)).toBe("30秒");
   });
 });

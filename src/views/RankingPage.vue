@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import AppStateMessage from "@/components/AppStateMessage.vue";
 import { useGameScoresStore } from "@/stores/gameScores";
-import Util from "@/utils/gameUtils";
 import {
   getRankingRankClass,
   useRankingPageState,
@@ -13,8 +12,16 @@ const gameScoresStore = useGameScoresStore();
 const {
   bestScore,
   bestScoreSummary,
+  formatAccuracyMetric,
+  formatNullableMetric,
   gameRuleOptions,
   gameScores,
+  getModeColor,
+  getModeLabel,
+  getResultRankColor,
+  getScoreGameRule,
+  getScoreGameRuleLabel,
+  getTimeLimitLabel,
   getTrendValueLabel,
   headers,
   isTimeAttackSelected,
@@ -204,44 +211,44 @@ const getRankClass = (rank: number): string => {
             <template v-slot:item.resultRank="{ value }">
               <span
                 class="result-rank-badge"
-                :style="{ backgroundColor: Util.getResultRankColor(value) }"
+                :style="{ backgroundColor: getResultRankColor(value) }"
               >
                 {{ value }}
               </span>
             </template>
             <template v-slot:item.wpm="{ value }">
-              <span class="metric-cell">{{ value ?? "-" }}</span>
+              <span class="metric-cell">{{ formatNullableMetric(value) }}</span>
             </template>
             <template v-slot:item.correctCharacterCount="{ value }">
-              <span class="metric-cell">{{ value ?? "-" }}</span>
+              <span class="metric-cell">{{ formatNullableMetric(value) }}</span>
             </template>
             <template v-slot:item.accuracy="{ value }">
               <span class="metric-cell">
-                {{ value != null ? `${value}%` : "-" }}
+                {{ formatAccuracyMetric(value) }}
               </span>
             </template>
             <template v-slot:item.missCount="{ value }">
-              <span class="metric-cell">{{ value ?? "-" }}</span>
+              <span class="metric-cell">{{ formatNullableMetric(value) }}</span>
             </template>
             <template v-slot:item.mode="{ value }">
-              <v-chip :color="Util.getColor(value)">
-                {{ Util.getLevel(value) }}
+              <v-chip :color="getModeColor(value)">
+                {{ getModeLabel(value) }}
               </v-chip>
             </template>
             <template v-slot:item.gameRule="{ item }">
               <v-chip
                 :color="
-                  Util.getGameRule(item) === timeAttackGameRule
+                  getScoreGameRule(item) === timeAttackGameRule
                     ? 'deep-purple'
                     : 'grey'
                 "
                 variant="tonal"
               >
-                {{ Util.getScoreGameRuleLabel(item) }}
+                {{ getScoreGameRuleLabel(item) }}
               </v-chip>
             </template>
             <template v-slot:item.timeLimitSeconds="{ item }">
-              <span class="metric-cell">{{ Util.getTimeLimitLabel(item) }}</span>
+              <span class="metric-cell">{{ getTimeLimitLabel(item) }}</span>
             </template>
           </v-data-table>
         </v-window-item>
