@@ -3,21 +3,23 @@ import { computed } from "vue";
 import { useBlogPagingState } from "@/composables/useBlogPagingState";
 import type { PostIndex } from "@/types/interfaces";
 
-/** Propsインタフェース定義 */
 interface Props {
+  /** 現在ページに表示する記事一覧 */
   pageStatus: PostIndex[];
+  /** 記事の総件数 */
   pageCounts: number;
+  /** 表示中のページ番号 */
   currentPage: number;
 }
-/** Emitsインタフェース定義 */
+
 interface Emits {
   (event: "doPostDetail", section: string, id: string): void;
   (event: "toNumberPage", pageNumber: number): void;
 }
-/** Propsインタフェース定義 */
+
 const props = defineProps<Props>();
-/** Emitの設定 */
 const emit = defineEmits<Emits>();
+
 /** 記事の一覧情報 */
 const pageStatus = computed(() => {
   return props.pageStatus;
@@ -36,14 +38,12 @@ const { listHeader, showPaging, totalPages } = useBlogPagingState(
   totalCount,
   currentPage
 );
-/**
- *
- * @param entry
- */
+/** 選択された記事の詳細ページ表示を親へ通知する */
 const doPostDetail = (entry: { section: string; id: string }): void => {
   emit("doPostDetail", entry.section, entry.id);
 };
-/** ページングの数字ボタン押下時または、ページ番号入力時のイベント */
+
+/** ページ番号の変更を親へ通知する */
 const toNumberPage = (pageNumber: number) => {
   emit("toNumberPage", pageNumber);
 };
@@ -53,7 +53,12 @@ const toNumberPage = (pageNumber: number) => {
     <p class="blog-list__header">{{ listHeader }}</p>
     <v-row dense class="blog-list__items">
       <v-col v-for="entry in pageStatus" :key="entry.id" cols="12">
-        <v-card class="blog-card mx-auto" max-width="800" hover @click="doPostDetail(entry)">
+        <v-card
+          class="blog-card mx-auto"
+          max-width="800"
+          hover
+          @click="doPostDetail(entry)"
+        >
           <v-card-item>
             <v-card-title class="blog-card__title">
               {{ entry.title }}

@@ -1,26 +1,31 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { BreadcrumbItem } from 'vuetify/lib/components/VBreadcrumbs/VBreadcrumbs';
+import { computed } from "vue";
 
-/** Propsインタフェース定義 */
-interface Props {
-    items: BreadcrumbItem[];
+interface BreadcrumbLink {
+  title: string;
+  disabled?: boolean;
+  href?: string;
+  to?: string;
 }
 
-/** Propsオブジェクトの設定 */
+interface Props {
+  /** パンくずリストに表示する項目 */
+  items: BreadcrumbLink[];
+}
+
 const props = defineProps<Props>();
 
-/** メッセージ情報 */
-const items = computed((): BreadcrumbItem[] => {
-    return props.items;
+/** Vuetifyのパンくずリストに渡す表示項目 */
+const items = computed((): BreadcrumbLink[] => {
+  return props.items;
 });
 </script>
 <template>
-    <div>
-        <v-breadcrumbs :items="items">
-            <template v-slot:divider>
-                <v-icon icon="mdi-chevron-right"></v-icon>
-            </template>
-        </v-breadcrumbs>
-    </div>
+  <div>
+    <v-breadcrumbs :items="items">
+      <template v-slot:divider>
+        <v-icon icon="mdi-chevron-right"></v-icon>
+      </template>
+    </v-breadcrumbs>
+  </div>
 </template>
