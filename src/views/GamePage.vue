@@ -5,7 +5,7 @@ import ResultModal from "@/components/ResultModal.vue";
 import GameTimer from "@/components/GameTimer.vue";
 import VirtualKeyboard from "@/components/VirtualKeyboard.vue";
 import { useTypingKeyboardFeedback } from "@/composables/useTypingKeyboardFeedback";
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
 import { useTimeAttackTimer } from "@/composables/useTimeAttackTimer";
@@ -15,6 +15,7 @@ import {
   type GameTimerControl,
 } from "@/composables/useGamePageKeyboardHandlers";
 import { createGamePageEnvironmentAlerts } from "@/composables/useGamePageEnvironmentAlerts";
+import { useGamePageRestart } from "@/composables/useGamePageRestart";
 import {
   createGamePageScore,
   saveGamePageScore,
@@ -106,36 +107,12 @@ const startGame = () => {
   }
 };
 
-/** TypingPanelへリセットを通知するフラグ */
-const isResetTimer = ref(false);
-
-/**
- * TypingPanelへリセットを通知する
- *
- * trueにした後で次の描画タイミングにfalseへ戻し、
- * 子コンポーネント側のwatchが次回リトライでも反応できる状態に戻す。
- */
-const resetTypingPanel = async (): Promise<void> => {
-  isResetTimer.value = true;
-  await nextTick();
-  isResetTimer.value = false;
-};
-
-/**
- * モーダルにてリセットボタン押下時、データをリセットする
- *
- * ページリロードではなく、親コンポーネントで保持しているゲーム状態と
- * 子コンポーネントのタイマー・入力状態を初期化する。
- */
-const restartGame = async (): Promise<void> => {
-  timerComponent.value?.resetTimer?.();
-  resetTimeAttackTimer();
-  clearKeyFeedbackTimers();
-
-  resetGamePageState();
-
-  await resetTypingPanel();
-};
+const { isResetTimer, restartGame } = useGamePageRestart({
+  timerComponent,
+  resetTimeAttackTimer,
+  clearKeyFeedbackTimers,
+  resetGamePageState,
+});
 
 /** アラートに表示するメッセージ */
 const alerts = ref<Alert[]>([]);
