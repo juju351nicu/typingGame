@@ -15,7 +15,7 @@ import { getNextKey } from "@/composables/useTypingKeyboard";
 import { handleTypingInputChange } from "@/composables/useTypingInputChange";
 import { useTypingTimers } from "@/composables/useTypingTimers";
 import { useTypingGameWords } from "@/composables/useTypingGameWords";
-import { handleCompletedWord } from "@/composables/useCompletedWordHandler";
+import { completeTypingWord } from "@/composables/useTypingWordCompletion";
 import {
   finishTypingGame,
   finishTypingGameIfCompleted,
@@ -103,16 +103,18 @@ const gameFinish = () => {
 
 /** 出題された単語と入力した単語の値を比較判定する */
 const checkWordEquality = (word: string) => {
-  handleCompletedWord({
+  completeTypingWord({
     currentWords: currentWords.value,
     inputValue: word,
     burstAnimationDuration: BURST_ANIMATION_DURATION,
     clearInput: () => {
       typeBoxValue.value = "";
     },
-    addScore: (scoreDelta, correctCharacterDelta) => {
-      gameScore.value += scoreDelta;
-      correctCharacterCount.value += correctCharacterDelta;
+    addGameScore: (delta) => {
+      gameScore.value += delta;
+    },
+    addCorrectCharacterCount: (delta) => {
+      correctCharacterCount.value += delta;
     },
     registerTimeout,
     removeWord,
