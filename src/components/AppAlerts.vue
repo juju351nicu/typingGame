@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch } from "vue";
+import { computed } from "vue";
 import type { Alert } from "@/types/interfaces";
+import { useAppAlertVisibility } from "@/composables/useAppAlertVisibility";
 
 /** Propsインタフェース定義 */
 interface Props {
@@ -15,60 +16,8 @@ const alerts = computed((): Alert[] => {
   return props.alerts;
 });
 
-/** アラートを自動で非表示にするまでの時間 */
-const AUTO_HIDE_DELAY_MS = 4000;
-
-/** アラートごとの表示状態 */
-const visibleAlerts = ref<boolean[]>([]);
-
-/** 自動非表示タイマー */
-const hideTimerIds = ref<ReturnType<typeof setTimeout>[]>([]);
-
-/**
- * 指定したアラートを非表示にする
- * @param index 非表示にするアラートのインデックス
- */
-const hideAlert = (index: number): void => {
-  visibleAlerts.value[index] = false;
-};
-
-/**
- * 指定したアラートを一定時間後に非表示にする
- * @param index 非表示タイマーを設定するアラートのインデックス
- */
-const scheduleHideAlert = (index: number): void => {
-  const timerId = setTimeout((): void => {
-    hideAlert(index);
-  }, AUTO_HIDE_DELAY_MS);
-  hideTimerIds.value.push(timerId);
-};
-
-watch(
-  () => props.alerts.length,
-  (newLength, oldLength = 0) => {
-    visibleAlerts.value = visibleAlerts.value.slice(0, newLength);
-
-    for (let index = oldLength; index < newLength; index++) {
-      visibleAlerts.value[index] = true;
-      scheduleHideAlert(index);
-    }
-  },
-  { immediate: true }
-);
-
-onUnmounted(() => {
-  hideTimerIds.value.forEach((timerId) => clearTimeout(timerId));
-  hideTimerIds.value = [];
-});
-
-/**
- * アラートの高さを調整する
- * @param index インデックス
- */
-const getTopStyle = (index: number) => {
-  const topPosition = index * 90;
-  return { top: `${topPosition}px` };
-};
+const { visibleAlerts, hideAlert, getTopStyle } =
+  useAppAlertVisibility(alerts);
 </script>
 <template>
   <div v-for="(alert, index) in alerts" :key="`${alert.type}-${index}`">
