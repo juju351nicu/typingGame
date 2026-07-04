@@ -37,6 +37,7 @@ describe("useBlogPostListPageState", () => {
 
     expect(pageState.normalizePageNumber("2")).toBe(2);
     expect(pageState.normalizePageNumber(["3", "4"])).toBe(3);
+    expect(pageState.normalizePageNumber([null, "4"])).toBe(1);
     expect(pageState.normalizePageNumber(undefined)).toBe(1);
     expect(pageState.normalizePageNumber(null)).toBe(1);
     expect(pageState.normalizePageNumber("abc")).toBe(1);

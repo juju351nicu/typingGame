@@ -1,7 +1,8 @@
 import type { PostIndex } from "@/types/interfaces";
 import { ref } from "vue";
+import type { LocationQueryValue } from "vue-router";
 
-type PageQueryValue = string | string[] | null | undefined;
+type PageQueryValue = LocationQueryValue | LocationQueryValue[] | undefined;
 
 interface BlogPostListStore {
   /** 指定ページの記事一覧を取得する */

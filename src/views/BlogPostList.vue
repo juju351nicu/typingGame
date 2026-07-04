@@ -7,6 +7,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/blogPosts";
 import { useBlogPostListPageState } from "@/composables/useBlogPostListPageState";
 
+const route = useRoute();
 const router = useRouter();
 
 /** ブログのストア情報取得 */
@@ -53,7 +54,6 @@ const searchPaging = (pageNumber: number) => {
 /** 記事の一覧情報をセットする。 */
 onBeforeMount(async () => {
   document.title = "ブログの一覧";
-  const route = useRoute();
   setPageFromQuery(route.query.pageNumber);
   await blogPostsStore.receivePostIndex();
   loadCurrentPage();
