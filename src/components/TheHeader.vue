@@ -1,22 +1,9 @@
 <script setup lang="ts">
 import AppSideMenu from "@/components/AppSideMenu.vue";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
-const router = useRouter();
+
 /** メニュータイトル */
 const title = "Balloon Typing Game";
-/**
- * 当サイトについてページへ遷移する
- */
-const goAboutUs = () => {
-  router.push({ name: "AboutUs" });
-};
-/**
- * ブログ記事一覧ページへ遷移する
- */
-const goBlogList = () => {
-  router.push({ name: "BlogPostList" });
-};
 /** サイドメニューフラグ */
 const drawer = ref(false);
 </script>
@@ -29,10 +16,12 @@ const drawer = ref(false);
     <v-toolbar-title class="app-title">{{ title }}</v-toolbar-title>
     <v-spacer />
     <div class="d-flex justify-end">
-      <v-btn class="mr-10 header_list" @click="goAboutUs()"
-        >当サイトについて</v-btn
-      >
-      <v-btn class="mr-10 header_list" @click="goBlogList()">ブログ</v-btn>
+      <v-btn class="mr-10 header_list" :to="{ name: 'AboutUs' }">
+        当サイトについて
+      </v-btn>
+      <v-btn class="mr-10 header_list" :to="{ name: 'BlogPostList' }">
+        ブログ
+      </v-btn>
     </div>
   </v-app-bar>
   <AppSideMenu v-model:drawer="drawer" />

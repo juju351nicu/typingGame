@@ -25,17 +25,17 @@ const routeSetting: RouteRecordRaw[] = [
     component: () => import("@/views/BlogPostList.vue"),
   },
   {
+    /** 当サイトについて */
+    path: "/aboutUs",
+    name: "AboutUs",
+    component: () => import("@/views/AboutUs.vue"),
+  },
+  {
     /** ブログ詳細情報 */
     path: "/:section/:id",
     name: "BlogPost",
     component: () => import("@/views/BlogPost.vue"),
     props: true,
-  },
-  {
-    /** 当サイトについて */
-    path: "/aboutUs",
-    name: "AboutUs",
-    component: () => import("@/views/AboutUs.vue"),
   },
   {
     /** 存在しないURLにアクセスした場合 */
