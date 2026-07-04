@@ -14,12 +14,11 @@ import {
   useGamePageKeyboardHandlers,
   type GameTimerControl,
 } from "@/composables/useGamePageKeyboardHandlers";
+import { createGamePageEnvironmentAlerts } from "@/composables/useGamePageEnvironmentAlerts";
 import {
   createGamePageScore,
   saveGamePageScore,
 } from "@/composables/useGamePageScore";
-import Util from "@/utils/gameUtils";
-import Const from "@/constants/const";
 import type { Alert } from "@/types/interfaces";
 
 /** ゲームスコアに関するストア情報 */
@@ -141,18 +140,7 @@ const restartGame = async (): Promise<void> => {
 /** アラートに表示するメッセージ */
 const alerts = ref<Alert[]>([]);
 onMounted(() => {
-  if (!Util.isLocalStorage()) {
-    alerts.value.push({
-      message: "ローカルストレージは使用不可能です。",
-      type: Const.ALERT_TYPE.ERROR,
-    });
-  }
-  if (!Util.checkBrowser()) {
-    alerts.value.push({
-      message: "Google Chromeをお使い下さい。",
-      type: Const.ALERT_TYPE.ERROR,
-    });
-  }
+  alerts.value.push(...createGamePageEnvironmentAlerts());
 });
 /** ゲームオーバーフラグ */
 watch(isGameOver, (newValue, _oldValue) => {
