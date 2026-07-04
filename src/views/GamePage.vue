@@ -199,7 +199,7 @@ onUnmounted(() => {
     @restart-game="restartGame"
   />
 </template>
-<style>
+<style scoped>
 .game-page {
   max-width: 1080px;
 }
@@ -239,7 +239,7 @@ onUnmounted(() => {
   animation: inputMissShake 160ms ease;
 }
 
-.game-text-field-error .v-field {
+.game-text-field-error :deep(.v-field) {
   background: var(--app-input-error-bg);
 }
 
