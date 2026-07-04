@@ -1,4 +1,5 @@
 import type { CurrentWord } from "@/types/interfaces";
+import Util from "@/utils/gameUtils";
 
 /**
  * キー入力値を小文字アルファベット1文字に正規化する。
@@ -61,8 +62,8 @@ export const isMissKey = (pressedKey: string, nextKey: string): boolean => {
   const normalizedNextKey = normalizeAlphabetKey(nextKey);
 
   return (
-    normalizedPressedKey !== "" &&
-    normalizedNextKey !== "" &&
+    !Util.isEmpty(normalizedPressedKey, { trimString: false }) &&
+    !Util.isEmpty(normalizedNextKey, { trimString: false }) &&
     normalizedPressedKey !== normalizedNextKey
   );
 };

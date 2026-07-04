@@ -1,4 +1,5 @@
 import type { CurrentWord } from "@/types/interfaces";
+import Util from "@/utils/gameUtils";
 
 /** 風船に割り当てるCSSクラス一覧 */
 export const balloonColorClasses = [
@@ -97,7 +98,7 @@ export const hasMatchedPrefix = (
   currentWords: CurrentWord[],
   inputValue: string
 ): boolean => {
-  if (inputValue === "") {
+  if (Util.isEmpty(inputValue, { trimString: false })) {
     return true;
   }
   // 破裂中の単語は、入力候補として扱わない。
@@ -137,7 +138,7 @@ export const getWordFeedbackClass = (
   inputValue: string,
   isInputMiss: boolean
 ): string => {
-  if (inputValue === "" || word.isBursting) {
+  if (Util.isEmpty(inputValue, { trimString: false }) || word.isBursting) {
     return "";
   }
   // 入力が先頭一致している単語を操作中の単語として強調する。

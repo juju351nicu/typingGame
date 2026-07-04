@@ -1,6 +1,7 @@
 import { ref, toRaw } from "vue";
 import type { CurrentWord } from "@/types/interfaces";
 import { createCurrentWord, shuffleWords } from "@/composables/useTypingWords";
+import Util from "@/utils/gameUtils";
 
 /**
  * 表示中の単語リストと出題済みインデックスを管理する。
@@ -77,7 +78,7 @@ export const useTypingGameWords = (initialWords: string[]) => {
    * @returns ゲーム完了状態ならtrue
    */
   const isGameCompleted = (): boolean => {
-    return isAddedAllWords() && currentWords.value.length === 0;
+    return isAddedAllWords() && Util.isEmpty(currentWords.value);
   };
 
   /** 表示中単語と出題インデックスを初期化し、単語リストをシャッフルする。 */

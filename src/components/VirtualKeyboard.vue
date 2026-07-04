@@ -2,10 +2,14 @@
 import { onMounted, onUnmounted, watch } from "vue";
 import Keyboard from "simple-keyboard";
 import "simple-keyboard/build/css/index.css";
+import Util from "@/utils/gameUtils";
 
 interface Props {
+  /** 次に入力すべきキー */
   nextKey?: string;
+  /** 直近で押されたキー */
   pressedKey?: string;
+  /** 直近でミスしたキー */
   missKey?: string;
 }
 
@@ -17,28 +21,34 @@ const props = withDefaults(defineProps<Props>(), {
 
 let keyboard: Keyboard | null = null;
 
+/** simple-keyboardに渡すアルファベット配列 */
 const keyboardLayout = {
   default: ["q w e r t y u i o p", "a s d f g h j k l", "z x c v b n m"],
 };
 
+/**
+ * 現在の入力状態から、simple-keyboardへ渡すハイライト設定を作成する。
+ *
+ * @returns 次キー、押下キー、ミスキーのボタンテーマ設定
+ */
 const getKeyTheme = () => {
   const buttonTheme = [];
 
-  if (props.nextKey !== "") {
+  if (!Util.isEmpty(props.nextKey, { trimString: false })) {
     buttonTheme.push({
       class: "hg-next-key",
       buttons: props.nextKey,
     });
   }
 
-  if (props.pressedKey !== "") {
+  if (!Util.isEmpty(props.pressedKey, { trimString: false })) {
     buttonTheme.push({
       class: "hg-pressed-key",
       buttons: props.pressedKey,
     });
   }
 
-  if (props.missKey !== "") {
+  if (!Util.isEmpty(props.missKey, { trimString: false })) {
     buttonTheme.push({
       class: "hg-miss-key",
       buttons: props.missKey,
@@ -48,6 +58,7 @@ const getKeyTheme = () => {
   return buttonTheme;
 };
 
+/** simple-keyboardのハイライト設定を最新状態へ反映する。 */
 const updateKeyTheme = () => {
   keyboard?.setOptions({
     buttonTheme: getKeyTheme(),

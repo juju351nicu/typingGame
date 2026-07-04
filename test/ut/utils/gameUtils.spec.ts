@@ -1,12 +1,179 @@
 import Util from "@/utils/gameUtils";
 import Const from "@/constants/const";
 import type { GameScore, RankingScore } from "@/types/interfaces";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 describe("isEmpty", () => {
   it("空文字チェック", () => {
     const result = Util.isEmpty("");
     expect(result).toBe(true);
+  });
+
+  it("null、undefined、空配列、空Map、空Set、空plain objectを空として扱う", () => {
+    expect(Util.isEmpty(null)).toBe(true);
+    expect(Util.isEmpty(undefined)).toBe(true);
+    expect(Util.isEmpty([])).toBe(true);
+    expect(Util.isEmpty(new Map())).toBe(true);
+    expect(Util.isEmpty(new Set())).toBe(true);
+    expect(Util.isEmpty({})).toBe(true);
+    expect(Util.isEmpty(Object.create(null))).toBe(true);
+  });
+
+  it("空白だけの文字列を空として扱う", () => {
+    expect(Util.isEmpty("   ")).toBe(true);
+    expect(Util.isEmpty("\n\t")).toBe(true);
+  });
+
+  it("値がある文字列、配列、Map、Set、plain objectは空として扱わない", () => {
+    expect(Util.isEmpty("text")).toBe(false);
+    expect(Util.isEmpty(["value"])).toBe(false);
+    expect(Util.isEmpty(new Map([["key", "value"]]))).toBe(false);
+    expect(Util.isEmpty(new Set(["value"]))).toBe(false);
+    expect(Util.isEmpty({ key: "value" })).toBe(false);
+  });
+
+  it("0とfalseは値ありとして扱う", () => {
+    expect(Util.isEmpty(0)).toBe(false);
+    expect(Util.isEmpty(false)).toBe(false);
+  });
+
+  it("オプションで空白文字列、空Map、空Set、空plain objectを空扱いしない", () => {
+    expect(Util.isEmpty("   ", { trimString: false })).toBe(false);
+    expect(Util.isEmpty(new Map(), { mapSet: false })).toBe(false);
+    expect(Util.isEmpty(new Set(), { mapSet: false })).toBe(false);
+    expect(Util.isEmpty({}, { plainObject: false })).toBe(false);
+  });
+});
+
+describe("isLocalStorage", () => {
+  it("localStorageが利用できる場合はtrueを返す", () => {
+    vi.stubGlobal("window", {
+      localStorage: {},
+    });
+
+    expect(Util.isLocalStorage()).toBe(true);
+  });
+
+  it("localStorageがnullの場合はfalseを返す", () => {
+    vi.stubGlobal("window", {
+      localStorage: null,
+    });
+
+    expect(Util.isLocalStorage()).toBe(false);
+  });
+
+  it("localStorage参照時に例外が発生した場合はfalseを返す", () => {
+    vi.stubGlobal("window", {
+      get localStorage() {
+        throw new Error("blocked");
+      },
+    });
+
+    expect(Util.isLocalStorage()).toBe(false);
+  });
+});
+
+describe("checkBrowser", () => {
+  it("userAgentからブラウザ情報を取得する", () => {
+    expect(
+      Util.getBrowserInfo(
+        "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
+      )
+    ).toMatchObject({
+      name: "chrome",
+      isChrome: true,
+      isChromium: false,
+      isSupportedChrome: true,
+    });
+    expect(
+      Util.getBrowserInfo(
+        "Mozilla/5.0 AppleWebKit/537.36 Chromium/120.0.0.0 Safari/537.36"
+      )
+    ).toMatchObject({
+      name: "chromium",
+      isChrome: true,
+      isChromium: true,
+      isSupportedChrome: true,
+    });
+    expect(
+      Util.getBrowserInfo(
+        "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
+      )
+    ).toMatchObject({
+      name: "edge",
+      isChrome: false,
+      isSupportedChrome: false,
+    });
+  });
+
+  it("Chrome、Chromium、iOS Chromeの場合はtrueを返す", () => {
+    const userAgents = [
+      "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
+      "Mozilla/5.0 AppleWebKit/537.36 Chromium/120.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (iPhone) AppleWebKit/605.1.15 CriOS/120.0.0.0 Mobile/15E148 Safari/604.1",
+    ];
+
+    userAgents.forEach((userAgent) => {
+      vi.stubGlobal("window", {
+        navigator: { userAgent },
+      });
+
+      expect(Util.checkBrowser()).toBe(true);
+    });
+  });
+
+  it("Edge、Opera、Safari、Firefox、IEの場合はfalseを返す", () => {
+    const userAgents = [
+      "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36 Edge/18.0",
+      "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
+      "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36 OPR/100.0.0.0",
+      "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36 SamsungBrowser/22.0",
+      "Mozilla/5.0 AppleWebKit/605.1.15 Version/17.0 Safari/605.1.15",
+      "Mozilla/5.0 Firefox/120.0",
+      "Mozilla/5.0 (iPhone) AppleWebKit/605.1.15 FxiOS/120.0 Mobile/15E148 Safari/605.1.15",
+      "Mozilla/5.0 Trident/7.0 rv:11.0",
+    ];
+
+    userAgents.forEach((userAgent) => {
+      vi.stubGlobal("window", {
+        navigator: { userAgent },
+      });
+
+      expect(Util.checkBrowser()).toBe(false);
+    });
+  });
+
+  it("userAgent参照時に例外が発生した場合はfalseを返す", () => {
+    vi.stubGlobal("window", {
+      navigator: {
+        get userAgent() {
+          throw new Error("blocked");
+        },
+      },
+    });
+
+    expect(Util.checkBrowser()).toBe(false);
+  });
+
+  it("userAgent参照時に例外が発生した場合はunknownを返す", () => {
+    vi.stubGlobal("window", {
+      navigator: {
+        get userAgent() {
+          throw new Error("blocked");
+        },
+      },
+    });
+
+    expect(Util.getBrowserInfo()).toMatchObject({
+      name: "unknown",
+      isChrome: false,
+      isSupportedChrome: false,
+      userAgent: "",
+    });
   });
 });
 
@@ -22,6 +189,16 @@ describe("calculateWpm", () => {
   });
 });
 
+describe("getCountDownTime", () => {
+  it("ミリ秒をhh:mm:ss.SS形式に変換する", () => {
+    expect(Util.getCountDownTime(3_723_450)).toBe("01:02:03.45");
+  });
+
+  it("100時間以上の場合は時間を3桁以上で表示する", () => {
+    expect(Util.getCountDownTime(100 * 60 * 60 * 1000)).toBe("100:00:00.00");
+  });
+});
+
 describe("calculateAccuracy", () => {
   it("入力文字数とミス数から正確率を計算する", () => {
     const result = Util.calculateAccuracy(10, 2);
@@ -34,6 +211,22 @@ describe("calculateAccuracy", () => {
 
   it("ミス数が入力文字数を超えた場合は0を返す", () => {
     expect(Util.calculateAccuracy(5, 10)).toBe(0);
+  });
+});
+
+describe("difficulty label and color", () => {
+  it("難易度に対応した表示名と色を返す", () => {
+    expect(Util.getLevel(0)).toBe("易");
+    expect(Util.getLevel(1)).toBe("普");
+    expect(Util.getLevel(2)).toBe("難");
+    expect(Util.getColor(0)).toBe("#000080");
+    expect(Util.getColor(1)).toBe("#ff00ff");
+    expect(Util.getColor(2)).toBe("#ff0000");
+  });
+
+  it("未定義の難易度では例外を投げる", () => {
+    expect(() => Util.getLevel(99)).toThrow("不明なステータスです: 99");
+    expect(() => Util.getColor(99)).toThrow("不明なステータスです: 99");
   });
 });
 

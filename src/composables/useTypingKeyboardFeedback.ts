@@ -3,6 +3,7 @@ import {
   isMissKey,
   normalizeAlphabetKey,
 } from "@/composables/useTypingKeyboard";
+import Util from "@/utils/gameUtils";
 
 interface TypingKeyboardFeedbackOptions {
   /** 押下キー表示を解除するまでの時間 */
@@ -51,7 +52,7 @@ export const useTypingKeyboardFeedback = (
    */
   const updateKeyFeedback = (eventKey: string, nextKey: string): void => {
     const key = normalizeAlphabetKey(eventKey);
-    if (key === "") {
+    if (Util.isEmpty(key, { trimString: false })) {
       return;
     }
 
