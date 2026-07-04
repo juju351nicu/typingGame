@@ -1,11 +1,15 @@
 import {
+  createTrendTitle,
   formatAccuracyMetric,
   formatNullableMetric,
+  formatTrendValueLabel,
   getRankingRankClass,
+  getRankingSummaryText,
+  getTrendMetricOption,
   useRankingPageState,
 } from "@/composables/useRankingPageState";
 import Const from "@/constants/const";
-import type { GameScore } from "@/types/interfaces";
+import type { GameScore, RankingScore } from "@/types/interfaces";
 import { nextTick, reactive } from "vue";
 import { describe, expect, it } from "vitest";
 
@@ -133,5 +137,39 @@ describe("useRankingPageState", () => {
     );
     expect(rankingState.getScoreGameRuleLabel(score)).toBe("タイムアタック");
     expect(rankingState.getTimeLimitLabel(score)).toBe("30秒");
+  });
+
+  it("推移グラフの表示設定とラベルを整形する", () => {
+    expect(getTrendMetricOption("score")).toEqual({
+      title: "スコア",
+      value: "score",
+      unit: "",
+    });
+    expect(createTrendTitle("wpm")).toBe("直近WPM推移");
+    expect(
+      formatTrendValueLabel(
+        {
+          ...scores[1],
+          barRatio: 100,
+          metricValue: 95,
+          playNumber: 1,
+        },
+        "accuracy"
+      )
+    ).toBe("95%");
+  });
+
+  it("ランキングサマリーの補足表示を整形する", () => {
+    const rankingScore: RankingScore = {
+      ...scores[0],
+      rank: 1,
+      resultRank: "S",
+    };
+
+    expect(getRankingSummaryText(null)).toBe("記録なし");
+    expect(getRankingSummaryText(rankingScore)).toBe("Sランク / 普 / 30秒 / 00:00:30");
+    expect(getRankingSummaryText(rankingScore, { withGameRule: true })).toBe(
+      "Sランク / 普 / タイムアタック 30秒 / 00:00:30"
+    );
   });
 });

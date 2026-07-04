@@ -85,6 +85,67 @@ export const formatAccuracyMetric = (
 };
 
 /**
+ * 指標値に対応する推移グラフの選択肢を取得する。
+ *
+ * 不正な値が渡された場合は、先頭のスコア指標を返す。
+ *
+ * @param metric 選択中の推移グラフ指標
+ * @returns 推移グラフ指標の表示設定
+ */
+export const getTrendMetricOption = (
+  metric: PerformanceTrendMetric
+): (typeof trendMetricOptions)[number] => {
+  return (
+    trendMetricOptions.find((item) => item.value === metric) ??
+    trendMetricOptions[0]
+  );
+};
+
+/**
+ * 推移グラフの見出しを作成する。
+ *
+ * @param metric 選択中の推移グラフ指標
+ * @returns 推移グラフの見出し
+ */
+export const createTrendTitle = (
+  metric: PerformanceTrendMetric
+): string => {
+  return `直近${getTrendMetricOption(metric).title}推移`;
+};
+
+/**
+ * 推移グラフの値を表示用に整形する。
+ *
+ * @param item 推移グラフ表示用データ
+ * @param metric 選択中の推移グラフ指標
+ * @returns 単位付きの表示値
+ */
+export const formatTrendValueLabel = (
+  item: PerformanceTrendItem,
+  metric: PerformanceTrendMetric
+): string => {
+  return `${item.metricValue}${getTrendMetricOption(metric).unit}`;
+};
+
+/**
+ * ランキングサマリーの補足表示を作成する。
+ *
+ * @param score 表示対象のスコア
+ * @param options ゲームルールを表示するかどうか
+ * @returns 補足表示。スコアがない場合は記録なし
+ */
+export const getRankingSummaryText = (
+  score: RankingScore | null | undefined,
+  options: { withGameRule?: boolean } = {}
+): string => {
+  if (!score) {
+    return "記録なし";
+  }
+
+  return Util.getRankingScoreSummary(score, options);
+};
+
+/**
  * ランキング画面の表示状態と集計値を管理する。
  *
  * フィルター、ランキング一覧、最高スコア、パフォーマンス推移をまとめ、
@@ -177,16 +238,12 @@ export const useRankingPageState = (gameScoresStore: GameScoresReader) => {
 
   /** 選択中の推移グラフ指標 */
   const selectedTrendMetricOption = computed(() => {
-    return (
-      trendMetricOptions.find(
-        (item) => item.value === selectedTrendMetric.value
-      ) ?? trendMetricOptions[0]
-    );
+    return getTrendMetricOption(selectedTrendMetric.value);
   });
 
   /** 推移グラフの見出し */
   const trendTitle = computed((): string => {
-    return `直近${selectedTrendMetricOption.value.title}推移`;
+    return createTrendTitle(selectedTrendMetric.value);
   });
 
   /** 最高スコア */
@@ -219,34 +276,22 @@ export const useRankingPageState = (gameScoresStore: GameScoresReader) => {
 
   /** 最高スコアの補足表示 */
   const bestScoreSummary = computed((): string => {
-    if (!bestScore.value) {
-      return "記録なし";
-    }
-
-    return Util.getRankingScoreSummary(bestScore.value, { withGameRule: true });
+    return getRankingSummaryText(bestScore.value, { withGameRule: true });
   });
 
   /** 通常モード最高スコアの補足表示 */
   const normalBestScoreSummary = computed((): string => {
-    if (!normalBestScore.value) {
-      return "記録なし";
-    }
-
-    return Util.getRankingScoreSummary(normalBestScore.value);
+    return getRankingSummaryText(normalBestScore.value);
   });
 
   /** タイムアタック最高スコアの補足表示 */
   const timeAttackBestScoreSummary = computed((): string => {
-    if (!timeAttackBestScore.value) {
-      return "記録なし";
-    }
-
-    return Util.getRankingScoreSummary(timeAttackBestScore.value);
+    return getRankingSummaryText(timeAttackBestScore.value);
   });
 
   /** 推移グラフ値の表示 */
   const getTrendValueLabel = (item: PerformanceTrendItem): string => {
-    return `${item.metricValue}${selectedTrendMetricOption.value.unit}`;
+    return formatTrendValueLabel(item, selectedTrendMetric.value);
   };
 
   /** リザルトランクの色を取得する。 */
