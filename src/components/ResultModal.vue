@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
+import { useResultModalDialog } from "@/composables/useResultModalDialog";
 import { useResultModalState } from "@/composables/useResultModalState";
 import type { GameScore } from "@/types/interfaces";
 /** Propsインタフェース定義 */
@@ -24,13 +25,12 @@ const lastScore = computed((): GameScore => {
   return props.lastScore;
 });
 
-/** ダイアログの表示・非表示 */
-const dialog = ref(false);
+const { closeDialog, dialog } = useResultModalDialog(isGameOverFlag);
 
 /** ゲームを再スタートする */
 const restartGame = () => {
   emit("restart-game");
-  dialog.value = false;
+  closeDialog();
 };
 
 const {
@@ -46,12 +46,6 @@ const {
   wpmLabel,
 } = useResultModalState(lastScore);
 
-/** ゲームオーバーフラグをウォッチにて判定する */
-watch(isGameOverFlag, (newValue, _oldValue) => {
-  if (newValue) {
-    dialog.value = true;
-  }
-});
 </script>
 <template>
   <div class="text-center">
