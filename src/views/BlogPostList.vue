@@ -7,12 +7,15 @@ import { useRoute, useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/blogPosts";
 import { useBlogPostListPageState } from "@/composables/useBlogPostListPageState";
 
+/** 現在のURLクエリを参照するためのルート情報 */
 const route = useRoute();
+/** 記事詳細ページへ遷移するためのルーター */
 const router = useRouter();
 
-/** ブログのストア情報取得 */
+/** ブログ記事一覧と取得状態を管理するストア */
 const blogPostsStore = useBlogPostsStore();
 
+/** ブログ一覧ページのページング状態と遷移先生成処理 */
 const {
   createPostDetailRoute,
   currentPage,
@@ -38,20 +41,33 @@ const errorMessage = computed((): string => {
 });
 
 /**
- * 記事の詳細ページに遷移する
- * @param section
- * @param id
+ * 記事の詳細ページに遷移する。
+ *
+ * 遷移前に現在ページをストアへ保存し、詳細ページから一覧へ戻る際の
+ * ページ復元に利用する。
+ *
+ * @param section 記事セクション
+ * @param id 記事ID
  */
 const doPostDetail = (section: string, id: string): void => {
   router.push(createPostDetailRoute(section, id));
 };
 
-/** ページ遷移 */
+/**
+ * ページ番号を指定して表示記事を切り替える。
+ *
+ * @param pageNumber 表示するページ番号
+ */
 const searchPaging = (pageNumber: number) => {
   setPage(pageNumber);
 };
 
-/** 記事の一覧情報をセットする。 */
+/**
+ * ブログ一覧画面の初期表示を準備する。
+ *
+ * URLクエリからページ番号を復元してから記事一覧を取得し、
+ * 現在ページに対応する記事だけを画面へ反映する。
+ */
 onBeforeMount(async () => {
   document.title = "ブログの一覧";
   setPageFromQuery(route.query.pageNumber);

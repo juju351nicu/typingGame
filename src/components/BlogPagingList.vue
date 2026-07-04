@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import Const from "@/constants/const";
+import { computed } from "vue";
+import { useBlogPagingState } from "@/composables/useBlogPagingState";
 import type { PostIndex } from "@/types/interfaces";
 
 /** Propsインタフェース定義 */
@@ -30,41 +30,12 @@ const totalCount = computed((): number => {
 const currentPage = computed((): number => {
   return props.currentPage;
 });
-const showPaging = ref(true);
-/** 総ページ数 */
-const totalPages = computed((): number => {
-  if (totalCount.value % Const.NUMBER_OF_BLOGS == 0) {
-    return totalCount.value / Const.NUMBER_OF_BLOGS;
-  } else {
-    return Math.ceil(totalCount.value / Const.NUMBER_OF_BLOGS);
-  }
-});
-/**検索結果件数を表示する。前半部 */
-const firstRowsCounts = computed(() => {
-  const start = (currentPage.value - 1) * Const.NUMBER_OF_BLOGS;
-  if (start + 1 < totalCount.value) {
-    return start + 1;
-  } else {
-    return totalCount.value;
-  }
-});
-/**検索結果件数を表示する。後半部 */
-const lastRowsCounts = computed(() => {
-  const end = currentPage.value * Const.NUMBER_OF_BLOGS;
-  if (end < totalCount.value) {
-    return end;
-  } else {
-    return totalCount.value;
-  }
-});
-const listHeader = computed(() => {
-  const nowDisplaying =
-    props.pageCounts === 0
-      ? ""
-      : `(${firstRowsCounts.value}件~${lastRowsCounts.value}件を表示)`;
-  const total = `検索結果件数: ${totalCount.value}件`;
-  return `${total}${nowDisplaying}`;
-});
+
+const { listHeader, showPaging, totalPages } = useBlogPagingState(
+  pageStatus,
+  totalCount,
+  currentPage
+);
 /**
  *
  * @param entry
