@@ -48,6 +48,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - localStorage を使ったランキング表示
 - ログイン済みユーザーのスコアAPI保存
 - 未ログイン時のlocalStorage fallback
+- バックエンドAPI無効時のFE単体動作
 - 難易度設定
 - タイムアタックモード
 - スコア履歴の localStorage 保存・初期化
@@ -101,6 +102,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - スコアAPI接続を見越して保存リクエスト / APIレスポンス型と変換処理を追加
 - fetchClient でHTTPエラーを共通例外として扱い、JSON helper も追加してAPI接続時の失敗検知と取得処理を整理
 - ログイン済みの場合は `/api/me/scores` にスコアを保存し、未ログインの場合はlocalStorage保存のみを行う構成に整理
+- GitHub PagesではバックエンドAPIを無効にし、FE単体でゲームとlocalStorage保存が動く構成を維持
 - ブログとランキングの error / empty 表示を共通コンポーネントへ整理
 - アラート通知を通知ごとの表示状態で管理し、後続通知の自動非表示が崩れないように改善
 - リトライ時のページリロードを廃止し、ゲーム状態とタイマーをリセットするSPA内完結の挙動に改善
@@ -154,7 +156,17 @@ Backend API connection policy:
 - 未ログインユーザーは、これまで通りPinia persisted state経由でlocalStorageにスコアを保存する。
 - ログイン済みユーザーは、localStorage保存後に `POST /api/me/scores` へスコアを保存する。
 - API保存に失敗しても、localStorage側のプレイ結果は消さない。
+- `VITE_ENABLE_BACKEND_API=true` の場合だけ、ログイン導線とAPI保存を有効にする。
+- GitHub Pagesでは `VITE_ENABLE_BACKEND_API` を未設定または `false` にし、FE単体で公開する。
 - Ghost-PDF5 の `const.js`、`rest.js`、`util.js` は考え方を参考にするが、typingGameでは `src/constants/const.ts`、`src/utils/fetchClient.ts`、`src/utils/gameUtils.ts` へ責務を寄せる。
+
+Local backend API:
+
+```bash
+VITE_ENABLE_BACKEND_API=true npm run dev
+```
+
+`VITE_API_BASE_URL` を指定しない場合は `http://localhost:8091` に接続します。
 
 ```bash
 npm install

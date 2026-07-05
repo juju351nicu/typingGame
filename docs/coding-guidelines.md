@@ -35,6 +35,76 @@ Ghost-PDF5へ戻す時は、TypeScriptの型をそのまま移すのではなく
 - API保存に失敗しても、localStorage側のプレイ結果は消さない。
 - API呼び出しは `fetchClient.ts` 経由に寄せる。
 - セッションCookieを使うAPIでは、`credentials: "include"` が必要になる。
+- GitHub Pagesでは当面FEだけを公開するため、バックエンドAPI前提の動きにしない。
+- バックエンドAPI連携は `VITE_ENABLE_BACKEND_API=true` の場合だけ有効にする。
+- `VITE_ENABLE_BACKEND_API` が未設定または `false` の場合は、ログイン導線を非表示にし、API保存も呼ばない。
+- `VITE_API_BASE_URL` はAPI有効時の接続先だけを表す。APIの有効/無効判定には使わない。
+
+### FE単体公開を守る設計
+
+当面はGitHub Pagesでフロントエンドだけを公開し、EC2などでバックエンドを公開するのは後の学習フェーズにします。
+
+そのため、公開版の最重要条件は「バックエンドが無くてもゲームとして自然に使えること」です。
+
+- ゲーム開始、タイピング、リザルト表示、ランキング表示はFEだけで完結させる。
+- スコア保存はlocalStorageを主とし、API保存は追加機能として扱う。
+- バックエンドAPIが無効な環境では、ユーザーがログイン機能を見つけて失敗する状態を避ける。
+- APIが落ちている、または未公開であることが、ゲーム体験の失敗に見えないようにする。
+
+### `VITE_ENABLE_BACKEND_API` の責務
+
+`VITE_ENABLE_BACKEND_API` は、バックエンドAPIを使うUIと通信処理を有効にするための明示フラグです。
+
+```text
+VITE_ENABLE_BACKEND_API=true
+```
+
+- `true`
+  - ローカルでBE/FEを両方起動して動作確認する環境。
+  - ログイン導線を表示する。
+  - ログイン済みユーザーのスコアをAPIにも保存する。
+- 未設定 / `false`
+  - GitHub PagesなどFE単体公開の環境。
+  - ログイン導線を表示しない。
+  - `/login` へ直接アクセスされた場合はゲーム画面へ戻す。
+  - スコアはlocalStorageへ保存し、API保存は呼ばない。
+
+`VITE_API_BASE_URL` は接続先URLの設定であり、APIを使うかどうかの判断には使いません。URLが設定されているだけでAPI機能が有効になると、GitHub Pages公開時に意図しない通信が起きやすいためです。
+
+### 判定を置く場所
+
+フラグ判定は、ユーザー体験を守る層と通信を止める層の両方に置きます。
+
+- `src/constants/const.ts`
+  - `BACKEND_API.ENABLED` と `BACKEND_API.BASE_URL` を集約する。
+- `src/components/TheHeader.vue`
+  - API無効時はログインボタンとログアウト表示を出さない。
+- `src/router/routes.ts`
+  - バックエンドAPIが必要な画面に `meta.requiresBackendApi` を付ける。
+- `src/router/index.ts`
+  - API無効時に `requiresBackendApi` の画面へ入ろうとしたらゲーム画面へ戻す。
+- `src/stores/auth.ts`
+  - API無効時はログイン、登録、ログイン中ユーザー取得、ログアウトAPIを呼ばない。
+- `src/stores/gameScores.ts`
+  - API無効時はログイン状態が残っていてもスコアAPI保存を呼ばない。
+
+UI側だけで隠すと、直アクセスや将来の実装追加でAPIが呼ばれる可能性があります。Store側だけで止めると、公開画面に使えないログイン導線が残ります。そのため、UI・router・storeの3箇所で責務を分けます。
+
+### ローカル開発時の起動
+
+BE連携を確認したい場合は、BEを起動したうえで以下のようにFEを起動します。
+
+```bash
+VITE_ENABLE_BACKEND_API=true npm run dev
+```
+
+`VITE_API_BASE_URL` を指定しない場合は、`http://localhost:8091` を使います。
+
+別URLのAPIへ向ける場合:
+
+```bash
+VITE_ENABLE_BACKEND_API=true VITE_API_BASE_URL=http://localhost:8091 npm run dev
+```
 
 ## Vue Components
 

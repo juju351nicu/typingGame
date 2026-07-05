@@ -22,6 +22,8 @@ const createMemoryStorage = (): Storage => {
 
 describe("gameScores store", () => {
   beforeEach(() => {
+    vi.resetModules();
+    vi.stubEnv("VITE_ENABLE_BACKEND_API", "true");
     vi.stubGlobal("localStorage", createMemoryStorage());
     setActivePinia(createPinia());
   });
@@ -119,6 +121,34 @@ describe("gameScores store", () => {
     await gameScoresStore.saveGameScoreList(score);
 
     expect(gameScoresStore.getGameScoreList).toEqual([score]);
+  });
+
+  it("バックエンドAPI無効時はログイン状態があってもAPI保存しない", async () => {
+    vi.resetModules();
+    vi.stubEnv("VITE_ENABLE_BACKEND_API", "false");
+    vi.stubGlobal("localStorage", createMemoryStorage());
+    setActivePinia(createPinia());
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const { useGameScoresStore } = await import("@/stores/gameScores");
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+    authStore.currentUser = {
+      id: 1,
+      loginEmail: "user@example.com",
+    };
+    const gameScoresStore = useGameScoresStore();
+    const score: GameScore = {
+      score: 11,
+      mode: 1,
+      time: "00:00:33.70",
+      date: "2026-05-24 12:29:45",
+    };
+
+    await gameScoresStore.saveGameScoreList(score);
+
+    expect(gameScoresStore.getGameScoreList).toEqual([score]);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("保存済みスコアを削除できる", async () => {

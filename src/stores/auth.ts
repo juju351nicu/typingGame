@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import Const from "@/constants/const";
 import type {
   LoginRequest,
   LoginUser,
@@ -44,6 +45,11 @@ export const useAuthStore = defineStore("auth", {
      * @param request ユーザー登録リクエスト
      */
     async register(request: RegisterUserRequest): Promise<void> {
+      if (!Const.BACKEND_API.ENABLED) {
+        this.currentUser = null;
+        return;
+      }
+
       this.isLoading = true;
       try {
         await registerUserApi(request);
@@ -58,6 +64,11 @@ export const useAuthStore = defineStore("auth", {
      * @param request ログインリクエスト
      */
     async login(request: LoginRequest): Promise<void> {
+      if (!Const.BACKEND_API.ENABLED) {
+        this.currentUser = null;
+        return;
+      }
+
       this.isLoading = true;
       try {
         const response = await loginApi(request);
@@ -70,6 +81,11 @@ export const useAuthStore = defineStore("auth", {
      * 現在のログイン状態をAPIから取得する。
      */
     async fetchCurrentUser(): Promise<void> {
+      if (!Const.BACKEND_API.ENABLED) {
+        this.currentUser = null;
+        return;
+      }
+
       this.isLoading = true;
       try {
         this.currentUser = await fetchCurrentUserApi();
@@ -89,6 +105,11 @@ export const useAuthStore = defineStore("auth", {
      * ログアウトする。
      */
     async logout(): Promise<void> {
+      if (!Const.BACKEND_API.ENABLED) {
+        this.currentUser = null;
+        return;
+      }
+
       this.isLoading = true;
       try {
         await logoutApi();

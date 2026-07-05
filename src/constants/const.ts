@@ -86,6 +86,16 @@ const DATE_FORMAT = {
   STANDARD_DATE_TIME: "YYYY-MM-DD HH:mm:ss",
 };
 
+/** バックエンドAPI接続に関する設定 */
+const BACKEND_API = {
+  /** バックエンドAPIを有効にするか */
+  ENABLED: import.meta.env.VITE_ENABLE_BACKEND_API === "true",
+  /** バックエンドAPIのベースURL */
+  BASE_URL:
+    import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
+    "http://localhost:8091",
+};
+
 export default {
   BLOG_PATH,
   NUMBER_OF_BLOGS,
@@ -101,4 +111,5 @@ export default {
   DATA_TABLE_PAGES,
   OPTIONS_OF_HEADERS,
   DATE_FORMAT,
+  BACKEND_API,
 };

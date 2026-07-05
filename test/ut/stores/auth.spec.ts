@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("auth store", () => {
   beforeEach(() => {
+    vi.resetModules();
+    vi.stubEnv("VITE_ENABLE_BACKEND_API", "true");
     setActivePinia(createPinia());
   });
 
@@ -121,5 +123,23 @@ describe("auth store", () => {
 
     expect(authStore.isLoggedIn).toBe(false);
     expect(authStore.currentUser).toBeNull();
+  });
+
+  it("バックエンドAPI無効時はログインAPIを呼ばない", async () => {
+    vi.resetModules();
+    vi.stubEnv("VITE_ENABLE_BACKEND_API", "false");
+    setActivePinia(createPinia());
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+
+    await authStore.login({
+      loginEmail: "user@example.com",
+      password: "password123",
+    });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(authStore.isLoggedIn).toBe(false);
   });
 });

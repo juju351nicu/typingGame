@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import Const from "@/constants/const";
 import type { GameScore } from "@/types/interfaces";
 import {
   deleteGameScores,
@@ -41,7 +42,7 @@ export const useGameScoresStore = defineStore("gameScores", {
       this.scores = saveGameScore(this.scores, data);
 
       const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) {
+      if (!Const.BACKEND_API.ENABLED || !authStore.isLoggedIn) {
         return;
       }
 

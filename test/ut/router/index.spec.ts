@@ -16,6 +16,7 @@ describe("router", () => {
     expect(router.resolve("/aboutUs").name).toBe("AboutUs");
     expect(router.resolve("/blogPostList").name).toBe("BlogPostList");
     expect(router.resolve("/login").name).toBe("LoginPage");
+    expect(router.resolve("/login").meta.requiresBackendApi).toBe(true);
   });
 
   it("ブログ詳細URLを動的ルートへ解決する", () => {

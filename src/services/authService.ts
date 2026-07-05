@@ -4,17 +4,13 @@ import type {
   LoginUser,
   RegisterUserRequest,
 } from "@/types/interfaces";
+import Const from "@/constants/const";
 import Fetcher from "@/utils/fetchClient";
 
-const DEFAULT_API_BASE_URL = "http://localhost:8091";
 const USERS_API_PATH = "/api/users";
 const LOGIN_API_PATH = "/api/auth/login";
 const LOGOUT_API_PATH = "/api/auth/logout";
 const CURRENT_USER_API_PATH = "/api/auth/me";
-
-const apiBaseUrl =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
-  DEFAULT_API_BASE_URL;
 
 /**
  * APIのURLを作成する。
@@ -22,7 +18,7 @@ const apiBaseUrl =
  * @returns API URL
  */
 const createApiUrl = (path: string): string => {
-  return `${apiBaseUrl}${path}`;
+  return `${Const.BACKEND_API.BASE_URL}${path}`;
 };
 
 /**

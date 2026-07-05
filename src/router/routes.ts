@@ -23,6 +23,9 @@ export const routeSetting: RouteRecordRaw[] = [
     /** ログイン画面 */
     path: "/login",
     name: "LoginPage",
+    meta: {
+      requiresBackendApi: true,
+    },
     component: () => import("@/views/LoginPage.vue"),
   },
   {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppSideMenu from "@/components/AppSideMenu.vue";
+import Const from "@/constants/const";
 import { useAuthStore } from "@/stores/auth";
 import { computed, ref } from "vue";
 
@@ -11,6 +12,8 @@ const drawer = ref(false);
 const authStore = useAuthStore();
 /** ログイン中ユーザーのメールアドレス */
 const loginEmail = computed(() => authStore.currentUser?.loginEmail ?? "");
+/** バックエンドAPIを使うか */
+const isBackendApiEnabled = Const.BACKEND_API.ENABLED;
 
 /**
  * ログアウトする。
@@ -35,14 +38,14 @@ const logout = async (): Promise<void> => {
         ブログ
       </v-btn>
       <v-btn
-        v-if="!authStore.isLoggedIn"
+        v-if="isBackendApiEnabled && !authStore.isLoggedIn"
         class="mr-10 header_list"
         :to="{ name: 'LoginPage' }"
       >
         ログイン
       </v-btn>
       <v-btn
-        v-else
+        v-else-if="isBackendApiEnabled"
         class="mr-10 header_list"
         prepend-icon="mdi-logout"
         @click="logout"
