@@ -10,6 +10,32 @@
 - composable の外から直接使う戻り値型や options 型は `export interface` にする。
 - `defineProps` / `defineEmits` は可能な限り型付きで書く。
 
+## Shared Utilities
+
+Ghost-PDF5、todo、typingGame を将来的に揃えるため、共通処理は責務ごとに置き場所を固定します。
+
+- `src/utils/fetchClient.ts`
+  - fetch共通処理、JSON送受信、HTTPエラー、Cookie送受信などを扱う。
+  - Ghost-PDF5 の `rest.js` 相当です。
+- `src/utils/gameUtils.ts`
+  - 空判定、localStorage、ブラウザ判定など、画面から独立した補助処理を扱う。
+  - Ghost-PDF5 の `util.js` 相当です。
+- `src/constants/const.ts`
+  - URL、画面選択肢、ゲーム設定値、表示用定数などを扱う。
+  - Ghost-PDF5 の `const.js` 相当です。
+
+新しく `rest.ts`、`util.ts`、`const.ts` を増やす前に、既存の `fetchClient.ts`、`gameUtils.ts`、`constants/const.ts` に追加できるか確認してください。
+
+Ghost-PDF5へ戻す時は、TypeScriptの型をそのまま移すのではなく、関数名、責務分離、エラー処理、localStorageの扱いを流用します。
+
+## Backend API Connection
+
+- 未ログインユーザーは、これまで通りlocalStorageにスコアを保存する。
+- ログイン済みユーザーは、localStorage保存後に `POST /api/me/scores` へスコアを保存する。
+- API保存に失敗しても、localStorage側のプレイ結果は消さない。
+- API呼び出しは `fetchClient.ts` 経由に寄せる。
+- セッションCookieを使うAPIでは、`credentials: "include"` が必要になる。
+
 ## Vue Components
 
 - 画面コンポーネントは表示と composable の接続を主な責務にする。
