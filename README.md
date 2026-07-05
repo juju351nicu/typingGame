@@ -46,6 +46,8 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - リトライ
 - 学習補助用の仮想キーボード表示
 - localStorage を使ったランキング表示
+- ログイン済みユーザーのスコアAPI保存
+- 未ログイン時のlocalStorage fallback
 - 難易度設定
 - タイムアタックモード
 - スコア履歴の localStorage 保存・初期化
@@ -98,6 +100,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - スコア保存処理をservice層へ分離し、将来のAPI保存へ差し替えやすい構成に整理
 - スコアAPI接続を見越して保存リクエスト / APIレスポンス型と変換処理を追加
 - fetchClient でHTTPエラーを共通例外として扱い、JSON helper も追加してAPI接続時の失敗検知と取得処理を整理
+- ログイン済みの場合は `/api/me/scores` にスコアを保存し、未ログインの場合はlocalStorage保存のみを行う構成に整理
 - ブログとランキングの error / empty 表示を共通コンポーネントへ整理
 - アラート通知を通知ごとの表示状態で管理し、後続通知の自動非表示が崩れないように改善
 - リトライ時のページリロードを廃止し、ゲーム状態とタイマーをリセットするSPA内完結の挙動に改善
@@ -145,6 +148,13 @@ Frontend cleanup plan before backend work:
 ```text
 docs/frontend-pre-backend-plan.md
 ```
+
+Backend API connection policy:
+
+- 未ログインユーザーは、これまで通りPinia persisted state経由でlocalStorageにスコアを保存する。
+- ログイン済みユーザーは、localStorage保存後に `POST /api/me/scores` へスコアを保存する。
+- API保存に失敗しても、localStorage側のプレイ結果は消さない。
+- Ghost-PDF5 の `const.js`、`rest.js`、`util.js` は考え方を参考にするが、typingGameでは `src/constants/const.ts`、`src/utils/fetchClient.ts`、`src/utils/gameUtils.ts` へ責務を寄せる。
 
 ```bash
 npm install

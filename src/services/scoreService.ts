@@ -7,6 +7,7 @@ import Fetcher from "@/utils/fetchClient";
 
 const DEFAULT_API_BASE_URL = "http://localhost:8091";
 const SCORE_API_PATH = "/api/scores";
+const MY_SCORE_API_PATH = "/api/me/scores";
 
 const apiBaseUrl =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
@@ -80,12 +81,38 @@ export const saveGameScoreApi = async (
 };
 
 /**
+ * ログインユーザー別スコア保存APIへゲームスコアを保存する。
+ * @param score 保存するゲームスコア
+ * @returns API保存後のゲームスコア
+ */
+export const saveMyGameScoreApi = async (
+  score: GameScore
+): Promise<GameScore> => {
+  const response = await Fetcher.postJson<GameScoreResponse>(
+    createApiUrl(MY_SCORE_API_PATH),
+    toSaveGameScoreRequest(score)
+  );
+  return toGameScore(response);
+};
+
+/**
  * スコア取得APIから保存済みスコアを取得する。
  * @returns APIから取得したゲームスコア一覧
  */
 export const fetchGameScoresApi = async (): Promise<GameScore[]> => {
   const response = await Fetcher.getJson<GameScoreResponse[]>(
     createApiUrl(SCORE_API_PATH)
+  );
+  return response.map(toGameScore);
+};
+
+/**
+ * ログインユーザー別スコア取得APIから保存済みスコアを取得する。
+ * @returns APIから取得したゲームスコア一覧
+ */
+export const fetchMyGameScoresApi = async (): Promise<GameScore[]> => {
+  const response = await Fetcher.getJson<GameScoreResponse[]>(
+    createApiUrl(MY_SCORE_API_PATH)
   );
   return response.map(toGameScore);
 };

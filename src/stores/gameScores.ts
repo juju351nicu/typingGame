@@ -3,7 +3,7 @@ import type { GameScore } from "@/types/interfaces";
 import {
   deleteGameScores,
   saveGameScore,
-  saveGameScoreApi,
+  saveMyGameScoreApi,
 } from "@/services/scoreService";
 import { useAuthStore } from "@/stores/auth";
 /**
@@ -46,7 +46,7 @@ export const useGameScoresStore = defineStore("gameScores", {
       }
 
       try {
-        await saveGameScoreApi(data);
+        await saveMyGameScoreApi(data);
       } catch {
         // API保存に失敗してもlocalStorage保存済みのプレイ結果は維持する。
       }

@@ -73,7 +73,12 @@ describe("gameScores store", () => {
     await gameScoresStore.saveGameScoreList(score);
 
     expect(gameScoresStore.getGameScoreList).toEqual([score]);
-    expect(fetchMock).toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://localhost:8091/api/me/scores",
+      expect.objectContaining({
+        method: "POST",
+      })
+    );
   });
 
   it("未ログインの場合はAPI保存せずにスコアを保存できる", async () => {
