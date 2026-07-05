@@ -46,6 +46,35 @@ export interface GameScoreResponse extends GameScoreBase {
 export interface GameScore extends GameScoreBase {
   date: string;
 }
+/** ログインユーザー情報 */
+export interface LoginUser {
+  id: number;
+  loginEmail: string;
+}
+/** ユーザー登録APIのリクエスト */
+export interface RegisterUserRequest {
+  loginEmail: string;
+  password: string;
+}
+/** ログインAPIのリクエスト */
+export interface LoginRequest {
+  loginEmail: string;
+  password: string;
+}
+/** ログインAPIのレスポンス */
+export interface LoginResponse {
+  user: LoginUser;
+}
+/** APIエラー時のフィールド単位エラー */
+export interface CustomFieldError {
+  errorCode?: string;
+  field?: string;
+  message: string;
+}
+/** APIエラー時の共通レスポンス */
+export interface ErrorResponse {
+  fieldErrors?: CustomFieldError[];
+}
 /** ランキング表示用スコアのインターフェース */
 export interface RankingScore extends GameScore {
   rank: number;

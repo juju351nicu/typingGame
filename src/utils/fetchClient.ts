@@ -1,3 +1,5 @@
+import type { ErrorResponse } from "@/types/interfaces";
+
 /**
  * Methodの定数
  */
@@ -22,8 +24,9 @@ export class HttpError extends Error {
   status: number;
   statusText: string;
   url: string;
+  errorResponse?: ErrorResponse;
 
-  constructor(response: Response) {
+  constructor(response: Response, errorResponse?: ErrorResponse) {
     super(
       `HTTP request failed: ${response.status} ${response.statusText} (${response.url})`
     );
@@ -31,6 +34,7 @@ export class HttpError extends Error {
     this.status = response.status;
     this.statusText = response.statusText;
     this.url = response.url;
+    this.errorResponse = errorResponse;
   }
 }
 
@@ -103,9 +107,24 @@ const postJson = async <T>(
 const fetcher = async (requestDatas: RequestData): Promise<Response> => {
   const response = await fetch(requestDatas.requestUrl, requestDatas.options);
   if (!response.ok) {
-    throw new HttpError(response);
+    throw new HttpError(response, await parseErrorResponse(response));
   }
   return response;
+};
+
+/**
+ * HTTPエラー時のレスポンス本文を共通エラーレスポンスとして取得する。
+ * @param response fetchレスポンス
+ * @returns APIエラーレスポンス
+ */
+const parseErrorResponse = async (
+  response: Response
+): Promise<ErrorResponse | undefined> => {
+  try {
+    return (await response.clone().json()) as ErrorResponse;
+  } catch {
+    return undefined;
+  }
 };
 
 /**
@@ -131,9 +150,9 @@ const createRequestData = (
   // HTTPメソッドがPOST・PUTの場合のみリクエストボディを追加する
   if (method === METHOD.POST || method === METHOD.PUT) {
     const body = JSON.stringify(reqData);
-    options = { method, headers, body };
+    options = { method, headers, body, credentials: "include" };
   } else {
-    options = { method, headers };
+    options = { method, headers, credentials: "include" };
   }
 
   return {

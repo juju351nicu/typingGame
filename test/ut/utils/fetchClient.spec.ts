@@ -20,6 +20,7 @@ describe("fetchClient", () => {
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/scores",
       expect.objectContaining({
+        credentials: "include",
         method: "GET",
       })
     );
@@ -53,6 +54,7 @@ describe("fetchClient", () => {
       "/api/scores",
       expect.objectContaining({
         body: JSON.stringify({ score: 10 }),
+        credentials: "include",
         method: "POST",
       })
     );
@@ -75,7 +77,16 @@ describe("fetchClient", () => {
   });
 
   it("HTTPエラーの場合はHttpErrorを投げる", async () => {
-    const response = new Response("Not Found", {
+    const responseBody = {
+      fieldErrors: [
+        {
+          errorCode: "NOT_FOUND",
+          field: "",
+          message: "見つかりません。",
+        },
+      ],
+    };
+    const response = new Response(JSON.stringify(responseBody), {
       status: 404,
       statusText: "Not Found",
     });
@@ -86,6 +97,7 @@ describe("fetchClient", () => {
       name: "HttpError",
       status: 404,
       statusText: "Not Found",
+      errorResponse: responseBody,
     });
     await expect(Fetcher.getRequest("/api/missing")).rejects.toBeInstanceOf(
       HttpError

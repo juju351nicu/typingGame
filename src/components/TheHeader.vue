@@ -1,11 +1,23 @@
 <script setup lang="ts">
 import AppSideMenu from "@/components/AppSideMenu.vue";
-import { ref } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import { computed, ref } from "vue";
 
 /** メニュータイトル */
 const title = "Balloon Typing Game";
 /** サイドメニューフラグ */
 const drawer = ref(false);
+/** 認証ストア */
+const authStore = useAuthStore();
+/** ログイン中ユーザーのメールアドレス */
+const loginEmail = computed(() => authStore.currentUser?.loginEmail ?? "");
+
+/**
+ * ログアウトする。
+ */
+const logout = async (): Promise<void> => {
+  await authStore.logout();
+};
 </script>
 <template>
   <v-app-bar color="deep-purple" dark>
@@ -21,6 +33,21 @@ const drawer = ref(false);
       </v-btn>
       <v-btn class="mr-10 header_list" :to="{ name: 'BlogPostList' }">
         ブログ
+      </v-btn>
+      <v-btn
+        v-if="!authStore.isLoggedIn"
+        class="mr-10 header_list"
+        :to="{ name: 'LoginPage' }"
+      >
+        ログイン
+      </v-btn>
+      <v-btn
+        v-else
+        class="mr-10 header_list"
+        prepend-icon="mdi-logout"
+        @click="logout"
+      >
+        {{ loginEmail }}
       </v-btn>
     </div>
   </v-app-bar>

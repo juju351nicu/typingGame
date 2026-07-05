@@ -5,6 +5,7 @@ import {
   saveGameScore,
   saveGameScoreApi,
 } from "@/services/scoreService";
+import { useAuthStore } from "@/stores/auth";
 /**
  * ゲームスコアのストアで使用する型定義
  */
@@ -38,6 +39,11 @@ export const useGameScoresStore = defineStore("gameScores", {
      */
     async saveGameScoreList(data: GameScore): Promise<void> {
       this.scores = saveGameScore(this.scores, data);
+
+      const authStore = useAuthStore();
+      if (!authStore.isLoggedIn) {
+        return;
+      }
 
       try {
         await saveGameScoreApi(data);

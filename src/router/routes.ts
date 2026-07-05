@@ -20,6 +20,12 @@ export const routeSetting: RouteRecordRaw[] = [
     component: () => import("@/views/SettingsPage.vue"),
   },
   {
+    /** ログイン画面 */
+    path: "/login",
+    name: "LoginPage",
+    component: () => import("@/views/LoginPage.vue"),
+  },
+  {
     /** ブログ記事一覧 */
     path: "/blogPostList",
     name: "BlogPostList",
