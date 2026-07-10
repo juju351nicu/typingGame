@@ -3,6 +3,7 @@ import Const from "@/constants/const";
 import type { GameScore } from "@/types/interfaces";
 import {
   deleteGameScores,
+  fetchMyGameScoresApi,
   saveGameScore,
   saveMyGameScoreApi,
 } from "@/services/scoreService";
@@ -22,7 +23,7 @@ export const useGameScoresStore = defineStore("gameScores", {
     /** スコア情報リスト */
     scores: [],
     /** ローディングフラグ */
-    isLoading: true,
+    isLoading: false,
   }),
   getters: {
     /**
@@ -50,6 +51,28 @@ export const useGameScoresStore = defineStore("gameScores", {
         await saveMyGameScoreApi(data);
       } catch {
         // API保存に失敗してもlocalStorage保存済みのプレイ結果は維持する。
+      }
+    },
+    /**
+     * ログインユーザーのスコア一覧をAPIから取得する。
+     *
+     * バックエンドAPIが無効、または未ログインの場合は何もしない。
+     * API取得に失敗した場合も、localStorageから復元済みのスコアは維持する。
+     */
+    async loadMyGameScoresIfAvailable(): Promise<void> {
+      const authStore = useAuthStore();
+      if (!Const.BACKEND_API.ENABLED || !authStore.isLoggedIn) {
+        this.isLoading = false;
+        return;
+      }
+
+      this.isLoading = true;
+      try {
+        this.scores = await fetchMyGameScoresApi();
+      } catch {
+        // API取得に失敗してもlocalStorageから復元済みのスコアは維持する。
+      } finally {
+        this.isLoading = false;
       }
     },
     /**

@@ -30,6 +30,7 @@ describe("gameScores store", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   it("スコアを保存できる", async () => {
@@ -148,6 +149,86 @@ describe("gameScores store", () => {
     await gameScoresStore.saveGameScoreList(score);
 
     expect(gameScoresStore.getGameScoreList).toEqual([score]);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("ログイン済みでバックエンドAPI有効時はユーザー別スコア一覧を読み込む", async () => {
+    const apiScore: GameScore = {
+      score: 22,
+      mode: 2,
+      time: "00:00:28.00",
+      date: "2026-07-10 10:00:00",
+      wpm: 34,
+      accuracy: 97,
+      missCount: 1,
+      correctCharacterCount: 82,
+    };
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify([
+          {
+            id: 1,
+            ...apiScore,
+          },
+        ]),
+        {
+          status: 200,
+          statusText: "OK",
+        }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const { useGameScoresStore } = await import("@/stores/gameScores");
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+    authStore.currentUser = {
+      id: 1,
+      loginEmail: "user@example.com",
+    };
+    const gameScoresStore = useGameScoresStore();
+
+    await gameScoresStore.loadMyGameScoresIfAvailable();
+
+    expect(gameScoresStore.getGameScoreList).toEqual([apiScore]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://localhost:8091/api/me/scores",
+      expect.objectContaining({
+        method: "GET",
+      })
+    );
+  });
+
+  it("ユーザー別スコア一覧の取得に失敗しても既存スコアを維持する", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("API error")));
+    const { useGameScoresStore } = await import("@/stores/gameScores");
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+    authStore.currentUser = {
+      id: 1,
+      loginEmail: "user@example.com",
+    };
+    const gameScoresStore = useGameScoresStore();
+    const localScore: GameScore = {
+      score: 11,
+      mode: 1,
+      time: "00:00:33.70",
+      date: "2026-05-24 12:29:45",
+    };
+    gameScoresStore.scores = [localScore];
+
+    await gameScoresStore.loadMyGameScoresIfAvailable();
+
+    expect(gameScoresStore.getGameScoreList).toEqual([localScore]);
+  });
+
+  it("未ログインの場合はユーザー別スコア一覧を取得しない", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const { useGameScoresStore } = await import("@/stores/gameScores");
+    const gameScoresStore = useGameScoresStore();
+
+    await gameScoresStore.loadMyGameScoresIfAvailable();
+
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

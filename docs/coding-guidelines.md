@@ -32,7 +32,9 @@ Ghost-PDF5へ戻す時は、TypeScriptの型をそのまま移すのではなく
 
 - 未ログインユーザーは、これまで通りlocalStorageにスコアを保存する。
 - ログイン済みユーザーは、localStorage保存後に `POST /api/me/scores` へスコアを保存する。
+- ログイン済みユーザーがランキング画面を開いた場合は、`GET /api/me/scores` でDB保存済みスコアの取得を試みる。
 - API保存に失敗しても、localStorage側のプレイ結果は消さない。
+- API取得に失敗しても、localStorageから復元済みのスコア一覧は維持する。
 - API呼び出しは `fetchClient.ts` 経由に寄せる。
 - セッションCookieを使うAPIでは、`credentials: "include"` が必要になる。
 - GitHub Pagesでは当面FEだけを公開するため、バックエンドAPI前提の動きにしない。
@@ -63,11 +65,12 @@ VITE_ENABLE_BACKEND_API=true
   - ローカルでBE/FEを両方起動して動作確認する環境。
   - ログイン導線を表示する。
   - ログイン済みユーザーのスコアをAPIにも保存する。
+  - ログイン済みユーザーのランキング表示では、APIからユーザー別スコア一覧を取得する。
 - 未設定 / `false`
   - GitHub PagesなどFE単体公開の環境。
   - ログイン導線を表示しない。
   - `/login` へ直接アクセスされた場合はゲーム画面へ戻す。
-  - スコアはlocalStorageへ保存し、API保存は呼ばない。
+  - スコアはlocalStorageへ保存し、API保存・API取得は呼ばない。
 
 `VITE_API_BASE_URL` は接続先URLの設定であり、APIを使うかどうかの判断には使いません。URLが設定されているだけでAPI機能が有効になると、GitHub Pages公開時に意図しない通信が起きやすいためです。
 
@@ -86,7 +89,8 @@ VITE_ENABLE_BACKEND_API=true
 - `src/stores/auth.ts`
   - API無効時はログイン、登録、ログイン中ユーザー取得、ログアウトAPIを呼ばない。
 - `src/stores/gameScores.ts`
-  - API無効時はログイン状態が残っていてもスコアAPI保存を呼ばない。
+  - API無効時はログイン状態が残っていてもスコアAPI保存・API取得を呼ばない。
+  - API取得に失敗した場合は、既存のlocalStorage由来スコアを維持する。
 
 UI側だけで隠すと、直アクセスや将来の実装追加でAPIが呼ばれる可能性があります。Store側だけで止めると、公開画面に使えないログイン導線が残ります。そのため、UI・router・storeの3箇所で責務を分けます。
 

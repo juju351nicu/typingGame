@@ -11,6 +11,8 @@ import {
 /** 保存済みスコアを管理するストア */
 const gameScoresStore = useGameScoresStore();
 
+void gameScoresStore.loadMyGameScoresIfAvailable();
+
 const {
   bestScore,
   bestScoreSummary,
