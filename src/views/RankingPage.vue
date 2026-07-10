@@ -59,7 +59,7 @@ const getRankClass = (rank: number): string => {
     <div class="score-header">
       <div>
         <p class="score-title">Ranking</p>
-        <p class="score-subtitle">localStorage に保存されたプレイ履歴です。</p>
+        <p class="score-subtitle">保存されたプレイ履歴です。</p>
       </div>
       <v-select
         v-model="selectedMode"

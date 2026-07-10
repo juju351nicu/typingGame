@@ -163,6 +163,18 @@ Backend API connection policy:
 - GitHub Pagesでは `VITE_ENABLE_BACKEND_API` を未設定または `false` にし、FE単体で公開する。
 - Ghost-PDF5 の `const.js`、`rest.js`、`util.js` は考え方を参考にするが、typingGameでは `src/constants/const.ts`、`src/utils/fetchClient.ts`、`src/utils/gameUtils.ts` へ責務を寄せる。
 
+Local integration check:
+
+2026-07-10 にローカル環境でFE/BE結合確認済みです。
+
+- Swagger UI からユーザー登録、ログイン、ログイン中ユーザー取得が成功する。
+- Swagger UI から `POST /api/me/scores` でログインユーザーのスコア保存が成功する。
+- Swagger UI から `GET /api/me/scores` でログインユーザーのスコア一覧取得が成功する。
+- `VITE_ENABLE_BACKEND_API=true` でFEを起動すると、ログイン導線が表示される。
+- FEからログイン後、ゲーム終了時にスコアが保存される。
+- ランキング画面でDB保存済みスコアとFEから保存したスコアが表示される。
+- API保存・取得に失敗しても、localStorage fallbackを維持する方針は継続する。
+
 Local backend API:
 
 ```bash
