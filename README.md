@@ -331,4 +331,59 @@ Backend startup checklist: [`docs/backend-startup-checklist.md`](./docs/backend-
   - オフライン対応
   - ホーム画面追加
 
-Status: 計画中
+Status: ローカルの基本連携は実装済み。API有効時とFE単体公開時の動作確認を継続。
+
+### Phase 7: FE/BE結合確認
+
+目安: 半日〜1日
+
+- バックエンドAPI有効時に、ユーザー登録、ログイン、スコア保存、ランキング表示を確認
+- バックエンドAPI無効時に、GitHub Pages公開と同じFE単体モードでlocalStorage保存を確認
+- API保存・取得に失敗してもlocalStorage fallbackが維持されることを確認
+- 確認結果をREADMEまたはdocsに追記
+
+Status: 次に着手するフェーズ
+
+### Phase 8: JWT化
+
+目安: 3日〜1週間
+
+- ログイン成功時にJWTを発行
+- フロントエンドでtokenを保持
+- `Authorization` ヘッダーでログインユーザー向けAPIを呼び出す
+- ログアウト、認証切れ、未ログイン時の表示を整理
+- Spring Securityとフロントエンドのテストを追加
+
+Status: 本番公開準備の前に実施予定
+
+### Phase 9: 本番公開準備
+
+目安: 2日〜1週間
+
+- 本番用CORS設定を整理
+- `application-prod` や環境変数でDB接続情報を切り替える
+- GitHub PagesからバックエンドAPIへ接続する前提で設定を整理
+- 起動手順、環境変数、確認手順をREADME/docsにまとめる
+
+Status: JWT化後に実施予定
+
+### Phase 10: EC2デプロイ学習
+
+目安: 1〜2週間
+
+- EC2にJava、MySQL、Nginxを準備
+- Spring Bootアプリを起動
+- `systemd` でサービス化
+- セキュリティグループ、ポート、HTTPSを確認
+- GitHub PagesのFEからEC2上のBEへ疎通確認
+
+Status: 本番公開準備後に学習予定
+
+### 後続フェーズの考え方
+
+現時点では、OpenAPI Generatorは導入しない方針です。
+typingGameの規模では、手書きのTypeScript型とSwagger UIで十分に管理できます。
+API数が増え、FE/BEの型同期コストが大きくなった段階で再検討します。
+
+期間の目安は、最短で1〜2週間、現実的には3〜4週間、学習を丁寧に進める場合は1〜2か月です。
+まずはFE/BE結合確認を終わらせ、その後にJWT化、本番公開準備、EC2学習の順で進めます。
