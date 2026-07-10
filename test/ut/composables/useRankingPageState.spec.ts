@@ -10,7 +10,7 @@ import {
 } from "@/composables/useRankingPageState";
 import Const from "@/constants/const";
 import type { GameScore, RankingScore } from "@/types/interfaces";
-import { nextTick, reactive } from "vue";
+import { nextTick, reactive, ref } from "vue";
 import { describe, expect, it } from "vitest";
 
 const scores: GameScore[] = [
@@ -79,6 +79,36 @@ describe("useRankingPageState", () => {
     expect(rankingState.rankingItems.value).toHaveLength(1);
     expect(rankingState.rankingItems.value[0].score).toBe(120);
     expect(rankingState.timeAttackBestScore.value?.timeLimitSeconds).toBe(30);
+  });
+
+  it("表示元を全体ランキングへ切り替えたらAPI由来のスコアを使う", () => {
+    const store = reactive({ getGameScoreList: scores });
+    const allRankingScores = ref<GameScore[]>([
+      {
+        score: 300,
+        mode: 2,
+        gameRule: Const.GAME_RULE.NORMAL,
+        time: "00:00:25",
+        date: "2026-07-04 10:00:00",
+        wpm: 60,
+        accuracy: 98,
+        missCount: 1,
+        correctCharacterCount: 80,
+      },
+    ]);
+    const rankingState = useRankingPageState(store, { allRankingScores });
+
+    expect(rankingState.gameScores.value).toEqual(scores);
+    expect(rankingState.scoreSourceOptions).toEqual([
+      { title: "自分の記録", value: "my" },
+      { title: "全体ランキング", value: "all" },
+    ]);
+
+    rankingState.selectedScoreSource.value = "all";
+
+    expect(rankingState.isAllRankingSelected.value).toBe(true);
+    expect(rankingState.gameScores.value).toEqual(allRankingScores.value);
+    expect(rankingState.rankingItems.value[0].score).toBe(300);
   });
 
   it("推移グラフの指標に応じたラベルを返す", () => {

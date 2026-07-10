@@ -1,4 +1,4 @@
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, type Ref } from "vue";
 import Const from "@/constants/const";
 import Util from "@/utils/gameUtils";
 import type {
@@ -12,6 +12,14 @@ import type {
 
 interface GameScoresReader {
   getGameScoreList: GameScore[];
+}
+
+/** ランキング画面で表示するスコア取得元 */
+type RankingScoreSource = "my" | "all";
+
+/** ランキング画面状態の追加オプション */
+interface UseRankingPageStateOptions {
+  allRankingScores?: Ref<GameScore[]>;
 }
 
 /** ランキング表の列定義 */
@@ -154,7 +162,10 @@ export const getRankingSummaryText = (
  * @param gameScoresStore 保存済みスコアを参照するstore
  * @returns ランキング画面で使用する状態と集計値
  */
-export const useRankingPageState = (gameScoresStore: GameScoresReader) => {
+export const useRankingPageState = (
+  gameScoresStore: GameScoresReader,
+  options: UseRankingPageStateOptions = {}
+) => {
   /** ランキング表の1ページあたりの表示件数 */
   const itemsPerPage = ref(Const.NUMBER_OF_ITEMS);
 
@@ -172,6 +183,9 @@ export const useRankingPageState = (gameScoresStore: GameScoresReader) => {
 
   /** ランキング画面で選択中の表示タブ */
   const selectedRankingTab = ref("summary");
+
+  /** ランキング画面で選択中のスコア取得元 */
+  const selectedScoreSource = ref<RankingScoreSource>("my");
 
   /** パフォーマンス推移で選択中の指標 */
   const selectedTrendMetric = ref<PerformanceTrendMetric>("score");
@@ -197,6 +211,12 @@ export const useRankingPageState = (gameScoresStore: GameScoresReader) => {
     ...Const.TIME_ATTACK_LIMITS,
   ];
 
+  /** スコア取得元の選択肢 */
+  const scoreSourceOptions: { title: string; value: RankingScoreSource }[] = [
+    { title: "自分の記録", value: "my" },
+    { title: "全体ランキング", value: "all" },
+  ];
+
   /** 制限時間フィルターを表示するか */
   const isTimeAttackSelected = computed((): boolean => {
     return selectedGameRule.value === Const.GAME_RULE.TIME_ATTACK;
@@ -213,8 +233,21 @@ export const useRankingPageState = (gameScoresStore: GameScoresReader) => {
     }
   });
 
-  /** スコア一覧 */
+  /** 全体ランキングAPIから取得したスコア一覧 */
+  const allRankingScores = computed((): GameScore[] => {
+    return options.allRankingScores?.value ?? [];
+  });
+
+  /** 全体ランキングを表示中か */
+  const isAllRankingSelected = computed((): boolean => {
+    return selectedScoreSource.value === "all";
+  });
+
+  /** 表示元に応じたスコア一覧 */
   const gameScores = computed((): GameScore[] => {
+    if (isAllRankingSelected.value) {
+      return allRankingScores.value;
+    }
     return gameScoresStore.getGameScoreList;
   });
 
@@ -340,6 +373,7 @@ export const useRankingPageState = (gameScoresStore: GameScoresReader) => {
     getTimeLimitLabel,
     getTrendValueLabel,
     headers: rankingHeaders,
+    isAllRankingSelected,
     isTimeAttackSelected,
     itemsPerPage,
     modeOptions,
@@ -348,9 +382,11 @@ export const useRankingPageState = (gameScoresStore: GameScoresReader) => {
     pages,
     performanceTrendItems,
     rankingItems,
+    scoreSourceOptions,
     selectedGameRule,
     selectedMode,
     selectedRankingTab,
+    selectedScoreSource,
     selectedTimeLimitSeconds,
     selectedTrendMetric,
     selectedTrendMetricOption,

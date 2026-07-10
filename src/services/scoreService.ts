@@ -1,6 +1,7 @@
 import type {
   GameScore,
   GameScoreResponse,
+  RankingQuery,
   SaveGameScoreRequest,
 } from "@/types/interfaces";
 import Const from "@/constants/const";
@@ -8,6 +9,7 @@ import Fetcher from "@/utils/fetchClient";
 
 const SCORE_API_PATH = "/api/scores";
 const MY_SCORE_API_PATH = "/api/me/scores";
+const RANKINGS_API_PATH = "/api/rankings";
 
 /**
  * APIのURLを作成する。
@@ -16,6 +18,32 @@ const MY_SCORE_API_PATH = "/api/me/scores";
  */
 const createApiUrl = (path: string): string => {
   return `${Const.BACKEND_API.BASE_URL}${path}`;
+};
+
+/**
+ * ランキング取得APIのURLを作成する。
+ * @param query ランキング検索条件
+ * @returns クエリ文字列付きAPI URL
+ */
+const createRankingsApiUrl = (query: RankingQuery = {}): string => {
+  const searchParams = new URLSearchParams();
+
+  if (query.mode != null) {
+    searchParams.set("mode", String(query.mode));
+  }
+  if (query.gameRule != null) {
+    searchParams.set("gameRule", query.gameRule);
+  }
+  if (query.timeLimitSeconds != null) {
+    searchParams.set("timeLimitSeconds", String(query.timeLimitSeconds));
+  }
+  if (query.limit != null) {
+    searchParams.set("limit", String(query.limit));
+  }
+
+  const queryString = searchParams.toString();
+  const apiUrl = createApiUrl(RANKINGS_API_PATH);
+  return queryString ? `${apiUrl}?${queryString}` : apiUrl;
 };
 
 /**
@@ -109,6 +137,20 @@ export const fetchGameScoresApi = async (): Promise<GameScore[]> => {
 export const fetchMyGameScoresApi = async (): Promise<GameScore[]> => {
   const response = await Fetcher.getJson<GameScoreResponse[]>(
     createApiUrl(MY_SCORE_API_PATH)
+  );
+  return response.map(toGameScore);
+};
+
+/**
+ * ランキング取得APIからスコア一覧を取得する。
+ * @param query ランキング検索条件
+ * @returns APIから取得したランキング用ゲームスコア一覧
+ */
+export const fetchRankingsApi = async (
+  query: RankingQuery = {}
+): Promise<GameScore[]> => {
+  const response = await Fetcher.getJson<GameScoreResponse[]>(
+    createRankingsApiUrl(query)
   );
   return response.map(toGameScore);
 };

@@ -2,6 +2,7 @@ import {
   deleteGameScores,
   fetchGameScoresApi,
   fetchMyGameScoresApi,
+  fetchRankingsApi,
   saveGameScore,
   saveGameScoreApi,
   saveMyGameScoreApi,
@@ -182,6 +183,57 @@ describe("scoreService", () => {
     expect(result).toEqual([newScore]);
     expect(fetchMock).toHaveBeenCalledWith(
       "http://localhost:8091/api/me/scores",
+      expect.objectContaining({
+        method: "GET",
+      })
+    );
+  });
+
+  it("ランキング取得APIへ検索条件付きリクエストを送信する", async () => {
+    const responseBody: GameScoreResponse[] = [
+      {
+        id: 1,
+        ...newScore,
+      },
+    ];
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify(responseBody), {
+        status: 200,
+        statusText: "OK",
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await fetchRankingsApi({
+      mode: 2,
+      gameRule: "timeAttack",
+      timeLimitSeconds: 60,
+      limit: 50,
+    });
+
+    expect(result).toEqual([newScore]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://localhost:8091/api/rankings?mode=2&gameRule=timeAttack&timeLimitSeconds=60&limit=50",
+      expect.objectContaining({
+        method: "GET",
+      })
+    );
+  });
+
+  it("ランキング取得APIは検索条件なしでもリクエストを送信できる", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify([]), {
+        status: 200,
+        statusText: "OK",
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await fetchRankingsApi();
+
+    expect(result).toEqual([]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://localhost:8091/api/rankings",
       expect.objectContaining({
         method: "GET",
       })

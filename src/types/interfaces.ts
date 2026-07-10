@@ -42,6 +42,14 @@ export interface GameScoreResponse extends GameScoreBase {
   date: string;
 }
 
+/** ランキング取得APIの検索条件 */
+export interface RankingQuery {
+  mode?: number | null;
+  gameRule?: GameRule | null;
+  timeLimitSeconds?: TimeLimitSeconds | null;
+  limit?: number | null;
+}
+
 /** ゲームスコアのインターフェ-ス */
 export interface GameScore extends GameScoreBase {
   date: string;

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, ref, watch } from "vue";
 import RankingSummaryPanel from "@/components/RankingSummaryPanel.vue";
 import RankingTablePanel from "@/components/RankingTablePanel.vue";
 import RankingTrendPanel from "@/components/RankingTrendPanel.vue";
@@ -7,13 +8,26 @@ import {
   getRankingRankClass,
   useRankingPageState,
 } from "@/composables/useRankingPageState";
+import Const from "@/constants/const";
+import { fetchRankingsApi } from "@/services/scoreService";
+import type { GameScore, RankingQuery } from "@/types/interfaces";
 
 /** 保存済みスコアを管理するストア */
 const gameScoresStore = useGameScoresStore();
 
 void gameScoresStore.loadMyGameScoresIfAvailable();
 
+/** 全体ランキングAPIから取得したスコア一覧 */
+const allRankingScores = ref<GameScore[]>([]);
+
+/** 全体ランキングAPI取得中か */
+const isAllRankingLoading = ref(false);
+
+/** バックエンドAPIが有効か */
+const isBackendApiEnabled = Const.BACKEND_API.ENABLED;
+
 const {
+  activeTimeLimitSeconds,
   bestScore,
   bestScoreSummary,
   formatAccuracyMetric,
@@ -28,6 +42,7 @@ const {
   getTimeLimitLabel,
   getTrendValueLabel,
   headers,
+  isAllRankingSelected,
   isTimeAttackSelected,
   itemsPerPage,
   modeOptions,
@@ -36,9 +51,11 @@ const {
   pages,
   performanceTrendItems,
   rankingItems,
+  scoreSourceOptions,
   selectedGameRule,
   selectedMode,
   selectedRankingTab,
+  selectedScoreSource,
   selectedTimeLimitSeconds,
   selectedTrendMetric,
   timeAttackBestScore,
@@ -47,7 +64,63 @@ const {
   timeLimitOptions,
   trendMetricOptions,
   trendTitle,
-} = useRankingPageState(gameScoresStore);
+} = useRankingPageState(gameScoresStore, { allRankingScores });
+
+/** ランキング画面の補足文 */
+const rankingSubtitle = computed((): string => {
+  if (isAllRankingSelected.value && isAllRankingLoading.value) {
+    return "全体ランキングを読み込んでいます。";
+  }
+  if (isAllRankingSelected.value) {
+    return "登録ユーザーを含む全体ランキングです。";
+  }
+  return "保存されたプレイ履歴です。";
+});
+
+/** 全体ランキングAPIの検索条件を作成する。 */
+const createRankingQuery = (): RankingQuery => {
+  return {
+    mode: selectedMode.value,
+    gameRule: selectedGameRule.value,
+    timeLimitSeconds: activeTimeLimitSeconds.value,
+    limit: 50,
+  };
+};
+
+/**
+ * 全体ランキングAPIからスコア一覧を取得する。
+ *
+ * API無効時や自分の記録を表示中の場合は取得しない。
+ * 取得に失敗した場合は、直前に取得できた全体ランキング表示を維持する。
+ */
+const loadAllRankingScoresIfAvailable = async (): Promise<void> => {
+  if (!isBackendApiEnabled || !isAllRankingSelected.value) {
+    isAllRankingLoading.value = false;
+    return;
+  }
+
+  isAllRankingLoading.value = true;
+  try {
+    allRankingScores.value = await fetchRankingsApi(createRankingQuery());
+  } catch {
+    // API取得に失敗しても画面表示中のランキングデータは維持する。
+  } finally {
+    isAllRankingLoading.value = false;
+  }
+};
+
+watch(
+  [
+    selectedScoreSource,
+    selectedMode,
+    selectedGameRule,
+    activeTimeLimitSeconds,
+  ],
+  () => {
+    void loadAllRankingScoresIfAvailable();
+  },
+  { immediate: true }
+);
 
 /** ランク表示用CSSクラス */
 const getRankClass = (rank: number): string => {
@@ -59,8 +132,24 @@ const getRankClass = (rank: number): string => {
     <div class="score-header">
       <div>
         <p class="score-title">Ranking</p>
-        <p class="score-subtitle">保存されたプレイ履歴です。</p>
+        <p class="score-subtitle">{{ rankingSubtitle }}</p>
       </div>
+      <v-btn-toggle
+        v-if="isBackendApiEnabled"
+        v-model="selectedScoreSource"
+        mandatory
+        density="comfortable"
+        color="primary"
+        class="score-source-toggle"
+      >
+        <v-btn
+          v-for="option in scoreSourceOptions"
+          :key="option.value"
+          :value="option.value"
+        >
+          {{ option.title }}
+        </v-btn>
+      </v-btn-toggle>
       <v-select
         v-model="selectedMode"
         :items="modeOptions"
@@ -184,6 +273,17 @@ const getRankClass = (rank: number): string => {
   margin: 8px 0 0;
 }
 
+.score-source-toggle {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  flex: 0 1 auto;
+}
+
+.score-source-toggle :deep(.v-btn) {
+  min-width: 132px;
+  text-transform: none;
+}
+
 .ranking-filter {
   flex: 1 1 180px;
   max-width: 220px;
@@ -244,6 +344,15 @@ const getRankClass = (rank: number): string => {
 
   .ranking-filter {
     max-width: none;
+  }
+
+  .score-source-toggle {
+    width: 100%;
+  }
+
+  .score-source-toggle :deep(.v-btn) {
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   .ranking-window {
