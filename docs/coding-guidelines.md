@@ -110,6 +110,9 @@ VITE_ENABLE_BACKEND_API=true npm run dev
 VITE_ENABLE_BACKEND_API=true VITE_API_BASE_URL=http://localhost:8091 npm run dev
 ```
 
+ローカル結合確認では、ブラウザで開くFEのURLも `http://localhost:8081` に揃えます。
+`http://127.0.0.1:8081` で開くと、ブラウザ上は別オリジン扱いになり、CORSやCookie送受信の条件が変わるためです。
+
 ## Vue Components
 
 - 画面コンポーネントは表示と composable の接続を主な責務にする。
