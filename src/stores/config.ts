@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
 import Const from "@/constants/const";
-import type { GameRule, TimeLimitSeconds } from "@/types/interfaces";
+import type { GameMode, GameRule, TimeLimitSeconds } from "@/types/interfaces";
 /**
  * 設定のストアで使用する型定義
  */
 interface ConfigState {
-  mode: number;
+  mode: GameMode;
   gameRule: GameRule;
   timeLimitSeconds: TimeLimitSeconds;
   isDarkMode: boolean;
@@ -20,7 +20,7 @@ interface ConfigState {
 export const useConfigStore = defineStore("config", {
   state: (): ConfigState => ({
     /** ゲームの難易度 */
-    mode: 0,
+    mode: Const.GAME_MODE.EASY,
     /** ゲーム終了条件の種類 */
     gameRule: Const.GAME_RULE.NORMAL,
     /** タイムアタックの制限時間 */
@@ -38,7 +38,7 @@ export const useConfigStore = defineStore("config", {
      * ゲームの難易度を取得する
      * @returns 難易度の数値
      */
-    getGameMode(): number {
+    getGameMode(): GameMode {
       return this.mode;
     },
     /**
@@ -93,20 +93,20 @@ export const useConfigStore = defineStore("config", {
   actions: {
     /**
      *
-     * @param {number} selectedGameMode
+     * @param selectedGameMode ゲーム難易度
      */
-    saveGameMode(selectedGameMode: number) {
+    saveGameMode(selectedGameMode: GameMode) {
       this.mode = selectedGameMode;
       switch (selectedGameMode) {
-        case 0:
+        case Const.GAME_MODE.EASY:
           this.insertion = Const.INTERVAL_INSERTION.EASY;
           this.animation = Const.INTERVAL_ANIMATION.EASY;
           break;
-        case 1:
+        case Const.GAME_MODE.NORMAL:
           this.insertion = Const.INTERVAL_INSERTION.NORMAL;
           this.animation = Const.INTERVAL_ANIMATION.NORMAL;
           break;
-        case 2:
+        case Const.GAME_MODE.HARD:
           this.insertion = Const.INTERVAL_INSERTION.HARD;
           this.animation = Const.INTERVAL_ANIMATION.HARD;
           break;

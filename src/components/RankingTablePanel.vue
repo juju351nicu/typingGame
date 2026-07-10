@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GameRule, RankingScore } from "@/types/interfaces";
+import type { GameMode, GameRule, RankingScore } from "@/types/interfaces";
 import { computed } from "vue";
 
 interface RankingTablePanelProps {
@@ -10,8 +10,8 @@ interface RankingTablePanelProps {
   timeAttackGameRule: GameRule;
   formatAccuracyMetric: (value: number | null | undefined) => string;
   formatNullableMetric: (value: number | string | null | undefined) => string;
-  getModeColor: (mode: number) => string;
-  getModeLabel: (mode: number) => string;
+  getModeColor: (mode: GameMode) => string;
+  getModeLabel: (mode: GameMode) => string;
   getRankClass: (rank: number) => string;
   getResultRankColor: (rank: string) => string;
   getScoreGameRule: (score: RankingScore) => GameRule;

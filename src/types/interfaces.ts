@@ -17,6 +17,9 @@ export interface Alert {
 /** ゲームルールの種類 */
 export type GameRule = "normal" | "timeAttack";
 
+/** ゲーム難易度の種類。BEのGameModeEnumと同じ外向き値です。 */
+export type GameMode = 0 | 1 | 2;
+
 /** タイムアタックの制限時間（秒） */
 export type TimeLimitSeconds = 30 | 60 | 90;
 
@@ -24,7 +27,7 @@ export type TimeLimitSeconds = 30 | 60 | 90;
 export interface GameScoreBase {
   time: string;
   score: number;
-  mode: number;
+  mode: GameMode;
   gameRule?: GameRule;
   timeLimitSeconds?: TimeLimitSeconds;
   wpm?: number;
@@ -44,7 +47,7 @@ export interface GameScoreResponse extends GameScoreBase {
 
 /** ランキング取得APIの検索条件 */
 export interface RankingQuery {
-  mode?: number | null;
+  mode?: GameMode | null;
   gameRule?: GameRule | null;
   timeLimitSeconds?: TimeLimitSeconds | null;
   limit?: number | null;
@@ -99,7 +102,7 @@ export interface PerformanceTrendItem extends GameScore {
 }
 export interface Item {
   title: string;
-  value: number;
+  value: GameMode;
 }
 /** JSON記事情報のインターフェ-ス */
 export interface PostIndex {

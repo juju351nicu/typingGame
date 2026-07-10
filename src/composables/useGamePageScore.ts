@@ -1,11 +1,16 @@
-import type { GameRule, GameScore, TimeLimitSeconds } from "@/types/interfaces";
+import type {
+  GameMode,
+  GameRule,
+  GameScore,
+  TimeLimitSeconds,
+} from "@/types/interfaces";
 import Util from "@/utils/gameUtils";
 
 interface GamePageScoreInput {
   /** 現在のスコア */
   score: number;
   /** 現在の難易度 */
-  mode: number;
+  mode: GameMode;
   /** 現在のゲームルール */
   gameRule: GameRule;
   /** タイムアタックの制限時間 */

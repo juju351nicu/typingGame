@@ -2,6 +2,7 @@ import { computed, ref, watch, type Ref } from "vue";
 import Const from "@/constants/const";
 import Util from "@/utils/gameUtils";
 import type {
+  GameMode,
   GameRule,
   GameScore,
   PerformanceTrendItem,
@@ -173,7 +174,7 @@ export const useRankingPageState = (
   const pages = Const.DATA_TABLE_PAGES;
 
   /** 難易度フィルター */
-  const selectedMode = ref<number | null>(null);
+  const selectedMode = ref<GameMode | null>(null);
 
   /** ゲームルールフィルター */
   const selectedGameRule = ref<GameRule | null>(null);
@@ -333,12 +334,12 @@ export const useRankingPageState = (
   };
 
   /** 難易度の色を取得する。 */
-  const getModeColor = (mode: number): string => {
+  const getModeColor = (mode: GameMode): string => {
     return Util.getColor(mode);
   };
 
   /** 難易度の表示名を取得する。 */
-  const getModeLabel = (mode: number): string => {
+  const getModeLabel = (mode: GameMode): string => {
     return Util.getLevel(mode);
   };
 

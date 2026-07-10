@@ -10,6 +10,64 @@
 - composable の外から直接使う戻り値型や options 型は `export interface` にする。
 - `defineProps` / `defineEmits` は可能な限り型付きで書く。
 
+### API値と疑似enum
+
+小さいアプリでは、TypeScript の `enum` よりも union型と `as const` の定数を優先します。
+
+理由:
+
+- APIやlocalStorageに保存する外向き値をそのまま型にできる。
+- 生成されるJavaScriptを増やさずに済む。
+- 既存の `src/constants/const.ts` に値を集約しやすい。
+- BE側の enum と外向き値を合わせつつ、FEでは軽い型定義で扱える。
+
+例:
+
+```ts
+export type GameMode = 0 | 1 | 2;
+export type GameRule = "normal" | "timeAttack";
+```
+
+```ts
+const GAME_MODE = {
+  EASY: 0,
+  NORMAL: 1,
+  HARD: 2,
+} as const satisfies Record<string, GameMode>;
+```
+
+```ts
+const GAME_RULE = {
+  NORMAL: "normal",
+  TIME_ATTACK: "timeAttack",
+} as const satisfies Record<string, GameRule>;
+```
+
+BE側では `GameModeEnum` / `GameRuleEnum` を使いますが、APIの外向き値はFE側と同じです。
+
+```text
+GameModeEnum.HARD <-> 2
+GameRuleEnum.TIME_ATTACK <-> "timeAttack"
+```
+
+### OpenAPI Generator
+
+現場では OpenAPI Generator でAPI型やAPIクライアントを生成することがあります。
+typingGameでは、現時点では導入しません。
+
+現時点で後回しにする理由:
+
+- API数がまだ少ない。
+- `fetchClient.ts` / `scoreService.ts` を手書きする方が学習しやすい。
+- 生成コードの置き場所、生成コマンド、差分管理、CI組み込みを決めるほどの規模ではない。
+- FE単体公開を維持するため、手書きのAPI有効/無効フラグ制御を読みやすくしておきたい。
+
+導入を検討する目安:
+
+- API数が増えて、request / response 型の手書き同期がつらくなった。
+- BEのOpenAPI定義をCIで安定生成できるようになった。
+- `npm run generate:api` のような生成コマンドを用意し、生成物の扱いを決められるようになった。
+
 ## Shared Utilities
 
 Ghost-PDF5、todo、typingGame を将来的に揃えるため、共通処理は責務ごとに置き場所を固定します。

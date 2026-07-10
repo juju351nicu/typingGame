@@ -125,18 +125,32 @@ limit
 
 ### mode / gameRule の扱い
 
-Phase6 中は、既存のFE型、localStorageデータ、バックエンドAPIの互換性を優先し、`mode` と `gameRule` の値は現在の形を維持します。
+既存のFE型、localStorageデータ、バックエンドAPIの互換性を優先し、`mode` と `gameRule` の外向き値は現在の形を維持します。
 
 ```ts
-mode: 0 | 1 | 2
-gameRule: "normal" | "timeAttack"
+export type GameMode = 0 | 1 | 2;
+export type GameRule = "normal" | "timeAttack";
 ```
 
-`gameRule` は候補値が少なく、バックエンド側では enum 化しやすい項目です。
-一方で `mode` は数値として画面、localStorage、API、DBに渡っているため、enum 化する場合は変換層を明確にする必要があります。
+BE側では `GameModeEnum` / `GameRuleEnum` を使い、FE側では TypeScript の union型と `as const` 定数を使います。
 
-そのため、enum 化は「自分の記録 / 全体ランキング」の表示切替とテストまで終わった後の改善フェーズで検討します。
-実装する場合も、外向きのAPI値はできるだけ変えず、FE側の `GameScore` や保存済みlocalStorageと矛盾しないようにします。
+```text
+BE GameModeEnum.HARD -> API/DB/FE では 2
+BE GameRuleEnum.TIME_ATTACK -> API/DB/FE では "timeAttack"
+```
+
+FE側で TypeScript の `enum` は使わず、以下の形にします。
+
+```ts
+const GAME_MODE = {
+  EASY: 0,
+  NORMAL: 1,
+  HARD: 2,
+} as const satisfies Record<string, GameMode>;
+```
+
+OpenAPI Generator は現時点では導入しません。
+API数が増え、request / response 型の手書き同期がつらくなった段階で、`npm run generate:api` のような生成タスクを検討します。
 
 ## 認証方式とJWT化のタイミング
 

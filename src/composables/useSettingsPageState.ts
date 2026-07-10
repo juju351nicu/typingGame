@@ -1,6 +1,11 @@
 import Const from "@/constants/const";
 import { resetGameScores } from "@/composables/useScoreReset";
-import type { Alert, GameRule, TimeLimitSeconds } from "@/types/interfaces";
+import type {
+  Alert,
+  GameMode,
+  GameRule,
+  TimeLimitSeconds,
+} from "@/types/interfaces";
 import { computed, ref } from "vue";
 
 /** 難易度選択に表示する項目 */
@@ -8,7 +13,7 @@ interface DifficultyOption {
   /** 画面に表示する難易度名 */
   title: string;
   /** 設定ストアへ保存する難易度値 */
-  value: number;
+  value: GameMode;
 }
 
 /** ゲームルール選択に表示する項目 */
@@ -35,7 +40,7 @@ interface TimeLimitOption {
  */
 interface SettingsConfigStore {
   /** 現在保存されている難易度 */
-  getGameMode: number;
+  getGameMode: GameMode;
   /** 現在保存されているゲームルール */
   getGameRule: GameRule;
   /** 現在保存されているタイムアタック制限時間 */
@@ -45,7 +50,7 @@ interface SettingsConfigStore {
   /** 現在保存されているダークモード有無 */
   getDisplayMode: boolean;
   /** 難易度を保存する */
-  saveGameMode: (mode: number) => void;
+  saveGameMode: (mode: GameMode) => void;
   /** ゲームルールを保存する */
   saveGameRule: (gameRule: GameRule) => void;
   /** タイムアタック制限時間を保存する */
@@ -117,7 +122,7 @@ export const useSettingsPageState = (
    *
    * @param mode 難易度
    */
-  const setGameMode = (mode: number): void => {
+  const setGameMode = (mode: GameMode): void => {
     configStore.saveGameMode(mode);
   };
 

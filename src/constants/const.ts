@@ -1,5 +1,5 @@
 import type { DataTableHeader } from "vuetify";
-import type { GameRule, TimeLimitSeconds } from "@/types/interfaces";
+import type { GameMode, GameRule, TimeLimitSeconds } from "@/types/interfaces";
 
 /**
  * マークダウンブログ取得用のURL
@@ -38,11 +38,18 @@ const INTERVAL_ANIMATION = {
   NORMAL: 30,
   HARD: 15,
 };
+/** ゲーム難易度の種類 */
+const GAME_MODE = {
+  EASY: 0,
+  NORMAL: 1,
+  HARD: 2,
+} as const satisfies Record<string, GameMode>;
+
 /** ゲーム難易度の選択リスト */
-const DIFFICULTY_LEVEL = [
-  { title: "Easy", value: 0 },
-  { title: "Normal", value: 1 },
-  { title: "Hard", value: 2 },
+const DIFFICULTY_LEVEL: { title: string; value: GameMode }[] = [
+  { title: "Easy", value: GAME_MODE.EASY },
+  { title: "Normal", value: GAME_MODE.NORMAL },
+  { title: "Hard", value: GAME_MODE.HARD },
 ];
 
 /** ゲーム終了条件の種類 */
@@ -103,6 +110,7 @@ export default {
   ALERT_TYPE,
   INTERVAL_ANIMATION,
   INTERVAL_INSERTION,
+  GAME_MODE,
   DIFFICULTY_LEVEL,
   GAME_RULE,
   GAME_RULE_OPTIONS,

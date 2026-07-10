@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import Const from "@/constants/const";
 import type {
+  GameMode,
   GameRule,
   GameScore,
   PerformanceTrendItem,
@@ -382,7 +383,7 @@ const getResultRankColor = (rank: string): string => {
  */
 const createRankingScores = (
   scores: GameScore[],
-  selectedMode: number | null = null,
+  selectedMode: GameMode | null = null,
   selectedGameRule: GameRule | null = null,
   selectedTimeLimitSeconds: TimeLimitSeconds | null = null
 ): RankingScore[] => {
@@ -553,7 +554,7 @@ const getCurrentTime = (): string => {
  * @param target ゲームのモード値（難易度）
  * @returns 色コード
  */
-const getColor = (target: number): string => {
+const getColor = (target: GameMode): string => {
   switch (target) {
     case 0:
       return "#000080";
@@ -571,7 +572,7 @@ const getColor = (target: number): string => {
  * @param target ゲームのモード値（難易度）
  * @returns 易〜難の値を取得する
  */
-const getLevel = (target: number): string => {
+const getLevel = (target: GameMode): string => {
   switch (target) {
     case 0:
       return "易";
