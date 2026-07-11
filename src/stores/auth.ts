@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import Const from "@/constants/const";
 import type {
+  LoginResponse,
   LoginRequest,
   LoginUser,
   RegisterUserRequest,
@@ -11,14 +12,25 @@ import {
   logoutApi,
   registerUserApi,
 } from "@/services/authService";
+import {
+  clearAuthToken,
+  getAuthToken,
+  saveAuthToken,
+} from "@/utils/authTokenStorage";
 
 /**
  * 認証ストアで使用する型定義
  */
 interface AuthState {
   currentUser: LoginUser | null;
+  accessToken: string | null;
+  tokenType: string | null;
+  expiresIn: number | null;
   isLoading: boolean;
 }
+
+/** 保存済みの認証トークンです。 */
+const storedAuthToken = Const.BACKEND_API.ENABLED ? getAuthToken() : null;
 
 /**
  * ログイン状態を扱うストア
@@ -27,6 +39,12 @@ export const useAuthStore = defineStore("auth", {
   state: (): AuthState => ({
     /** ログイン中ユーザー情報 */
     currentUser: null,
+    /** API認証に使うアクセストークン */
+    accessToken: storedAuthToken?.accessToken ?? null,
+    /** アクセストークンの種別 */
+    tokenType: storedAuthToken?.tokenType ?? null,
+    /** アクセストークンの有効期間（秒） */
+    expiresIn: storedAuthToken?.expiresIn ?? null,
     /** ローディングフラグ */
     isLoading: false,
   }),
@@ -52,9 +70,10 @@ export const useAuthStore = defineStore("auth", {
 
       this.isLoading = true;
       try {
+        this.clearCurrentUser();
         await registerUserApi(request);
         const response = await loginApi(request);
-        this.currentUser = response.user;
+        this.setLoginResponse(response);
       } finally {
         this.isLoading = false;
       }
@@ -71,8 +90,9 @@ export const useAuthStore = defineStore("auth", {
 
       this.isLoading = true;
       try {
+        this.clearCurrentUser();
         const response = await loginApi(request);
-        this.currentUser = response.user;
+        this.setLoginResponse(response);
       } finally {
         this.isLoading = false;
       }
@@ -90,16 +110,31 @@ export const useAuthStore = defineStore("auth", {
       try {
         this.currentUser = await fetchCurrentUserApi();
       } catch {
-        this.currentUser = null;
+        this.clearCurrentUser();
       } finally {
         this.isLoading = false;
       }
+    },
+    /**
+     * ログインAPIレスポンスをFE側の認証状態へ反映する。
+     * @param response ログインAPIレスポンス
+     */
+    setLoginResponse(response: LoginResponse): void {
+      const authToken = saveAuthToken(response);
+      this.currentUser = response.user;
+      this.accessToken = authToken?.accessToken ?? null;
+      this.tokenType = authToken?.tokenType ?? null;
+      this.expiresIn = authToken?.expiresIn ?? null;
     },
     /**
      * FE側のログイン状態をクリアする。
      */
     clearCurrentUser(): void {
       this.currentUser = null;
+      this.accessToken = null;
+      this.tokenType = null;
+      this.expiresIn = null;
+      clearAuthToken();
     },
     /**
      * ログアウトする。
@@ -114,7 +149,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         await logoutApi();
       } finally {
-        this.currentUser = null;
+        this.clearCurrentUser();
         this.isLoading = false;
       }
     },

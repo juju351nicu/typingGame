@@ -75,6 +75,9 @@ export interface LoginRequest {
 /** ログインAPIのレスポンス */
 export interface LoginResponse {
   user: LoginUser;
+  accessToken?: string;
+  tokenType?: string;
+  expiresIn?: number;
 }
 /** APIエラー時のフィールド単位エラー */
 export interface CustomFieldError {

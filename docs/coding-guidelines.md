@@ -104,7 +104,7 @@ Ghost-PDF5へ戻す時は、TypeScriptの型をそのまま移すのではなく
 
 Phase8でJWT化する場合は、最初はaccess tokenのみで開始します。
 
-- tokenは `sessionStorage` に保存する。
+- tokenは `sessionStorage` に保存する。保存処理は `authTokenStorage.ts` に寄せる。
 - API呼び出し時は `Authorization: Bearer {token}` を付ける。
 - `fetchClient.ts` でAuthorizationヘッダー付与を共通化する。
 - logout時はPiniaのログイン状態と `sessionStorage` のtokenを削除する。
@@ -113,6 +113,13 @@ Phase8でJWT化する場合は、最初はaccess tokenのみで開始します�
 - GitHub Pages向けのAPI無効モードでは、token復元やAPI呼び出しを行わない。
 
 JWT化後も、未ログインユーザーのlocalStorage保存とFE単体公開は維持します。
+
+実装上の注意:
+
+- `fetchClient.ts` からPiniaストアを直接参照しない。循環参照を避けるため、tokenの保存・取得は `authTokenStorage.ts` 経由にする。
+- 移行期間中は `LoginResponse` のtoken項目をoptionalにする。BEがtokenを返さない場合でもセッションCookie方式で動けるようにする。
+- login / register 前には古いtokenをクリアする。期限切れtokenがログインAPIに付いて失敗する状態を避ける。
+- `VITE_ENABLE_BACKEND_API=false` の場合は、ログイン導線やtoken利用を前提にしない。
 
 ### FE単体公開を守る設計
 

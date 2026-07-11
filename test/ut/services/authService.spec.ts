@@ -45,6 +45,9 @@ describe("authService", () => {
         id: 1,
         loginEmail: "user@example.com",
       },
+      accessToken: "access-token",
+      tokenType: "Bearer",
+      expiresIn: 3600,
     };
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify(responseBody), {

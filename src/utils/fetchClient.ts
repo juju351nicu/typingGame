@@ -1,4 +1,6 @@
 import type { ErrorResponse } from "@/types/interfaces";
+import Const from "@/constants/const";
+import { getAuthorizationHeaderValue } from "@/utils/authTokenStorage";
 
 /**
  * Methodの定数
@@ -128,6 +130,16 @@ const parseErrorResponse = async (
 };
 
 /**
+ * 認証ヘッダーを付与するAPIリクエストか判定する。
+ *
+ * @param uri リクエストURL
+ * @returns 認証ヘッダーを付与する場合はtrue
+ */
+const isBackendApiRequest = (uri: string): boolean => {
+  return uri.startsWith(Const.BACKEND_API.BASE_URL) || uri.startsWith("/api/");
+};
+
+/**
  * リクエスト送信の設定情報を取得する
  *
  * @param uri リクエストURL
@@ -144,6 +156,12 @@ const createRequestData = (
 ): RequestData => {
   // HeadersInitは複数形式を受け取れるため、標準のHeadersに正規化して扱う。
   const headers = new Headers(customHeader ?? defaultHeader);
+  const authorizationHeaderValue = isBackendApiRequest(uri)
+    ? getAuthorizationHeaderValue()
+    : null;
+  if (authorizationHeaderValue) {
+    headers.set("Authorization", authorizationHeaderValue);
+  }
 
   // optionsで HTTPMethodやHeadersを設定する
   let options: RequestInit = {};

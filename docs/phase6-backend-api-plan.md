@@ -36,6 +36,8 @@ GET /api/rankings
 ## 現在の到達状況
 
 2026-07-11 時点では、セッションCookie方式でバックエンドAPI連携を進めています。
+JWT移行の第一段階として、ログインレスポンスの `accessToken` を `sessionStorage` に保存し、
+保存済みtokenがある場合は `fetchClient.ts` から `Authorization` ヘッダーを付ける実装まで追加しています。
 
 実装済み:
 
@@ -58,11 +60,14 @@ GET /api/rankings
 - API無効時のFE単体動作確認
 - `npm run dev:api` によるAPI有効起動
 - `8081` 固定と `--strictPort` によるCORS確認ミス防止
+- ログイン成功時のJWTアクセストークン保存
+- 保存済みJWTアクセストークンの `Authorization: Bearer {token}` 付与
 
 現在の残タスク:
 
-1. JWT化へ進む前に、セッションCookie方式での結合確認結果を必要に応じて追記する。
-2. JWT化の詳細設計をバックエンド側docsで具体化する。
+1. BE側で `Authorization: Bearer {token}` からログインユーザー情報を復元する。
+2. `/api/me/**` をJWT認証で呼べることを確認する。
+3. token期限切れや不正token時のエラー表示を確認する。
 
 ここまでで、Phase6 の「FE/BE一通りの実装」は一区切りです。
 
@@ -197,8 +202,8 @@ src/utils/fetchClient.ts
 Phase8の初期方針:
 
 - 最初は access token のみで開始する。
-- tokenは `sessionStorage` に保存する。
-- API呼び出し時は `Authorization: Bearer {token}` を付ける。
+- tokenは `sessionStorage` に保存する。FE実装済み。
+- API呼び出し時は `Authorization: Bearer {token}` を付ける。FE実装済み。
 - token期限切れ時はログイン状態をクリアし、再ログインを促す。
 - refresh token は後回しにする。
 - API無効時のFE単体動作とlocalStorage fallbackは維持する。
@@ -213,23 +218,26 @@ JWT化後に更新するFE型の候補:
 
 ```ts
 export interface LoginResponse {
-  accessToken: string;
-  tokenType: "Bearer";
-  expiresIn: number;
   user: LoginUser;
+  accessToken?: string;
+  tokenType?: string;
+  expiresIn?: number;
 }
 ```
+
+FEでは移行期間中の互換性を優先し、`accessToken`、`tokenType`、`expiresIn` はoptionalにしています。
+BEがtokenを返す場合は保存し、返さない場合は従来のセッションCookie方式のまま動けるようにしています。
 
 JWT化後に追加する処理の候補:
 
 ```text
 authStore
-- accessToken を state に持つ
-- sessionStorage へ保存 / 復元する
-- logout 時に token を削除する
+- accessToken を state に持つ。実装済み。
+- sessionStorage へ保存 / 復元する。実装済み。
+- logout 時に token を削除する。実装済み。
 
 fetchClient
-- token がある場合は Authorization ヘッダーを付ける
+- token がある場合は Authorization ヘッダーを付ける。実装済み。
 - 401 / token期限切れ時の扱いを整理する
 ```
 

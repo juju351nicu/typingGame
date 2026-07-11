@@ -22,6 +22,9 @@ describe("auth store", () => {
               id: 1,
               loginEmail: "user@example.com",
             },
+            accessToken: "access-token",
+            tokenType: "Bearer",
+            expiresIn: 3600,
           }),
           {
             status: 200,
@@ -43,6 +46,9 @@ describe("auth store", () => {
       id: 1,
       loginEmail: "user@example.com",
     });
+    expect(authStore.accessToken).toBe("access-token");
+    expect(authStore.tokenType).toBe("Bearer");
+    expect(authStore.expiresIn).toBe(3600);
   });
 
   it("登録後にログイン状態へ切り替える", async () => {
@@ -67,6 +73,9 @@ describe("auth store", () => {
               id: 1,
               loginEmail: "user@example.com",
             },
+            accessToken: "registered-access-token",
+            tokenType: "Bearer",
+            expiresIn: 3600,
           }),
           {
             status: 200,
@@ -84,6 +93,7 @@ describe("auth store", () => {
     });
 
     expect(authStore.isLoggedIn).toBe(true);
+    expect(authStore.accessToken).toBe("registered-access-token");
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
@@ -95,11 +105,15 @@ describe("auth store", () => {
       id: 1,
       loginEmail: "user@example.com",
     };
+    authStore.accessToken = "access-token";
+    authStore.tokenType = "Bearer";
+    authStore.expiresIn = 3600;
 
     await authStore.fetchCurrentUser();
 
     expect(authStore.isLoggedIn).toBe(false);
     expect(authStore.currentUser).toBeNull();
+    expect(authStore.accessToken).toBeNull();
   });
 
   it("ログアウトするとログイン状態をクリアする", async () => {
@@ -118,11 +132,15 @@ describe("auth store", () => {
       id: 1,
       loginEmail: "user@example.com",
     };
+    authStore.accessToken = "access-token";
+    authStore.tokenType = "Bearer";
+    authStore.expiresIn = 3600;
 
     await authStore.logout();
 
     expect(authStore.isLoggedIn).toBe(false);
     expect(authStore.currentUser).toBeNull();
+    expect(authStore.accessToken).toBeNull();
   });
 
   it("バックエンドAPI無効時はログインAPIを呼ばない", async () => {

@@ -162,6 +162,7 @@ Backend API connection policy:
 - `VITE_ENABLE_BACKEND_API=true` の場合だけ、ログイン導線とAPI保存を有効にする。
 - GitHub Pagesでは `VITE_ENABLE_BACKEND_API` を未設定または `false` にし、FE単体で公開する。
 - Ghost-PDF5 の `const.js`、`rest.js`、`util.js` は考え方を参考にするが、typingGameでは `src/constants/const.ts`、`src/utils/fetchClient.ts`、`src/utils/gameUtils.ts` へ責務を寄せる。
+- JWTアクセストークンの保存・取得は `src/utils/authTokenStorage.ts` に寄せ、`fetchClient.ts` から `Authorization` ヘッダーを付ける。
 
 Local integration check:
 
@@ -367,7 +368,7 @@ Status: 完了。次はJWT化設計と実装準備。
 - ログアウト、認証切れ、未ログイン時の表示を整理
 - Spring Securityとフロントエンドのテストを追加
 
-Status: 本番公開準備の前に実施予定
+Status: BEはログイン成功時のJWT発行まで実装済み。FEはtokenの `sessionStorage` 保存と `Authorization` ヘッダー付与まで実装済み。次はBEでBearer tokenからログインユーザーを復元する。
 
 ### Phase 9: 本番公開準備
 

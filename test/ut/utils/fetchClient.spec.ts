@@ -1,6 +1,24 @@
 import Fetcher, { HttpError } from "@/utils/fetchClient";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+const createMemoryStorage = (initialValues: Record<string, string> = {}) => {
+  const store = new Map<string, string>(Object.entries(initialValues));
+  return {
+    get length() {
+      return store.size;
+    },
+    clear: vi.fn(() => store.clear()),
+    getItem: vi.fn((key: string) => store.get(key) ?? null),
+    key: vi.fn((index: number) => Array.from(store.keys())[index] ?? null),
+    removeItem: vi.fn((key: string) => {
+      store.delete(key);
+    }),
+    setItem: vi.fn((key: string, value: string) => {
+      store.set(key, value);
+    }),
+  } satisfies Storage;
+};
+
 describe("fetchClient", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -74,6 +92,55 @@ describe("fetchClient", () => {
     });
 
     expect(result).toEqual(responseBody);
+  });
+
+  it("保存済みtokenがある場合はAuthorizationヘッダーを付ける", async () => {
+    vi.stubGlobal(
+      "sessionStorage",
+      createMemoryStorage({
+        "typingGame.authToken": JSON.stringify({
+          accessToken: "access-token",
+          tokenType: "Bearer",
+          expiresIn: 3600,
+        }),
+      })
+    );
+    const response = new Response("{}", {
+      status: 200,
+      statusText: "OK",
+    });
+    const fetchMock = vi.fn().mockResolvedValue(response);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await Fetcher.getRequest("/api/me/scores");
+
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    const headers = options.headers as Headers;
+    expect(headers.get("Authorization")).toBe("Bearer access-token");
+  });
+
+  it("API以外のリクエストにはAuthorizationヘッダーを付けない", async () => {
+    vi.stubGlobal(
+      "sessionStorage",
+      createMemoryStorage({
+        "typingGame.authToken": JSON.stringify({
+          accessToken: "access-token",
+          tokenType: "Bearer",
+        }),
+      })
+    );
+    const response = new Response("{}", {
+      status: 200,
+      statusText: "OK",
+    });
+    const fetchMock = vi.fn().mockResolvedValue(response);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await Fetcher.getRequest("/blog_store/posts-index.json");
+
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    const headers = options.headers as Headers;
+    expect(headers.get("Authorization")).toBeNull();
   });
 
   it("HTTPエラーの場合はHttpErrorを投げる", async () => {
