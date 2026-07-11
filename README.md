@@ -356,6 +356,8 @@ Status: ローカルの基本連携は実装済み。API有効時とFE単体公�
 - API無効時はログイン導線が非表示になり、ゲーム画面、localStorage保存、ランキング表示が動作する。
 - API有効モードを `localhost:8082` などCORS未許可のポートで開くと通信に失敗するため、API連携確認は `localhost:8081` に固定する。
 - ログインユーザー向けスコアAPIで401になった場合は、FE側のログイン状態をクリアし、共通アラートで再ログイン案内を表示する。localStorageに保存済みの記録は維持する。
+- Cookie無効時はセッションCookie方式のログイン継続が難しくなるため、最終的な主方式はJWT Bearer認証に寄せる。
+- localStorageは認証方式ではなく、未ログインスコア保存とAPI失敗時fallbackとして残す。
 
 Status: 完了。次はJWT化設計と実装準備。
 
@@ -369,7 +371,7 @@ Status: 完了。次はJWT化設計と実装準備。
 - ログアウト、認証切れ、未ログイン時の表示を整理
 - Spring Securityとフロントエンドのテストを追加
 
-Status: BEはログイン成功時のJWT発行、Bearer tokenからのログインユーザー復元、Swagger UIでのBearer認証確認まで実装済み。FEはtokenの `sessionStorage` 保存、`Authorization` ヘッダー付与、ログインユーザー向けスコアAPIの401時ログイン状態クリアと再ログイン案内まで実装済み。次はセッションCookie方式を残すかの判断、または本番公開準備に進む。
+Status: BEはログイン成功時のJWT発行、Bearer tokenからのログインユーザー復元、Swagger UIでのBearer認証確認まで実装済み。FEはtokenの `sessionStorage` 保存、`Authorization` ヘッダー付与、ログインユーザー向けスコアAPIの401時ログイン状態クリアと再ログイン案内まで実装済み。最終的な主方式はJWT Bearer認証に寄せ、セッションCookie方式は移行期間とローカル学習用として残す。次は本番公開準備、またはセッションCookie方式を削除するタイミングの判断に進む。
 
 ### Phase 9: 本番公開準備
 

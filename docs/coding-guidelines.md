@@ -111,6 +111,8 @@ Phase8でJWT化する場合は、最初はaccess tokenのみで開始します�
 - token期限切れや不正tokenで401になった場合は、ログイン状態と `sessionStorage` のtokenをクリアし、共通アラートで再ログイン案内を表示する。
 - refresh token はaccess token方式が安定してから検討する。
 - GitHub Pages向けのAPI無効モードでは、token復元やAPI呼び出しを行わない。
+- 最終的な主方式はJWT Bearer認証に寄せる。
+- セッションCookie方式は、移行期間とローカル学習用として残す。
 
 JWT化後も、未ログインユーザーのlocalStorage保存とFE単体公開は維持します。
 
@@ -122,6 +124,9 @@ JWT化後も、未ログインユーザーのlocalStorage保存とFE単体公開
 - 移行期間中は `LoginResponse` のtoken項目をoptionalにする。BEがtokenを返さない場合でもセッションCookie方式で動けるようにする。
 - login / register 前には古いtokenをクリアする。期限切れtokenがログインAPIに付いて失敗する状態を避ける。
 - `VITE_ENABLE_BACKEND_API=false` の場合は、ログイン導線やtoken利用を前提にしない。
+- Cookie無効時は、セッションCookie方式のログイン継続は難しくなる。ただし、JWT Bearer方式は `Authorization` ヘッダーを使うため、Cookie無効でも認証できる。
+- `localStorage` は認証token保存ではなく、未ログインスコア保存とAPI失敗時fallbackに使う。
+- JWT tokenを `localStorage` へ保存しない。ログイン状態を長く残す必要が出るまでは、`sessionStorage` を使う。
 
 ### FE単体公開を守る設計
 

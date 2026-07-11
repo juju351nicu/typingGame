@@ -208,12 +208,48 @@ Phase8の初期方針:
 - token期限切れ時はログイン状態をクリアし、再ログインを促す。
 - refresh token は後回しにする。
 - API無効時のFE単体動作とlocalStorage fallbackは維持する。
+- 最終的な主方式はJWT Bearer認証に寄せる。
+- セッションCookie方式は移行期間とローカル学習用として残す。
 
 `sessionStorage` を使う理由:
 
 - 同じタブでの画面リロード後もログイン状態を復元できる。
 - ブラウザを閉じると消えるため、localStorageより残り続けにくい。
 - JWTの学習用途として実装が分かりやすい。
+
+## Cookie / sessionStorage / localStorage の役割
+
+認証まわりでは、Cookie、sessionStorage、localStorageを混同しないようにします。
+
+typingGameでの役割は以下です。
+
+```text
+Cookie
+-> セッションCookie方式で JSESSIONID を送受信するために使う
+-> Cookie無効時はセッション方式のログイン継続が難しくなる
+-> GitHub Pages FE と別ホストBEでは SameSite / Secure / CORS / HTTPS の条件が絡む
+
+sessionStorage
+-> JWT access token を保存するために使う
+-> 同じタブではリロード後もtokenを復元できる
+-> タブまたはブラウザを閉じると消える
+-> fetchClientから Authorization: Bearer {token} を付ける
+
+localStorage
+-> 未ログインユーザーのスコア保存に使う
+-> API保存・API取得に失敗した場合のfallback表示に使う
+-> JWT tokenの保存場所としては使わない
+```
+
+Cookieを無効にした場合でも、Spring Security自体が使えなくなるわけではありません。
+使えなくなりやすいのは、Cookieに `JSESSIONID` を保存してログイン状態を維持するセッションCookie方式です。
+
+JWT Bearer方式では、FEが `Authorization` ヘッダーにtokenを付けて送るため、Cookieが無効でも認証できます。
+そのため、typingGameの将来構成ではJWT Bearer方式を主方式にします。
+
+localStorageは認証方式ではありません。
+typingGameでは、バックエンドがなくてもゲームとして成立するよう、未ログインユーザーのプレイ履歴を保存する場所として残します。
+ログイン済みの場合も、まずlocalStorageに保存してからAPI保存するため、API失敗時にもプレイ結果が消えない設計です。
 
 JWT化後に更新するFE型の候補:
 
