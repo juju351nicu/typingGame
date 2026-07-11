@@ -382,7 +382,7 @@ Status: BEはログイン成功時のJWT発行、Bearer tokenからのログイ�
 - GitHub PagesからバックエンドAPIへ接続する前提で設定を整理
 - 起動手順、環境変数、確認手順をREADME/docsにまとめる
 
-Status: JWT化後に実施予定
+Status: 着手準備として `docs/phase9-production-readiness-plan.md` に、GitHub Pages公開版はFE単体モードを維持すること、将来API公開時の環境変数、localStorage/sessionStorage/Cookieの役割をまとめています。
 
 ### Phase 10: EC2デプロイ学習
 
