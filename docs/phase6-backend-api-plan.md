@@ -194,6 +194,45 @@ src/services/authService.ts
 src/utils/fetchClient.ts
 ```
 
+Phase8の初期方針:
+
+- 最初は access token のみで開始する。
+- tokenは `sessionStorage` に保存する。
+- API呼び出し時は `Authorization: Bearer {token}` を付ける。
+- token期限切れ時はログイン状態をクリアし、再ログインを促す。
+- refresh token は後回しにする。
+- API無効時のFE単体動作とlocalStorage fallbackは維持する。
+
+`sessionStorage` を使う理由:
+
+- 同じタブでの画面リロード後もログイン状態を復元できる。
+- ブラウザを閉じると消えるため、localStorageより残り続けにくい。
+- JWTの学習用途として実装が分かりやすい。
+
+JWT化後に更新するFE型の候補:
+
+```ts
+export interface LoginResponse {
+  accessToken: string;
+  tokenType: "Bearer";
+  expiresIn: number;
+  user: LoginUser;
+}
+```
+
+JWT化後に追加する処理の候補:
+
+```text
+authStore
+- accessToken を state に持つ
+- sessionStorage へ保存 / 復元する
+- logout 時に token を削除する
+
+fetchClient
+- token がある場合は Authorization ヘッダーを付ける
+- 401 / token期限切れ時の扱いを整理する
+```
+
 ## フロントエンド側の対応順
 
 1. APIレスポンス用の型を整理する。

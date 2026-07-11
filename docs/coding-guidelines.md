@@ -100,6 +100,20 @@ Ghost-PDF5へ戻す時は、TypeScriptの型をそのまま移すのではなく
 - `VITE_ENABLE_BACKEND_API` が未設定または `false` の場合は、ログイン導線を非表示にし、API保存も呼ばない。
 - `VITE_API_BASE_URL` はAPI有効時の接続先だけを表す。APIの有効/無効判定には使わない。
 
+### JWT移行時の方針
+
+Phase8でJWT化する場合は、最初はaccess tokenのみで開始します。
+
+- tokenは `sessionStorage` に保存する。
+- API呼び出し時は `Authorization: Bearer {token}` を付ける。
+- `fetchClient.ts` でAuthorizationヘッダー付与を共通化する。
+- logout時はPiniaのログイン状態と `sessionStorage` のtokenを削除する。
+- token期限切れ時はログイン状態をクリアし、再ログインを促す。
+- refresh token はaccess token方式が安定してから検討する。
+- GitHub Pages向けのAPI無効モードでは、token復元やAPI呼び出しを行わない。
+
+JWT化後も、未ログインユーザーのlocalStorage保存とFE単体公開は維持します。
+
 ### FE単体公開を守る設計
 
 当面はGitHub Pagesでフロントエンドだけを公開し、EC2などでバックエンドを公開するのは後の学習フェーズにします。
