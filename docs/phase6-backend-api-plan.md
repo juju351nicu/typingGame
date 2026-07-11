@@ -56,10 +56,13 @@ GET /api/rankings
 - FEのランキングAPI取得テスト
 - FE画面からの全体ランキング表示確認
 - API無効時のFE単体動作確認
+- `npm run dev:api` によるAPI有効起動
+- `8081` 固定と `--strictPort` によるCORS確認ミス防止
 
 現在の残タスク:
 
-1. 必要に応じて、全体ランキングの文言や表示位置を微調整する。
+1. JWT化へ進む前に、セッションCookie方式での結合確認結果を必要に応じて追記する。
+2. JWT化の詳細設計をバックエンド側docsで具体化する。
 
 ここまでで、Phase6 の「FE/BE一通りの実装」は一区切りです。
 
@@ -68,6 +71,10 @@ GET /api/rankings
 - `GET /api/rankings?mode=2&gameRule=timeAttack&timeLimitSeconds=60&limit=20` でDB由来のスコアが返ることを確認済み。
 - FEを `http://localhost:8081/scoresBoard` で開き、「全体ランキング」へ切り替えるとランキング表に4件表示されることを確認済み。
 - API無効モードの `http://localhost:8082/scoresBoard` では、ログイン導線と「自分の記録 / 全体ランキング」切り替えが非表示で、ランキング画面自体は表示されることを確認済み。
+- `npm run dev:api` でAPI有効モードを起動し、ユーザー登録、ログイン、ログイン状態でのゲーム結果保存、ランキング表示を確認済み。
+- `npm run dev` でAPI無効モードを起動し、ログイン導線が非表示でFE単体動作できることを確認済み。
+- `localhost:8082` などCORS未許可のポートでAPI有効モードを開くと、ログインAPIなどの通信に失敗する。API連携確認は `localhost:8081` に固定する。
+- ログイン画面では、APIの `fieldErrors` がある場合はその内容を表示し、CORSやBE停止などfetch自体が失敗した場合は接続確認用メッセージを表示する。
 - `http://127.0.0.1:8081` で開くと、CORSやCookie送受信の条件が変わるため、ローカル結合確認では `localhost` に揃える。
 
 ### POST /api/scores

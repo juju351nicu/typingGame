@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { HttpError } from "@/utils/fetchClient";
 import { useAuthStore } from "@/stores/auth";
 import type { CustomFieldError } from "@/types/interfaces";
+import { toDisplayFieldErrors } from "@/utils/apiErrorUtils";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -59,16 +59,7 @@ const updateFormMode = (value: unknown): void => {
  * @param error 例外
  */
 const setErrorMessages = (error: unknown): void => {
-  if (error instanceof HttpError && error.errorResponse?.fieldErrors?.length) {
-    fieldErrors.value = error.errorResponse.fieldErrors;
-    return;
-  }
-
-  fieldErrors.value = [
-    {
-      message: "通信に失敗しました。時間をおいてもう一度お試しください。",
-    },
-  ];
+  fieldErrors.value = toDisplayFieldErrors(error);
 };
 
 /**

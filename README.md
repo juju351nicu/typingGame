@@ -178,10 +178,13 @@ Local integration check:
 Local backend API:
 
 ```bash
-VITE_ENABLE_BACKEND_API=true npm run dev
+npm run dev:api
 ```
 
-`VITE_API_BASE_URL` を指定しない場合は `http://localhost:8091` に接続します。
+`dev:api` は `VITE_ENABLE_BACKEND_API=true`、`VITE_API_BASE_URL=http://localhost:8091`、`--port 8081`、`--strictPort` 付きで起動します。
+`8081` が使用中の場合は `8082` へ自動退避せず、CORSやCookie条件のズレに気づけるようにエラーで停止します。
+
+FE単体モードは以下で起動します。
 
 ```bash
 npm install
@@ -342,7 +345,17 @@ Status: ローカルの基本連携は実装済み。API有効時とFE単体公�
 - API保存・取得に失敗してもlocalStorage fallbackが維持されることを確認
 - 確認結果をREADMEまたはdocsに追記
 
-Status: 次に着手するフェーズ
+確認済み:
+
+- `npm run dev:api` で `http://localhost:8081` をAPI有効モードとして起動できる。
+- API有効時はログイン導線が表示される。
+- ユーザー登録、ログイン、ログイン状態でのゲーム結果保存ができる。
+- ランキング画面で「自分の記録」と「全体ランキング」を切り替えられる。
+- `npm run dev` でAPI無効のFE単体モードを起動できる。
+- API無効時はログイン導線が非表示になり、ゲーム画面、localStorage保存、ランキング表示が動作する。
+- API有効モードを `localhost:8082` などCORS未許可のポートで開くと通信に失敗するため、API連携確認は `localhost:8081` に固定する。
+
+Status: 完了。次はJWT化設計と実装準備。
 
 ### Phase 8: JWT化
 
