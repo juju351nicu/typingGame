@@ -24,6 +24,16 @@ interface ApiErrorMessageOptions {
 }
 
 /**
+ * 認証切れ、または不正な認証情報によるAPIエラーか判定します。
+ *
+ * @param error 判定対象の例外
+ * @returns 401のHTTPエラーの場合はtrue
+ */
+export const isUnauthorizedApiError = (error: unknown): boolean => {
+  return error instanceof HttpError && error.status === 401;
+};
+
+/**
  * 例外を画面表示用のフィールドエラー一覧へ変換します。
  *
  * バックエンドが `fieldErrors` を返した場合はその内容を優先し、
@@ -42,7 +52,7 @@ export const toDisplayFieldErrors = (
       return error.errorResponse.fieldErrors;
     }
 
-    if (error.status === 401) {
+    if (isUnauthorizedApiError(error)) {
       return [
         {
           errorCode: "UNAUTHORIZED",

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { toDisplayFieldErrors } from "@/utils/apiErrorUtils";
+import {
+  isUnauthorizedApiError,
+  toDisplayFieldErrors,
+} from "@/utils/apiErrorUtils";
 import { HttpError } from "@/utils/fetchClient";
 
 const createHttpError = (
@@ -42,6 +45,20 @@ describe("apiErrorUtils", () => {
         message: "メールアドレスまたはパスワードが正しくありません。",
       }),
     ]);
+  });
+
+  it("401のHTTPエラーを認証エラーとして判定する", () => {
+    const result = isUnauthorizedApiError(
+      createHttpError(401, "Unauthorized")
+    );
+
+    expect(result).toBe(true);
+  });
+
+  it("401以外のエラーは認証エラーとして扱わない", () => {
+    const result = isUnauthorizedApiError(createHttpError(500, "Error"));
+
+    expect(result).toBe(false);
   });
 
   it("fetch自体が失敗した場合は接続確認用メッセージを返す", () => {

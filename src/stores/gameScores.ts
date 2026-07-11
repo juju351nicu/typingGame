@@ -8,6 +8,7 @@ import {
   saveMyGameScoreApi,
 } from "@/services/scoreService";
 import { useAuthStore } from "@/stores/auth";
+import { isUnauthorizedApiError } from "@/utils/apiErrorUtils";
 /**
  * ゲームスコアのストアで使用する型定義
  */
@@ -49,7 +50,11 @@ export const useGameScoresStore = defineStore("gameScores", {
 
       try {
         await saveMyGameScoreApi(data);
-      } catch {
+      } catch (error) {
+        // 期限切れtokenなどで401になった場合は、次回操作でログインし直せるよう認証状態をクリアする。
+        if (isUnauthorizedApiError(error)) {
+          authStore.clearCurrentUser();
+        }
         // API保存に失敗してもlocalStorage保存済みのプレイ結果は維持する。
       }
     },
@@ -69,7 +74,11 @@ export const useGameScoresStore = defineStore("gameScores", {
       this.isLoading = true;
       try {
         this.scores = await fetchMyGameScoresApi();
-      } catch {
+      } catch (error) {
+        // 期限切れtokenなどで401になった場合は、ヘッダー表示と保存先判定を未ログイン状態へ戻す。
+        if (isUnauthorizedApiError(error)) {
+          authStore.clearCurrentUser();
+        }
         // API取得に失敗してもlocalStorageから復元済みのスコアは維持する。
       } finally {
         this.isLoading = false;

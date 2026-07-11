@@ -108,7 +108,7 @@ Phase8でJWT化する場合は、最初はaccess tokenのみで開始します�
 - API呼び出し時は `Authorization: Bearer {token}` を付ける。
 - `fetchClient.ts` でAuthorizationヘッダー付与を共通化する。
 - logout時はPiniaのログイン状態と `sessionStorage` のtokenを削除する。
-- token期限切れ時はログイン状態をクリアし、再ログインを促す。
+- token期限切れや不正tokenで401になった場合は、ログイン状態と `sessionStorage` のtokenをクリアし、次回操作で再ログインできる状態にする。
 - refresh token はaccess token方式が安定してから検討する。
 - GitHub Pages向けのAPI無効モードでは、token復元やAPI呼び出しを行わない。
 
@@ -117,6 +117,7 @@ JWT化後も、未ログインユーザーのlocalStorage保存とFE単体公開
 実装上の注意:
 
 - `fetchClient.ts` からPiniaストアを直接参照しない。循環参照を避けるため、tokenの保存・取得は `authTokenStorage.ts` 経由にする。
+- 401判定など画面横断で使うAPIエラー判定は `apiErrorUtils.ts` に寄せ、storeや画面で個別に `status === 401` を増やしすぎない。
 - 移行期間中は `LoginResponse` のtoken項目をoptionalにする。BEがtokenを返さない場合でもセッションCookie方式で動けるようにする。
 - login / register 前には古いtokenをクリアする。期限切れtokenがログインAPIに付いて失敗する状態を避ける。
 - `VITE_ENABLE_BACKEND_API=false` の場合は、ログイン導線やtoken利用を前提にしない。

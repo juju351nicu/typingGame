@@ -124,6 +124,41 @@ describe("gameScores store", () => {
     expect(gameScoresStore.getGameScoreList).toEqual([score]);
   });
 
+  it("ログイン済みでAPI保存が401になった場合はログイン状態をクリアする", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(null, {
+          status: 401,
+          statusText: "Unauthorized",
+        })
+      )
+    );
+    const { useGameScoresStore } = await import("@/stores/gameScores");
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+    authStore.currentUser = {
+      id: 1,
+      loginEmail: "user@example.com",
+    };
+    authStore.accessToken = "access-token";
+    authStore.tokenType = "Bearer";
+    authStore.expiresIn = 3600;
+    const gameScoresStore = useGameScoresStore();
+    const score: GameScore = {
+      score: 11,
+      mode: 1,
+      time: "00:00:33.70",
+      date: "2026-05-24 12:29:45",
+    };
+
+    await gameScoresStore.saveGameScoreList(score);
+
+    expect(gameScoresStore.getGameScoreList).toEqual([score]);
+    expect(authStore.isLoggedIn).toBe(false);
+    expect(authStore.accessToken).toBeNull();
+  });
+
   it("バックエンドAPI無効時はログイン状態があってもAPI保存しない", async () => {
     vi.resetModules();
     vi.stubEnv("VITE_ENABLE_BACKEND_API", "false");
@@ -219,6 +254,42 @@ describe("gameScores store", () => {
     await gameScoresStore.loadMyGameScoresIfAvailable();
 
     expect(gameScoresStore.getGameScoreList).toEqual([localScore]);
+  });
+
+  it("ユーザー別スコア一覧の取得が401になった場合はログイン状態をクリアする", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(null, {
+          status: 401,
+          statusText: "Unauthorized",
+        })
+      )
+    );
+    const { useGameScoresStore } = await import("@/stores/gameScores");
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+    authStore.currentUser = {
+      id: 1,
+      loginEmail: "user@example.com",
+    };
+    authStore.accessToken = "access-token";
+    authStore.tokenType = "Bearer";
+    authStore.expiresIn = 3600;
+    const gameScoresStore = useGameScoresStore();
+    const localScore: GameScore = {
+      score: 11,
+      mode: 1,
+      time: "00:00:33.70",
+      date: "2026-05-24 12:29:45",
+    };
+    gameScoresStore.scores = [localScore];
+
+    await gameScoresStore.loadMyGameScoresIfAvailable();
+
+    expect(gameScoresStore.getGameScoreList).toEqual([localScore]);
+    expect(authStore.isLoggedIn).toBe(false);
+    expect(authStore.accessToken).toBeNull();
   });
 
   it("未ログインの場合はユーザー別スコア一覧を取得しない", async () => {
