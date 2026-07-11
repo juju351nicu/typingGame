@@ -143,6 +143,54 @@ describe("auth store", () => {
     expect(authStore.accessToken).toBeNull();
   });
 
+  it("認証切れとしてログイン状態をクリアすると再ログイン案内を表示する", async () => {
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+    authStore.currentUser = {
+      id: 1,
+      loginEmail: "user@example.com",
+    };
+    authStore.accessToken = "access-token";
+    authStore.tokenType = "Bearer";
+    authStore.expiresIn = 3600;
+
+    authStore.clearExpiredLogin();
+
+    expect(authStore.isLoggedIn).toBe(false);
+    expect(authStore.accessToken).toBeNull();
+    expect(authStore.authNotice).toEqual({
+      id: 1,
+      message: "ログインの有効期限が切れました。もう一度ログインしてください。",
+      type: "warning",
+    });
+  });
+
+  it("ログイン中ユーザー取得が401の場合は再ログイン案内を表示する", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(null, {
+          status: 401,
+          statusText: "Unauthorized",
+        })
+      )
+    );
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+    authStore.currentUser = {
+      id: 1,
+      loginEmail: "user@example.com",
+    };
+    authStore.accessToken = "access-token";
+
+    await authStore.fetchCurrentUser();
+
+    expect(authStore.isLoggedIn).toBe(false);
+    expect(authStore.authNotice?.message).toBe(
+      "ログインの有効期限が切れました。もう一度ログインしてください。"
+    );
+  });
+
   it("バックエンドAPI無効時はログインAPIを呼ばない", async () => {
     vi.resetModules();
     vi.stubEnv("VITE_ENABLE_BACKEND_API", "false");

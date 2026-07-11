@@ -11,6 +11,7 @@ export interface PrivacyPolicy {
 }
 /** アラートのインターフェ-ス */
 export interface Alert {
+  id?: number;
   message: string;
   type?: "success" | "info" | "warning" | "error" | undefined;
 }

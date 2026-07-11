@@ -71,6 +71,34 @@ describe("useAppAlertVisibility", () => {
     expect(visibleAlerts.value).toEqual([true]);
   });
 
+  it("同じ文言でもidが変わった場合は表示状態とタイマーをリセットする", async () => {
+    const alerts = ref<Alert[]>([
+      {
+        id: 1,
+        message: "ログインの有効期限が切れました。",
+        type: "warning",
+      },
+    ]);
+    const { hideAlert, visibleAlerts } = useAppAlertVisibility(alerts, {
+      autoHideDelayMs: 1000,
+    });
+
+    await nextTick();
+    hideAlert(0);
+    expect(visibleAlerts.value).toEqual([false]);
+
+    alerts.value = [
+      {
+        id: 2,
+        message: "ログインの有効期限が切れました。",
+        type: "warning",
+      },
+    ];
+    await nextTick();
+
+    expect(visibleAlerts.value).toEqual([true]);
+  });
+
   it("アラート数が減った場合は古いタイマーを停止する", async () => {
     const alerts = ref<Alert[]>([
       { message: "保存しました", type: "success" },

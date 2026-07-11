@@ -53,7 +53,7 @@ export const useGameScoresStore = defineStore("gameScores", {
       } catch (error) {
         // 期限切れtokenなどで401になった場合は、次回操作でログインし直せるよう認証状態をクリアする。
         if (isUnauthorizedApiError(error)) {
-          authStore.clearCurrentUser();
+          authStore.clearExpiredLogin();
         }
         // API保存に失敗してもlocalStorage保存済みのプレイ結果は維持する。
       }
@@ -77,7 +77,7 @@ export const useGameScoresStore = defineStore("gameScores", {
       } catch (error) {
         // 期限切れtokenなどで401になった場合は、ヘッダー表示と保存先判定を未ログイン状態へ戻す。
         if (isUnauthorizedApiError(error)) {
-          authStore.clearCurrentUser();
+          authStore.clearExpiredLogin();
         }
         // API取得に失敗してもlocalStorageから復元済みのスコアは維持する。
       } finally {

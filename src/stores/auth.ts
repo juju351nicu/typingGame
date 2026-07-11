@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import Const from "@/constants/const";
 import type {
+  Alert,
   LoginResponse,
   LoginRequest,
   LoginUser,
@@ -17,6 +18,11 @@ import {
   getAuthToken,
   saveAuthToken,
 } from "@/utils/authTokenStorage";
+import { isUnauthorizedApiError } from "@/utils/apiErrorUtils";
+
+/** 認証切れ時に画面上部へ表示するメッセージ */
+const SESSION_EXPIRED_MESSAGE =
+  "ログインの有効期限が切れました。もう一度ログインしてください。";
 
 /**
  * 認証ストアで使用する型定義
@@ -27,6 +33,8 @@ interface AuthState {
   tokenType: string | null;
   expiresIn: number | null;
   isLoading: boolean;
+  authNotice: Alert | null;
+  authNoticeSequence: number;
 }
 
 /** 保存済みの認証トークンです。 */
@@ -47,6 +55,10 @@ export const useAuthStore = defineStore("auth", {
     expiresIn: storedAuthToken?.expiresIn ?? null,
     /** ローディングフラグ */
     isLoading: false,
+    /** 認証状態の変化を画面へ知らせる通知 */
+    authNotice: null,
+    /** 同じ通知文言でも再表示できるようにするための連番 */
+    authNoticeSequence: 0,
   }),
   getters: {
     /**
@@ -109,8 +121,12 @@ export const useAuthStore = defineStore("auth", {
       this.isLoading = true;
       try {
         this.currentUser = await fetchCurrentUserApi();
-      } catch {
-        this.clearCurrentUser();
+      } catch (error) {
+        if (isUnauthorizedApiError(error)) {
+          this.clearExpiredLogin();
+        } else {
+          this.clearCurrentUser();
+        }
       } finally {
         this.isLoading = false;
       }
@@ -134,7 +150,27 @@ export const useAuthStore = defineStore("auth", {
       this.accessToken = null;
       this.tokenType = null;
       this.expiresIn = null;
+      this.authNotice = null;
       clearAuthToken();
+    },
+    /**
+     * 認証切れとしてログイン状態をクリアし、再ログイン案内を表示する。
+     */
+    clearExpiredLogin(): void {
+      this.clearCurrentUser();
+      // 同じ文言の通知でも再表示できるよう、通知ごとにidを進める。
+      this.authNoticeSequence += 1;
+      this.authNotice = {
+        id: this.authNoticeSequence,
+        message: SESSION_EXPIRED_MESSAGE,
+        type: Const.ALERT_TYPE.WARNING,
+      };
+    },
+    /**
+     * 認証に関する画面通知を削除する。
+     */
+    clearAuthNotice(): void {
+      this.authNotice = null;
     },
     /**
      * ログアウトする。

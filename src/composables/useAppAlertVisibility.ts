@@ -26,7 +26,9 @@ const DEFAULT_TOP_OFFSET_PX = 90;
  * @returns アラートの内容を表す署名配列
  */
 const createAlertSignatures = (alerts: Alert[]): string[] => {
-  return alerts.map((alert) => `${alert.type ?? ""}:${alert.message}`);
+  return alerts.map(
+    (alert) => `${alert.id ?? ""}:${alert.type ?? ""}:${alert.message}`
+  );
 };
 
 /**

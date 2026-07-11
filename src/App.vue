@@ -1,19 +1,31 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import TheHeader from "@/components/TheHeader.vue";
 import TheFooter from "@/components/TheFooter.vue";
+import AppAlerts from "@/components/AppAlerts.vue";
 import { useConfigStore } from "@/stores/config";
+import { useAuthStore } from "@/stores/auth";
 import { useTheme } from "vuetify";
 import { useDisplayTheme } from "@/composables/useDisplayTheme";
+import type { Alert } from "@/types/interfaces";
 /** ゲームの設定情報に関するストア情報 */
 const configStore = useConfigStore();
+/** 認証状態に関するストア情報 */
+const authStore = useAuthStore();
 const theme = useTheme();
 
 const { isDarkMode } = useDisplayTheme(configStore, theme);
+
+/** アプリ全体で表示する認証通知 */
+const authAlerts = computed((): Alert[] => {
+  return authStore.authNotice ? [authStore.authNotice] : [];
+});
 </script>
 <template>
   <v-app class="app-shell" :class="{ 'app-shell--dark': isDarkMode }">
     <v-main class="main__board">
       <TheHeader />
+      <AppAlerts :alerts="authAlerts" />
       <router-view />
     </v-main>
     <TheFooter />

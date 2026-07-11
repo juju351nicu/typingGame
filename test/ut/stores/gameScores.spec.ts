@@ -157,6 +157,9 @@ describe("gameScores store", () => {
     expect(gameScoresStore.getGameScoreList).toEqual([score]);
     expect(authStore.isLoggedIn).toBe(false);
     expect(authStore.accessToken).toBeNull();
+    expect(authStore.authNotice?.message).toBe(
+      "ログインの有効期限が切れました。もう一度ログインしてください。"
+    );
   });
 
   it("バックエンドAPI無効時はログイン状態があってもAPI保存しない", async () => {
@@ -290,6 +293,9 @@ describe("gameScores store", () => {
     expect(gameScoresStore.getGameScoreList).toEqual([localScore]);
     expect(authStore.isLoggedIn).toBe(false);
     expect(authStore.accessToken).toBeNull();
+    expect(authStore.authNotice?.message).toBe(
+      "ログインの有効期限が切れました。もう一度ログインしてください。"
+    );
   });
 
   it("未ログインの場合はユーザー別スコア一覧を取得しない", async () => {

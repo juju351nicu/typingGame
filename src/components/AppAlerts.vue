@@ -19,7 +19,10 @@ const { visibleAlerts, hideAlert, getTopStyle } =
   useAppAlertVisibility(alerts);
 </script>
 <template>
-  <div v-for="(alert, index) in alerts" :key="`${alert.type}-${index}`">
+  <div
+    v-for="(alert, index) in alerts"
+    :key="alert.id ?? `${alert.type}-${index}`"
+  >
     <div class="d-flex justify-end">
       <v-alert
         v-if="visibleAlerts[index]"

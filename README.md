@@ -355,7 +355,7 @@ Status: ローカルの基本連携は実装済み。API有効時とFE単体公�
 - `npm run dev` でAPI無効のFE単体モードを起動できる。
 - API無効時はログイン導線が非表示になり、ゲーム画面、localStorage保存、ランキング表示が動作する。
 - API有効モードを `localhost:8082` などCORS未許可のポートで開くと通信に失敗するため、API連携確認は `localhost:8081` に固定する。
-- ログインユーザー向けスコアAPIで401になった場合は、FE側のログイン状態をクリアし、localStorageに保存済みの記録は維持する。
+- ログインユーザー向けスコアAPIで401になった場合は、FE側のログイン状態をクリアし、共通アラートで再ログイン案内を表示する。localStorageに保存済みの記録は維持する。
 
 Status: 完了。次はJWT化設計と実装準備。
 
@@ -369,7 +369,7 @@ Status: 完了。次はJWT化設計と実装準備。
 - ログアウト、認証切れ、未ログイン時の表示を整理
 - Spring Securityとフロントエンドのテストを追加
 
-Status: BEはログイン成功時のJWT発行、Bearer tokenからのログインユーザー復元、Swagger UIでのBearer認証確認まで実装済み。FEはtokenの `sessionStorage` 保存、`Authorization` ヘッダー付与、ログインユーザー向けスコアAPIの401時ログイン状態クリアまで実装済み。次はtoken期限切れ時の画面文言や再ログイン導線を必要に応じて整える。
+Status: BEはログイン成功時のJWT発行、Bearer tokenからのログインユーザー復元、Swagger UIでのBearer認証確認まで実装済み。FEはtokenの `sessionStorage` 保存、`Authorization` ヘッダー付与、ログインユーザー向けスコアAPIの401時ログイン状態クリアと再ログイン案内まで実装済み。次はセッションCookie方式を残すかの判断、または本番公開準備に進む。
 
 ### Phase 9: 本番公開準備
 
