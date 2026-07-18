@@ -9,7 +9,7 @@ Phase9では、GitHub Pagesで公開しているフロントエンドと、将�
 
 ## 現在の到達点
 
-2026-07-11時点では、以下まで完了しています。
+2026-07-18時点では、以下まで完了しています。
 
 - FE単体モードでゲーム、リザルト、ランキング、ブログが動く。
 - 未ログインユーザーのスコアはlocalStorageへ保存する。
@@ -18,6 +18,26 @@ Phase9では、GitHub Pagesで公開しているフロントエンドと、将�
 - ログイン済みユーザーはJWT tokenを `sessionStorage` に保存できる。
 - API呼び出し時に `Authorization: Bearer {token}` を付けられる。
 - ログインユーザー向けAPIが401の場合、ログイン状態をクリアし、再ログイン案内を表示できる。
+- GitHub ActionsのDeploy workflowで `VITE_ENABLE_BACKEND_API=false` を明示している。
+- GitHub Pages公開URLでログイン導線が出ないことを確認済み。
+- GitHub Pages公開URLでゲームプレイ、Result表示、localStorage保存、ランキング表、サマリー、分析タブの表示を確認済み。
+
+## Phase9完了整理
+
+Phase9のFE側ゴールだった「GitHub Pages公開版をFE単体モードで安定して見せられる状態にする」は完了扱いで良いです。
+
+完了したこと:
+
+- GitHub Pages公開版はAPI無効モードでビルドする。
+- API無効時はログイン導線を出さない。
+- スコア保存はlocalStorageで動く。
+- ランキング、サマリー、分析タブでlocalStorage由来の履歴を表示できる。
+- API有効モードは `npm run dev:api` に寄せた。
+- 将来API公開時に使う `VITE_API_BASE_URL` の考え方をdocsへ残した。
+- Cookie / sessionStorage / localStorage の役割を整理した。
+- BE側のPhase9方針と矛盾していない。
+
+Phase10では、バックエンドAPIがEC2などで公開できた後に、GitHub PagesからJWT Bearer認証で疎通確認します。
 
 ## 公開方針
 
@@ -177,8 +197,9 @@ FE側でPhase9を進める場合は、以下の順番が良いです。
 
 Phase9のFE側完了条件は以下です。
 
-- FE単体公開とAPI有効モードの違いがdocsにまとまっている。
-- GitHub Pages公開版ではAPIを呼ばない方針が明確になっている。
-- 将来API公開する場合の環境変数が明確になっている。
-- localStorage、sessionStorage、Cookieの役割が混ざらず整理されている。
-- BE側のPhase9方針と矛盾していない。
+- FE単体公開とAPI有効モードの違いがdocsにまとまっている。完了。
+- GitHub Pages公開版ではAPIを呼ばない方針が明確になっている。完了。
+- 将来API公開する場合の環境変数が明確になっている。完了。
+- localStorage、sessionStorage、Cookieの役割が混ざらず整理されている。完了。
+- BE側のPhase9方針と矛盾していない。完了。
+- GitHub Pages公開URLでFE単体動作を確認している。完了。

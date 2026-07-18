@@ -382,7 +382,7 @@ Status: BEはログイン成功時のJWT発行、Bearer tokenからのログイ�
 - GitHub PagesからバックエンドAPIへ接続する前提で設定を整理
 - 起動手順、環境変数、確認手順をREADME/docsにまとめる
 
-Status: `docs/phase9-production-readiness-plan.md` に、GitHub Pages公開版はFE単体モードを維持すること、将来API公開時の環境変数、localStorage/sessionStorage/Cookieの役割をまとめています。Deploy workflowのBuildステップでは `VITE_ENABLE_BACKEND_API=false` を明示し、公開版がAPI無効モードでビルドされるようにしています。
+Status: 完了。`docs/phase9-production-readiness-plan.md` に、GitHub Pages公開版はFE単体モードを維持すること、将来API公開時の環境変数、localStorage/sessionStorage/Cookieの役割をまとめています。Deploy workflowのBuildステップでは `VITE_ENABLE_BACKEND_API=false` を明示し、公開版がAPI無効モードでビルドされるようにしています。GitHub Pages公開URLでログイン導線が出ないこと、ゲームプレイ後にlocalStorage保存とランキング表示が動くことも確認済みです。
 
 ### Phase 10: EC2デプロイ学習
 
@@ -394,7 +394,7 @@ Status: `docs/phase9-production-readiness-plan.md` に、GitHub Pages公開版�
 - セキュリティグループ、ポート、HTTPSを確認
 - GitHub PagesのFEからEC2上のBEへ疎通確認
 
-Status: 本番公開準備後に学習予定
+Status: 着手準備。バックエンド側の `docs/phase10-ec2-deployment-checklist.md` に沿って、EC2上にAPIを公開できた後、GitHub PagesのFEからJWT Bearer認証で疎通確認します。
 
 ### 後続フェーズの考え方
 
