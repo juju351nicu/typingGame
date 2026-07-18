@@ -96,7 +96,8 @@ GitHub Pagesへ公開するビルドでは、原則としてAPI無効モード�
 VITE_ENABLE_BACKEND_API=false
 ```
 
-または未指定のままにします。
+GitHub ActionsのDeploy workflowでは、Buildステップでこの値を明示します。
+ローカルでFE単体モードを確認する場合は、未指定のままでも同じ挙動になります。
 
 この状態では、以下の挙動になります。
 

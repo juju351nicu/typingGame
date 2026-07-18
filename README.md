@@ -247,7 +247,7 @@ Workflow:
 3. `posts-index.json` に差分があれば自動コミット
 4. `npm run check:posts`
 5. `npm run test`
-6. `npm run build`
+6. `VITE_ENABLE_BACKEND_API=false` を明示して `npm run build`
 7. `dist` を GitHub Pages へデプロイ
 
 ## Roadmap
@@ -382,7 +382,7 @@ Status: BEはログイン成功時のJWT発行、Bearer tokenからのログイ�
 - GitHub PagesからバックエンドAPIへ接続する前提で設定を整理
 - 起動手順、環境変数、確認手順をREADME/docsにまとめる
 
-Status: 着手準備として `docs/phase9-production-readiness-plan.md` に、GitHub Pages公開版はFE単体モードを維持すること、将来API公開時の環境変数、localStorage/sessionStorage/Cookieの役割をまとめています。
+Status: `docs/phase9-production-readiness-plan.md` に、GitHub Pages公開版はFE単体モードを維持すること、将来API公開時の環境変数、localStorage/sessionStorage/Cookieの役割をまとめています。Deploy workflowのBuildステップでは `VITE_ENABLE_BACKEND_API=false` を明示し、公開版がAPI無効モードでビルドされるようにしています。
 
 ### Phase 10: EC2デプロイ学習
 
