@@ -6,12 +6,12 @@ const items = [
   {
     title: "トップページ",
     disabled: false,
-    href: "/",
+    to: { name: "GamePage" },
   },
   {
     title: "当サイトについて",
     disabled: true,
-    href: "/aboutUs",
+    to: { name: "AboutUs" },
   },
 ];
 onMounted(() => {

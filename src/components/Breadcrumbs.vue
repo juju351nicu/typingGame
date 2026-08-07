@@ -5,7 +5,7 @@ interface BreadcrumbLink {
   title: string;
   disabled?: boolean;
   href?: string;
-  to?: string;
+  to?: string | { name: string };
 }
 
 interface Props {
