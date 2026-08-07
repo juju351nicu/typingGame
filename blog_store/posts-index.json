@@ -8,12 +8,36 @@
     "url": "blog_store/posts/guide/npm-audit-vite-lockfile.md"
   },
   {
+    "id": "ai-assisted-personal-development",
+    "section": "guide",
+    "date": "2026-08-07",
+    "title": "AIを活用して個人開発を進めた記録",
+    "description": "ChatGPTやClaude CodeのようなAIを使いながら、個人開発を小さく進めるために意識したこと、任せたこと、最後に自分で確認したことをまとめました。",
+    "url": "blog_store/posts/guide/ai-assisted-personal-development.md"
+  },
+  {
     "id": "github-actions-pages-deploy",
     "section": "guide",
     "date": "2026-07-18",
     "title": "GitHub ActionsでVueアプリをGitHub Pagesに公開した記録",
     "description": "Vue3 + Viteで作成したタイピングゲームを、GitHub ActionsからGitHub Pagesへ公開したときの構成、API無効モード、SPA fallback、確認手順をまとめました。",
     "url": "blog_store/posts/guide/github-actions-pages-deploy.md"
+  },
+  {
+    "id": "spring-boot-prod-env-settings",
+    "section": "guide",
+    "date": "2026-07-12",
+    "title": "Spring Bootのprod設定と環境変数を整理した記録",
+    "description": "Spring BootバックエンドをEC2公開へ進める前に、application-prod.yml、DB接続、JWT secret、CORS、Swagger公開設定を環境変数で整理した流れをまとめました。",
+    "url": "blog_store/posts/guide/spring-boot-prod-env-settings.md"
+  },
+  {
+    "id": "spring-security-jwt-resource-server",
+    "section": "guide",
+    "date": "2026-07-11",
+    "title": "Spring SecurityをJWT Bearer認証に対応させた記録",
+    "description": "Spring Bootバックエンドで、セッションCookie方式からJWT Bearer認証へ寄せるために、Resource Server構成、JWT発行、認証情報復元を実装した流れをまとめました。",
+    "url": "blog_store/posts/guide/spring-security-jwt-resource-server.md"
   },
   {
     "id": "vue3-vuetify-pinia-dark-mode",
@@ -30,6 +54,22 @@
     "title": "Node.js で Markdown ブログの posts-index.json を自動生成した話",
     "description": "Vue3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。",
     "url": "blog_store/posts/guide/nodejs-generate-posts-index.md"
+  },
+  {
+    "id": "vue-localstorage-ranking",
+    "section": "guide",
+    "date": "2026-06-08",
+    "title": "VueでlocalStorageランキング機能を作った記録",
+    "description": "Vue3 + Piniaでタイピングゲームのプレイ結果をlocalStorageに保存し、ランキング表、サマリー、スコア推移を表示できるようにした実装をまとめました。",
+    "url": "blog_store/posts/guide/vue-localstorage-ranking.md"
+  },
+  {
+    "id": "ghost-pdf-development-record",
+    "section": "guide",
+    "date": "2026-05-25",
+    "title": "Ghost-PDF開発で学んだ責務分離をtypingGameへ活かした記録",
+    "description": "Ghost-PDF開発で使っていたconst、rest、utilの考え方を、typingGameのTypeScript構成へ移すときに意識した責務分離と再利用の考え方をまとめました。",
+    "url": "blog_store/posts/guide/ghost-pdf-development-record.md"
   },
   {
     "id": "vue3-setinterval-multiple-start",
