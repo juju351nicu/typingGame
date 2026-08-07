@@ -1,19 +1,19 @@
 [
   {
-    "id": "github-actions-pages-deploy",
-    "section": "guide",
-    "date": "2026-08-08",
-    "title": "GitHub ActionsでVueアプリをGitHub Pagesに公開した記録",
-    "description": "Vue3 + Viteで作成したタイピングゲームを、GitHub ActionsからGitHub Pagesへ公開したときの構成、API無効モード、SPA fallback、確認手順をまとめました。",
-    "url": "blog_store/posts/guide/github-actions-pages-deploy.md"
-  },
-  {
     "id": "npm-audit-vite-lockfile",
     "section": "guide",
     "date": "2026-08-08",
     "title": "npm auditで見つかったVite脆弱性を更新対応した記録",
     "description": "npm auditで検出されたVite関連の脆弱性に対して、Vite更新、テスト、GitHub Actionsのnpm ci失敗、lockfile同期まで対応した流れをまとめました。",
     "url": "blog_store/posts/guide/npm-audit-vite-lockfile.md"
+  },
+  {
+    "id": "github-actions-pages-deploy",
+    "section": "guide",
+    "date": "2026-07-18",
+    "title": "GitHub ActionsでVueアプリをGitHub Pagesに公開した記録",
+    "description": "Vue3 + Viteで作成したタイピングゲームを、GitHub ActionsからGitHub Pagesへ公開したときの構成、API無効モード、SPA fallback、確認手順をまとめました。",
+    "url": "blog_store/posts/guide/github-actions-pages-deploy.md"
   },
   {
     "id": "vue3-vuetify-pinia-dark-mode",
