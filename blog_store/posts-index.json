@@ -1,5 +1,13 @@
 [
   {
+    "id": "docker-compose-mysql-local-db",
+    "section": "guide",
+    "date": "2026-08-14",
+    "title": "Docker ComposeでMySQLを固定した記録",
+    "description": "EC2学習へ進む前に、Rancher DesktopとDocker ComposeでMySQL 8.4を固定し、Spring Bootはローカル起動のままDBだけコンテナ化した流れをまとめました。",
+    "url": "blog_store/posts/guide/docker-compose-mysql-local-db.md"
+  },
+  {
     "id": "npm-audit-vite-lockfile",
     "section": "guide",
     "date": "2026-08-08",
