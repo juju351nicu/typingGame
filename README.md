@@ -335,7 +335,7 @@ Backend startup checklist: [`docs/backend-startup-checklist.md`](./docs/backend-
   - オフライン対応
   - ホーム画面追加
 
-Status: ローカルの基本連携は実装済み。API有効時とFE単体公開時の動作確認を継続。
+Status: ローカルの基本連携は実装済み。API有効時とFE単体公開時の動作確認を継続。Docker Composeは、まずバックエンド側のMySQL固定から着手します。
 
 ### Phase 7: FE/BE結合確認
 
@@ -388,13 +388,14 @@ Status: 完了。`docs/phase9-production-readiness-plan.md` に、GitHub Pages�
 
 目安: 1〜2週間
 
+- EC2前に、バックエンド側でMySQLだけDocker Compose固定
 - EC2にJava、MySQL、Nginxを準備
 - Spring Bootアプリを起動
 - `systemd` でサービス化
 - セキュリティグループ、ポート、HTTPSを確認
 - GitHub PagesのFEからEC2上のBEへ疎通確認
 
-Status: 着手準備。バックエンド側の `docs/phase10-ec2-deployment-checklist.md` に沿って、EC2上にAPIを公開できた後、GitHub PagesのFEからJWT Bearer認証で疎通確認します。
+Status: EC2の前に、バックエンド側でDocker ComposeによるMySQL固定を挟みます。その後、バックエンド側の `docs/phase10-ec2-deployment-checklist.md` に沿って、EC2上にAPIを公開できた後、GitHub PagesのFEからJWT Bearer認証で疎通確認します。
 
 ### 後続フェーズの考え方
 
