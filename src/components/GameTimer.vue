@@ -30,7 +30,37 @@ defineExpose({ startTimer, stopTimer, resetTimer });
 </script>
 <template>
   <div class="game-status-item">
-    <label>タイマー</label>
+    <label>経過時間</label>
     <span>{{ timeLabel }}</span>
   </div>
 </template>
+<style scoped>
+.game-status-item label {
+  color: var(--app-text-muted);
+  display: block;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.game-status-item span {
+  color: var(--app-text);
+  display: block;
+  font-size: 1.65rem;
+  font-weight: bold;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .game-status-item span {
+    font-size: 1.45rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-status-item span {
+    font-size: 1.25rem;
+  }
+}
+</style>

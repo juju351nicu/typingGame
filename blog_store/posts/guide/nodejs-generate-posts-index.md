@@ -4,6 +4,7 @@ title: Node.js で Markdown ブログの posts-index.json を自動生成した�
 date: 2026-06-20
 section: guide
 description: Vue3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。
+tags: Node.js, Markdown, TypeScript
 ---
 
 # Node.js で Markdown ブログの posts-index.json を自動生成した話

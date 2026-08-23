@@ -4,6 +4,7 @@ title: Spring Bootのprod設定と環境変数を整理した記録
 date: 2026-07-12
 section: guide
 description: Spring BootバックエンドをEC2公開へ進める前に、application-prod.yml、DB接続、JWT secret、CORS、Swagger公開設定を環境変数で整理した流れをまとめました。
+tags: Spring Boot, AWS, 環境変数
 ---
 
 # Spring Bootのprod設定と環境変数を整理した記録

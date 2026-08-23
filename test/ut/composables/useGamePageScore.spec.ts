@@ -1,5 +1,6 @@
 import {
   createGamePageScore,
+  findPreviousComparableScore,
   saveGamePageScore,
 } from "@/composables/useGamePageScore";
 import Const from "@/constants/const";
@@ -74,5 +75,64 @@ describe("useGamePageScore", () => {
     saveGamePageScore(gameScoresStore, score);
 
     expect(gameScoresStore.saveGameScoreList).toHaveBeenCalledWith(score);
+  });
+
+  it("今回と同じ条件で遊んだ直近スコアを返す", () => {
+    const scores: GameScore[] = [
+      {
+        score: 8,
+        mode: 0,
+        gameRule: Const.GAME_RULE.NORMAL,
+        time: "00:00:20.00",
+        date: "2026-07-01 10:00:00",
+      },
+      {
+        score: 12,
+        mode: 1,
+        gameRule: Const.GAME_RULE.NORMAL,
+        time: "00:00:20.00",
+        date: "2026-07-02 10:00:00",
+      },
+      {
+        score: 15,
+        mode: 0,
+        gameRule: Const.GAME_RULE.NORMAL,
+        time: "00:00:20.00",
+        date: "2026-07-03 10:00:00",
+      },
+    ];
+
+    expect(findPreviousComparableScore(scores, scores[2])).toEqual(scores[0]);
+  });
+
+  it("タイムアタックは制限時間も同じ記録だけを比較する", () => {
+    const scores: GameScore[] = [
+      {
+        score: 10,
+        mode: 1,
+        gameRule: Const.GAME_RULE.TIME_ATTACK,
+        timeLimitSeconds: 30,
+        time: "00:00:30.00",
+        date: "2026-07-01 10:00:00",
+      },
+      {
+        score: 18,
+        mode: 1,
+        gameRule: Const.GAME_RULE.TIME_ATTACK,
+        timeLimitSeconds: 60,
+        time: "00:01:00.00",
+        date: "2026-07-02 10:00:00",
+      },
+      {
+        score: 20,
+        mode: 1,
+        gameRule: Const.GAME_RULE.TIME_ATTACK,
+        timeLimitSeconds: 60,
+        time: "00:01:00.00",
+        date: "2026-07-03 10:00:00",
+      },
+    ];
+
+    expect(findPreviousComparableScore(scores, scores[2])).toEqual(scores[1]);
   });
 });

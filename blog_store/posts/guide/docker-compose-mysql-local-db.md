@@ -4,6 +4,7 @@ title: Docker ComposeでMySQLを固定した記録
 date: 2026-08-14
 section: guide
 description: EC2学習へ進む前に、Rancher DesktopとDocker ComposeでMySQL 8.4を固定し、Spring Bootはローカル起動のままDBだけコンテナ化した流れをまとめました。
+tags: Docker, MySQL, Spring Boot
 ---
 
 # Docker ComposeでMySQLを固定した記録

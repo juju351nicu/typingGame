@@ -31,10 +31,16 @@ const logout = async (): Promise<void> => {
     <v-toolbar-title class="app-title">{{ title }}</v-toolbar-title>
     <v-spacer />
     <div class="d-flex justify-end">
-      <v-btn class="mr-10 header_list" :to="{ name: 'AboutUs' }">
+      <v-btn
+        class="mr-10 header_list header-link--about"
+        :to="{ name: 'AboutUs' }"
+      >
         当サイトについて
       </v-btn>
-      <v-btn class="mr-10 header_list" :to="{ name: 'BlogPostList' }">
+      <v-btn
+        class="mr-10 header_list header-link--blog"
+        :to="{ name: 'BlogPostList' }"
+      >
         ブログ
       </v-btn>
       <v-btn
@@ -69,14 +75,11 @@ const logout = async (): Promise<void> => {
   .app-title {
     flex: 0 1 auto;
     font-size: 1.05rem;
-    max-width: 172px;
+    max-width: none;
   }
 
   .header_list {
-    font-size: 0.78rem;
-    min-width: auto;
-    padding-left: 8px;
-    padding-right: 8px;
+    display: none;
   }
 
   :deep(.v-toolbar__content) {
@@ -96,7 +99,7 @@ const logout = async (): Promise<void> => {
 
 @media (max-width: 420px) {
   .app-title {
-    max-width: 138px;
+    font-size: 0.98rem;
   }
 
   .header_list {

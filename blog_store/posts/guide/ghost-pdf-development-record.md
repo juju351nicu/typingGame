@@ -4,6 +4,7 @@ title: Ghost-PDF開発で学んだ責務分離をtypingGameへ活かした記録
 date: 2026-05-25
 section: guide
 description: Ghost-PDF開発で使っていたconst、rest、utilの考え方を、typingGameのTypeScript構成へ移すときに意識した責務分離と再利用の考え方をまとめました。
+tags: TypeScript, 設計, リファクタリング
 ---
 
 # Ghost-PDF開発で学んだ責務分離をtypingGameへ活かした記録

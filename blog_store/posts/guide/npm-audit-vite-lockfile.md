@@ -4,6 +4,7 @@ title: npm auditで見つかったVite脆弱性を更新対応した記録
 date: 2026-08-08
 section: guide
 description: npm auditで検出されたVite関連の脆弱性に対して、Vite更新、テスト、GitHub Actionsのnpm ci失敗、lockfile同期まで対応した流れをまとめました。
+tags: npm, Vite, GitHub Actions
 ---
 
 # npm auditで見つかったVite脆弱性を更新対応した記録

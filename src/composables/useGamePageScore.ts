@@ -70,3 +70,45 @@ export const saveGamePageScore = (
 ): void => {
   gameScoresStore.saveGameScoreList(score);
 };
+
+/**
+ * 今回と同じ条件で遊んだ直近のスコアを取得する。
+ *
+ * 保存直後の一覧では末尾が今回のスコアになるため、その1件を比較対象から外す。
+ * 通常 / タイムアタックや難易度が異なる記録は、単純比較すると意味が薄いため除外する。
+ *
+ * @param scores 保存済みスコア一覧
+ * @param currentScore 今回のスコア
+ * @returns 同じ条件の前回スコア。存在しない場合はnull
+ */
+export const findPreviousComparableScore = (
+  scores: GameScore[],
+  currentScore: GameScore
+): GameScore | null => {
+  const lastScore = scores.at(-1);
+  const hasCurrentScoreAtEnd =
+    lastScore?.date === currentScore.date &&
+    lastScore?.score === currentScore.score;
+  const candidates = hasCurrentScoreAtEnd ? scores.slice(0, -1) : scores;
+  const currentGameRule = Util.getGameRule(currentScore);
+
+  return (
+    candidates
+      .slice()
+      .reverse()
+      .find((score) => {
+        if (
+          score.mode !== currentScore.mode ||
+          Util.getGameRule(score) !== currentGameRule
+        ) {
+          return false;
+        }
+
+        if (currentGameRule === "timeAttack") {
+          return score.timeLimitSeconds === currentScore.timeLimitSeconds;
+        }
+
+        return true;
+      }) ?? null
+  );
+};

@@ -5,6 +5,11 @@
     "date": "2026-08-14",
     "title": "Docker ComposeでMySQLを固定した記録",
     "description": "EC2学習へ進む前に、Rancher DesktopとDocker ComposeでMySQL 8.4を固定し、Spring Bootはローカル起動のままDBだけコンテナ化した流れをまとめました。",
+    "tags": [
+      "Docker",
+      "MySQL",
+      "Spring Boot"
+    ],
     "url": "blog_store/posts/guide/docker-compose-mysql-local-db.md"
   },
   {
@@ -13,6 +18,11 @@
     "date": "2026-08-08",
     "title": "npm auditで見つかったVite脆弱性を更新対応した記録",
     "description": "npm auditで検出されたVite関連の脆弱性に対して、Vite更新、テスト、GitHub Actionsのnpm ci失敗、lockfile同期まで対応した流れをまとめました。",
+    "tags": [
+      "npm",
+      "Vite",
+      "GitHub Actions"
+    ],
     "url": "blog_store/posts/guide/npm-audit-vite-lockfile.md"
   },
   {
@@ -21,6 +31,11 @@
     "date": "2026-08-07",
     "title": "AIを活用して個人開発を進めた記録",
     "description": "ChatGPTやClaude CodeのようなAIを使いながら、個人開発を小さく進めるために意識したこと、任せたこと、最後に自分で確認したことをまとめました。",
+    "tags": [
+      "AI",
+      "個人開発",
+      "開発プロセス"
+    ],
     "url": "blog_store/posts/guide/ai-assisted-personal-development.md"
   },
   {
@@ -29,6 +44,11 @@
     "date": "2026-07-18",
     "title": "GitHub ActionsでVueアプリをGitHub Pagesに公開した記録",
     "description": "Vue3 + Viteで作成したタイピングゲームを、GitHub ActionsからGitHub Pagesへ公開したときの構成、API無効モード、SPA fallback、確認手順をまとめました。",
+    "tags": [
+      "Vue 3",
+      "GitHub Actions",
+      "GitHub Pages"
+    ],
     "url": "blog_store/posts/guide/github-actions-pages-deploy.md"
   },
   {
@@ -37,6 +57,11 @@
     "date": "2026-07-12",
     "title": "Spring Bootのprod設定と環境変数を整理した記録",
     "description": "Spring BootバックエンドをEC2公開へ進める前に、application-prod.yml、DB接続、JWT secret、CORS、Swagger公開設定を環境変数で整理した流れをまとめました。",
+    "tags": [
+      "Spring Boot",
+      "AWS",
+      "環境変数"
+    ],
     "url": "blog_store/posts/guide/spring-boot-prod-env-settings.md"
   },
   {
@@ -45,6 +70,11 @@
     "date": "2026-07-11",
     "title": "Spring SecurityをJWT Bearer認証に対応させた記録",
     "description": "Spring Bootバックエンドで、セッションCookie方式からJWT Bearer認証へ寄せるために、Resource Server構成、JWT発行、認証情報復元を実装した流れをまとめました。",
+    "tags": [
+      "Spring Boot",
+      "Spring Security",
+      "JWT"
+    ],
     "url": "blog_store/posts/guide/spring-security-jwt-resource-server.md"
   },
   {
@@ -53,6 +83,11 @@
     "date": "2026-07-04",
     "title": "Vue3 + Vuetify + Pinia でダークモードを復活させた話",
     "description": "Vue3 + Vite + Vuetify のタイピングゲームで、以前外していたダークモードを Pinia と Vuetify theme の同期で復活させたときの設計と実装をまとめました。",
+    "tags": [
+      "Vue 3",
+      "Vuetify",
+      "Pinia"
+    ],
     "url": "blog_store/posts/guide/vue3-vuetify-pinia-dark-mode.md"
   },
   {
@@ -61,6 +96,11 @@
     "date": "2026-06-20",
     "title": "Node.js で Markdown ブログの posts-index.json を自動生成した話",
     "description": "Vue3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。",
+    "tags": [
+      "Node.js",
+      "Markdown",
+      "TypeScript"
+    ],
     "url": "blog_store/posts/guide/nodejs-generate-posts-index.md"
   },
   {
@@ -69,6 +109,11 @@
     "date": "2026-06-08",
     "title": "VueでlocalStorageランキング機能を作った記録",
     "description": "Vue3 + Piniaでタイピングゲームのプレイ結果をlocalStorageに保存し、ランキング表、サマリー、スコア推移を表示できるようにした実装をまとめました。",
+    "tags": [
+      "Vue 3",
+      "Pinia",
+      "localStorage"
+    ],
     "url": "blog_store/posts/guide/vue-localstorage-ranking.md"
   },
   {
@@ -77,6 +122,11 @@
     "date": "2026-05-25",
     "title": "Ghost-PDF開発で学んだ責務分離をtypingGameへ活かした記録",
     "description": "Ghost-PDF開発で使っていたconst、rest、utilの考え方を、typingGameのTypeScript構成へ移すときに意識した責務分離と再利用の考え方をまとめました。",
+    "tags": [
+      "TypeScript",
+      "設計",
+      "リファクタリング"
+    ],
     "url": "blog_store/posts/guide/ghost-pdf-development-record.md"
   },
   {
@@ -85,6 +135,11 @@
     "date": "2026-05-10",
     "title": "Vue3 の setInterval 多重起動で単語が大量生成された話",
     "description": "Vue3 + TypeScript でタイピングゲームを作成中に発生した、setInterval の多重起動バグについて原因と解決方法をまとめました。",
+    "tags": [
+      "Vue 3",
+      "TypeScript",
+      "setInterval"
+    ],
     "url": "blog_store/posts/guide/vue3-setinterval-multiple-start.md"
   }
 ]

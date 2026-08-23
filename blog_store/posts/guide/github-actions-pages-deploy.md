@@ -4,6 +4,7 @@ title: GitHub ActionsでVueアプリをGitHub Pagesに公開した記録
 date: 2026-07-18
 section: guide
 description: Vue3 + Viteで作成したタイピングゲームを、GitHub ActionsからGitHub Pagesへ公開したときの構成、API無効モード、SPA fallback、確認手順をまとめました。
+tags: Vue 3, GitHub Actions, GitHub Pages
 ---
 
 # GitHub ActionsでVueアプリをGitHub Pagesに公開した記録

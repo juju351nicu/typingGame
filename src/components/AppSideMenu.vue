@@ -30,18 +30,28 @@ const drawer = computed({
 const links = ref<MenuLink[]>([
   {
     to: { name: "GamePage" },
-    title: "ダッシュボード",
+    title: "ゲーム",
     icon: "mdi-home",
   },
   {
     to: { name: "RankingPage" },
-    title: "スコア一覧",
-    icon: "mdi-account",
+    title: "ランキング",
+    icon: "mdi-trophy-outline",
   },
   {
     to: { name: "SettingsPage" },
-    title: "設定画面",
+    title: "設定",
     icon: "mdi-cog-outline",
+  },
+  {
+    to: { name: "BlogPostList" },
+    title: "開発ブログ",
+    icon: "mdi-post-outline",
+  },
+  {
+    to: { name: "AboutUs" },
+    title: "このサイトについて",
+    icon: "mdi-information-outline",
   },
 ]);
 </script>

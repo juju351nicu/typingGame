@@ -4,6 +4,7 @@ title: AIを活用して個人開発を進めた記録
 date: 2026-08-07
 section: guide
 description: ChatGPTやClaude CodeのようなAIを使いながら、個人開発を小さく進めるために意識したこと、任せたこと、最後に自分で確認したことをまとめました。
+tags: AI, 個人開発, 開発プロセス
 ---
 
 # AIを活用して個人開発を進めた記録

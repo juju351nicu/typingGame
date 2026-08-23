@@ -4,6 +4,7 @@ title: VueでlocalStorageランキング機能を作った記録
 date: 2026-06-08
 section: guide
 description: Vue3 + Piniaでタイピングゲームのプレイ結果をlocalStorageに保存し、ランキング表、サマリー、スコア推移を表示できるようにした実装をまとめました。
+tags: Vue 3, Pinia, localStorage
 ---
 
 # VueでlocalStorageランキング機能を作った記録

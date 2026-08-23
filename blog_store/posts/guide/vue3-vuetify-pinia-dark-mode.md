@@ -4,6 +4,7 @@ title: Vue3 + Vuetify + Pinia でダークモードを復活させた話
 date: 2026-07-04
 section: guide
 description: Vue3 + Vite + Vuetify のタイピングゲームで、以前外していたダークモードを Pinia と Vuetify theme の同期で復活させたときの設計と実装をまとめました。
+tags: Vue 3, Vuetify, Pinia
 ---
 
 # Vue3 + Vuetify + Pinia でダークモードを復活させた話

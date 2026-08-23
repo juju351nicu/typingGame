@@ -153,7 +153,7 @@ const getPostTimestamp = (post) => {
  *
  * @param {Record<string, string>} frontmatter 解析済みfrontmatter
  * @param {string} filePath Markdownファイルの絶対パス
- * @returns {{ id: string, section: string, date: string, title: string, description: string, url: string }} 記事インデックス1件分
+ * @returns {{ id: string, section: string, date: string, title: string, description: string, tags: string[], url: string }} 記事インデックス1件分
  */
 const createPostIndex = (frontmatter, filePath) => {
   return {
@@ -162,6 +162,10 @@ const createPostIndex = (frontmatter, filePath) => {
     date: frontmatter.date,
     title: frontmatter.title,
     description: frontmatter.description,
+    tags: (frontmatter.tags ?? "")
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean),
     url: getRelativeUrl(filePath),
   };
 };

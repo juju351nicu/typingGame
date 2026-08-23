@@ -116,6 +116,8 @@ export interface PostIndex {
   description: string;
   id: string;
   section: string;
+  /** 記事で扱う技術タグ */
+  tags?: string[];
   /**タイトル */
   title: string;
   url: string;

@@ -4,6 +4,7 @@ title: Spring SecurityをJWT Bearer認証に対応させた記録
 date: 2026-07-11
 section: guide
 description: Spring Bootバックエンドで、セッションCookie方式からJWT Bearer認証へ寄せるために、Resource Server構成、JWT発行、認証情報復元を実装した流れをまとめました。
+tags: Spring Boot, Spring Security, JWT
 ---
 
 # Spring SecurityをJWT Bearer認証に対応させた記録

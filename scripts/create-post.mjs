@@ -64,16 +64,17 @@ const assertUniquePost = (posts, id, markdownPath) => {
  * 生成したfrontmatterは scripts/generate-posts.mjs が読み取る。
  * これにより posts-index.json を手動編集せず、Markdownから再生成できる。
  *
- * @param {{ id: string, section: string, title: string, date: string, description: string }} post 新規記事の値
+ * @param {{ id: string, section: string, title: string, date: string, description: string, tags: string }} post 新規記事の値
  * @returns {string} 必須frontmatter付きのMarkdown本文
  */
-const createMarkdown = ({ id, section, title, date, description }) => {
+const createMarkdown = ({ id, section, title, date, description, tags }) => {
   return `---
 id: ${id}
 title: ${title}
 date: ${date}
 section: ${section}
 description: ${description}
+tags: ${tags}
 ---
 
 # ${title}
@@ -186,6 +187,8 @@ const main = async () => {
       throw new Error("id は英数字・空白・ハイフンを含めて入力してください。");
     }
 
+    const tags = await prompt.ask("tags（カンマ区切り・任意）: ");
+
     const posts = await readPostsIndex();
     const date = new Date().toISOString().slice(0, 10);
     const markdownPath = path.posix.join(BLOG_ROOT, "posts", section, `${id}.md`);
@@ -195,7 +198,7 @@ const main = async () => {
     await mkdir(path.dirname(markdownFilePath), { recursive: true });
     await writeFile(
       markdownFilePath,
-      createMarkdown({ id, section, title, date, description }),
+      createMarkdown({ id, section, title, date, description, tags }),
       "utf8"
     );
 
