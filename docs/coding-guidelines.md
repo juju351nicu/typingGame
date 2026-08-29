@@ -95,14 +95,14 @@ Ghost-PDF5へ戻す時は、TypeScriptの型をそのまま移すのではなく
 - API取得に失敗しても、localStorageから復元済みのスコア一覧は維持する。
 - API呼び出しは `fetchClient.ts` 経由に寄せる。
 - セッションCookieを使うAPIでは、`credentials: "include"` が必要になる。
-- GitHub Pagesでは当面FEだけを公開するため、バックエンドAPI前提の動きにしない。
+- GitHub Pages本番版はEC2上のAPIへ接続するが、API停止中もゲームの基本機能とlocalStorage保存を維持する。
 - バックエンドAPI連携は `VITE_ENABLE_BACKEND_API=true` の場合だけ有効にする。
 - `VITE_ENABLE_BACKEND_API` が未設定または `false` の場合は、ログイン導線を非表示にし、API保存も呼ばない。
 - `VITE_API_BASE_URL` はAPI有効時の接続先だけを表す。APIの有効/無効判定には使わない。
 
-### JWT移行時の方針
+### JWT認証の方針
 
-Phase8でJWT化する場合は、最初はaccess tokenのみで開始します。
+JWT認証はaccess tokenを使う方式で実装しています。
 
 - tokenは `sessionStorage` に保存する。保存処理は `authTokenStorage.ts` に寄せる。
 - API呼び出し時は `Authorization: Bearer {token}` を付ける。
@@ -110,7 +110,7 @@ Phase8でJWT化する場合は、最初はaccess tokenのみで開始します�
 - logout時はPiniaのログイン状態と `sessionStorage` のtokenを削除する。
 - token期限切れや不正tokenで401になった場合は、ログイン状態と `sessionStorage` のtokenをクリアし、共通アラートで再ログイン案内を表示する。
 - refresh token はaccess token方式が安定してから検討する。
-- GitHub Pages向けのAPI無効モードでは、token復元やAPI呼び出しを行わない。
+- API無効モードでは、token復元やAPI呼び出しを行わない。
 - 最終的な主方式はJWT Bearer認証に寄せる。
 - セッションCookie方式は、移行期間とローカル学習用として残す。
 
@@ -128,9 +128,9 @@ JWT化後も、未ログインユーザーのlocalStorage保存とFE単体公開
 - `localStorage` は認証token保存ではなく、未ログインスコア保存とAPI失敗時fallbackに使う。
 - JWT tokenを `localStorage` へ保存しない。ログイン状態を長く残す必要が出るまでは、`sessionStorage` を使う。
 
-### FE単体公開を守る設計
+### FE単体動作を残す設計
 
-当面はGitHub Pagesでフロントエンドだけを公開し、EC2などでバックエンドを公開するのは後の学習フェーズにします。
+GitHub Pages本番版はEC2上のバックエンドAPIへ接続します。一方、EC2停止中でもタイピングゲームとして利用できる設計を維持します。
 
 そのため、公開版の最重要条件は「バックエンドが無くてもゲームとして自然に使えること」です。
 
@@ -148,12 +148,12 @@ VITE_ENABLE_BACKEND_API=true
 ```
 
 - `true`
-  - ローカルでBE/FEを両方起動して動作確認する環境。
+  - GitHub Pages本番版、またはローカルでBE/FEを両方起動して動作確認する環境。
   - ログイン導線を表示する。
   - ログイン済みユーザーのスコアをAPIにも保存する。
   - ログイン済みユーザーのランキング表示では、APIからユーザー別スコア一覧を取得する。
 - 未設定 / `false`
-  - GitHub PagesなどFE単体公開の環境。
+  - ローカルでFE単体動作を確認する環境。
   - ログイン導線を表示しない。
   - `/login` へ直接アクセスされた場合はゲーム画面へ戻す。
   - スコアはlocalStorageへ保存し、API保存・API取得は呼ばない。

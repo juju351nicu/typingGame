@@ -1,5 +1,7 @@
 # Frontend Cleanup Plan Before Backend Work
 
+> 2026-08-29更新: この計画に記載したバックエンド接続前の整理は完了しています。現在はEC2上のSpring Boot APIを公開し、GitHub PagesからHTTPS・JWT Bearer認証で接続しています。以下は実装前の判断と作業履歴として残します。
+
 ## 目的
 
 お盆休みにバックエンド側のタスクへ入りやすくするため、事前にフロントエンド側で潰せる課題を整理します。

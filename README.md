@@ -5,9 +5,17 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 画面下から浮かび上がる風船型の単語を入力し、正しく打てると風船が破裂してスコアが加算されます。
 プレイ後は WPM・正確率・ミス数・ランクを確認でき、同じ条件で遊んだ前回のスコアとも比較できます。
 
-## Demo
+## Portfolio Summary
 
-[https://juju351nicu.github.io/typingGame/](https://juju351nicu.github.io/typingGame/)
+- Vue 3 / TypeScriptによるゲームUI、状態管理、レスポンシブ表示、Markdown技術ブログを実装しています。
+- Spring Boot / MySQLのAPIをAWS EC2へ公開し、Nginx、HTTPS、JWT Bearer認証を使ってGitHub Pagesから接続しています。
+- 主要ロジックを50ファイル・269テストで検証し、GitHub Actionsでtest・build・deployを自動化しています。
+
+## Links
+
+- [Live Demo](https://juju351nicu.github.io/typingGame/)
+- [Frontend Repository](https://github.com/juju351nicu/typingGame)
+- [Backend Repository](https://github.com/juju351nicu/typing-game-backend)
 
 ## Screenshots
 
@@ -61,7 +69,9 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - リザルト画面からランキングへの遷移
 - 学習補助用の仮想キーボード表示
 - localStorage を使ったランキング表示
+- ユーザー登録とJWT Bearer認証によるログイン
 - ログイン済みユーザーのスコアAPI保存
+- ユーザー別スコアと全体ランキングの切り替え
 - 未ログイン時のlocalStorage fallback
 - バックエンドAPI無効時のFE単体動作
 - 難易度設定
@@ -87,16 +97,13 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 
 ## Tech Stack
 
-- Vue 3
-- TypeScript
-- Vite
-- Vue Router
-- Pinia
-- pinia-plugin-persistedstate
-- Vuetify
-- Vitest
-- GitHub Actions
-- GitHub Pages
+| 分類 | 技術 |
+| --- | --- |
+| Frontend | Vue 3, TypeScript, Vite, Vue Router, Pinia, Vuetify |
+| Backend | Java 25, Spring Boot, Spring Security, JWT, JPA, Flyway |
+| Database | MySQL 8.4, Docker Compose |
+| Infrastructure | AWS EC2, Route 53, Nginx, Let's Encrypt, systemd |
+| Test / CI/CD | Vitest, GitHub Actions, GitHub Pages |
 
 ## Highlights
 
@@ -124,14 +131,14 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - fetchClient でHTTPエラーを共通例外として扱い、JSON helper も追加してAPI接続時の失敗検知と取得処理を整理
 - ログイン済みの場合は `/api/me/scores` にスコアを保存し、未ログインの場合はlocalStorage保存のみを行う構成に整理
 - ランキング画面では、ログイン済みかつバックエンドAPI有効時だけ `/api/me/scores` からユーザー別スコア一覧を取得し、失敗時はlocalStorageの表示を維持
-- GitHub PagesではバックエンドAPIを無効にし、FE単体でゲームとlocalStorage保存が動く構成を維持
+- GitHub PagesからEC2上のHTTPS APIへ接続しつつ、API停止時もlocalStorageのプレイ結果を維持するfallback構成を実装
 - ブログとランキングの error / empty 表示を共通コンポーネントへ整理
 - アラート通知を通知ごとの表示状態で管理し、後続通知の自動非表示が崩れないように改善
 - リトライ時のページリロードを廃止し、ゲーム状態とタイマーをリセットするSPA内完結の挙動に改善
 - ルート単位の遅延読み込みと Markdown renderer の分割により、初期JSと blog chunk の肥大化を軽減
 - スコア初期化前に確認ダイアログを表示し、誤操作で履歴を消しにくいように改善
 - スマホ幅でもゲーム画面、リザルト画面、ランキング画面が見やすいようにレスポンシブ調整
-- Vitest で 50 ファイル / 264 テストを実装し、タイピング処理、TypingPanelのv-model接続、TypingPanelのwatch副作用、入力変更反映、単語完了時の状態更新、単語追加位置、ゲーム終了判定、ブログ前後ナビ、ブログ詳細読み込み、ブログ記事一覧ページング、ブログページング表示、ブログ一覧クエリ正規化、Markdown変換、frontmatter除去、fetchClient、blogPostService、空判定、ブラウザ判定、localStorage判定、タイマー表示、ストップウォッチタイマー、難易度不正値、タイムアタックタイマー、ゲーム画面キーボード操作、ゲーム画面環境チェック、ゲーム画面リトライ処理、ゲーム開始・終了処理、同条件の前回スコア判定、ランキング絞り込み、ランキング画面状態、ランキング表表示値、ランキング表示文言、パフォーマンス推移、ゲーム画面状態リセット、ゲーム画面スコア保存、リザルト表示、リザルトモーダル開閉、設定画面状態、アラート表示状態、スコア保存、設定保存、テーマ切替、仮想キーボード表示設定、スコア初期化、localStorage 復元処理などを検証
+- Vitest で 50 ファイル / 269 テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元などを検証
 
 ## Component Design
 
@@ -196,6 +203,16 @@ Local integration check:
 - FEからログイン後、ゲーム終了時にスコアが保存される。
 - ランキング画面でDB保存済みスコアとFEから保存したスコアが表示される。
 - API保存・取得に失敗しても、localStorage fallbackを維持する方針は継続する。
+
+Production integration check:
+
+2026-08-29に、GitHub PagesからEC2上の本番APIへの接続を確認しました。
+
+- `https://api.clipdev.jp` のHTTPS、Nginx、Spring Boot、JWT認証が動作する。
+- GitHub Pagesからユーザー登録・ログインでき、ログインユーザーがヘッダーへ表示される。
+- sessionStorageのJWTを使い、ページ再読み込み後にログインユーザーを復元できる。
+- ゲーム終了後にランキング画面へ遷移し、自分の記録を表示できる。
+- EC2停止中も、ゲーム、localStorage保存、ローカルランキング、技術ブログは利用できる。
 
 Local backend API:
 
@@ -270,6 +287,9 @@ Workflow:
 5. `npm run test`
 6. `VITE_ENABLE_BACKEND_API=true`、`VITE_API_BASE_URL=https://api.clipdev.jp` を設定して `npm run build`
 7. `dist` を GitHub Pages へデプロイ
+
+<details>
+<summary><strong>Roadmap（開発履歴）</strong></summary>
 
 ## Roadmap
 
@@ -356,7 +376,7 @@ Backend startup checklist: [`docs/backend-startup-checklist.md`](./docs/backend-
   - オフライン対応
   - ホーム画面追加
 
-Status: ローカルの基本連携は実装済み。API有効時とFE単体公開時の動作確認を継続。Docker Composeは、まずバックエンド側のMySQL固定から着手します。
+Status: 完了。ローカル結合に加え、GitHub PagesからEC2上の本番APIへ接続済みです。MySQLはDocker Composeで稼働しています。
 
 ### Phase 7: FE/BE結合確認
 
@@ -380,7 +400,7 @@ Status: ローカルの基本連携は実装済み。API有効時とFE単体公�
 - Cookie無効時はセッションCookie方式のログイン継続が難しくなるため、最終的な主方式はJWT Bearer認証に寄せる。
 - localStorageは認証方式ではなく、未ログインスコア保存とAPI失敗時fallbackとして残す。
 
-Status: 完了。次はJWT化設計と実装準備。
+Status: 完了。ローカルと本番の両方でJWT Bearer認証を使用しています。
 
 ### Phase 8: JWT化
 
@@ -392,7 +412,7 @@ Status: 完了。次はJWT化設計と実装準備。
 - ログアウト、認証切れ、未ログイン時の表示を整理
 - Spring Securityとフロントエンドのテストを追加
 
-Status: BEはログイン成功時のJWT発行、Bearer tokenからのログインユーザー復元、Swagger UIでのBearer認証確認まで実装済み。FEはtokenの `sessionStorage` 保存、`Authorization` ヘッダー付与、ログインユーザー向けスコアAPIの401時ログイン状態クリアと再ログイン案内まで実装済み。最終的な主方式はJWT Bearer認証に寄せ、セッションCookie方式は移行期間とローカル学習用として残す。次は本番公開準備、またはセッションCookie方式を削除するタイミングの判断に進む。
+Status: 完了。BEのJWT発行・検証、FEのsessionStorage保存・Authorizationヘッダー付与・401時の再ログイン案内まで実装し、本番環境でも確認済みです。
 
 ### Phase 9: 本番公開準備
 
@@ -416,7 +436,7 @@ Status: 完了。`docs/phase9-production-readiness-plan.md` にAPI公開前後�
 - セキュリティグループ、ポート、HTTPSを確認
 - GitHub PagesのFEからEC2上のBEへ疎通確認
 
-Status: EC2、Docker/MySQL、Spring Boot、systemd、Nginx、独自ドメイン、HTTPS、JWT Bearer認証まで完了しています。FEのDeploy workflowも `https://api.clipdev.jp` へ切り替え済みです。次はGitHub Pages上でユーザー登録、ログイン、スコア保存・取得、ランキング、CORSを実確認します。
+Status: 完了。EC2、Docker/MySQL、Spring Boot、systemd、Nginx、独自ドメイン、HTTPS、JWT Bearer認証を構築し、GitHub Pagesからのブラウザログインとランキング画面表示まで確認済みです。
 
 ### 後続フェーズの考え方
 
@@ -424,5 +444,6 @@ Status: EC2、Docker/MySQL、Spring Boot、systemd、Nginx、独自ドメイン�
 typingGameの規模では、手書きのTypeScript型とSwagger UIで十分に管理できます。
 API数が増え、FE/BEの型同期コストが大きくなった段階で再検討します。
 
-期間の目安は、最短で1〜2週間、現実的には3〜4週間、学習を丁寧に進める場合は1〜2か月です。
-まずはFE/BE結合確認を終わらせ、その後にJWT化、本番公開準備、EC2学習の順で進めます。
+FE/BE結合、JWT化、本番公開準備、EC2学習まで完了しました。今後は運用確認、セキュリティ改善、高度な分析表示を必要性に応じて進めます。
+
+</details>

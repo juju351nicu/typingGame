@@ -2,6 +2,18 @@
 import Breadcrumbs from "@/components/Breadcrumbs.vue";
 import { onMounted } from "vue";
 
+/** 公開しているソースコードのリポジトリ */
+const repositories = [
+  {
+    label: "Frontend Repository",
+    href: "https://github.com/juju351nicu/typingGame",
+  },
+  {
+    label: "Backend Repository",
+    href: "https://github.com/juju351nicu/typing-game-backend",
+  },
+];
+
 const items = [
   {
     title: "トップページ",
@@ -27,8 +39,26 @@ onMounted(() => {
         <h1>Balloon Typing Game</h1>
         <p>
           Balloon Typing Game は、画面下から浮かんでくる風船の英単語を入力して割っていくタイピングゲームです。
-          Vue 3 と TypeScript を使い、入力フィードバック、リザルト表示、ランキング保存まで実装しています。
+          Vue 3 と TypeScript のFEから、AWS EC2上のSpring Boot APIへHTTPS接続し、JWTログインとランキング保存まで実装しています。
         </p>
+      </section>
+
+      <section class="about__section">
+        <h2>ソースコード</h2>
+        <p>フロントエンドとバックエンドを、それぞれGitHubで公開しています。</p>
+        <div class="repository-links">
+          <v-btn
+            v-for="repository in repositories"
+            :key="repository.href"
+            :href="repository.href"
+            prepend-icon="mdi-github"
+            rel="noopener noreferrer"
+            target="_blank"
+            variant="outlined"
+          >
+            {{ repository.label }}
+          </v-btn>
+        </div>
       </section>
 
       <section class="about__section">
@@ -40,6 +70,8 @@ onMounted(() => {
           <li>風船の破裂アニメーション</li>
           <li>スコア、WPM、正確率、正タイプ数、ミス数、ランクのリザルト表示</li>
           <li>localStorage を使ったローカルランキング保存</li>
+          <li>ユーザー登録、JWTログイン、ユーザー別スコア保存</li>
+          <li>ユーザー別スコアと全体ランキングの切り替え</li>
           <li>難易度変更とスコア初期化</li>
           <li>Markdown ブログ記事の一覧・詳細表示と前後ナビゲーション</li>
           <li>PC とスマホ幅のレスポンシブ表示</li>
@@ -56,6 +88,9 @@ onMounted(() => {
           <li>Pinia</li>
           <li>Vitest</li>
           <li>GitHub Pages / GitHub Actions</li>
+          <li>Spring Boot / Spring Security / JWT</li>
+          <li>MySQL / Docker Compose</li>
+          <li>AWS EC2 / Route 53 / Nginx / Let's Encrypt</li>
         </ul>
       </section>
 
@@ -64,6 +99,7 @@ onMounted(() => {
         <p>
           ランキング表示のため、プレイ結果をブラウザの localStorage に保存します。
           保存される内容は、スコア、プレイ時間、難易度、WPM、正確率、正タイプ数、ミス数、プレイ日時です。
+          ログイン中は、同じプレイ結果をバックエンドAPI経由でMySQLにも保存します。
           設定画面から保存済みスコアを削除できます。
         </p>
       </section>
@@ -77,11 +113,10 @@ onMounted(() => {
       </section>
 
       <section class="about__section">
-        <h2>今後の改善予定</h2>
+        <h2>今後の改善候補</h2>
         <ul>
-          <li>ゲーム処理の composable 化</li>
-          <li>スコア計算とタイマー処理の責務分離</li>
-          <li>テスト範囲の拡充</li>
+          <li>API停止中であることを利用者へ伝える表示</li>
+          <li>MySQLのホスト公開設定などインフラ構成の継続的な見直し</li>
           <li>分析グラフや苦手キー表示の追加</li>
         </ul>
       </section>
@@ -137,6 +172,13 @@ onMounted(() => {
   display: grid;
   gap: 8px;
   padding-left: 1.2rem;
+}
+
+.repository-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
 }
 
 @media (max-width: 600px) {
