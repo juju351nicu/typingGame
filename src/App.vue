@@ -14,6 +14,9 @@ const configStore = useConfigStore();
 const authStore = useAuthStore();
 const theme = useTheme();
 
+// ページ再読み込み後も、sessionStorageのJWTを使ってログインユーザーを復元する。
+void authStore.restoreSession();
+
 const { isDarkMode } = useDisplayTheme(configStore, theme);
 
 /** アプリ全体で表示する認証通知 */

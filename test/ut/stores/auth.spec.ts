@@ -1,6 +1,24 @@
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+const createMemoryStorage = (initialValues: Record<string, string> = {}) => {
+  const store = new Map<string, string>(Object.entries(initialValues));
+  return {
+    get length() {
+      return store.size;
+    },
+    clear: vi.fn(() => store.clear()),
+    getItem: vi.fn((key: string) => store.get(key) ?? null),
+    key: vi.fn((index: number) => Array.from(store.keys())[index] ?? null),
+    removeItem: vi.fn((key: string) => {
+      store.delete(key);
+    }),
+    setItem: vi.fn((key: string, value: string) => {
+      store.set(key, value);
+    }),
+  } satisfies Storage;
+};
+
 describe("auth store", () => {
   beforeEach(() => {
     vi.resetModules();
@@ -95,6 +113,58 @@ describe("auth store", () => {
     expect(authStore.isLoggedIn).toBe(true);
     expect(authStore.accessToken).toBe("registered-access-token");
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("保存済みJWTがある場合はログイン中ユーザーを復元する", async () => {
+    vi.stubGlobal(
+      "sessionStorage",
+      createMemoryStorage({
+        "typingGame.authToken": JSON.stringify({
+          accessToken: "access-token",
+          tokenType: "Bearer",
+          expiresIn: 3600,
+        }),
+      })
+    );
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: 1,
+          loginEmail: "user@example.com",
+        }),
+        {
+          status: 200,
+          statusText: "OK",
+        }
+      )
+    );
+    vi.stubGlobal(
+      "fetch",
+      fetchMock
+    );
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+
+    await authStore.restoreSession();
+
+    expect(authStore.currentUser).toEqual({
+      id: 1,
+      loginEmail: "user@example.com",
+    });
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    const headers = options.headers as Headers;
+    expect(headers.get("Authorization")).toBe("Bearer access-token");
+  });
+
+  it("保存済みJWTがない場合はログイン状態の復元APIを呼ばない", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+
+    await authStore.restoreSession();
+
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("ログイン中ユーザー取得に失敗した場合は未ログインにする", async () => {

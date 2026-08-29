@@ -71,6 +71,22 @@ export const useAuthStore = defineStore("auth", {
   },
   actions: {
     /**
+     * sessionStorageに保存されたJWTからログイン状態を復元する。
+     *
+     * API無効時、保存済みJWTがない場合、すでにユーザー取得済みの場合は通信しない。
+     */
+    async restoreSession(): Promise<void> {
+      if (
+        !Const.BACKEND_API.ENABLED ||
+        !this.accessToken ||
+        this.currentUser
+      ) {
+        return;
+      }
+
+      await this.fetchCurrentUser();
+    },
+    /**
      * ユーザーを登録する。
      * @param request ユーザー登録リクエスト
      */

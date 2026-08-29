@@ -1,5 +1,18 @@
 # Phase9 本番公開準備メモ
 
+## 2026-08-29 更新
+
+バックエンドAPIのEC2公開、独自ドメイン、HTTPS、JWT Bearer認証まで完了したため、GitHub Pages公開版を本番API接続モードへ切り替えました。
+
+現在のビルド設定:
+
+```text
+VITE_ENABLE_BACKEND_API=true
+VITE_API_BASE_URL=https://api.clipdev.jp
+```
+
+以下に残る「API無効モード」の記述は、バックエンド公開前のPhase9方針と、API障害時にもゲームを継続できる設計の背景を示すものです。現在のGitHub Pagesデプロイ設定は `.github/workflows/deploy.yml` を正とします。
+
 ## 目的
 
 Phase9では、GitHub Pagesで公開しているフロントエンドと、将来公開するバックエンドAPIの接続方針を整理します。

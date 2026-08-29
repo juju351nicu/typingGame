@@ -181,7 +181,7 @@ Backend API connection policy:
 - API保存に失敗しても、localStorage側のプレイ結果は消さない。
 - API取得に失敗しても、localStorageから復元済みのランキング表示は維持する。
 - `VITE_ENABLE_BACKEND_API=true` の場合だけ、ログイン導線とAPI保存を有効にする。
-- GitHub Pagesでは `VITE_ENABLE_BACKEND_API` を未設定または `false` にし、FE単体で公開する。
+- GitHub Pagesでは `VITE_ENABLE_BACKEND_API=true`、`VITE_API_BASE_URL=https://api.clipdev.jp` で本番APIへ接続する。
 - Ghost-PDF5 の `const.js`、`rest.js`、`util.js` は考え方を参考にするが、typingGameでは `src/constants/const.ts`、`src/utils/fetchClient.ts`、`src/utils/gameUtils.ts` へ責務を寄せる。
 - JWTアクセストークンの保存・取得は `src/utils/authTokenStorage.ts` に寄せ、`fetchClient.ts` から `Authorization` ヘッダーを付ける。
 
@@ -268,7 +268,7 @@ Workflow:
 3. `posts-index.json` に差分があれば自動コミット
 4. `npm run check:posts`
 5. `npm run test`
-6. `VITE_ENABLE_BACKEND_API=false` を明示して `npm run build`
+6. `VITE_ENABLE_BACKEND_API=true`、`VITE_API_BASE_URL=https://api.clipdev.jp` を設定して `npm run build`
 7. `dist` を GitHub Pages へデプロイ
 
 ## Roadmap
@@ -403,7 +403,7 @@ Status: BEはログイン成功時のJWT発行、Bearer tokenからのログイ�
 - GitHub PagesからバックエンドAPIへ接続する前提で設定を整理
 - 起動手順、環境変数、確認手順をREADME/docsにまとめる
 
-Status: 完了。`docs/phase9-production-readiness-plan.md` に、GitHub Pages公開版はFE単体モードを維持すること、将来API公開時の環境変数、localStorage/sessionStorage/Cookieの役割をまとめています。Deploy workflowのBuildステップでは `VITE_ENABLE_BACKEND_API=false` を明示し、公開版がAPI無効モードでビルドされるようにしています。GitHub Pages公開URLでログイン導線が出ないこと、ゲームプレイ後にlocalStorage保存とランキング表示が動くことも確認済みです。
+Status: 完了。`docs/phase9-production-readiness-plan.md` にAPI公開前後の切り替え方針と、localStorage/sessionStorage/Cookieの役割をまとめています。2026-08-29にDeploy workflowを本番API有効モードへ切り替えました。
 
 ### Phase 10: EC2デプロイ学習
 
@@ -416,7 +416,7 @@ Status: 完了。`docs/phase9-production-readiness-plan.md` に、GitHub Pages�
 - セキュリティグループ、ポート、HTTPSを確認
 - GitHub PagesのFEからEC2上のBEへ疎通確認
 
-Status: EC2の前に、バックエンド側でDocker ComposeによるMySQL固定を挟みます。その後、バックエンド側の `docs/phase10-ec2-deployment-checklist.md` に沿って、EC2上にAPIを公開できた後、GitHub PagesのFEからJWT Bearer認証で疎通確認します。
+Status: EC2、Docker/MySQL、Spring Boot、systemd、Nginx、独自ドメイン、HTTPS、JWT Bearer認証まで完了しています。FEのDeploy workflowも `https://api.clipdev.jp` へ切り替え済みです。次はGitHub Pages上でユーザー登録、ログイン、スコア保存・取得、ランキング、CORSを実確認します。
 
 ### 後続フェーズの考え方
 

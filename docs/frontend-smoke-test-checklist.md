@@ -83,9 +83,29 @@ npm run build
 - chunk size warning が出ない。
 - `dist/blog_store` にブログデータがコピーされる。
 
-## バックエンド接続時に追加する観点
+## 7. GitHub Pagesから本番APIへ接続
 
-- スコア保存API失敗時にユーザーへエラーが見える。
-- ランキング取得API失敗時に共通 error 表示へ落ちる。
-- ログイン前後でランキングやスコア保存の挙動が切り替わる。
-- JWT期限切れ時に再ログイン導線へ進める。
+前提:
+
+```text
+FE: https://juju351nicu.github.io/typingGame/
+API: https://api.clipdev.jp
+```
+
+1. EC2起動後、未認証の `GET /api/auth/me` が401になることを確認する。
+2. GitHub Pagesを開き、ヘッダーにログイン導線が表示されることを確認する。
+3. 新しいテスト用メールアドレスでユーザー登録する。
+4. 登録後にログイン状態となり、ヘッダーへメールアドレスが表示されることを確認する。
+5. DevToolsのNetworkで、`/api/auth/login` と `/api/auth/me` が `https://api.clipdev.jp` 宛てであることを確認する。
+6. 認証必須APIに `Authorization: Bearer ...` が付くことを確認する。実JWTは画面共有や記録へ残さない。
+7. ページを再読み込みし、sessionStorageのJWTからログイン表示が復元されることを確認する。
+8. ゲームを完了し、`POST /api/me/scores` が成功することを確認する。
+9. ランキング画面で `GET /api/me/scores` の結果が表示されることを確認する。
+10. 「全体ランキング」へ切り替え、`GET /api/rankings` の結果が表示されることを確認する。
+11. ログアウト後、JWTがsessionStorageから削除されることを確認する。
+
+確認観点:
+
+- ブラウザのConsoleにCORSまたはMixed Contentエラーが出ない。
+- API失敗時もlocalStorageへ保存済みのプレイ結果は消えない。
+- JWT期限切れまたは401時にログイン状態が解除され、再ログイン案内が表示される。

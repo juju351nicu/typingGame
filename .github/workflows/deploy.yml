@@ -58,7 +58,8 @@ jobs:
 
       - name: Build
         env:
-          VITE_ENABLE_BACKEND_API: "false"
+          VITE_ENABLE_BACKEND_API: "true"
+          VITE_API_BASE_URL: "https://api.clipdev.jp"
         run: npm run build
 
       - name: Add SPA fallback
