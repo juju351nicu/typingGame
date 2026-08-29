@@ -36,6 +36,23 @@ describe("config store", () => {
     expect(configStore.getIsTimeAttackMode).toBe(false);
   });
 
+  it.each([
+    [Const.GAME_MODE.EASY, Const.INTERVAL_INSERTION.EASY, 15],
+    [Const.GAME_MODE.NORMAL, Const.INTERVAL_INSERTION.NORMAL, 10],
+    [Const.GAME_MODE.HARD, Const.INTERVAL_INSERTION.HARD, 5],
+  ] as const)(
+    "難易度%sに対応する風船の出現間隔と移動速度を設定する",
+    async (mode, expectedInsertion, expectedAnimation) => {
+      const { useConfigStore } = await import("@/stores/config");
+      const configStore = useConfigStore();
+
+      configStore.saveGameMode(mode);
+
+      expect(configStore.getInsertionSpeed).toBe(expectedInsertion);
+      expect(configStore.getAnimationSpeed).toBe(expectedAnimation);
+    }
+  );
+
   it("タイムアタックの設定を保存する", async () => {
     const { useConfigStore } = await import("@/stores/config");
     const configStore = useConfigStore();

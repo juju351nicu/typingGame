@@ -34,9 +34,9 @@ const INTERVAL_INSERTION = {
 };
 /** アニメーションの速度*/
 const INTERVAL_ANIMATION = {
-  EASY: 60,
-  NORMAL: 30,
-  HARD: 15,
+  EASY: 15,
+  NORMAL: 10,
+  HARD: 5,
 };
 /** ゲーム難易度の種類 */
 const GAME_MODE = {
