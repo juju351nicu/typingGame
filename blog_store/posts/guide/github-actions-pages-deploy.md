@@ -104,3 +104,14 @@ GitHub Pagesへの公開は、静的サイトとしてはシンプルです。
 ただし、SPA、環境変数、ローカル保存、ブログ記事生成、将来のバックエンド連携を同時に考えると、公開用ビルドの状態を明確に分けることが大事だと感じました。
 
 今回の構成にしたことで、バックエンドが未公開でもフロントエンドだけ先に公開でき、今後EC2などでAPIを公開したあとにAPI有効モードへ進める準備ができました。
+
+## 2026-08-29 追記
+
+EC2上でSpring Boot APIの独自ドメイン・HTTPS・JWT Bearer認証まで確認できたため、GitHub Pagesの本番ビルドをAPI有効モードへ切り替えました。
+
+```text
+VITE_ENABLE_BACKEND_API=true
+VITE_API_BASE_URL=https://api.clipdev.jp
+```
+
+現在は、公開画面からユーザー登録・ログインを利用できます。API停止中もゲームの基本機能を維持できるよう、未ログイン時とAPI失敗時のlocalStorage fallbackは残しています。

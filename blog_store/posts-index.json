@@ -1,5 +1,20 @@
 [
   {
+    "id": "ec2-spring-boot-https-frontend-connection",
+    "section": "guide",
+    "date": "2026-08-29",
+    "title": "EC2にSpring Boot APIを公開しGitHub Pagesから接続した記録",
+    "description": "Ubuntu EC2へSpring BootとMySQLを配置し、systemd、Nginx、Route 53、Let's Encrypt、JWTを組み合わせて、GitHub PagesのVueフロントエンドからHTTPS接続するまでをまとめました。",
+    "tags": [
+      "AWS",
+      "EC2",
+      "Spring Boot",
+      "Nginx",
+      "HTTPS"
+    ],
+    "url": "blog_store/posts/guide/ec2-spring-boot-https-frontend-connection.md"
+  },
+  {
     "id": "docker-compose-mysql-local-db",
     "section": "guide",
     "date": "2026-08-14",
