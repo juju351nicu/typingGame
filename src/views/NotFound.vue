@@ -12,7 +12,7 @@ const goGamePage = (): void => {
   <v-container>
     <h1>404: Not Found</h1>
     <p>ページが見つかりません。</p>
-    <v-btn class="mt-2" color="success" @click="goGamePage" size="large">
+    <v-btn class="mt-2" color="success" size="large" @click="goGamePage">
       トップページに戻る
     </v-btn>
   </v-container>

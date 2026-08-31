@@ -1,10 +1,10 @@
 import { useSettingsPageState } from "@/composables/useSettingsPageState";
 import Const from "@/constants/const";
-import type { GameRule, TimeLimitSeconds } from "@/types/interfaces";
+import type { GameMode, GameRule, TimeLimitSeconds } from "@/types/interfaces";
 import { describe, expect, it, vi } from "vitest";
 
 const createConfigStore = () => ({
-  getGameMode: 1,
+  getGameMode: 1 as GameMode,
   getGameRule: Const.GAME_RULE.NORMAL as GameRule,
   getTimeLimitSeconds: 60 as TimeLimitSeconds,
   getIsVirtualKeyBoard: true,

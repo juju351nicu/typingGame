@@ -197,7 +197,9 @@ describe("useRankingPageState", () => {
     };
 
     expect(getRankingSummaryText(null)).toBe("記録なし");
-    expect(getRankingSummaryText(rankingScore)).toBe("Sランク / 普 / 30秒 / 00:00:30");
+    expect(getRankingSummaryText(rankingScore)).toBe(
+      "Sランク / 普 / 30秒 / 00:00:30"
+    );
     expect(getRankingSummaryText(rankingScore, { withGameRule: true })).toBe(
       "Sランク / 普 / タイムアタック 30秒 / 00:00:30"
     );

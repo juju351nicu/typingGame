@@ -1,7 +1,4 @@
-import {
-  fetchBlogPostBody,
-  fetchPostIndex,
-} from "@/services/blogPostService";
+import { fetchBlogPostBody, fetchPostIndex } from "@/services/blogPostService";
 import type { PostIndex } from "@/types/interfaces";
 import Fetcher from "@/utils/fetchClient";
 import { beforeEach, describe, expect, it, vi } from "vitest";

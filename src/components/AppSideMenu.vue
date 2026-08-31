@@ -59,7 +59,7 @@ const links = ref<MenuLink[]>([
   <v-navigation-drawer v-model="drawer" temporary>
     <v-list v-for="link in links" :key="link.title" variant="plain">
       <v-list-item :to="link.to">
-        <template v-slot:prepend>
+        <template #prepend>
           <v-icon>{{ link.icon }}</v-icon>
         </template>
         <v-list-item-title>{{ link.title }}</v-list-item-title>

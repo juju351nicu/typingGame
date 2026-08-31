@@ -35,9 +35,7 @@ describe("apiErrorUtils", () => {
   });
 
   it("401でfieldErrorsがない場合は認証失敗メッセージを返す", () => {
-    const result = toDisplayFieldErrors(
-      createHttpError(401, "Unauthorized")
-    );
+    const result = toDisplayFieldErrors(createHttpError(401, "Unauthorized"));
 
     expect(result).toEqual([
       expect.objectContaining({
@@ -48,9 +46,7 @@ describe("apiErrorUtils", () => {
   });
 
   it("401のHTTPエラーを認証エラーとして判定する", () => {
-    const result = isUnauthorizedApiError(
-      createHttpError(401, "Unauthorized")
-    );
+    const result = isUnauthorizedApiError(createHttpError(401, "Unauthorized"));
 
     expect(result).toBe(true);
   });

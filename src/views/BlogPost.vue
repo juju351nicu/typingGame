@@ -104,15 +104,13 @@ onUnmounted(() => {
         <h1>{{ currentPost.title }}</h1>
         <div class="article-meta">
           <time :datetime="currentPost.date">
-            <v-icon size="small" aria-hidden="true">mdi-calendar-blank-outline</v-icon>
+            <v-icon size="small" aria-hidden="true"
+              >mdi-calendar-blank-outline</v-icon
+            >
             {{ currentPost.date }}
           </time>
           <span class="article-section">{{ currentPost.section }}</span>
-          <span
-            v-for="tag in currentPost.tags"
-            :key="tag"
-            class="article-tag"
-          >
+          <span v-for="tag in currentPost.tags" :key="tag" class="article-tag">
             {{ tag }}
           </span>
         </div>
@@ -156,7 +154,7 @@ onUnmounted(() => {
       </div>
     </article>
   </v-container>
-  <Loading :isLoading="isLoading" />
+  <Loading :is-loading="isLoading" />
 </template>
 <style scoped>
 .blog-post {

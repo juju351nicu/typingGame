@@ -19,6 +19,7 @@ import {
   saveAuthToken,
 } from "@/utils/authTokenStorage";
 import { isUnauthorizedApiError } from "@/utils/apiErrorUtils";
+import { useGameScoresStore } from "@/stores/gameScores";
 
 /** 認証切れ時に画面上部へ表示するメッセージ */
 const SESSION_EXPIRED_MESSAGE =
@@ -31,35 +32,37 @@ interface AuthState {
   currentUser: LoginUser | null;
   accessToken: string | null;
   tokenType: string | null;
-  expiresIn: number | null;
+  expiresAt: number | null;
   isLoading: boolean;
   authNotice: Alert | null;
   authNoticeSequence: number;
 }
 
-/** 保存済みの認証トークンです。 */
-const storedAuthToken = Const.BACKEND_API.ENABLED ? getAuthToken() : null;
-
 /**
  * ログイン状態を扱うストア
  */
 export const useAuthStore = defineStore("auth", {
-  state: (): AuthState => ({
-    /** ログイン中ユーザー情報 */
-    currentUser: null,
-    /** API認証に使うアクセストークン */
-    accessToken: storedAuthToken?.accessToken ?? null,
-    /** アクセストークンの種別 */
-    tokenType: storedAuthToken?.tokenType ?? null,
-    /** アクセストークンの有効期間（秒） */
-    expiresIn: storedAuthToken?.expiresIn ?? null,
-    /** ローディングフラグ */
-    isLoading: false,
-    /** 認証状態の変化を画面へ知らせる通知 */
-    authNotice: null,
-    /** 同じ通知文言でも再表示できるようにするための連番 */
-    authNoticeSequence: 0,
-  }),
+  state: (): AuthState => {
+    // Piniaインスタンスごとに、その時点のsessionStorageから初期値を作る。
+    const storedAuthToken = Const.BACKEND_API.ENABLED ? getAuthToken() : null;
+
+    return {
+      /** ログイン中ユーザー情報 */
+      currentUser: null,
+      /** API認証に使うアクセストークン */
+      accessToken: storedAuthToken?.accessToken ?? null,
+      /** アクセストークンの種別 */
+      tokenType: storedAuthToken?.tokenType ?? null,
+      /** アクセストークンの有効期限（Unix time、ミリ秒） */
+      expiresAt: storedAuthToken?.expiresAt ?? null,
+      /** ローディングフラグ */
+      isLoading: false,
+      /** 認証状態の変化を画面へ知らせる通知 */
+      authNotice: null,
+      /** 同じ通知文言でも再表示できるようにするための連番 */
+      authNoticeSequence: 0,
+    };
+  },
   getters: {
     /**
      * ログイン済みか判定する。
@@ -76,11 +79,7 @@ export const useAuthStore = defineStore("auth", {
      * API無効時、保存済みJWTがない場合、すでにユーザー取得済みの場合は通信しない。
      */
     async restoreSession(): Promise<void> {
-      if (
-        !Const.BACKEND_API.ENABLED ||
-        !this.accessToken ||
-        this.currentUser
-      ) {
+      if (!Const.BACKEND_API.ENABLED || !this.accessToken || this.currentUser) {
         return;
       }
 
@@ -156,7 +155,7 @@ export const useAuthStore = defineStore("auth", {
       this.currentUser = response.user;
       this.accessToken = authToken?.accessToken ?? null;
       this.tokenType = authToken?.tokenType ?? null;
-      this.expiresIn = authToken?.expiresIn ?? null;
+      this.expiresAt = authToken?.expiresAt ?? null;
     },
     /**
      * FE側のログイン状態をクリアする。
@@ -165,7 +164,7 @@ export const useAuthStore = defineStore("auth", {
       this.currentUser = null;
       this.accessToken = null;
       this.tokenType = null;
-      this.expiresIn = null;
+      this.expiresAt = null;
       this.authNotice = null;
       clearAuthToken();
     },
@@ -202,6 +201,8 @@ export const useAuthStore = defineStore("auth", {
         await logoutApi();
       } finally {
         this.clearCurrentUser();
+        // APIから取得した前ユーザーのスコアを共有端末に残さない。
+        useGameScoresStore().deleteGameScoreList();
         this.isLoading = false;
       }
     },

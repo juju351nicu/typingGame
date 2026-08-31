@@ -53,6 +53,15 @@ jobs:
       - name: Check blog post index
         run: npm run check:posts
 
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
       - name: Test
         run: npm run test
 

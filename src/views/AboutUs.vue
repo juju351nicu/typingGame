@@ -38,8 +38,10 @@ onMounted(() => {
         <p class="about__eyebrow">About</p>
         <h1>Balloon Typing Game</h1>
         <p>
-          Balloon Typing Game は、画面下から浮かんでくる風船の英単語を入力して割っていくタイピングゲームです。
-          Vue 3 と TypeScript のFEから、AWS EC2上のSpring Boot APIへHTTPS接続し、JWTログインとランキング保存まで実装しています。
+          Balloon Typing Game
+          は、画面下から浮かんでくる風船の英単語を入力して割っていくタイピングゲームです。
+          Vue 3 と TypeScript のFEから、AWS EC2上のSpring Boot
+          APIへHTTPS接続し、JWTログインとランキング保存まで実装しています。
         </p>
       </section>
 
@@ -87,6 +89,9 @@ onMounted(() => {
           <li>Vuetify</li>
           <li>Pinia</li>
           <li>Vitest</li>
+          <li>Vue Test Utils / jsdom</li>
+          <li>DOMPurify</li>
+          <li>ESLint / Prettier / vue-tsc</li>
           <li>GitHub Pages / GitHub Actions</li>
           <li>Spring Boot / Spring Security / JWT</li>
           <li>MySQL / Docker Compose</li>
@@ -97,7 +102,8 @@ onMounted(() => {
       <section class="about__section">
         <h2>保存される情報</h2>
         <p>
-          ランキング表示のため、プレイ結果をブラウザの localStorage に保存します。
+          ランキング表示のため、プレイ結果をブラウザの localStorage
+          に保存します。
           保存される内容は、スコア、プレイ時間、難易度、WPM、正確率、正タイプ数、ミス数、プレイ日時です。
           ログイン中は、同じプレイ結果をバックエンドAPI経由でMySQLにも保存します。
           設定画面から保存済みスコアを削除できます。
@@ -107,8 +113,9 @@ onMounted(() => {
       <section class="about__section">
         <h2>推奨環境</h2>
         <p>
-          最新版の Google Chrome、Microsoft Edge、Firefox、Safari での利用を想定しています。
-          JavaScript と localStorage が有効なブラウザでプレイしてください。
+          最新版の Google Chrome、Microsoft Edge、Firefox、Safari
+          での利用を想定しています。 JavaScript と localStorage
+          が有効なブラウザでプレイしてください。
         </p>
       </section>
 

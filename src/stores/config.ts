@@ -145,15 +145,6 @@ export const useConfigStore = defineStore("config", {
       this.isVirtualKeyBoard = flag;
     },
     /**
-     * 仮想キーボードの表示有無を設定する。
-     *
-     * @deprecated `saveIsVirtualKeyboard` を使用してください。
-     * @param {boolean} flag 仮想キーボードの表示有無
-     */
-    saveIsVertualKeyBoard(flag: boolean) {
-      this.saveIsVirtualKeyboard(flag);
-    },
-    /**
      * 単語を表示するインターバルをクリアする
      */
     resetIntervalSettings(): void {

@@ -2,7 +2,12 @@ import { nextTick, ref } from "vue";
 import { describe, expect, it, vi } from "vitest";
 import { useGamePageSession } from "@/composables/useGamePageSession";
 import Const from "@/constants/const";
-import type { GameRule, GameScore, TimeLimitSeconds } from "@/types/interfaces";
+import type {
+  GameMode,
+  GameRule,
+  GameScore,
+  TimeLimitSeconds,
+} from "@/types/interfaces";
 
 const createEmptyScore = (): GameScore => ({
   score: 0,
@@ -16,7 +21,7 @@ const createSessionState = () => {
     saveGameScoreList: vi.fn(),
   };
   const configStore = {
-    getGameMode: 1,
+    getGameMode: 1 as GameMode,
     getGameRule: Const.GAME_RULE.NORMAL as GameRule,
     getTimeLimitSeconds: 60 as TimeLimitSeconds,
   };

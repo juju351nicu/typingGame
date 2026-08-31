@@ -62,9 +62,7 @@ describe("useTypingWordPositions", () => {
     const words = [createWord(80), createWord(-121)];
 
     expect(hasAnyWordReachedTop(words)).toBe(true);
-    expect(hasAnyWordReachedTop([createWord(80), createWord(-40)])).toBe(
-      false
-    );
+    expect(hasAnyWordReachedTop([createWord(80), createWord(-40)])).toBe(false);
   });
 
   it("上端到達を終了条件にする場合はゲーム終了扱いにする", () => {

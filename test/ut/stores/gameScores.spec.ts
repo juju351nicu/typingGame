@@ -143,7 +143,7 @@ describe("gameScores store", () => {
     };
     authStore.accessToken = "access-token";
     authStore.tokenType = "Bearer";
-    authStore.expiresIn = 3600;
+    authStore.expiresAt = Date.now() + 3_600_000;
     const gameScoresStore = useGameScoresStore();
     const score: GameScore = {
       score: 11,
@@ -278,7 +278,7 @@ describe("gameScores store", () => {
     };
     authStore.accessToken = "access-token";
     authStore.tokenType = "Bearer";
-    authStore.expiresIn = 3600;
+    authStore.expiresAt = Date.now() + 3_600_000;
     const gameScoresStore = useGameScoresStore();
     const localScore: GameScore = {
       score: 11,

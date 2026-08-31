@@ -9,7 +9,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 
 - Vue 3 / TypeScriptによるゲームUI、状態管理、レスポンシブ表示、Markdown技術ブログを実装しています。
 - Spring Boot / MySQLのAPIをAWS EC2へ公開し、Nginx、HTTPS、JWT Bearer認証を使ってGitHub Pagesから接続しています。
-- 主要ロジックを50ファイル・269テストで検証し、GitHub Actionsでtest・build・deployを自動化しています。
+- ロジックと主要コンポーネントを52ファイル・276テストで検証し、GitHub Actionsでformat・lint・typecheck・test・build・deployを自動化しています。
 
 ## Links
 
@@ -82,7 +82,8 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - 最大幅800px、見出し余白、コードハイライト・横スクロールを整えた記事レイアウト
 - ブログ記事詳細の前後ナビゲーション
 - スマホ表示対応
-- GitHub Actions による test / build / deploy 自動化
+- DOMPurifyによるMarkdown最終HTMLのサニタイズ
+- GitHub Actions による format / lint / typecheck / test / build / deploy 自動化
 
 ## How to Play
 
@@ -103,7 +104,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 | Backend | Java 25, Spring Boot, Spring Security, JWT, JPA, Flyway |
 | Database | MySQL 8.4, Docker Compose |
 | Infrastructure | AWS EC2, Route 53, Nginx, Let's Encrypt, systemd |
-| Test / CI/CD | Vitest, GitHub Actions, GitHub Pages |
+| Test / CI/CD | Vitest, Vue Test Utils, ESLint, Prettier, vue-tsc, GitHub Actions, GitHub Pages |
 
 ## Highlights
 
@@ -126,6 +127,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - 設定画面で難易度、通常 / タイムアタック、制限時間、仮想キーボード表示、ライト / ダークテーマを変更可能
 - Markdown ブログ詳細に、posts-index.json の順序を基準にした前後記事ナビを追加
 - Markdown ブログを最大幅800pxの読み物レイアウトにし、記事メタ情報、技術タグ、見出し余白、コード横スクロールを追加
+- Markdownから生成した最終HTMLをDOMPurifyでサニタイズし、XSS入力とリンク・画像保持をjsdom上の回帰テストで検証
 - スコア保存処理をservice層へ分離し、将来のAPI保存へ差し替えやすい構成に整理
 - スコアAPI接続を見越して保存リクエスト / APIレスポンス型と変換処理を追加
 - fetchClient でHTTPエラーを共通例外として扱い、JSON helper も追加してAPI接続時の失敗検知と取得処理を整理
@@ -136,9 +138,14 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - アラート通知を通知ごとの表示状態で管理し、後続通知の自動非表示が崩れないように改善
 - リトライ時のページリロードを廃止し、ゲーム状態とタイマーをリセットするSPA内完結の挙動に改善
 - ルート単位の遅延読み込みと Markdown renderer の分割により、初期JSと blog chunk の肥大化を軽減
+- JWTの有効期限を保存時刻から計算し、期限切れトークンをAPI送信前に破棄
+- APIの送信先をURLのoriginで検証し、外部originへAuthorizationヘッダーや認証Cookieを送らないよう制限
+- UA文字列によるChrome限定判定を廃止し、必要なlocalStorage機能の可否だけを検出
+- ESLint / Prettier / vue-tscを導入し、Pull Requestとデプロイの両方で品質チェックを実行
+- `prefers-reduced-motion`、アラート通知、ゲーム状態のARIA属性を追加
 - スコア初期化前に確認ダイアログを表示し、誤操作で履歴を消しにくいように改善
 - スマホ幅でもゲーム画面、リザルト画面、ランキング画面が見やすいようにレスポンシブ調整
-- Vitest で 50 ファイル / 269 テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元などを検証
+- Vitest で 52 ファイル / 276 テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元、Markdownサニタイズ、コンポーネント表示などを検証
 
 ## Component Design
 
@@ -149,7 +156,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 | `useBlogPostNavigation.ts` | ブログ記事詳細の前後ナビゲーション判定 |
 | `useCompletedWordHandler.ts` | 単語一致時の破裂、スコア加算、削除後処理の制御 |
 | `useDisplayTheme.ts` | Piniaの表示設定とVuetifyテーマの同期 |
-| `useMarkdownRenderer.ts` | Markdown本文のHTML変換、コードハイライト、許可HTMLタグの設定 |
+| `useMarkdownRenderer.ts` | Markdown本文のHTML変換、コードハイライト、DOMPurifyによる最終HTMLのサニタイズ |
 | `useRankingPageState.ts` | ランキング画面のフィルター、集計、推移表示状態の管理 |
 | `useScoreReset.ts` | 保存済みスコアの初期化と成功アラート追加 |
 | `useTypingGameWords.ts` | 表示中単語、出題インデックス、単語追加・削除・完了判定の管理 |
@@ -167,6 +174,8 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 画面コンポーネントは表示と各 composable の接続を担当し、入力判定・タイマー・単語管理・スコア更新などのロジックはテストしやすい単位に分けています。
 
 ## Development
+
+Node.js 20.19.0以上を使用します。
 
 Coding guidelines:
 
@@ -242,6 +251,18 @@ http://localhost:8081/
 npm run build
 ```
 
+## Quality Check
+
+```bash
+npm run format:check
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+```
+
+すべてまとめて確認する場合は `npm run check` を使用します。
+
 ## Test
 
 ```bash
@@ -274,7 +295,8 @@ GitHub Actions では deploy 前に `npm run generate:posts` を実行し、`pos
 
 ## Deployment
 
-`master` ブランチへ push すると、GitHub Actions で test / build が実行され、GitHub Pages に自動デプロイされます。
+Pull Requestでは、GitHub Actionsでブログインデックス、format、lint、typecheck、test、buildを確認します。
+`master` ブランチへpushすると、同じ品質チェックの通過後にGitHub Pagesへ自動デプロイされます。
 
 GitHub リポジトリ名 `typingGame` のリネームは急ぎではありません。GitHub Pages の公開URL、Vite の `base`、README 内の Demo URL、スクリーンショット、外部ポートフォリオからのリンクに影響するため、Phase5 のタイムアタックモードが落ち着き、公開URLをまとめて見直すタイミングで検討します。
 
@@ -284,9 +306,12 @@ Workflow:
 2. `npm run generate:posts`
 3. `posts-index.json` に差分があれば自動コミット
 4. `npm run check:posts`
-5. `npm run test`
-6. `VITE_ENABLE_BACKEND_API=true`、`VITE_API_BASE_URL=https://api.clipdev.jp` を設定して `npm run build`
-7. `dist` を GitHub Pages へデプロイ
+5. `npm run format:check`
+6. `npm run lint`
+7. `npm run typecheck`
+8. `npm run test`
+9. `VITE_ENABLE_BACKEND_API=true`、`VITE_API_BASE_URL=https://api.clipdev.jp` を設定して `npm run build`
+10. `dist` を GitHub Pages へデプロイ
 
 <details>
 <summary><strong>Roadmap（開発履歴）</strong></summary>

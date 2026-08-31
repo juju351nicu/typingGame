@@ -26,10 +26,13 @@ const createMemoryStorage = (initialValues: Record<string, string> = {}) => {
 
 describe("authTokenStorage", () => {
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
   });
 
   it("ログインレスポンスのtokenをsessionStorageへ保存する", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-31T00:00:00.000Z"));
     const sessionStorageMock = createMemoryStorage();
     vi.stubGlobal("sessionStorage", sessionStorageMock);
 
@@ -46,7 +49,7 @@ describe("authTokenStorage", () => {
     expect(result).toEqual({
       accessToken: "access-token",
       tokenType: "Bearer",
-      expiresIn: 3600,
+      expiresAt: Date.now() + 3_600_000,
     });
     expect(getAuthToken()).toEqual(result);
   });
@@ -68,6 +71,24 @@ describe("authTokenStorage", () => {
   it("不正な保存値の場合はtokenを削除してnullを返す", () => {
     const sessionStorageMock = createMemoryStorage({
       "typingGame.authToken": "{",
+    });
+    vi.stubGlobal("sessionStorage", sessionStorageMock);
+
+    expect(getAuthToken()).toBeNull();
+    expect(sessionStorageMock.removeItem).toHaveBeenCalledWith(
+      "typingGame.authToken"
+    );
+  });
+
+  it("有効期限を過ぎたtokenを削除してnullを返す", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-31T00:00:00.000Z"));
+    const sessionStorageMock = createMemoryStorage({
+      "typingGame.authToken": JSON.stringify({
+        accessToken: "expired-access-token",
+        tokenType: "Bearer",
+        expiresAt: Date.now() - 1,
+      }),
     });
     vi.stubGlobal("sessionStorage", sessionStorageMock);
 

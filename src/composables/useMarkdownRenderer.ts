@@ -1,4 +1,4 @@
-import { sanitize } from "@markdown-design/markdown-it-sanitize";
+import DOMPurify from "dompurify";
 import hljs from "highlight.js/lib/core";
 import bash from "highlight.js/lib/languages/bash";
 import javascript from "highlight.js/lib/languages/javascript";
@@ -57,7 +57,7 @@ const markdownIt: MarkdownIt = new MarkdownIt({
         return hljs.highlight(sourceCode, {
           language: normalizedLanguage,
         }).value;
-      } catch (error) {
+      } catch {
         // ハイライト失敗だけで記事全体の表示を止めない。
         return "";
       }
@@ -65,21 +65,6 @@ const markdownIt: MarkdownIt = new MarkdownIt({
 
     return "";
   },
-});
-
-// YouTube埋め込み記事を表示できるよう、必要なiframe属性だけ許可する。
-markdownIt.use(sanitize, {
-  ADD_TAGS: ["iframe"],
-  ADD_ATTR: [
-    "allow",
-    "allowfullscreen",
-    "frameborder",
-    "scrolling",
-    "src",
-    "width",
-    "height",
-    "style",
-  ],
 });
 
 /**
@@ -92,5 +77,8 @@ markdownIt.use(sanitize, {
  * @returns サニタイズ済みのHTML文字列
  */
 export const renderMarkdown = (markdown: string): string => {
-  return markdownIt.render(markdown);
+  return DOMPurify.sanitize(markdownIt.render(markdown), {
+    FORBID_TAGS: ["iframe"],
+    FORBID_ATTR: ["style"],
+  });
 };

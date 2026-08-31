@@ -52,7 +52,10 @@ export const createGamePageScore = (input: GamePageScoreInput): GameScore => {
     time: Util.getCountDownTime(input.accumTime),
     date: Util.getCurrentTime(),
     wpm: Util.calculateWpm(input.correctCharacterCount, input.accumTime),
-    accuracy: Util.calculateAccuracy(input.typedCharacterCount, input.missCount),
+    accuracy: Util.calculateAccuracy(
+      input.typedCharacterCount,
+      input.missCount
+    ),
     missCount: input.missCount,
     correctCharacterCount: input.correctCharacterCount,
   };

@@ -1,10 +1,4 @@
-import {
-  computed,
-  getCurrentInstance,
-  onUnmounted,
-  ref,
-  type Ref,
-} from "vue";
+import { computed, getCurrentInstance, onUnmounted, ref, type Ref } from "vue";
 import Util from "@/utils/gameUtils";
 
 type IntervalId = ReturnType<typeof setInterval>;

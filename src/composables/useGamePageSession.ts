@@ -1,5 +1,6 @@
 import { watch, type Ref } from "vue";
 import type {
+  GameMode,
   GameRule,
   GameScore,
   TimeLimitSeconds,
@@ -17,7 +18,7 @@ interface GameScoreStore {
 
 interface GameConfigState {
   /** 現在の難易度 */
-  getGameMode: number;
+  getGameMode: GameMode;
   /** 現在のゲームルール */
   getGameRule: GameRule;
   /** タイムアタックの制限時間 */

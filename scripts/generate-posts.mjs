@@ -192,7 +192,11 @@ const main = async () => {
 
   posts.sort((a, b) => getPostTimestamp(b) - getPostTimestamp(a));
 
-  await writeFile(POSTS_INDEX_PATH, `${JSON.stringify(posts, null, 2)}\n`, "utf8");
+  await writeFile(
+    POSTS_INDEX_PATH,
+    `${JSON.stringify(posts, null, 2)}\n`,
+    "utf8"
+  );
   console.log(`Generated: ${getRelativeUrl(POSTS_INDEX_PATH)}`);
   console.log(`Posts: ${posts.length}`);
 };

@@ -38,7 +38,7 @@ export interface GameScoreBase {
 }
 
 /** ゲームスコア保存APIのリクエスト */
-export interface SaveGameScoreRequest extends GameScoreBase {}
+export type SaveGameScoreRequest = GameScoreBase;
 
 /** ゲームスコアAPIのレスポンス */
 export interface GameScoreResponse extends GameScoreBase {
@@ -123,7 +123,7 @@ export interface PostIndex {
   url: string;
 }
 /** 表示中単語の位置指定スタイル */
-export interface CurrentWordStyle {
+export interface CurrentWordStyle extends CSSProperties {
   left: string;
   top: string;
 }
@@ -135,3 +135,4 @@ export interface CurrentWord {
   balloonClass: string;
   isBursting?: boolean;
 }
+import type { CSSProperties } from "vue";

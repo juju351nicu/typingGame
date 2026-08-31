@@ -36,7 +36,10 @@ export const handleCompletedWord = (
   options: CompletedWordHandlerOptions
 ): boolean => {
   // 完全一致した単語だけを正解処理の対象にする。
-  const index = findCompletedWordIndex(options.currentWords, options.inputValue);
+  const index = findCompletedWordIndex(
+    options.currentWords,
+    options.inputValue
+  );
 
   if (index === -1) {
     return false;
@@ -48,10 +51,7 @@ export const handleCompletedWord = (
   options.clearInput();
 
   const scoreResult = getCompletedWordScoreResult(targetWord);
-  options.addScore(
-    scoreResult.scoreDelta,
-    scoreResult.correctCharacterDelta
-  );
+  options.addScore(scoreResult.scoreDelta, scoreResult.correctCharacterDelta);
 
   // アニメーション完了後に単語を消し、完了判定と次キー更新を行う。
   options.registerTimeout(() => {

@@ -80,7 +80,5 @@ export const shouldFinishByWordReachedTop = (
   shouldFinishOnWordReachedTop: boolean,
   threshold = DEFAULT_TOP_REACHED_THRESHOLD
 ): boolean => {
-  return (
-    shouldFinishOnWordReachedTop && hasAnyWordReachedTop(words, threshold)
-  );
+  return shouldFinishOnWordReachedTop && hasAnyWordReachedTop(words, threshold);
 };

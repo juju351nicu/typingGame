@@ -2,11 +2,7 @@ import { getBlogPostNavigation } from "@/composables/useBlogPostNavigation";
 import type { PostIndex } from "@/types/interfaces";
 import { describe, expect, it } from "vitest";
 
-const createPost = (
-  id: string,
-  section: string,
-  title: string
-): PostIndex => ({
+const createPost = (id: string, section: string, title: string): PostIndex => ({
   id,
   section,
   title,

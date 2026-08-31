@@ -54,7 +54,9 @@ const assertUniquePost = (posts, id, markdownPath) => {
 
   const hasSameUrl = posts.some((post) => post.url === markdownPath);
   if (hasSameUrl) {
-    throw new Error(`同じ Markdown パスの記事が既に存在します: ${markdownPath}`);
+    throw new Error(
+      `同じ Markdown パスの記事が既に存在します: ${markdownPath}`
+    );
   }
 };
 
@@ -170,7 +172,9 @@ const main = async () => {
     const sectionInput = await prompt.ask(`section (${DEFAULT_SECTION}): `);
     const section = slugify(sectionInput || DEFAULT_SECTION);
     if (section === "") {
-      throw new Error("section は英数字・空白・ハイフンを含めて入力してください。");
+      throw new Error(
+        "section は英数字・空白・ハイフンを含めて入力してください。"
+      );
     }
 
     const description = await prompt.ask("description: ");
@@ -191,7 +195,12 @@ const main = async () => {
 
     const posts = await readPostsIndex();
     const date = new Date().toISOString().slice(0, 10);
-    const markdownPath = path.posix.join(BLOG_ROOT, "posts", section, `${id}.md`);
+    const markdownPath = path.posix.join(
+      BLOG_ROOT,
+      "posts",
+      section,
+      `${id}.md`
+    );
     assertUniquePost(posts, id, markdownPath);
 
     const markdownFilePath = path.join(POSTS_ROOT, section, `${id}.md`);

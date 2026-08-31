@@ -99,7 +99,7 @@ const BACKEND_API = {
   ENABLED: import.meta.env.VITE_ENABLE_BACKEND_API === "true",
   /** バックエンドAPIのベースURL */
   BASE_URL:
-    import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
+    import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ||
     "http://localhost:8091",
 };
 

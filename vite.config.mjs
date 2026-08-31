@@ -32,12 +32,20 @@ export default defineConfig(({ command }) => ({
   base: command === "build" ? "/typingGame/" : "/",
   server: {
     host: true,
-    port: "8081",
+    port: 8081,
   },
   plugins: [vue(), vuetify(), copyBlogStorePlugin()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
+  test: {
+    // jsdomのコンポーネントテストでもVuetifyのCSS importをViteに処理させる。
+    server: {
+      deps: {
+        inline: [/vuetify/],
+      },
     },
   },
 }));

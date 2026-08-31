@@ -85,9 +85,7 @@ describe("useTypingWords", () => {
     expect(getWordFeedbackClass(createWord("home"), "xx", true)).toBe(
       "word-miss"
     );
-    expect(getWordFeedbackClass(createWord("home", true), "ho", true)).toBe(
-      ""
-    );
+    expect(getWordFeedbackClass(createWord("home", true), "ho", true)).toBe("");
   });
 
   it("単語リストを破壊せずにシャッフルする", () => {

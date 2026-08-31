@@ -99,8 +99,11 @@ describe("useTimeAttackTimer", () => {
 
   it("リセット後は再開しない", () => {
     const onTimeUp = vi.fn();
-    const { startTimeAttackTimer, resetTimeAttackTimer, resumeTimeAttackTimer } =
-      useTimeAttackTimer();
+    const {
+      startTimeAttackTimer,
+      resetTimeAttackTimer,
+      resumeTimeAttackTimer,
+    } = useTimeAttackTimer();
 
     startTimeAttackTimer({
       timeLimitSeconds: 30,

@@ -110,12 +110,7 @@ const loadAllRankingScoresIfAvailable = async (): Promise<void> => {
 };
 
 watch(
-  [
-    selectedScoreSource,
-    selectedMode,
-    selectedGameRule,
-    activeTimeLimitSeconds,
-  ],
+  [selectedScoreSource, selectedMode, selectedGameRule, activeTimeLimitSeconds],
   () => {
     void loadAllRankingScoresIfAvailable();
   },
@@ -367,6 +362,5 @@ const getRankClass = (rank: number): string => {
   .ranking-tabs :deep(.v-tab) {
     min-width: 104px;
   }
-
 }
 </style>

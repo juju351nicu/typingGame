@@ -25,32 +25,6 @@ type EmptyCheckOptions = {
   mapSet?: boolean;
 };
 
-/** userAgentから判定したブラウザ名 */
-type BrowserName =
-  | "chrome"
-  | "chromium"
-  | "edge"
-  | "opera"
-  | "safari"
-  | "firefox"
-  | "ie"
-  | "samsung-internet"
-  | "unknown";
-
-/** userAgent判定の結果 */
-type BrowserInfo = {
-  /** 判定したブラウザ名 */
-  name: BrowserName;
-  /** ChromeまたはChrome互換として扱うブラウザか */
-  isChrome: boolean;
-  /** Chromiumとして判定されたか */
-  isChromium: boolean;
-  /** このアプリでサポート対象のChrome系ブラウザか */
-  isSupportedChrome: boolean;
-  /** 判定に使用したuserAgent */
-  userAgent: string;
-};
-
 /** isEmptyのデフォルト判定ルール */
 const defaultEmptyCheckOptions: Required<EmptyCheckOptions> = {
   trimString: true,
@@ -64,9 +38,7 @@ const defaultEmptyCheckOptions: Required<EmptyCheckOptions> = {
  * @param target 判定対象
  * @returns plain objectの場合true
  */
-const isPlainObject = (
-  target: unknown
-): target is Record<string, unknown> => {
+const isPlainObject = (target: unknown): target is Record<string, unknown> => {
   if (target === null || typeof target !== "object") {
     return false;
   }
@@ -96,9 +68,7 @@ const isEmpty = (target: unknown, options: EmptyCheckOptions = {}): boolean => {
   }
 
   if (typeof target === "string") {
-    const comparableString = mergedOptions.trimString
-      ? target.trim()
-      : target;
+    const comparableString = mergedOptions.trimString ? target.trim() : target;
     return comparableString === "";
   }
 
@@ -106,7 +76,10 @@ const isEmpty = (target: unknown, options: EmptyCheckOptions = {}): boolean => {
     return target.length <= 0;
   }
 
-  if (mergedOptions.mapSet && (target instanceof Map || target instanceof Set)) {
+  if (
+    mergedOptions.mapSet &&
+    (target instanceof Map || target instanceof Set)
+  ) {
     return target.size <= 0;
   }
 
@@ -127,153 +100,9 @@ const isLocalStorage = (): boolean => {
     } else {
       return false;
     }
-  } catch (error) {
+  } catch {
     return false;
   }
-};
-
-/**
- * userAgentからブラウザ情報を取得する。
- *
- * 判定しやすいようにブラウザ名とChrome系サポート可否をまとめて返す。
- *
- * @param userAgent 判定対象のuserAgent。省略時は現在のブラウザを参照する
- * @returns ブラウザ情報
- */
-const getBrowserInfo = (userAgent?: string): BrowserInfo => {
-  try {
-    const rawUserAgent = userAgent ?? window.navigator.userAgent;
-    const normalizedUserAgent = rawUserAgent.toLowerCase();
-    const isInternetExplorer =
-      normalizedUserAgent.includes("msie") ||
-      normalizedUserAgent.includes("trident");
-    const isEdge =
-      normalizedUserAgent.includes("edge/") ||
-      normalizedUserAgent.includes("edg/") ||
-      normalizedUserAgent.includes("edgios/") ||
-      normalizedUserAgent.includes("edga/");
-    const isOpera =
-      normalizedUserAgent.includes("opera") ||
-      normalizedUserAgent.includes("opr/") ||
-      normalizedUserAgent.includes("opios/");
-    const isFirefox =
-      normalizedUserAgent.includes("firefox/") ||
-      normalizedUserAgent.includes("fxios/");
-    const isSamsungInternet =
-      normalizedUserAgent.includes("samsungbrowser/");
-    const isChromium = normalizedUserAgent.includes("chromium/");
-    const isChrome =
-      normalizedUserAgent.includes("chrome/") ||
-      normalizedUserAgent.includes("crios/") ||
-      isChromium;
-    const isSafari =
-      normalizedUserAgent.includes("safari/") &&
-      !isChrome &&
-      !isEdge &&
-      !isOpera &&
-      !isFirefox &&
-      !isSamsungInternet;
-
-    if (isInternetExplorer) {
-      return {
-        name: "ie",
-        isChrome: false,
-        isChromium: false,
-        isSupportedChrome: false,
-        userAgent: rawUserAgent,
-      };
-    }
-    if (isEdge) {
-      return {
-        name: "edge",
-        isChrome: false,
-        isChromium: false,
-        isSupportedChrome: false,
-        userAgent: rawUserAgent,
-      };
-    }
-    if (isOpera) {
-      return {
-        name: "opera",
-        isChrome: false,
-        isChromium: false,
-        isSupportedChrome: false,
-        userAgent: rawUserAgent,
-      };
-    }
-    if (isFirefox) {
-      return {
-        name: "firefox",
-        isChrome: false,
-        isChromium: false,
-        isSupportedChrome: false,
-        userAgent: rawUserAgent,
-      };
-    }
-    if (isSamsungInternet) {
-      return {
-        name: "samsung-internet",
-        isChrome: false,
-        isChromium: false,
-        isSupportedChrome: false,
-        userAgent: rawUserAgent,
-      };
-    }
-    if (isChromium) {
-      return {
-        name: "chromium",
-        isChrome: true,
-        isChromium: true,
-        isSupportedChrome: true,
-        userAgent: rawUserAgent,
-      };
-    }
-    if (isChrome) {
-      return {
-        name: "chrome",
-        isChrome: true,
-        isChromium: false,
-        isSupportedChrome: true,
-        userAgent: rawUserAgent,
-      };
-    }
-    if (isSafari) {
-      return {
-        name: "safari",
-        isChrome: false,
-        isChromium: false,
-        isSupportedChrome: false,
-        userAgent: rawUserAgent,
-      };
-    }
-
-    return {
-      name: "unknown",
-      isChrome: false,
-      isChromium: false,
-      isSupportedChrome: false,
-      userAgent: rawUserAgent,
-    };
-  } catch (error) {
-    return {
-      name: "unknown",
-      isChrome: false,
-      isChromium: false,
-      isSupportedChrome: false,
-      userAgent: "",
-    };
-  }
-};
-
-/**
- * Google Chrome系ブラウザかどうかをチェックする。
- *
- * EdgeやOperaなど、Chromeの文字列を含む別ブラウザは対象外にする。
- *
- * @returns Google Chrome系ブラウザの場合true
- */
-const checkBrowser = (): boolean => {
-  return getBrowserInfo().isSupportedChrome;
 };
 
 /**
@@ -468,10 +297,7 @@ const getRankingScoreSummary = (
   score: RankingScore,
   options: { withGameRule?: boolean } = {}
 ): string => {
-  const items = [
-    `${score.resultRank}ランク`,
-    getLevel(score.mode),
-  ];
+  const items = [`${score.resultRank}ランク`, getLevel(score.mode)];
 
   if (options.withGameRule) {
     const ruleLabel = getScoreGameRuleLabel(score);
@@ -591,8 +417,6 @@ const getLevel = (target: GameMode): string => {
 export default {
   isEmpty,
   isLocalStorage,
-  getBrowserInfo,
-  checkBrowser,
   getCountDownTime,
   calculateWpm,
   calculateAccuracy,

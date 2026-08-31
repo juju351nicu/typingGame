@@ -23,6 +23,7 @@ describe("auth store", () => {
   beforeEach(() => {
     vi.resetModules();
     vi.stubEnv("VITE_ENABLE_BACKEND_API", "true");
+    vi.stubGlobal("localStorage", createMemoryStorage());
     setActivePinia(createPinia());
   });
 
@@ -66,7 +67,7 @@ describe("auth store", () => {
     });
     expect(authStore.accessToken).toBe("access-token");
     expect(authStore.tokenType).toBe("Bearer");
-    expect(authStore.expiresIn).toBe(3600);
+    expect(authStore.expiresAt).toBeGreaterThan(Date.now());
   });
 
   it("登録後にログイン状態へ切り替える", async () => {
@@ -138,10 +139,7 @@ describe("auth store", () => {
         }
       )
     );
-    vi.stubGlobal(
-      "fetch",
-      fetchMock
-    );
+    vi.stubGlobal("fetch", fetchMock);
     const { useAuthStore } = await import("@/stores/auth");
     const authStore = useAuthStore();
 
@@ -154,6 +152,32 @@ describe("auth store", () => {
     const options = fetchMock.mock.calls[0][1] as RequestInit;
     const headers = options.headers as Headers;
     expect(headers.get("Authorization")).toBe("Bearer access-token");
+  });
+
+  it("Piniaを作り直した場合は最新の保存済みJWTから初期化する", async () => {
+    const sessionStorageMock = createMemoryStorage({
+      "typingGame.authToken": JSON.stringify({
+        accessToken: "first-token",
+        tokenType: "Bearer",
+        expiresAt: Date.now() + 3_600_000,
+      }),
+    });
+    vi.stubGlobal("sessionStorage", sessionStorageMock);
+    const { useAuthStore } = await import("@/stores/auth");
+
+    expect(useAuthStore().accessToken).toBe("first-token");
+
+    sessionStorageMock.setItem(
+      "typingGame.authToken",
+      JSON.stringify({
+        accessToken: "second-token",
+        tokenType: "Bearer",
+        expiresAt: Date.now() + 3_600_000,
+      })
+    );
+    setActivePinia(createPinia());
+
+    expect(useAuthStore().accessToken).toBe("second-token");
   });
 
   it("保存済みJWTがない場合はログイン状態の復元APIを呼ばない", async () => {
@@ -177,7 +201,7 @@ describe("auth store", () => {
     };
     authStore.accessToken = "access-token";
     authStore.tokenType = "Bearer";
-    authStore.expiresIn = 3600;
+    authStore.expiresAt = Date.now() + 3_600_000;
 
     await authStore.fetchCurrentUser();
 
@@ -197,20 +221,31 @@ describe("auth store", () => {
       )
     );
     const { useAuthStore } = await import("@/stores/auth");
+    const { useGameScoresStore } = await import("@/stores/gameScores");
     const authStore = useAuthStore();
+    const gameScoresStore = useGameScoresStore();
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
     };
     authStore.accessToken = "access-token";
     authStore.tokenType = "Bearer";
-    authStore.expiresIn = 3600;
+    authStore.expiresAt = Date.now() + 3_600_000;
+    gameScoresStore.scores = [
+      {
+        score: 42,
+        mode: 1,
+        time: "00:00:30.00",
+        date: "2026-08-31 12:00:00",
+      },
+    ];
 
     await authStore.logout();
 
     expect(authStore.isLoggedIn).toBe(false);
     expect(authStore.currentUser).toBeNull();
     expect(authStore.accessToken).toBeNull();
+    expect(gameScoresStore.scores).toEqual([]);
   });
 
   it("認証切れとしてログイン状態をクリアすると再ログイン案内を表示する", async () => {
@@ -222,7 +257,7 @@ describe("auth store", () => {
     };
     authStore.accessToken = "access-token";
     authStore.tokenType = "Bearer";
-    authStore.expiresIn = 3600;
+    authStore.expiresAt = Date.now() + 3_600_000;
 
     authStore.clearExpiredLogin();
 

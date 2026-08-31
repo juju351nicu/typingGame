@@ -71,4 +71,15 @@ const authAlerts = computed((): Alert[] => {
   background-color: var(--app-bg);
   color: var(--app-text);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 </style>

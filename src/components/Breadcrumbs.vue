@@ -23,7 +23,7 @@ const items = computed((): BreadcrumbLink[] => {
 <template>
   <div>
     <v-breadcrumbs :items="items">
-      <template v-slot:divider>
+      <template #divider>
         <v-icon icon="mdi-chevron-right"></v-icon>
       </template>
     </v-breadcrumbs>

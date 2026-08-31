@@ -1,10 +1,7 @@
 import type { PostIndex } from "@/types/interfaces";
 import { defineStore } from "pinia";
 import Const from "@/constants/const";
-import {
-  fetchBlogPostBody,
-  fetchPostIndex,
-} from "@/services/blogPostService";
+import { fetchBlogPostBody, fetchPostIndex } from "@/services/blogPostService";
 /**
  * BlogPostsストアで使用する変数の型定義
  */
@@ -111,7 +108,7 @@ export const useBlogPostsStore = defineStore("Posts", {
       this.errorMessage = "";
       try {
         this.pageStatus = await fetchPostIndex();
-      } catch (error) {
+      } catch {
         this.errorMessage = "記事一覧の取得に失敗しました。";
       } finally {
         this.isLoading = false;
@@ -127,7 +124,7 @@ export const useBlogPostsStore = defineStore("Posts", {
       this.errorMessage = "";
       try {
         this.postHtml = await fetchBlogPostBody(this.pageStatus, section, id);
-      } catch (error) {
+      } catch {
         this.errorMessage = "記事本文の取得に失敗しました。";
       } finally {
         this.isLoading = false;

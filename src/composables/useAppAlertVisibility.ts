@@ -41,8 +41,7 @@ export const useAppAlertVisibility = (
   alerts: Readonly<Ref<Alert[]>>,
   options: AppAlertVisibilityOptions = {}
 ) => {
-  const autoHideDelayMs =
-    options.autoHideDelayMs ?? DEFAULT_AUTO_HIDE_DELAY_MS;
+  const autoHideDelayMs = options.autoHideDelayMs ?? DEFAULT_AUTO_HIDE_DELAY_MS;
   const topOffsetPx = options.topOffsetPx ?? DEFAULT_TOP_OFFSET_PX;
   const setTimer = options.setTimer ?? setTimeout;
   const clearTimer = options.clearTimer ?? clearTimeout;

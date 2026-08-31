@@ -7,7 +7,7 @@ const AUTH_TOKEN_STORAGE_KEY = "typingGame.authToken";
 export interface AuthToken {
   accessToken: string;
   tokenType: string;
-  expiresIn?: number;
+  expiresAt?: number;
 }
 
 /**
@@ -41,7 +41,10 @@ export const saveAuthToken = (response: LoginResponse): AuthToken | null => {
   const authToken: AuthToken = {
     accessToken: response.accessToken,
     tokenType: response.tokenType ?? "Bearer",
-    expiresIn: response.expiresIn,
+    expiresAt:
+      typeof response.expiresIn === "number" && response.expiresIn > 0
+        ? Date.now() + response.expiresIn * 1000
+        : undefined,
   };
 
   getSessionStorage()?.setItem(
@@ -65,14 +68,30 @@ export const getAuthToken = (): AuthToken | null => {
 
   try {
     const parsedValue = JSON.parse(storedValue) as Partial<AuthToken>;
-    if (!parsedValue.accessToken) {
+    if (
+      typeof parsedValue.accessToken !== "string" ||
+      parsedValue.accessToken.length === 0
+    ) {
       clearAuthToken();
       return null;
     }
+
+    if (
+      parsedValue.expiresAt !== undefined &&
+      (!Number.isFinite(parsedValue.expiresAt) ||
+        parsedValue.expiresAt <= Date.now())
+    ) {
+      clearAuthToken();
+      return null;
+    }
+
     return {
       accessToken: parsedValue.accessToken,
-      tokenType: parsedValue.tokenType ?? "Bearer",
-      expiresIn: parsedValue.expiresIn,
+      tokenType:
+        typeof parsedValue.tokenType === "string"
+          ? parsedValue.tokenType
+          : "Bearer",
+      expiresAt: parsedValue.expiresAt,
     };
   } catch {
     clearAuthToken();

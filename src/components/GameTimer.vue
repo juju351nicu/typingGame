@@ -30,12 +30,12 @@ defineExpose({ startTimer, stopTimer, resetTimer });
 </script>
 <template>
   <div class="game-status-item">
-    <label>経過時間</label>
-    <span>{{ timeLabel }}</span>
+    <span class="game-status-label">経過時間</span>
+    <span role="timer" aria-label="経過時間">{{ timeLabel }}</span>
   </div>
 </template>
 <style scoped>
-.game-status-item label {
+.game-status-label {
   color: var(--app-text-muted);
   display: block;
   font-size: 1rem;

@@ -1,6 +1,6 @@
 import Util from "@/utils/gameUtils";
 import Const from "@/constants/const";
-import type { GameScore, RankingScore } from "@/types/interfaces";
+import type { GameMode, GameScore, RankingScore } from "@/types/interfaces";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 afterEach(() => {
@@ -77,106 +77,6 @@ describe("isLocalStorage", () => {
   });
 });
 
-describe("checkBrowser", () => {
-  it("userAgentからブラウザ情報を取得する", () => {
-    expect(
-      Util.getBrowserInfo(
-        "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
-      )
-    ).toMatchObject({
-      name: "chrome",
-      isChrome: true,
-      isChromium: false,
-      isSupportedChrome: true,
-    });
-    expect(
-      Util.getBrowserInfo(
-        "Mozilla/5.0 AppleWebKit/537.36 Chromium/120.0.0.0 Safari/537.36"
-      )
-    ).toMatchObject({
-      name: "chromium",
-      isChrome: true,
-      isChromium: true,
-      isSupportedChrome: true,
-    });
-    expect(
-      Util.getBrowserInfo(
-        "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
-      )
-    ).toMatchObject({
-      name: "edge",
-      isChrome: false,
-      isSupportedChrome: false,
-    });
-  });
-
-  it("Chrome、Chromium、iOS Chromeの場合はtrueを返す", () => {
-    const userAgents = [
-      "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
-      "Mozilla/5.0 AppleWebKit/537.36 Chromium/120.0.0.0 Safari/537.36",
-      "Mozilla/5.0 (iPhone) AppleWebKit/605.1.15 CriOS/120.0.0.0 Mobile/15E148 Safari/604.1",
-    ];
-
-    userAgents.forEach((userAgent) => {
-      vi.stubGlobal("window", {
-        navigator: { userAgent },
-      });
-
-      expect(Util.checkBrowser()).toBe(true);
-    });
-  });
-
-  it("Edge、Opera、Safari、Firefox、IEの場合はfalseを返す", () => {
-    const userAgents = [
-      "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36 Edge/18.0",
-      "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
-      "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36 OPR/100.0.0.0",
-      "Mozilla/5.0 AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36 SamsungBrowser/22.0",
-      "Mozilla/5.0 AppleWebKit/605.1.15 Version/17.0 Safari/605.1.15",
-      "Mozilla/5.0 Firefox/120.0",
-      "Mozilla/5.0 (iPhone) AppleWebKit/605.1.15 FxiOS/120.0 Mobile/15E148 Safari/605.1.15",
-      "Mozilla/5.0 Trident/7.0 rv:11.0",
-    ];
-
-    userAgents.forEach((userAgent) => {
-      vi.stubGlobal("window", {
-        navigator: { userAgent },
-      });
-
-      expect(Util.checkBrowser()).toBe(false);
-    });
-  });
-
-  it("userAgent参照時に例外が発生した場合はfalseを返す", () => {
-    vi.stubGlobal("window", {
-      navigator: {
-        get userAgent() {
-          throw new Error("blocked");
-        },
-      },
-    });
-
-    expect(Util.checkBrowser()).toBe(false);
-  });
-
-  it("userAgent参照時に例外が発生した場合はunknownを返す", () => {
-    vi.stubGlobal("window", {
-      navigator: {
-        get userAgent() {
-          throw new Error("blocked");
-        },
-      },
-    });
-
-    expect(Util.getBrowserInfo()).toMatchObject({
-      name: "unknown",
-      isChrome: false,
-      isSupportedChrome: false,
-      userAgent: "",
-    });
-  });
-});
-
 describe("calculateWpm", () => {
   it("正しく入力した文字数と時間からWPMを計算する", () => {
     const result = Util.calculateWpm(25, 60_000);
@@ -225,8 +125,12 @@ describe("difficulty label and color", () => {
   });
 
   it("未定義の難易度では例外を投げる", () => {
-    expect(() => Util.getLevel(99)).toThrow("不明なステータスです: 99");
-    expect(() => Util.getColor(99)).toThrow("不明なステータスです: 99");
+    expect(() => Util.getLevel(99 as GameMode)).toThrow(
+      "不明なステータスです: 99"
+    );
+    expect(() => Util.getColor(99 as GameMode)).toThrow(
+      "不明なステータスです: 99"
+    );
   });
 });
 

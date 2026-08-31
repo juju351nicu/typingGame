@@ -35,9 +35,7 @@ describe("useTypingGameWords", () => {
   });
 
   it("指定した単語を表示中リストから削除する", () => {
-    const { currentWords, addWord, removeWord } = useTypingGameWords([
-      "home",
-    ]);
+    const { currentWords, addWord, removeWord } = useTypingGameWords(["home"]);
     const addedWord = addWord(0, 100);
 
     removeWord(addedWord!);

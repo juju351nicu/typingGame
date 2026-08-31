@@ -78,11 +78,11 @@ onBeforeMount(async () => {
 <template>
   <BlogPagingList
     v-if="!isLoading && !errorMessage && pageCounts > 0"
-    :pageStatus="pageStatus"
-    :pageCounts="pageCounts"
-    :currentPage="currentPage"
-    @doPostDetail="doPostDetail"
-    @toNumberPage="searchPaging"
+    :page-status="pageStatus"
+    :page-counts="pageCounts"
+    :current-page="currentPage"
+    @do-post-detail="doPostDetail"
+    @to-number-page="searchPaging"
   />
   <AppStateMessage
     v-else-if="!isLoading && errorMessage"
@@ -96,5 +96,5 @@ onBeforeMount(async () => {
     title="記事がありません"
     message="記事を追加するとここに一覧が表示されます。"
   />
-  <Loading :isLoading="isLoading" />
+  <Loading :is-loading="isLoading" />
 </template>

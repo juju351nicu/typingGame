@@ -31,9 +31,7 @@ describe("useAppAlertVisibility", () => {
   });
 
   it("手動でアラートを非表示にする", async () => {
-    const alerts = ref<Alert[]>([
-      { message: "保存しました", type: "success" },
-    ]);
+    const alerts = ref<Alert[]>([{ message: "保存しました", type: "success" }]);
     const { hideAlert, visibleAlerts } = useAppAlertVisibility(alerts);
 
     await nextTick();
@@ -43,9 +41,7 @@ describe("useAppAlertVisibility", () => {
   });
 
   it("範囲外のインデックスを指定しても表示状態を変更しない", async () => {
-    const alerts = ref<Alert[]>([
-      { message: "保存しました", type: "success" },
-    ]);
+    const alerts = ref<Alert[]>([{ message: "保存しました", type: "success" }]);
     const { hideAlert, visibleAlerts } = useAppAlertVisibility(alerts);
 
     await nextTick();

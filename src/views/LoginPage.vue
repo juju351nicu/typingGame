@@ -131,7 +131,9 @@ const submit = async (): Promise<void> => {
               v-model="password"
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
-              autocomplete="current-password"
+              :autocomplete="
+                formMode === 'login' ? 'current-password' : 'new-password'
+              "
               label="パスワード"
               name="password"
               prepend-inner-icon="mdi-lock"

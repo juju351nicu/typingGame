@@ -21,6 +21,7 @@ const createMemoryStorage = (initialValues: Record<string, string> = {}) => {
 
 describe("fetchClient", () => {
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
   });
 
@@ -141,6 +142,42 @@ describe("fetchClient", () => {
     const options = fetchMock.mock.calls[0][1] as RequestInit;
     const headers = options.headers as Headers;
     expect(headers.get("Authorization")).toBeNull();
+    expect(options.credentials).toBeUndefined();
+  });
+
+  it("APIと同じ文字列で始まる外部originには認証情報を付けない", async () => {
+    vi.stubGlobal(
+      "sessionStorage",
+      createMemoryStorage({
+        "typingGame.authToken": JSON.stringify({
+          accessToken: "access-token",
+          tokenType: "Bearer",
+        }),
+      })
+    );
+    const response = new Response("{}", { status: 200 });
+    const fetchMock = vi.fn().mockResolvedValue(response);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await Fetcher.getRequest("http://localhost:8091.evil.example/api/scores");
+
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    const headers = options.headers as Headers;
+    expect(headers.get("Authorization")).toBeNull();
+    expect(options.credentials).toBeUndefined();
+  });
+
+  it("リクエストに10秒のタイムアウトを設定する", async () => {
+    const timeoutSpy = vi.spyOn(AbortSignal, "timeout");
+    const response = new Response("{}", { status: 200 });
+    const fetchMock = vi.fn().mockResolvedValue(response);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await Fetcher.getRequest("/api/scores");
+
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(options.signal).toBeInstanceOf(AbortSignal);
+    expect(timeoutSpy).toHaveBeenCalledWith(10_000);
   });
 
   it("HTTPエラーの場合はHttpErrorを投げる", async () => {

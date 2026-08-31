@@ -19,9 +19,7 @@ interface BlogPostListStore {
  *
  * @param blogPostsStore ブログ記事ストア
  */
-export const useBlogPostListPageState = (
-  blogPostsStore: BlogPostListStore
-) => {
+export const useBlogPostListPageState = (blogPostsStore: BlogPostListStore) => {
   /** 記事の一覧情報 */
   const pageStatus = ref<PostIndex[]>([]);
 

@@ -5,7 +5,7 @@ import ResultModal from "@/components/ResultModal.vue";
 import GameTimer from "@/components/GameTimer.vue";
 import VirtualKeyboard from "@/components/VirtualKeyboard.vue";
 import { useTypingKeyboardFeedback } from "@/composables/useTypingKeyboardFeedback";
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
 import { useTimeAttackTimer } from "@/composables/useTimeAttackTimer";
@@ -28,6 +28,13 @@ const gameScoresStore = useGameScoresStore();
 const configStore = useConfigStore();
 /** Timerコンポーネントに関する情報 */
 const timerComponent = ref<GameTimerControl | null>(null);
+
+interface FocusableInput {
+  focus: () => void;
+}
+
+/** ゲーム開始後にフォーカスする入力欄 */
+const typingInput = ref<FocusableInput | null>(null);
 
 const {
   remainingSeconds,
@@ -88,12 +95,8 @@ const previousComparableScore = computed(() => {
   );
 });
 
-const {
-  pressedKey,
-  missKey,
-  updateKeyFeedback,
-  clearKeyFeedbackTimers,
-} = useTypingKeyboardFeedback();
+const { pressedKey, missKey, updateKeyFeedback, clearKeyFeedbackTimers } =
+  useTypingKeyboardFeedback();
 
 const { startGame } = useGamePageSession({
   gameScoresStore,
@@ -112,6 +115,13 @@ const { startGame } = useGamePageSession({
   stopTimeAttackTimer,
   resetTimeAttackTimer,
 });
+
+/** ユーザー操作でゲームを開始し、描画後に入力欄へフォーカスする。 */
+const startGameAndFocusInput = async (): Promise<void> => {
+  startGame();
+  await nextTick();
+  typingInput.value?.focus();
+};
 
 const { isResetTimer, restartGame } = useGamePageRestart({
   timerComponent,
@@ -151,40 +161,45 @@ onUnmounted(() => {
     <AppAlerts :alerts="alerts" />
     <div class="game-board">
       <TypingPanel
-        :isGameStarted="isGameStarted"
-        :isResetTimer="isResetTimer"
-        :shouldFinishOnWordReachedTop="shouldFinishOnWordReachedTop"
-        :gameScore="gameScore"
-        @update:gameScore="($event) => (gameScore = $event)"
-        :isGameOver="isGameOver"
-        @update:isGameOver="($event) => (isGameOver = $event)"
-        :inputValue="inputValue"
-        @update:inputValue="($event) => (inputValue = $event)"
-        :typedCharacterCount="typedCharacterCount"
-        @update:typedCharacterCount="($event) => (typedCharacterCount = $event)"
-        :missCount="missCount"
-        @update:missCount="($event) => (missCount = $event)"
-        :correctCharacterCount="correctCharacterCount"
-        @update:correctCharacterCount="
+        :is-game-started="isGameStarted"
+        :is-reset-timer="isResetTimer"
+        :should-finish-on-word-reached-top="shouldFinishOnWordReachedTop"
+        :game-score="gameScore"
+        :is-game-over="isGameOver"
+        :input-value="inputValue"
+        :typed-character-count="typedCharacterCount"
+        :miss-count="missCount"
+        :correct-character-count="correctCharacterCount"
+        :is-input-miss="isInputMiss"
+        :next-key="nextKey"
+        @update:game-score="($event) => (gameScore = $event)"
+        @update:is-game-over="($event) => (isGameOver = $event)"
+        @update:input-value="($event) => (inputValue = $event)"
+        @update:typed-character-count="
+          ($event) => (typedCharacterCount = $event)
+        "
+        @update:miss-count="($event) => (missCount = $event)"
+        @update:correct-character-count="
           ($event) => (correctCharacterCount = $event)
         "
-        :isInputMiss="isInputMiss"
-        @update:isInputMiss="($event) => (isInputMiss = $event)"
-        :nextKey="nextKey"
-        @update:nextKey="($event) => (nextKey = $event)"
+        @update:is-input-miss="($event) => (isInputMiss = $event)"
+        @update:next-key="($event) => (nextKey = $event)"
       />
       <template v-if="isGameStarted">
         <div class="game-control-panel">
           <div class="input-panel">
-            <label class="input-label" for="typing-input">
-              <v-icon size="small" aria-hidden="true">mdi-keyboard-outline</v-icon>
+            <div class="input-label">
+              <v-icon size="small" aria-hidden="true"
+                >mdi-keyboard-outline</v-icon
+              >
               好きな風船の単語を入力
-            </label>
+            </div>
             <v-text-field
               id="typing-input"
+              ref="typingInput"
+              v-model="inputValue"
               class="game-text-field"
               :class="{ 'game-text-field-error': isInputMiss }"
-              v-model="inputValue"
               variant="outlined"
               density="comfortable"
               hide-details
@@ -193,33 +208,38 @@ onUnmounted(() => {
               autocomplete="off"
               spellcheck="false"
               aria-label="好きな風船の単語を入力"
-              autofocus
             />
           </div>
           <div
             class="status-panel"
             :class="{ 'status-panel--time-attack': isTimeAttackMode }"
           >
-            <GameTimer ref="timerComponent" v-model:accumTime="accumTime" />
+            <GameTimer ref="timerComponent" v-model:accum-time="accumTime" />
             <div v-if="isTimeAttackMode" class="game-status-item">
-              <label>残り時間</label>
-              <span>{{ remainingTimeLabel }}</span>
+              <span class="game-status-label">残り時間</span>
+              <span role="timer" aria-label="残り時間">{{
+                remainingTimeLabel
+              }}</span>
             </div>
             <div class="game-status-item">
-              <label>スコア</label>
-              <span>{{ gameScore }}</span>
+              <span class="game-status-label">スコア</span>
+              <span aria-live="polite" aria-label="スコア">{{
+                gameScore
+              }}</span>
             </div>
             <div class="game-status-item game-status-item--miss">
-              <label>ミス</label>
-              <span>{{ missCount }}</span>
+              <span class="game-status-label">ミス</span>
+              <span aria-live="polite" aria-label="ミス数">{{
+                missCount
+              }}</span>
             </div>
           </div>
           <VirtualKeyboard
             v-if="configStore.getIsVirtualKeyBoard"
             class="keyboard-panel"
-            :nextKey="nextKey"
-            :pressedKey="pressedKey"
-            :missKey="missKey"
+            :next-key="nextKey"
+            :pressed-key="pressedKey"
+            :miss-key="missKey"
           />
         </div>
       </template>
@@ -268,7 +288,7 @@ onUnmounted(() => {
                 size="x-large"
                 min-width="230"
                 prepend-icon="mdi-play"
-                @click="startGame"
+                @click="startGameAndFocusInput"
               >
                 ゲームをはじめる
               </v-btn>
@@ -290,9 +310,9 @@ onUnmounted(() => {
     </div>
   </v-container>
   <ResultModal
-    :lastScore="lastScore"
-    :previousScore="previousComparableScore"
-    :isGameOver="isGameOver"
+    :last-score="lastScore"
+    :previous-score="previousComparableScore"
+    :is-game-over="isGameOver"
     @restart-game="restartGame"
   />
 </template>
@@ -393,7 +413,7 @@ onUnmounted(() => {
   padding: 12px 14px;
 }
 
-.game-status-item label {
+.game-status-label {
   color: var(--app-text-muted);
   display: block;
   font-size: 1rem;
@@ -418,8 +438,16 @@ onUnmounted(() => {
 .game-intro {
   align-items: center;
   background:
-    radial-gradient(circle at 18% 20%, rgba(126, 214, 255, 0.32), transparent 30%),
-    radial-gradient(circle at 86% 78%, rgba(177, 151, 252, 0.25), transparent 32%),
+    radial-gradient(
+      circle at 18% 20%,
+      rgba(126, 214, 255, 0.32),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 86% 78%,
+      rgba(177, 151, 252, 0.25),
+      transparent 32%
+    ),
     linear-gradient(145deg, #fbfdff 0%, #eff8ff 52%, #f7f2ff 100%);
   display: flex;
   justify-content: center;
@@ -653,7 +681,7 @@ onUnmounted(() => {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .game-status-item label {
+  .game-status-label {
     font-size: 1.1rem;
   }
 
@@ -712,8 +740,16 @@ onUnmounted(() => {
 
 :global(.app-shell--dark) .game-intro {
   background:
-    radial-gradient(circle at 18% 20%, rgba(54, 162, 208, 0.2), transparent 30%),
-    radial-gradient(circle at 86% 78%, rgba(126, 87, 194, 0.22), transparent 32%),
+    radial-gradient(
+      circle at 18% 20%,
+      rgba(54, 162, 208, 0.2),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 86% 78%,
+      rgba(126, 87, 194, 0.22),
+      transparent 32%
+    ),
     linear-gradient(145deg, #1d222b 0%, #182832 52%, #241d31 100%);
 }
 

@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { GameMode, GameRule, RankingScore } from "@/types/interfaces";
 import { computed } from "vue";
+import type { DataTableHeader } from "vuetify";
+
+type ItemsPerPageOption = number | { title: string; value: number };
 
 interface RankingTablePanelProps {
   modelValue: number;
-  headers: readonly unknown[];
+  headers: readonly DataTableHeader[];
   rankingItems: RankingScore[];
-  pages: readonly unknown[];
+  pages: readonly ItemsPerPageOption[];
   timeAttackGameRule: GameRule;
   formatAccuracyMetric: (value: number | null | undefined) => string;
   formatNullableMetric: (value: number | string | null | undefined) => string;
@@ -40,15 +43,15 @@ const itemsPerPage = computed({
     no-data-text="まだスコアがありません。ゲームをプレイするとここに表示されます。"
     class="ranking-table elevation-1"
   >
-    <template v-slot:item.rank="{ value }">
+    <template #item.rank="{ value }">
       <span class="rank-badge" :class="getRankClass(value)">
         {{ value }}位
       </span>
     </template>
-    <template v-slot:item.score="{ value }">
+    <template #item.score="{ value }">
       <span class="score-cell">{{ value }}</span>
     </template>
-    <template v-slot:item.resultRank="{ value }">
+    <template #item.resultRank="{ value }">
       <span
         class="result-rank-badge"
         :style="{ backgroundColor: getResultRankColor(value) }"
@@ -56,26 +59,26 @@ const itemsPerPage = computed({
         {{ value }}
       </span>
     </template>
-    <template v-slot:item.wpm="{ value }">
+    <template #item.wpm="{ value }">
       <span class="metric-cell">{{ formatNullableMetric(value) }}</span>
     </template>
-    <template v-slot:item.correctCharacterCount="{ value }">
+    <template #item.correctCharacterCount="{ value }">
       <span class="metric-cell">{{ formatNullableMetric(value) }}</span>
     </template>
-    <template v-slot:item.accuracy="{ value }">
+    <template #item.accuracy="{ value }">
       <span class="metric-cell">
         {{ formatAccuracyMetric(value) }}
       </span>
     </template>
-    <template v-slot:item.missCount="{ value }">
+    <template #item.missCount="{ value }">
       <span class="metric-cell">{{ formatNullableMetric(value) }}</span>
     </template>
-    <template v-slot:item.mode="{ value }">
+    <template #item.mode="{ value }">
       <v-chip :color="getModeColor(value)">
         {{ getModeLabel(value) }}
       </v-chip>
     </template>
-    <template v-slot:item.gameRule="{ item }">
+    <template #item.gameRule="{ item }">
       <v-chip
         :color="
           getScoreGameRule(item) === timeAttackGameRule ? 'deep-purple' : 'grey'
@@ -85,7 +88,7 @@ const itemsPerPage = computed({
         {{ getScoreGameRuleLabel(item) }}
       </v-chip>
     </template>
-    <template v-slot:item.timeLimitSeconds="{ item }">
+    <template #item.timeLimitSeconds="{ item }">
       <span class="metric-cell">{{ getTimeLimitLabel(item) }}</span>
     </template>
   </v-data-table>

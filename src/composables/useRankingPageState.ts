@@ -116,9 +116,7 @@ export const getTrendMetricOption = (
  * @param metric 選択中の推移グラフ指標
  * @returns 推移グラフの見出し
  */
-export const createTrendTitle = (
-  metric: PerformanceTrendMetric
-): string => {
+export const createTrendTitle = (metric: PerformanceTrendMetric): string => {
   return `直近${getTrendMetricOption(metric).title}推移`;
 };
 

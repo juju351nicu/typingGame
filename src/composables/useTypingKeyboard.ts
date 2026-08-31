@@ -30,9 +30,12 @@ export const getNextKey = (
   const visibleWords = currentWords.filter((word) => !word.isBursting);
 
   // 入力中の単語があればそれを優先し、なければ先頭の表示単語を案内する。
-  const targetWord = visibleWords.find((word) => {
-    return !word.isBursting && word.characters.join("").startsWith(inputValue);
-  }) ?? visibleWords[0];
+  const targetWord =
+    visibleWords.find((word) => {
+      return (
+        !word.isBursting && word.characters.join("").startsWith(inputValue)
+      );
+    }) ?? visibleWords[0];
 
   if (targetWord == null) {
     return "";

@@ -154,7 +154,9 @@ const toNumberPage = (pageNumber: number) => {
   border-radius: 12px;
   box-shadow: var(--app-shadow);
   cursor: pointer;
-  transition: border-color 160ms ease, transform 160ms ease;
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 
 .blog-card:hover,

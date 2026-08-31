@@ -17,11 +17,7 @@ describe("useBlogPagingState", () => {
     const pageStatus = ref<PostIndex[]>([]);
     const totalCount = ref(0);
     const currentPage = ref(1);
-    const pagingState = useBlogPagingState(
-      pageStatus,
-      totalCount,
-      currentPage
-    );
+    const pagingState = useBlogPagingState(pageStatus, totalCount, currentPage);
 
     expect(pagingState.showPaging.value).toBe(false);
     expect(pagingState.totalPages.value).toBe(0);
@@ -32,11 +28,7 @@ describe("useBlogPagingState", () => {
     const pageStatus = ref([createPost("first"), createPost("second")]);
     const totalCount = ref(5);
     const currentPage = ref(1);
-    const pagingState = useBlogPagingState(
-      pageStatus,
-      totalCount,
-      currentPage
-    );
+    const pagingState = useBlogPagingState(pageStatus, totalCount, currentPage);
 
     expect(pagingState.showPaging.value).toBe(true);
     expect(pagingState.totalPages.value).toBe(2);
@@ -51,11 +43,7 @@ describe("useBlogPagingState", () => {
     const pageStatus = ref([createPost("fifth")]);
     const totalCount = ref(5);
     const currentPage = ref(2);
-    const pagingState = useBlogPagingState(
-      pageStatus,
-      totalCount,
-      currentPage
-    );
+    const pagingState = useBlogPagingState(pageStatus, totalCount, currentPage);
 
     expect(pagingState.firstRowsCounts.value).toBe(5);
     expect(pagingState.lastRowsCounts.value).toBe(5);
@@ -68,11 +56,7 @@ describe("useBlogPagingState", () => {
     const pageStatus = ref([createPost("first")]);
     const totalCount = ref(1);
     const currentPage = ref(1);
-    const pagingState = useBlogPagingState(
-      pageStatus,
-      totalCount,
-      currentPage
-    );
+    const pagingState = useBlogPagingState(pageStatus, totalCount, currentPage);
 
     expect(pagingState.totalPages.value).toBe(1);
     expect(pagingState.listHeader.value).toBe(

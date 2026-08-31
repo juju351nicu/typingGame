@@ -8,8 +8,6 @@ import { getAuthorizationHeaderValue } from "@/utils/authTokenStorage";
 const METHOD = {
   GET: "GET",
   POST: "POST",
-  PUT: "PUT",
-  DELETE: "DELETE",
 } as const;
 
 type HttpMethod = (typeof METHOD)[keyof typeof METHOD];
@@ -48,13 +46,16 @@ const defaultHeader: Record<string, string> = {
   "Content-Type": "application/json",
 };
 
+/** APIが応答しない場合にリクエストを中断するまでの時間 */
+const REQUEST_TIMEOUT_MILLISECONDS = 10_000;
+
 /**
  * GET送信の結果
  * @param uri リクエストURL
  * @returns fetch結果
  */
 const getRequest = (uri: string): Promise<Response> => {
-  // HttpMeshodに Getを設定する
+  // HTTPメソッドにGETを設定する
   const method = METHOD.GET;
   // リクエストデータ作成
   const requestDatas = createRequestData(uri, null, null, method);
@@ -75,14 +76,14 @@ const getJson = async <T>(uri: string): Promise<T> => {
 /**
  * POST送信の結果
  * @param uri リクエストURL
- * @param reqestData 送信するリクエストボディのデータ
+ * @param requestData 送信するリクエストボディのデータ
  * @returns fetch結果
  */
-const postRequest = (uri: string, reqestData: unknown): Promise<Response> => {
-  // HttpMeshodに Postを設定する
+const postRequest = (uri: string, requestData: unknown): Promise<Response> => {
+  // HTTPメソッドにPOSTを設定する
   const method = METHOD.POST;
   // リクエストデータ作成
-  const requestDatas = createRequestData(uri, reqestData, null, method);
+  const requestDatas = createRequestData(uri, requestData, null, method);
   // fetch返却
   return fetcher(requestDatas);
 };
@@ -90,14 +91,11 @@ const postRequest = (uri: string, reqestData: unknown): Promise<Response> => {
 /**
  * POST送信のJSONレスポンスを取得する。
  * @param uri リクエストURL
- * @param reqestData 送信するリクエストボディのデータ
+ * @param requestData 送信するリクエストボディのデータ
  * @returns JSONレスポンス
  */
-const postJson = async <T>(
-  uri: string,
-  reqestData: unknown
-): Promise<T> => {
-  const response = await postRequest(uri, reqestData);
+const postJson = async <T>(uri: string, requestData: unknown): Promise<T> => {
+  const response = await postRequest(uri, requestData);
   return response.json();
 };
 
@@ -136,7 +134,24 @@ const parseErrorResponse = async (
  * @returns 認証ヘッダーを付与する場合はtrue
  */
 const isBackendApiRequest = (uri: string): boolean => {
-  return uri.startsWith(Const.BACKEND_API.BASE_URL) || uri.startsWith("/api/");
+  if (uri === "/api" || uri.startsWith("/api/")) {
+    return true;
+  }
+
+  try {
+    const backendUrl = new URL(Const.BACKEND_API.BASE_URL);
+    const requestUrl = new URL(uri);
+    const backendPath = backendUrl.pathname.replace(/\/$/, "");
+
+    return (
+      requestUrl.origin === backendUrl.origin &&
+      (backendPath === "" ||
+        requestUrl.pathname === backendPath ||
+        requestUrl.pathname.startsWith(`${backendPath}/`))
+    );
+  } catch {
+    return false;
+  }
 };
 
 /**
@@ -163,15 +178,18 @@ const createRequestData = (
     headers.set("Authorization", authorizationHeaderValue);
   }
 
-  // optionsで HTTPMethodやHeadersを設定する
-  let options: RequestInit = {};
-  // HTTPメソッドがPOST・PUTの場合のみリクエストボディを追加する
-  if (method === METHOD.POST || method === METHOD.PUT) {
-    const body = JSON.stringify(reqData);
-    options = { method, headers, body, credentials: "include" };
-  } else {
-    options = { method, headers, credentials: "include" };
-  }
+  const credentials = isBackendApiRequest(uri) ? "include" : undefined;
+  const signal = AbortSignal.timeout(REQUEST_TIMEOUT_MILLISECONDS);
+
+  // HTTPメソッドがPOSTの場合のみリクエストボディを追加する。
+  const body = method === METHOD.POST ? JSON.stringify(reqData) : undefined;
+  const options: RequestInit = {
+    method,
+    headers,
+    signal,
+    ...(body !== undefined ? { body } : {}),
+    ...(credentials !== undefined ? { credentials } : {}),
+  };
 
   return {
     requestUrl: uri,

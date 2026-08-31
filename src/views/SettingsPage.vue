@@ -57,8 +57,8 @@ const {
           variant="outlined"
           density="comfortable"
           hide-details
-          @update:modelValue="setGameMode"
           class="setting-control"
+          @update:model-value="setGameMode"
         />
       </section>
 
@@ -78,8 +78,8 @@ const {
           variant="outlined"
           density="comfortable"
           hide-details
-          @update:modelValue="setGameRule"
           class="setting-control"
+          @update:model-value="setGameRule"
         />
       </section>
 
@@ -99,8 +99,8 @@ const {
           variant="outlined"
           density="comfortable"
           hide-details
-          @update:modelValue="setTimeLimitSeconds"
           class="setting-control"
+          @update:model-value="setTimeLimitSeconds"
         />
       </section>
 
@@ -117,8 +117,8 @@ const {
           hide-details
           inset
           :label="isVirtualKeyboardVisible ? '表示' : '非表示'"
-          @update:modelValue="setVirtualKeyboardVisible"
           class="setting-control"
+          @update:model-value="setVirtualKeyboardVisible"
         />
       </section>
 
@@ -135,8 +135,8 @@ const {
           hide-details
           inset
           :label="isDarkMode ? 'ダーク' : 'ライト'"
-          @update:modelValue="setDisplayMode"
           class="setting-control"
+          @update:model-value="setDisplayMode"
         />
       </section>
 
@@ -161,9 +161,7 @@ const {
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" @click="closeResetDialog">
-            キャンセル
-          </v-btn>
+          <v-btn variant="text" @click="closeResetDialog"> キャンセル </v-btn>
           <v-btn color="error" variant="flat" @click="resetModalData">
             削除する
           </v-btn>

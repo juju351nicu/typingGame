@@ -21,7 +21,7 @@ defineExpose({
 });
 </script>
 <template>
-  <div class="words-board" ref="words-board">
+  <div ref="words-board" class="words-board">
     <template v-for="(word, wordIndex) in currentWords" :key="wordIndex">
       <div
         class="word"
@@ -32,7 +32,7 @@ defineExpose({
         ]"
         :style="word.style"
       >
-        <template v-for="(character, index) in word.characters">
+        <template v-for="(character, index) in word.characters" :key="index">
           <span :class="word.classList[index]">{{ character }} </span>
         </template>
       </div>
@@ -60,7 +60,8 @@ defineExpose({
   background: #ff3b5c;
   color: #ffffff;
   border-radius: 50% 50% 48% 48%;
-  box-shadow: inset -8px -10px 0 rgba(0, 0, 0, 0.15),
+  box-shadow:
+    inset -8px -10px 0 rgba(0, 0, 0, 0.15),
     0 8px 14px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
@@ -193,8 +194,8 @@ defineExpose({
 
 .word-burst::after {
   background:
-    radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 2px, transparent 3px)
-      0 8px / 34px 34px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 2px, transparent 3px) 0
+      8px / 34px 34px,
     radial-gradient(circle, rgba(255, 255, 255, 0.7) 0 2px, transparent 3px)
       18px 18px / 46px 46px;
   animation-delay: 40ms;

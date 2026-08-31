@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import {
-  onMounted,
-  onUnmounted,
-  useTemplateRef,
-} from "vue";
+import { onMounted, onUnmounted, useTemplateRef } from "vue";
 import TypingWordsBoard from "@/components/TypingWordsBoard.vue";
 import { wordsData as WORD_DATAS } from "@/assets/words";
 import {

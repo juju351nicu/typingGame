@@ -15,8 +15,7 @@ const alerts = computed((): Alert[] => {
   return props.alerts;
 });
 
-const { visibleAlerts, hideAlert, getTopStyle } =
-  useAppAlertVisibility(alerts);
+const { visibleAlerts, hideAlert, getTopStyle } = useAppAlertVisibility(alerts);
 </script>
 <template>
   <div
@@ -31,6 +30,8 @@ const { visibleAlerts, hideAlert, getTopStyle } =
         dense
         class="alert"
         closable
+        role="alert"
+        aria-live="assertive"
         @click:close="hideAlert(index)"
       >
         {{ alert.message }}
