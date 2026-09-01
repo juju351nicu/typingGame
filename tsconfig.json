@@ -9,9 +9,8 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "lib": ["esnext", "dom"]
   },
