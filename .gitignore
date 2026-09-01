@@ -4,3 +4,4 @@ dist
 dist-ssr
 *.local
 docs/work-log.md
+/docs/
