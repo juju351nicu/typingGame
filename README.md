@@ -139,7 +139,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - リトライ時のページリロードを廃止し、ゲーム状態とタイマーをリセットするSPA内完結の挙動に改善
 - ルート単位の遅延読み込みと Markdown renderer の分割により、初期JSと blog chunk の肥大化を軽減
 - JWTの有効期限を保存時刻から計算し、期限切れトークンをAPI送信前に破棄
-- APIの送信先をURLのoriginで検証し、外部originへAuthorizationヘッダーや認証Cookieを送らないよう制限
+- APIの送信先をURLのoriginで検証し、外部originへAuthorizationヘッダーを送らないよう制限
 - UA文字列によるChrome限定判定を廃止し、必要なlocalStorage機能の可否だけを検出
 - ESLint / Prettier / vue-tscを導入し、Pull Requestとデプロイの両方で品質チェックを実行
 - `prefers-reduced-motion`、アラート通知、ゲーム状態のARIA属性を追加
@@ -177,17 +177,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 
 Node.js 20.19.0以上を使用します。
 
-Coding guidelines:
-
-```text
-docs/coding-guidelines.md
-```
-
-Frontend cleanup plan before backend work:
-
-```text
-docs/frontend-pre-backend-plan.md
-```
+詳細なコーディング規約と開発計画は、公開リポジトリ外で管理しています。
 
 Backend API connection policy:
 
@@ -230,7 +220,7 @@ npm run dev:api
 ```
 
 `dev:api` は `VITE_ENABLE_BACKEND_API=true`、`VITE_API_BASE_URL=http://localhost:8091`、`--port 8081`、`--strictPort` 付きで起動します。
-`8081` が使用中の場合は `8082` へ自動退避せず、CORSやCookie条件のズレに気づけるようにエラーで停止します。
+`8081` が使用中の場合は `8082` へ自動退避せず、CORS条件のズレに気づけるようにエラーで停止します。
 
 FE単体モードは以下で起動します。
 
@@ -362,12 +352,6 @@ Status: 完了
 
 ### Phase 5: 拡張機能
 
-Plan: [`docs/phase5-time-attack-plan.md`](./docs/phase5-time-attack-plan.md)
-
-Frontend cleanup before backend work: [`docs/frontend-pre-backend-plan.md`](./docs/frontend-pre-backend-plan.md)
-
-Frontend smoke test checklist: [`docs/frontend-smoke-test-checklist.md`](./docs/frontend-smoke-test-checklist.md)
-
 - タイムアタックモード
   - 30秒 / 60秒 / 90秒などの制限時間を選択
   - 通常モードとは別のゲームモードとして実装
@@ -383,10 +367,6 @@ Frontend smoke test checklist: [`docs/frontend-smoke-test-checklist.md`](./docs/
 Status: 主要機能は完了。Chart.js を使う高度な分析、プレイ回数、苦手キーは後続候補。
 
 ### Phase 6: バックエンドAPI連携
-
-Plan: [`docs/phase6-backend-api-plan.md`](./docs/phase6-backend-api-plan.md)
-
-Backend startup checklist: [`docs/backend-startup-checklist.md`](./docs/backend-startup-checklist.md)
 
 - Spring Boot API
   - スコア保存API
@@ -422,7 +402,7 @@ Status: 完了。ローカル結合に加え、GitHub PagesからEC2上の本番
 - API無効時はログイン導線が非表示になり、ゲーム画面、localStorage保存、ランキング表示が動作する。
 - API有効モードを `localhost:8082` などCORS未許可のポートで開くと通信に失敗するため、API連携確認は `localhost:8081` に固定する。
 - ログインユーザー向けスコアAPIで401になった場合は、FE側のログイン状態をクリアし、共通アラートで再ログイン案内を表示する。localStorageに保存済みの記録は維持する。
-- Cookie無効時はセッションCookie方式のログイン継続が難しくなるため、最終的な主方式はJWT Bearer認証に寄せる。
+- 認証はCookieを使わず、JWT Bearer認証へ一本化する。
 - localStorageは認証方式ではなく、未ログインスコア保存とAPI失敗時fallbackとして残す。
 
 Status: 完了。ローカルと本番の両方でJWT Bearer認証を使用しています。
@@ -448,7 +428,7 @@ Status: 完了。BEのJWT発行・検証、FEのsessionStorage保存・Authoriza
 - GitHub PagesからバックエンドAPIへ接続する前提で設定を整理
 - 起動手順、環境変数、確認手順をREADME/docsにまとめる
 
-Status: 完了。`docs/phase9-production-readiness-plan.md` にAPI公開前後の切り替え方針と、localStorage/sessionStorage/Cookieの役割をまとめています。2026-08-29にDeploy workflowを本番API有効モードへ切り替えました。
+Status: 完了。API公開前後の切り替え方針とストレージの役割は非公開の運用資料で管理し、2026-08-29にDeploy workflowを本番API有効モードへ切り替えました。
 
 ### Phase 10: EC2デプロイ学習
 

@@ -178,7 +178,6 @@ const createRequestData = (
     headers.set("Authorization", authorizationHeaderValue);
   }
 
-  const credentials = isBackendApiRequest(uri) ? "include" : undefined;
   const signal = AbortSignal.timeout(REQUEST_TIMEOUT_MILLISECONDS);
 
   // HTTPメソッドがPOSTの場合のみリクエストボディを追加する。
@@ -188,7 +187,6 @@ const createRequestData = (
     headers,
     signal,
     ...(body !== undefined ? { body } : {}),
-    ...(credentials !== undefined ? { credentials } : {}),
   };
 
   return {

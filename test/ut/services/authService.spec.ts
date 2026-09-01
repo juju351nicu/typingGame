@@ -34,9 +34,10 @@ describe("authService", () => {
       "http://localhost:8091/api/users",
       expect.objectContaining({
         method: "POST",
-        credentials: "include",
       })
     );
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(options.credentials).toBeUndefined();
   });
 
   it("ログインAPIへリクエストを送信する", async () => {
@@ -67,9 +68,10 @@ describe("authService", () => {
       "http://localhost:8091/api/auth/login",
       expect.objectContaining({
         method: "POST",
-        credentials: "include",
       })
     );
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(options.credentials).toBeUndefined();
   });
 
   it("ログイン中ユーザー取得APIへリクエストを送信する", async () => {
@@ -92,9 +94,10 @@ describe("authService", () => {
       "http://localhost:8091/api/auth/me",
       expect.objectContaining({
         method: "GET",
-        credentials: "include",
       })
     );
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(options.credentials).toBeUndefined();
   });
 
   it("ログアウトAPIへリクエストを送信する", async () => {
@@ -112,8 +115,9 @@ describe("authService", () => {
       "http://localhost:8091/api/auth/logout",
       expect.objectContaining({
         method: "POST",
-        credentials: "include",
       })
     );
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(options.credentials).toBeUndefined();
   });
 });

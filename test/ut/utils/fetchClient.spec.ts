@@ -39,10 +39,11 @@ describe("fetchClient", () => {
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/scores",
       expect.objectContaining({
-        credentials: "include",
         method: "GET",
       })
     );
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(options.credentials).toBeUndefined();
   });
 
   it("GETリクエストのJSONレスポンスを取得する", async () => {
@@ -73,10 +74,11 @@ describe("fetchClient", () => {
       "/api/scores",
       expect.objectContaining({
         body: JSON.stringify({ score: 10 }),
-        credentials: "include",
         method: "POST",
       })
     );
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(options.credentials).toBeUndefined();
   });
 
   it("POSTリクエストのJSONレスポンスを取得する", async () => {
