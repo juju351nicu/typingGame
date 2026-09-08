@@ -302,5 +302,3 @@ Workflow:
 8. `npm run test`
 9. `VITE_ENABLE_BACKEND_API=true`、`VITE_API_BASE_URL=https://api.clipdev.jp` を設定して `npm run build`
 10. `dist` を GitHub Pages へデプロイ
-
-<details>
