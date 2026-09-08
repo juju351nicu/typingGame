@@ -1,17 +1,21 @@
 ---
 id: spring-boot-prod-env-settings
-title: Spring Bootのprod設定と環境変数を整理した記録
+title: Spring Bootの本番設定からDB・JWT・CORSの秘密情報を分離する
 date: 2026-07-12
 section: guide
-description: Spring BootバックエンドをEC2公開へ進める前に、application-prod.yml、DB接続、JWT secret、CORS、Swagger公開設定を環境変数で整理した流れをまとめました。
+description: Spring Bootのapplication-prod.ymlを追加し、DB接続情報、JWT secret、CORS許可Origin、Swagger公開設定をリポジトリから環境変数へ分離した方針と、その判断理由をまとめました。
 tags: Spring Boot, AWS, 環境変数
 ---
 
-# Spring Bootのprod設定と環境変数を整理した記録
+# Spring Bootの本番設定からDB・JWT・CORSの秘密情報を分離する
 
-typingGame のバックエンドを将来EC2へ公開するために、`application-prod.yml` を追加し、本番相当の設定を整理しました。
+Vue 3のフロントエンドとSpring BootのバックエンドでタイピングゲームtypingGameを開発しています。バックエンドを外部公開するにあたり、まず設定ファイルの整理から着手しました。
 
-目的は、いきなり本番運用を完成させることではなく、公開前に「GitHubに載せてはいけない値」と「環境ごとに変える値」を分けることです。
+公開してから設定を直すのでは遅い値があります。DBパスワードとJWT署名鍵です。これらがリポジトリに残ったまま公開すると、あとから消してもGit履歴には残り続けます。
+
+この記事では、`application-prod.yml` を追加して「GitHubへ載せてはいけない値」と「環境ごとに変える値」を環境変数へ分離した方針と、なぜその形にしたのかをまとめます。
+
+なお、この設定を実際にEC2上で起動し、GitHub PagesのフロントエンドからHTTPS接続するまでの手順は、別記事「GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで」で扱います。この記事は、その前段の設定設計にあたります。
 
 ## 整理した設定
 
@@ -88,14 +92,14 @@ DB_USERNAME=typing_game_app
 DB_PASSWORD=...
 ```
 
-EC2で最初に動かす場合は、まずEC2内MySQLから始め、後からRDS化やDocker化を検討する方針にしています。
+接続先を環境変数にしておくと、DBの置き場所を変えてもアプリ側のコードは変わりません。実際にこのあとEC2へ公開した際は、EC2上のDocker Composeで起動したMySQLへ `DB_URL` だけを向けて接続しています。
 
-最初から全部を本格構成にすると、どこで詰まったのか分かりにくくなるためです。
+最初から全部を本格構成にすると、どこで詰まったのか分かりにくくなるため、変わる可能性がある値を外へ出すことを優先しました。
 
-## 学んだこと
+## まとめ
 
-本番設定の整理は、コードを書く作業より地味です。
+本番設定の整理は、コードを書く作業に比べると地味です。しかしDBパスワード、JWT secret、CORS許可Origin、Swagger公開設定を曖昧にしたまま公開へ進むと、あとから戻せない状態になります。
 
-しかし、DBパスワード、JWT secret、CORS、Swagger公開設定のような値を曖昧にしたまま公開へ進むと、あとで危ない状態になります。
+今回一貫させたのは、**便利さより「危ない状態で起動しないこと」を優先する**という判断です。`JWT_SECRET` にデフォルト値を置かず、Swaggerを既定で無効にしたのは、どちらも設定漏れがそのまま公開されることを防ぐためです。
 
-今回 `application-prod.yml` を分けたことで、次のPhase10ではEC2上で `prod` profileを起動し、GitHub PagesのフロントエンドからAPI接続を確認する準備ができました。
+この `application-prod.yml` は、後にEC2上で `/etc/typing-game-backend.env` から環境変数を渡す形でそのまま利用しました。設定を先に分離しておいたため、公開時に触る必要があったのは値だけで、コードの変更は発生していません。

@@ -1,17 +1,19 @@
 ---
-id: vue-localstorage-ranking
-title: VueでlocalStorageランキング機能を作った記録
+id: vue-pinia-localstorage-persistence
+title: Vue + Piniaでゲーム結果をlocalStorageへ永続化し、API障害時も結果を残す
 date: 2026-06-08
 section: guide
-description: Vue3 + Piniaでタイピングゲームのプレイ結果をlocalStorageに保存し、ランキング表、サマリー、スコア推移を表示できるようにした実装をまとめました。
+description: Vue 3 + Piniaでタイピングゲームのプレイ結果をlocalStorageへ永続化し、バックエンドAPIが停止していてもスコアが消えないフォールバック設計にした実装をまとめました。
 tags: Vue 3, Pinia, localStorage
 ---
 
-# VueでlocalStorageランキング機能を作った記録
+# Vue + Piniaでゲーム結果をlocalStorageへ永続化し、API障害時も結果を残す
 
-typingGameでは、プレイ結果をブラウザのlocalStorageへ保存し、ランキング画面で見られるようにしています。
+Vue 3 + Piniaで作っているタイピングゲームでは、プレイ結果をブラウザのlocalStorageへ保存し、ランキング画面で表示しています。
 
-バックエンドAPIが未公開の状態でも、フロントエンドだけでゲーム体験が完結するようにしたかったためです。
+目的は2つあります。バックエンドAPIが未公開の段階でもゲーム体験を完結させること、そしてAPIを公開したあとも、バックエンドが停止したときにユーザーのプレイ結果が消えないようにすることです。
+
+この記事では、保存先をどこに置き、APIとどう併存させたのかをまとめます。
 
 ## 保存する情報
 
@@ -30,9 +32,9 @@ typingGameでは、プレイ結果をブラウザのlocalStorageへ保存し、�
 
 単純なスコア一覧ではなく、あとからランキング、サマリー、推移グラフへ展開できる形にしました。
 
-## Pinia persisted state
+## 保存はPinia storeへ寄せる
 
-保存はPinia storeに寄せています。
+画面からlocalStorageを直接触らず、保存はPinia storeに寄せています。
 
 `gameScores` storeでスコア一覧を持ち、persist設定でlocalStorageへ保存します。
 
@@ -87,8 +89,10 @@ GitHub Pages公開後には、実際に1回ゲームをプレイして確認し�
 - サマリーに最高スコアやプレイ回数が表示される
 - 分析タブに直近スコア推移が表示される
 
-## 学んだこと
+## まとめ
 
-localStorageは小さな個人開発では便利ですが、画面から直接扱いすぎると後から変更しにくくなります。
+localStorageは個人開発では手軽ですが、画面から直接扱うと後から変更しにくくなります。
 
-store、service、utilityに責務を分けておくことで、フロントエンド単体公開とバックエンドAPI連携の両方に対応しやすくなりました。
+今回の設計で効いたのは、**保存先をstoreの内部実装として隠したこと**です。画面はstoreへスコアを渡すだけなので、保存先がlocalStorageだけの状態からAPI併用へ移行しても、画面側のコードは変わっていません。
+
+そして、ログイン済みでもまずlocalStorageへ書いてからAPIへ送る順番にしたことで、バックエンドが停止していてもプレイ結果が失われない構成になりました。API連携そのものより、この順番の判断の方が効果が大きかったと感じています。

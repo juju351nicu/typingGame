@@ -1,31 +1,55 @@
 ---
 id: github-actions-pages-deploy
-title: GitHub ActionsでVueアプリをGitHub Pagesに公開した記録
+title: Vue + ViteをGitHub ActionsからGitHub Pagesへ自動デプロイする
 date: 2026-07-18
 section: guide
-description: Vue3 + Viteで作成したタイピングゲームを、GitHub ActionsからGitHub Pagesへ公開したときの構成、API無効モード、SPA fallback、確認手順をまとめました。
+description: Vue 3 + ViteのタイピングゲームをGitHub ActionsからGitHub Pagesへ自動デプロイする構成として、API接続の切り替え、SPA fallback、ブログ記事インデックスの自動生成をどう組み込んだのかをまとめました。
 tags: Vue 3, GitHub Actions, GitHub Pages
 ---
 
-# GitHub ActionsでVueアプリをGitHub Pagesに公開した記録
+# Vue + ViteをGitHub ActionsからGitHub Pagesへ自動デプロイする
 
-Vue3 + Viteで作成しているタイピングゲームを、GitHub Actionsを使ってGitHub Pagesへ公開しました。
+Vue 3 + Viteで作っているタイピングゲームを、GitHub ActionsからGitHub Pagesへ自動デプロイしています。
 
-単に `npm run build` して終わりではなく、公開環境ではバックエンドAPIを無効にすること、SPAの直接アクセスに対応すること、Markdownブログのインデックスを生成してからデプロイすることを意識しました。
+`npm run build` した成果物を置くだけなら簡単ですが、実際には次の3つを解決する必要がありました。
 
-## 背景
+- バックエンドAPIの有無で、フロントエンドの動作を切り替えたい
+- Vue RouterのURLへ直接アクセスすると、GitHub Pagesが404を返す
+- Markdownブログの記事一覧JSONを、更新し忘れずにデプロイしたい
 
-このアプリは、フロントエンドだけでも遊べるタイピングゲームとして作っています。
+この記事では、この3点をデプロイworkflowへどう組み込んだのかをまとめます。
 
-一方で、将来的にはSpring Bootのバックエンドと連携し、ログイン、スコア保存、ランキングAPIなども使える構成にする予定です。
+## 現在の構成
 
-そのため公開時には、次の条件を満たす必要がありました。
+本番の構成は次のとおりです。
 
-- GitHub Pagesでは静的ファイルとして動かす
-- バックエンドAPIが未公開でもゲームを遊べる
-- スコアはlocalStorageに保存する
-- ブログ記事一覧はMarkdownから自動生成する
-- ルーティングの直接アクセスで404にならないようにする
+```text
+GitHub Pages（Vue 3 / Vite）
+        │
+        │ HTTPS
+        ▼
+Spring Boot API（EC2）
+        │
+        ▼
+      MySQL
+
+API失敗時 / 未ログイン時
+        ↓
+  localStorage fallback
+```
+
+ただし、この構成へは一度に到達していません。GitHub Pagesへ公開した時点ではバックエンドが未公開だったため、まずAPIを使わない構成から始めています。
+
+```text
+当初の構成
+
+GitHub Pages（Vue 3 / Vite）
+        │
+        ▼
+  localStorage のみ
+```
+
+どちらの構成でも同じビルドで動くよう、API接続の有無はビルド時の環境変数で切り替える形にしました。
 
 ## GitHub Pages用のビルド設定
 
@@ -39,11 +63,11 @@ GitHub Pagesではリポジトリ名がURLの一部になります。
 https://juju351nicu.github.io/typingGame/
 ```
 
-## API無効モード
+## API接続をビルド時に切り替える
 
-フロントエンドには、バックエンドAPIを使うモードと使わないモードがあります。
+フロントエンドには、バックエンドAPIを使うモードと使わないモードがあります。切り替えはコードではなく、ビルド時の環境変数で行います。
 
-GitHub Pages公開時点ではバックエンドをまだ外部公開していないため、Actionsのビルドでは明示的にAPIを無効にしました。
+公開当初、バックエンドは外部未公開だったため、明示的にAPIを無効にしました。
 
 ```yaml
 - name: Build
@@ -52,7 +76,21 @@ GitHub Pages公開時点ではバックエンドをまだ外部公開してい�
   run: npm run build
 ```
 
-これにより、公開URLではログイン導線を出さず、スコアはlocalStorageに保存する動きになります。
+この状態では、公開URLにログイン導線は出ず、スコアはlocalStorageへ保存されます。
+
+バックエンドをEC2へ公開したあとは、同じ箇所を有効側へ切り替えました。
+
+```yaml
+- name: Build
+  env:
+    VITE_ENABLE_BACKEND_API: "true"
+    VITE_API_BASE_URL: "https://api.clipdev.jp"
+  run: npm run build
+```
+
+この切り替えだけで済むようにしておいたことが、あとから効きました。バックエンド公開時にフロントエンドのコードへ手を入れる必要がなく、変更はworkflowの環境変数だけです。
+
+なお、API有効化後も未ログイン時とAPI失敗時のlocalStorage fallbackは残しています。バックエンドが停止していてもゲーム自体は遊べる状態を維持するためです。
 
 ## SPA fallback
 
@@ -85,9 +123,9 @@ Actionsでもデプロイ前に次を実行します。
 
 これにより、記事を追加したのに一覧JSONを更新し忘れる、というミスを防げます。
 
-## 確認したこと
+## 動作確認
 
-公開後は、次の点を確認しました。
+公開後、次の点を確認しました。
 
 - 公開URLが `200 OK` で返る
 - API無効モードでログイン導線が表示されない
@@ -97,21 +135,10 @@ Actionsでもデプロイ前に次を実行します。
 - サマリー、分析、ランキング表の各タブが動く
 - `404.html` が生成されている
 
-## 学んだこと
+## まとめ
 
-GitHub Pagesへの公開は、静的サイトとしてはシンプルです。
+GitHub Pagesへの公開そのものは、静的サイトとしてはシンプルです。難しいのは、SPA、環境変数、ローカル保存、ブログ記事生成、バックエンド連携が同時に絡んだときに、公開用ビルドがどの状態なのかを曖昧にしないことでした。
 
-ただし、SPA、環境変数、ローカル保存、ブログ記事生成、将来のバックエンド連携を同時に考えると、公開用ビルドの状態を明確に分けることが大事だと感じました。
+今回もっとも効果があったのは、**API接続の有無をコードではなくビルド時の環境変数へ出したこと**です。この設計により、バックエンドが未公開の段階でフロントエンドだけ先に公開でき、後日EC2へAPIを公開したときも、変更したのはworkflowの環境変数2行だけで済みました。
 
-今回の構成にしたことで、バックエンドが未公開でもフロントエンドだけ先に公開でき、今後EC2などでAPIを公開したあとにAPI有効モードへ進める準備ができました。
-
-## 2026-08-29 追記
-
-EC2上でSpring Boot APIの独自ドメイン・HTTPS・JWT Bearer認証まで確認できたため、GitHub Pagesの本番ビルドをAPI有効モードへ切り替えました。
-
-```text
-VITE_ENABLE_BACKEND_API=true
-VITE_API_BASE_URL=https://api.clipdev.jp
-```
-
-現在は、公開画面からユーザー登録・ログインを利用できます。API停止中もゲームの基本機能を維持できるよう、未ログイン時とAPI失敗時のlocalStorage fallbackは残しています。
+EC2上のSpring Boot APIについては、別記事「GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで」で扱っています。

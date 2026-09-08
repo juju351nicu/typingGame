@@ -18,8 +18,8 @@
     "id": "docker-compose-mysql-local-db",
     "section": "guide",
     "date": "2026-08-14",
-    "title": "Docker ComposeでMySQLを固定した記録",
-    "description": "EC2学習へ進む前に、Rancher DesktopとDocker ComposeでMySQL 8.4を固定し、Spring Bootはローカル起動のままDBだけコンテナ化した流れをまとめました。",
+    "title": "Docker ComposeでMySQL 8.4の開発環境を統一する",
+    "description": "開発PCごとに違うMySQLの条件をそろえるため、Rancher DesktopとDocker ComposeでMySQL 8.4を固定し、Spring Boot本体はコンテナ化せずDBだけを分離した判断をまとめました。",
     "tags": [
       "Docker",
       "MySQL",
@@ -31,8 +31,8 @@
     "id": "npm-audit-vite-lockfile",
     "section": "guide",
     "date": "2026-08-08",
-    "title": "npm auditで見つかったVite脆弱性を更新対応した記録",
-    "description": "npm auditで検出されたVite関連の脆弱性に対して、Vite更新、テスト、GitHub Actionsのnpm ci失敗、lockfile同期まで対応した流れをまとめました。",
+    "title": "npm auditで検出したVite脆弱性とnpm ciのlockfileエラーを解消する",
+    "description": "npm auditで検出されたVite関連の脆弱性を、npm audit fix --forceを使わずに解消し、その過程で発生したGitHub Actionsのnpm ci失敗をlockfile同期で解決するまでをまとめました。",
     "tags": [
       "npm",
       "Vite",
@@ -44,8 +44,8 @@
     "id": "ai-assisted-personal-development",
     "section": "guide",
     "date": "2026-08-07",
-    "title": "AIを活用して個人開発を進めた記録",
-    "description": "ChatGPTやClaude CodeのようなAIを使いながら、個人開発を小さく進めるために意識したこと、任せたこと、最後に自分で確認したことをまとめました。",
+    "title": "AIに調査と整理を任せ、技術判断は自分で行う個人開発の進め方",
+    "description": "個人開発でChatGPTやClaude Codeを使うにあたり、AIへ任せる範囲と自分で判断する範囲をどう線引きしたのか、npm audit対応とGitHub Pages公開の2つの実例をもとにまとめました。",
     "tags": [
       "AI",
       "個人開発",
@@ -57,8 +57,8 @@
     "id": "github-actions-pages-deploy",
     "section": "guide",
     "date": "2026-07-18",
-    "title": "GitHub ActionsでVueアプリをGitHub Pagesに公開した記録",
-    "description": "Vue3 + Viteで作成したタイピングゲームを、GitHub ActionsからGitHub Pagesへ公開したときの構成、API無効モード、SPA fallback、確認手順をまとめました。",
+    "title": "Vue + ViteをGitHub ActionsからGitHub Pagesへ自動デプロイする",
+    "description": "Vue 3 + ViteのタイピングゲームをGitHub ActionsからGitHub Pagesへ自動デプロイする構成として、API接続の切り替え、SPA fallback、ブログ記事インデックスの自動生成をどう組み込んだのかをまとめました。",
     "tags": [
       "Vue 3",
       "GitHub Actions",
@@ -70,8 +70,8 @@
     "id": "spring-boot-prod-env-settings",
     "section": "guide",
     "date": "2026-07-12",
-    "title": "Spring Bootのprod設定と環境変数を整理した記録",
-    "description": "Spring BootバックエンドをEC2公開へ進める前に、application-prod.yml、DB接続、JWT secret、CORS、Swagger公開設定を環境変数で整理した流れをまとめました。",
+    "title": "Spring Bootの本番設定からDB・JWT・CORSの秘密情報を分離する",
+    "description": "Spring Bootのapplication-prod.ymlを追加し、DB接続情報、JWT secret、CORS許可Origin、Swagger公開設定をリポジトリから環境変数へ分離した方針と、その判断理由をまとめました。",
     "tags": [
       "Spring Boot",
       "AWS",
@@ -83,8 +83,8 @@
     "id": "spring-security-jwt-resource-server",
     "section": "guide",
     "date": "2026-07-11",
-    "title": "Spring SecurityをJWT Bearer認証に対応させた記録",
-    "description": "Spring Bootバックエンドで、セッションCookie方式からJWT Bearer認証へ寄せるために、Resource Server構成、JWT発行、認証情報復元を実装した流れをまとめました。",
+    "title": "Spring Security Resource ServerでJWT Bearer認証を実装する",
+    "description": "Spring BootでセッションCookie方式からJWT Bearer認証へ移行するため、OAuth2 Resource Serverを使ってJWTの発行と検証を実装した構成、認証フロー、保存先の選択理由をまとめました。",
     "tags": [
       "Spring Boot",
       "Spring Security",
@@ -119,37 +119,37 @@
     "url": "blog_store/posts/guide/nodejs-generate-posts-index.md"
   },
   {
-    "id": "vue-localstorage-ranking",
+    "id": "vue-pinia-localstorage-persistence",
     "section": "guide",
     "date": "2026-06-08",
-    "title": "VueでlocalStorageランキング機能を作った記録",
-    "description": "Vue3 + Piniaでタイピングゲームのプレイ結果をlocalStorageに保存し、ランキング表、サマリー、スコア推移を表示できるようにした実装をまとめました。",
+    "title": "Vue + Piniaでゲーム結果をlocalStorageへ永続化し、API障害時も結果を残す",
+    "description": "Vue 3 + Piniaでタイピングゲームのプレイ結果をlocalStorageへ永続化し、バックエンドAPIが停止していてもスコアが消えないフォールバック設計にした実装をまとめました。",
     "tags": [
       "Vue 3",
       "Pinia",
       "localStorage"
     ],
-    "url": "blog_store/posts/guide/vue-localstorage-ranking.md"
+    "url": "blog_store/posts/guide/vue-pinia-localstorage-persistence.md"
   },
   {
-    "id": "ghost-pdf-development-record",
+    "id": "vue-typescript-responsibility-separation",
     "section": "guide",
     "date": "2026-05-25",
-    "title": "Ghost-PDF開発で学んだ責務分離をtypingGameへ活かした記録",
-    "description": "Ghost-PDF開発で使っていたconst、rest、utilの考え方を、typingGameのTypeScript構成へ移すときに意識した責務分離と再利用の考え方をまとめました。",
+    "title": "Vue 3 / TypeScriptで画面・API通信・状態管理・Utilityの責務を分離する",
+    "description": "Vue 3 + TypeScriptのタイピングゲームで、定数、API通信、汎用ロジック、画面状態、アプリ全体の状態をそれぞれどこへ置くか決めた責務分離の方針と、その判断理由をまとめました。",
     "tags": [
       "TypeScript",
       "設計",
       "リファクタリング"
     ],
-    "url": "blog_store/posts/guide/ghost-pdf-development-record.md"
+    "url": "blog_store/posts/guide/vue-typescript-responsibility-separation.md"
   },
   {
     "id": "vue3-setinterval-multiple-start",
     "section": "guide",
     "date": "2026-05-10",
-    "title": "Vue3 の setInterval 多重起動で単語が大量生成された話",
-    "description": "Vue3 + TypeScript でタイピングゲームを作成中に発生した、setInterval の多重起動バグについて原因と解決方法をまとめました。",
+    "title": "Vue 3 の setInterval 多重起動で単語が大量生成された話",
+    "description": "Vue 3 + TypeScript のタイピングゲームで、再スタートのたびに単語の出現速度が上がっていく不具合が発生しました。原因の setInterval 多重起動と、タイマーを状態として管理する修正方法をまとめました。",
     "tags": [
       "Vue 3",
       "TypeScript",

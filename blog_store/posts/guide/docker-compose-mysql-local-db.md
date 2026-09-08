@@ -1,19 +1,19 @@
 ---
 id: docker-compose-mysql-local-db
-title: Docker ComposeでMySQLを固定した記録
+title: Docker ComposeでMySQL 8.4の開発環境を統一する
 date: 2026-08-14
 section: guide
-description: EC2学習へ進む前に、Rancher DesktopとDocker ComposeでMySQL 8.4を固定し、Spring Bootはローカル起動のままDBだけコンテナ化した流れをまとめました。
+description: 開発PCごとに違うMySQLの条件をそろえるため、Rancher DesktopとDocker ComposeでMySQL 8.4を固定し、Spring Boot本体はコンテナ化せずDBだけを分離した判断をまとめました。
 tags: Docker, MySQL, Spring Boot
 ---
 
-# Docker ComposeでMySQLを固定した記録
+# Docker ComposeでMySQL 8.4の開発環境を統一する
 
-typingGame のバックエンドをEC2へ進める前に、ローカルのMySQL環境をDocker Composeで固定しました。
+Spring BootでバックエンドAPIを開発しているtypingGameで、ローカルのMySQL環境をDocker Composeで固定しました。
 
-目的は、いきなり本番運用の形を完成させることではありません。
+目的は本番運用の形を完成させることではなく、別のPCでも同じMySQLの条件でバックエンドを動かせるようにすることです。
 
-まずは、別PCでも同じMySQLの条件でSpring Bootバックエンドを動かせるようにすることです。
+この記事では、なぜMySQLだけをコンテナ化し、Spring Boot本体はコンテナ化しなかったのかという判断を中心にまとめます。
 
 ## なぜMySQLをDocker化したか
 
@@ -168,7 +168,7 @@ Docker ComposeでMySQLを固定したことで、次の確認がしやすくな�
 
 Spring Boot 4 / Java 25へ更新した後も、Docker MySQL 8.4に接続して起動確認できました。
 
-## 学んだこと
+## まとめ
 
 Dockerは、いきなりアプリ全体をコンテナ化するためだけのものではありません。
 
@@ -180,4 +180,4 @@ DB条件をそろえる、Spring Bootはいつも通り起動する、API疎通�
 
 この順番にしたことで、Docker、MySQL、Flyway、Spring Bootのどこを確認しているのかが分かりやすくなりました。
 
-次はこの状態を足場にして、Phase10のEC2学習へ進めます。
+この構成をベースに、次はEC2上でも同じCompose定義を利用してMySQLを起動します。ローカルと本番でDBの条件をそろえられるため、EC2側で問題が起きたときにDB環境の差異を疑わずに済みます。

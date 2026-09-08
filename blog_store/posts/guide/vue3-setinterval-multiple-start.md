@@ -1,20 +1,19 @@
 ---
 id: vue3-setinterval-multiple-start
-title: Vue3 の setInterval 多重起動で単語が大量生成された話
+title: Vue 3 の setInterval 多重起動で単語が大量生成された話
 date: 2026-05-10
 section: guide
-description: Vue3 + TypeScript でタイピングゲームを作成中に発生した、setInterval の多重起動バグについて原因と解決方法をまとめました。
+description: Vue 3 + TypeScript のタイピングゲームで、再スタートのたびに単語の出現速度が上がっていく不具合が発生しました。原因の setInterval 多重起動と、タイマーを状態として管理する修正方法をまとめました。
 tags: Vue 3, TypeScript, setInterval
 ---
 
-# Vue3 の setInterval 多重起動で単語が大量生成された話
+# Vue 3 の setInterval 多重起動で単語が大量生成された話
 
 ## はじめに
 
-Vue3 + TypeScript でタイピングゲームを作成していた際に、
-`setInterval` の多重起動によるバグにハマったので、その原因と解決方法をまとめます。
+Vue 3 + TypeScript でタイピングゲームを作成していた際、ゲームを再スタートするたびに単語の出現速度が上がっていく不具合が発生しました。
 
----
+原因は `setInterval` の多重起動です。この記事では、症状から原因の特定、そしてタイマーを「状態」として管理する修正方法までをまとめます。
 
 ## やりたかったこと
 
@@ -26,12 +25,9 @@ setInterval(() => {
 }, 1000);
 ```
 
----
-
 ## 発生した問題
 
-ゲームを再スタートすると、単語の出現速度がどんどん速くなる現象が発生しました。
-再スタートするたびに単語が一斉に出現し、setInterval が重複して動作していることに気づきました。
+ゲームを再スタートすると、単語の出現速度がどんどん速くなりました。
 
 ```text
 1回目：正常
@@ -39,11 +35,11 @@ setInterval(() => {
 3回目：3倍速
 ```
 
----
+再スタートの回数に比例して速くなることから、処理そのものではなく、タイマーが重複して動いていると判断できます。
 
 ## 原因
 
-原因はシンプルで、**setInterval が複数回実行されていたこと**でした。
+`setInterval` が呼ばれるたびに、新しいタイマーが増えていました。
 
 ```ts
 // NGパターン
@@ -54,21 +50,19 @@ const startGame = () => {
 };
 ```
 
-👉 startGame を呼ぶたびに新しいタイマーが増える
-
----
+`startGame` を呼ぶたびに新しいタイマーが生成されますが、以前のタイマーは止まりません。`setInterval` は明示的に `clearInterval` するまで動き続けるためです。
 
 ## 解決方法
 
-### ① タイマー ID を保持する
+タイマーIDを保持し、開始前に必ず停止する形へ変更しました。
+
+### タイマーIDを状態として持つ
 
 ```ts
 const timerId = ref<number | null>(null);
 ```
 
----
-
-### ② setInterval の戻り値を保存
+### setInterval の戻り値を保存する
 
 ```ts
 timerId.value = setInterval(() => {
@@ -76,24 +70,26 @@ timerId.value = setInterval(() => {
 }, 1000);
 ```
 
----
+戻り値を保存しておかないと、あとから停止する手段がなくなります。
 
-### ③ clearInterval で停止
+### clearInterval で停止する
 
 ```ts
-if (timerId.value !== null) {
-  clearInterval(timerId.value);
-  timerId.value = null;
-}
+const stopGame = () => {
+  if (timerId.value !== null) {
+    clearInterval(timerId.value);
+    timerId.value = null;
+  }
+};
 ```
 
----
+停止後に `null` を代入することで、「今タイマーが動いているか」を状態として判断できます。
 
-### ④ ゲーム開始前に必ずリセット
+### ゲーム開始前に必ずリセットする
 
 ```ts
 const startGame = () => {
-  stopGame(); // 既存タイマー停止
+  stopGame(); // 既存タイマーを停止してから開始する
 
   timerId.value = setInterval(() => {
     addWord();
@@ -101,29 +97,32 @@ const startGame = () => {
 };
 ```
 
-## また、コンポーネント破棄時にも clearInterval を実行するため、onUnmounted でタイマー停止処理を呼ぶようにしました。
+開始処理の先頭で停止を呼ぶことで、何回 `startGame` を呼んでも動くタイマーは常に1つになります。
 
-## 学んだこと
+### コンポーネント破棄時にも停止する
 
-- setInterval は自動で止まらない
-- 再実行時は必ず clearInterval が必要
-- タイマーは「状態」として管理するべき
+画面を離れたときにタイマーが残ると、存在しない画面に対して処理が動き続けます。そのため `onUnmounted` でも停止を呼びます。
 
----
+```ts
+onUnmounted(() => {
+  stopGame();
+});
+```
 
-## 実務的な観点
+これにより、ゲームの再スタートと画面遷移の両方でタイマーが残らなくなります。
 
-今回の問題は、実務でもよくあるバグです。
+## 同じ形で起きる問題
 
-- 二重 API 呼び出し
-- 多重イベント登録
-- メモリリーク
+今回の不具合は、タイマーに限った話ではありません。
 
-👉 「リソースを解放する」という意識が重要
+- 二重の API 呼び出し
+- 多重のイベントリスナー登録
+- 破棄されない購読によるメモリリーク
 
----
+いずれも「開始したリソースを解放していない」という同じ構造です。
 
 ## まとめ
 
-setInterval は便利ですが、管理を誤るとバグの原因になります。
-Vue で扱う場合は、必ず「開始・停止」をセットで設計することが重要です。
+`setInterval` は自動では止まりません。再実行するなら `clearInterval` が必要で、そのためにはタイマーIDを状態として保持しておく必要があります。
+
+Vue で扱う場合は、開始と停止を必ずセットで設計し、さらに `onUnmounted` で解放するところまでを1組として考えるのが安全でした。

@@ -1,17 +1,46 @@
 ---
 id: spring-security-jwt-resource-server
-title: Spring SecurityをJWT Bearer認証に対応させた記録
+title: Spring Security Resource ServerでJWT Bearer認証を実装する
 date: 2026-07-11
 section: guide
-description: Spring Bootバックエンドで、セッションCookie方式からJWT Bearer認証へ寄せるために、Resource Server構成、JWT発行、認証情報復元を実装した流れをまとめました。
+description: Spring BootでセッションCookie方式からJWT Bearer認証へ移行するため、OAuth2 Resource Serverを使ってJWTの発行と検証を実装した構成、認証フロー、保存先の選択理由をまとめました。
 tags: Spring Boot, Spring Security, JWT
 ---
 
-# Spring SecurityをJWT Bearer認証に対応させた記録
+# Spring Security Resource ServerでJWT Bearer認証を実装する
 
-typingGame のバックエンドでは、Spring Securityを使ってログイン機能を実装しています。
+typingGameのバックエンドでは、Spring Securityでログイン機能を実装しています。
 
-最初はセッションCookie方式で動かしていましたが、GitHub Pagesで公開するフロントエンドと、将来EC2などで公開するバックエンドを接続しやすくするため、JWT Bearer認証にも対応しました。
+当初はセッションCookie方式で動かしていましたが、フロントエンドをGitHub Pages、バックエンドを別ホストで公開する構成にすると、Cookieでは考えることが増えます。そこでJWT Bearer認証へ移行しました。
+
+この記事では、Spring Security標準のOAuth2 Resource Serverを使ってJWTの発行と検証を実装した構成と、トークンの保存先をどう選んだのかをまとめます。
+
+## 認証の全体像
+
+先に、ログインからAPI呼び出しまでの流れを示します。以降の各クラスは、この図のどこかを担当しています。
+
+```text
+Vue (フロントエンド)
+  │
+  │ POST /api/auth/login
+  ▼
+Spring Boot
+  │  JwtTokenService が access token を発行
+  │  JwtEncoder で署名
+  ▼
+Vue
+  │  accessToken を sessionStorage へ保存
+  │
+  │ Authorization: Bearer <token>
+  ▼
+Spring Security
+  │  Resource Server が Bearer token を受け取る
+  │  JwtDecoder で署名と有効期限を検証
+  │  JwtLoginUserDetailsConverter でユーザー情報を復元
+  ▼
+Controller
+     認証済みユーザーとして処理
+```
 
 ## JWT化した理由
 
@@ -75,15 +104,27 @@ Authorization: Bearer xxxxx.yyyyy.zzzzz
 
 そのため、JWTは `sessionStorage` に保存し、`localStorage` はランキング履歴の保存用途に限定しました。
 
+### sessionStorageを選んだ理由とトレードオフ
+
+`localStorage` ではなく `sessionStorage` にしたのは、タブを閉じたらトークンが残らないためです。共用端末で開きっぱなしにした場合でも、セッション終了とともにトークンが消えます。
+
+ただし、これはトレードオフのある選択です。
+
+- `sessionStorage` はJavaScriptから読めるため、XSSが成立した場合はトークンを取得される
+- 本来もっとも安全なのは、JavaScriptから読めない `HttpOnly` Cookieへ入れる方式
+- 一方で `HttpOnly` Cookieを別ホスト構成で使うには、SameSite、Secure、Cookieドメイン、CSRF対策の設計が必要になる
+
+今回はFE/BE別ホスト構成の疎通と認証の仕組みを理解することを優先し、`sessionStorage` を選びました。実サービスとして運用する場合は、`HttpOnly` Cookie方式との比較と、リフレッシュトークンの扱いを検討する必要があります。
+
 ## 401レスポンス
 
 認証失敗時のレスポンスも、フロントエンドで扱いやすいように既存の `fieldErrors` 形式へ揃えました。
 
 tokenが無い場合、不正な場合、期限切れの場合でも、画面側のエラー表示を共通化しやすくするためです。
 
-## 確認したこと
+## 動作確認
 
-実装後は、次の確認を行いました。
+実装後、次の観点で確認しました。
 
 - ログイン成功時にJWTが返る
 - Bearer token付きで `/api/auth/me` を呼べる
@@ -92,10 +133,10 @@ tokenが無い場合、不正な場合、期限切れの場合でも、画面側
 - Swagger UIからBearer認証を試せる
 - ControllerテストでJWT認証APIを確認する
 
-## 学んだこと
+## まとめ
 
-Spring Securityは、Cookie認証だけの仕組みではありません。
+Spring Securityは、Cookie認証だけの仕組みではありません。認証方式をどう選び、どのAPIを保護し、フロントエンドがどこに認証情報を持つかまで含めて設計する必要があります。
 
-認証方式をどう選び、どのAPIを保護し、フロントエンドがどこに認証情報を持つかまで含めて設計する必要があります。
+今回はJWT発行と検証を独自フィルターで作らず、Spring Security標準のResource Serverへ寄せました。署名検証、有効期限、401応答といった実装を自前で書かずに済み、`JwtDecoder` のBean定義とセキュリティ設定だけで完結しています。
 
-今回JWT化したことで、GitHub PagesとEC2バックエンドをつなぐ次の段階へ進みやすくなりました。
+この構成にしたことで、フロントエンドをGitHub Pages、バックエンドをEC2に置く別ホスト構成でも、`Authorization` ヘッダーだけで認証を通せるようになりました。

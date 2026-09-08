@@ -1,13 +1,13 @@
 ---
 id: npm-audit-vite-lockfile
-title: npm auditで見つかったVite脆弱性を更新対応した記録
+title: npm auditで検出したVite脆弱性とnpm ciのlockfileエラーを解消する
 date: 2026-08-08
 section: guide
-description: npm auditで検出されたVite関連の脆弱性に対して、Vite更新、テスト、GitHub Actionsのnpm ci失敗、lockfile同期まで対応した流れをまとめました。
+description: npm auditで検出されたVite関連の脆弱性を、npm audit fix --forceを使わずに解消し、その過程で発生したGitHub Actionsのnpm ci失敗をlockfile同期で解決するまでをまとめました。
 tags: npm, Vite, GitHub Actions
 ---
 
-# npm auditで見つかったVite脆弱性を更新対応した記録
+# npm auditで検出したVite脆弱性とnpm ciのlockfileエラーを解消する
 
 フロントエンドの依存関係を確認するために `npm audit` を実行したところ、Vite関連の脆弱性が検出されました。
 
@@ -98,7 +98,7 @@ npx npm@10.9.4 ci --dry-run
 - GitHub ActionsのDeploy workflowが成功
 - 公開URLが `200 OK` で返る
 
-## 学んだこと
+## まとめ
 
 `npm audit fix --force` は便利ですが、メジャーバージョン更新が入る場合は慎重に扱う必要があります。
 
