@@ -79,6 +79,8 @@ export const useGameScoresStore = defineStore("gameScores", {
 
 これにより、バックエンドが落ちていても、ユーザーのプレイ結果がすぐ消えない構成にできます。
 
+ただし、境界は明示しておきます。現時点ではAPI保存に失敗したスコアの自動再送までは実装していません。localStorageは同期キューではなく、プレイ結果を失わないためのフォールバックとして使っています。API復旧後にサーバー側へ反映されるのは、それ以降のプレイ結果です。
+
 ## 公開URLで確認したこと
 
 GitHub Pages公開後には、実際に1回ゲームをプレイして確認しました。
@@ -96,3 +98,5 @@ localStorageは個人開発では手軽ですが、画面から直接扱うと�
 今回の設計で効いたのは、**保存先をstoreの内部実装として隠したこと**です。画面はstoreへスコアを渡すだけなので、保存先がlocalStorageだけの状態からAPI併用へ移行しても、画面側のコードは変わっていません。
 
 そして、ログイン済みでもまずlocalStorageへ書いてからAPIへ送る順番にしたことで、バックエンドが停止していてもプレイ結果が失われない構成になりました。API連携そのものより、この順番の判断の方が効果が大きかったと感じています。
+
+ログイン状態とトークンの扱いは[Spring Security Resource ServerでJWT Bearer認証を実装する](spring-security-jwt-resource-server)、APIを実際に公開した構成は[GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで](ec2-spring-boot-https-frontend-connection)にまとめています。

@@ -44,7 +44,7 @@
     "id": "ai-assisted-personal-development",
     "section": "guide",
     "date": "2026-08-07",
-    "title": "AIに調査と整理を任せ、技術判断は自分で行う個人開発の進め方",
+    "title": "AIに調査・整理・実装補助を任せ、技術判断は自分で行う個人開発の進め方",
     "description": "個人開発でChatGPTやClaude Codeを使うにあたり、AIへ任せる範囲と自分で判断する範囲をどう線引きしたのか、npm audit対応とGitHub Pages公開の2つの実例をもとにまとめました。",
     "tags": [
       "AI",
@@ -70,7 +70,7 @@
     "id": "spring-boot-prod-env-settings",
     "section": "guide",
     "date": "2026-07-12",
-    "title": "Spring Bootの本番設定からDB・JWT・CORSの秘密情報を分離する",
+    "title": "Spring Bootの本番設定を環境変数へ分離する — DB・JWT・CORS・Swagger",
     "description": "Spring Bootのapplication-prod.ymlを追加し、DB接続情報、JWT secret、CORS許可Origin、Swagger公開設定をリポジトリから環境変数へ分離した方針と、その判断理由をまとめました。",
     "tags": [
       "Spring Boot",
@@ -96,8 +96,8 @@
     "id": "vue3-vuetify-pinia-dark-mode",
     "section": "guide",
     "date": "2026-07-04",
-    "title": "Vue3 + Vuetify + Pinia でダークモードを復活させた話",
-    "description": "Vue3 + Vite + Vuetify のタイピングゲームで、以前外していたダークモードを Pinia と Vuetify theme の同期で復活させたときの設計と実装をまとめました。",
+    "title": "Vue 3 + Vuetify + Pinia でダークモードを復活させた話",
+    "description": "Vue 3 + Vite + Vuetify のタイピングゲームで、以前外していたダークモードを Pinia と Vuetify theme の同期で復活させたときの設計と実装をまとめました。",
     "tags": [
       "Vue 3",
       "Vuetify",
@@ -110,7 +110,7 @@
     "section": "guide",
     "date": "2026-06-20",
     "title": "Node.js で Markdown ブログの posts-index.json を自動生成した話",
-    "description": "Vue3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。",
+    "description": "Vue 3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。",
     "tags": [
       "Node.js",
       "Markdown",

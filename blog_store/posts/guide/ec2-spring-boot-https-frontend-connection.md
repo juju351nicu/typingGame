@@ -93,12 +93,11 @@ DNS                 Route 53
 
 バックエンドを公開する前に、ローカル環境で次を済ませました。
 
-- MySQL 8.4をDocker Composeで固定する
-- Spring Bootのprodプロファイルを用意する
-- DB接続情報、CORS、JWT secretを環境変数へ分離する
-- Spring SecurityをJWT Bearer認証へ対応させる
+- MySQL 8.4をDocker Composeで固定する → [Docker ComposeでMySQL 8.4の開発環境を統一する](docker-compose-mysql-local-db)
+- Spring Bootのprodプロファイルを用意し、DB接続情報、CORS、JWT secretを環境変数へ分離する → [Spring Bootの本番設定を環境変数へ分離する](spring-boot-prod-env-settings)
+- Spring SecurityをJWT Bearer認証へ対応させる → [Spring Security Resource ServerでJWT Bearer認証を実装する](spring-security-jwt-resource-server)
 - ユーザー別スコアAPIとランキングAPIを実装する
-- FE単体モードを残し、API障害時もlocalStorageの記録を消さない
+- FE単体モードを残し、API障害時もlocalStorageの記録を消さない → [Vue + Piniaでゲーム結果をlocalStorageへ永続化し、API障害時も結果を残す](vue-pinia-localstorage-persistence)
 
 ローカルで動かない状態のままEC2へ持ち込むと、原因がアプリ側かサーバー側か分からなくなるため、先に手元で確定させています。
 
@@ -216,7 +215,7 @@ CertbotとLet's Encryptを使い、`api.clipdev.jp`へ証明書を設定しま�
 
 ## GitHub PagesのVueをAPIへ接続する
 
-バックエンド公開後、GitHub Actionsの本番ビルド設定を切り替えました。
+バックエンド公開後、GitHub Actionsの本番ビルド設定を切り替えました。workflow全体の構成は[Vue + ViteをGitHub ActionsからGitHub Pagesへ自動デプロイする](github-actions-pages-deploy)にまとめています。
 
 ```yaml
 - name: Build
@@ -410,7 +409,7 @@ Security Groupは次のとおりです。
 
 secretを変更すると、古いsecretで署名された既存JWTは検証できなくなります。ローテーション後はSpring Bootを再起動し、再ログインで新しいトークンを取得しました。
 
-なお、現在のCompose定義ではMySQLの3306番をホストへpublishしています。Security Groupで外部公開はしていませんが、多層防御としては弱いため、改善対象として残しています。
+MySQLの3306番については、Security Groupで塞ぐだけでは不十分でした。Dockerのポート公開はiptablesへ直接ルールを入れるため、UFWで3306番を塞いでも効きません。Security Group一枚だけが頼りの状態になるため、Compose定義側で `127.0.0.1:3306:3306` を指定し、ループバック限定にしています。Spring BootがEC2ホスト上、MySQLがDocker内というこの構成なら、bindアドレスを指定するだけで済みます。詳細は[Docker ComposeでMySQL 8.4の開発環境を統一する](docker-compose-mysql-local-db)で扱っています。
 
 ## API障害時にもゲームを継続できる設計
 
@@ -433,18 +432,9 @@ secretを変更すると、古いsecretで署名された既存JWTは検証で�
 
 ## 今後の改善
 
-- MySQLの3306番のpublishをループバックへ限定する
 - ブラウザのNetworkタブでも、ユーザー別スコア保存・取得と全体ランキングの各APIが2xxで完了していることを記録する
 - 停止・再開・障害時の運用手順を文書としてまとめる
-
-3306番については、Spring BootがEC2ホスト上、MySQLがDocker内という現在の構成なら、bindアドレスを指定するだけで対応できます。
-
-```yaml
-ports:
-  - "127.0.0.1:3306:3306"
-```
-
-こうしておけば、仮にSecurity Groupの設定を誤ってもMySQLが外部へ露出しません。
+- Spring Boot本体もコンテナ化し、MySQLをホストへpublishせずコンテナ間通信だけで接続する
 
 ## まとめ
 

@@ -82,6 +82,6 @@ typingGameでも、ゲーム開始、タイマー、単語生成、入力判定�
 
 typingGameでは、定数、API通信、汎用ロジック、画面状態、アプリ全体の状態を、それぞれ別の場所へ置く方針で開発を始めました。
 
-分けたこと自体より、分けたおかげで後からの変更が局所で済んだことに効果がありました。特に `fetchClient.ts` へ通信を寄せていたため、JWT認証の追加が共通処理の変更だけで完了しています。
+分けたこと自体より、分けたおかげで後からの変更が局所で済んだことに効果がありました。特に `fetchClient.ts` へ通信を寄せていたため、JWT認証の追加が共通処理の変更だけで完了しています。そのJWT認証側の実装は[Spring Security Resource ServerでJWT Bearer認証を実装する](spring-security-jwt-resource-server)にまとめています。
 
 過去のGhost-PDFを整理する場合も、`constants`、`fetchClient`、`gameUtils`、`composables` というこの分け方を持ち込む予定です。

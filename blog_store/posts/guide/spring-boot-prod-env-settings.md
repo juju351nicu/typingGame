@@ -1,13 +1,13 @@
 ---
 id: spring-boot-prod-env-settings
-title: Spring Bootの本番設定からDB・JWT・CORSの秘密情報を分離する
+title: Spring Bootの本番設定を環境変数へ分離する — DB・JWT・CORS・Swagger
 date: 2026-07-12
 section: guide
 description: Spring Bootのapplication-prod.ymlを追加し、DB接続情報、JWT secret、CORS許可Origin、Swagger公開設定をリポジトリから環境変数へ分離した方針と、その判断理由をまとめました。
 tags: Spring Boot, AWS, 環境変数
 ---
 
-# Spring Bootの本番設定からDB・JWT・CORSの秘密情報を分離する
+# Spring Bootの本番設定を環境変数へ分離する — DB・JWT・CORS・Swagger
 
 Vue 3のフロントエンドとSpring BootのバックエンドでタイピングゲームtypingGameを開発しています。バックエンドを外部公開するにあたり、まず設定ファイルの整理から着手しました。
 
@@ -15,7 +15,7 @@ Vue 3のフロントエンドとSpring Bootのバックエンドでタイピン�
 
 この記事では、`application-prod.yml` を追加して「GitHubへ載せてはいけない値」と「環境ごとに変える値」を環境変数へ分離した方針と、なぜその形にしたのかをまとめます。
 
-なお、この設定を実際にEC2上で起動し、GitHub PagesのフロントエンドからHTTPS接続するまでの手順は、別記事「GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで」で扱います。この記事は、その前段の設定設計にあたります。
+なお、この設定を実際にEC2上で起動し、GitHub PagesのフロントエンドからHTTPS接続するまでの手順は、[GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで](ec2-spring-boot-https-frontend-connection)で扱います。この記事は、その前段の設定設計にあたります。
 
 ## 整理した設定
 
@@ -52,6 +52,8 @@ app:
 これにより、環境変数を設定し忘れた場合は起動時に気づけます。
 
 便利さよりも、危ない状態で起動しないことを優先しました。
+
+このsecretを使ってJWTを発行・検証している実装は[Spring Security Resource ServerでJWT Bearer認証を実装する](spring-security-jwt-resource-server)にまとめています。
 
 ## Swaggerを本番でデフォルト無効にする
 
@@ -92,7 +94,7 @@ DB_USERNAME=typing_game_app
 DB_PASSWORD=...
 ```
 
-接続先を環境変数にしておくと、DBの置き場所を変えてもアプリ側のコードは変わりません。実際にこのあとEC2へ公開した際は、EC2上のDocker Composeで起動したMySQLへ `DB_URL` だけを向けて接続しています。
+接続先を環境変数にしておくと、DBの置き場所を変えてもアプリ側のコードは変わりません。実際にこのあとEC2へ公開した際は、EC2上のDocker Composeで起動したMySQLへ `DB_URL` だけを向けて接続しています。MySQL側の定義は[Docker ComposeでMySQL 8.4の開発環境を統一する](docker-compose-mysql-local-db)にまとめています。
 
 最初から全部を本格構成にすると、どこで詰まったのか分かりにくくなるため、変わる可能性がある値を外へ出すことを優先しました。
 

@@ -85,8 +85,9 @@ services:
   mysql:
     image: mysql:8.4
     container_name: typing-game-mysql
+    restart: unless-stopped
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     environment:
       MYSQL_DATABASE: typing_game
       MYSQL_USER: typing_game_app
@@ -99,31 +100,46 @@ services:
       - --default-time-zone=+09:00
     volumes:
       - typing-game-mysql-data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  typing-game-mysql-data:
 ```
 
 ポイントは、DB名、アプリ用ユーザー、文字コード、タイムゾーン、MySQLバージョンをリポジトリ上で見える形にしたことです。
 
 これにより、他PCでも同じ条件でMySQLを起動しやすくなります。
 
-### ポート公開はローカル開発を前提にしている
+`restart: unless-stopped` と `healthcheck` も、この定義をそのままEC2へ持ち込むために入れています。ホストを再起動してもMySQLが復帰し、Spring Bootを起動する前に `healthy` になったかどうかを `docker compose ps` で判断できます。
 
-`ports` の指定には注意点があります。
+### ポート公開はループバックへ限定する
+
+`ports` の指定は、bindアドレスを書くかどうかで意味が変わります。
 
 ```yaml
+# ホストの全インターフェースで待ち受ける
 ports:
   - "3306:3306"
-```
 
-この書き方は、ホストのすべてのネットワークインターフェースで3306番を待ち受けます。手元の開発PCであれば、DBクライアントから接続しやすいこの形で問題ありません。
-
-一方、EC2のような外部公開するホストで同じ定義を使うと、ファイアウォールの設定を誤ったときにMySQLがそのままインターネットへ露出します。公開ホストで動かす場合は、bindアドレスを明示してループバックへ限定するのが安全です。
-
-```yaml
+# ループバックだけで待ち受ける
 ports:
   - "127.0.0.1:3306:3306"
 ```
 
-この記事の構成はローカル開発が対象のため `"3306:3306"` のままにしていますが、同じCompose定義をサーバーへ持ち込むときは、ここを変える前提で読んでください。
+bindアドレスを省略した `"3306:3306"` は、ホストのすべてのネットワークインターフェースで3306番を待ち受けます。手元の開発PCなら問題になりにくいのですが、同じ定義をEC2のような外部公開するホストへ持ち込むと、ファイアウォールの設定を誤ったときにMySQLがそのままインターネットへ露出します。
+
+しかも、Dockerのポート公開はiptablesへ直接ルールを入れるため、UFWで3306番を塞いでも効きません。bindアドレスを省略したままだと、外部からの接続を止めているのはAWSのSecurity Groupだけ、という単層防御になります。
+
+そこで、`127.0.0.1` を明示してループバック限定にしました。この構成ではローカルでもEC2でもSpring Bootをホスト上で直接起動していて、接続先はどちらも `localhost:3306` です。ループバックへ限定してもローカル開発の手順は変わらず、同じCompose定義を環境ごとに書き換えずに使えます。
+
+DBクライアントから接続する場合も、同じホスト上から、あるいはSSHポートフォワード経由でつなげば影響はありません。
 
 ## 起動手順
 
@@ -200,4 +216,4 @@ DB条件をそろえる、Spring Bootはいつも通り起動する、API疎通�
 
 この順番にしたことで、Docker、MySQL、Flyway、Spring Bootのどこを確認しているのかが分かりやすくなりました。
 
-この構成をベースに、次はEC2上でも同じCompose定義を利用してMySQLを起動します。ローカルと本番でDBの条件をそろえられるため、EC2側で問題が起きたときにDB環境の差異を疑わずに済みます。
+この構成をベースに、次はEC2上でも同じCompose定義を利用してMySQLを起動します。ローカルと本番でDBの条件をそろえられるため、EC2側で問題が起きたときにDB環境の差異を疑わずに済みます。EC2側の構成と手順は[GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで](ec2-spring-boot-https-frontend-connection)にまとめています。

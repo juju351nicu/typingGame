@@ -1,13 +1,13 @@
 ---
 id: vue3-vuetify-pinia-dark-mode
-title: Vue3 + Vuetify + Pinia でダークモードを復活させた話
+title: Vue 3 + Vuetify + Pinia でダークモードを復活させた話
 date: 2026-07-04
 section: guide
-description: Vue3 + Vite + Vuetify のタイピングゲームで、以前外していたダークモードを Pinia と Vuetify theme の同期で復活させたときの設計と実装をまとめました。
+description: Vue 3 + Vite + Vuetify のタイピングゲームで、以前外していたダークモードを Pinia と Vuetify theme の同期で復活させたときの設計と実装をまとめました。
 tags: Vue 3, Vuetify, Pinia
 ---
 
-# Vue3 + Vuetify + Pinia でダークモードを復活させた話
+# Vue 3 + Vuetify + Pinia でダークモードを復活させた話
 
 ## はじめに
 
@@ -206,3 +206,5 @@ expect(configStore.getDisplayMode).toBe(true);
 ダークモードは見た目の機能ですが、実装としては状態管理、永続化、UIコンポーネント、CSS設計がつながる部分でもあります。
 
 今回のように `Pinia -> composable -> Vuetify theme -> CSS変数` の流れに整理しておくと、今後画面が増えてもテーマ対応を広げやすくなります。
+
+Piniaとcomposableの置き場所を決めた方針は[Vue 3 / TypeScriptで画面・API通信・状態管理・Utilityの責務を分離する](vue-typescript-responsibility-separation)にまとめています。

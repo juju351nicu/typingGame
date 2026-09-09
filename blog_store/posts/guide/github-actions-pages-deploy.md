@@ -49,7 +49,7 @@ GitHub Pages（Vue 3 / Vite）
   localStorage のみ
 ```
 
-どちらの構成でも同じビルドで動くよう、API接続の有無はビルド時の環境変数で切り替える形にしました。
+どちらの構成でも同じコードベース・同じworkflowを使えるよう、API接続の有無はビルド時の環境変数で切り替える形にしました。環境変数が変われば生成される成果物も変わりますが、変更するのはworkflowの値だけで、アプリケーションのコードには手を入れません。
 
 ## GitHub Pages用のビルド設定
 
@@ -121,7 +121,7 @@ Actionsでもデプロイ前に次を実行します。
   run: npm run check:posts
 ```
 
-これにより、記事を追加したのに一覧JSONを更新し忘れる、というミスを防げます。
+これにより、記事を追加したのに一覧JSONを更新し忘れる、というミスを防げます。生成スクリプト側の設計は[Node.js で Markdown ブログの posts-index.json を自動生成した話](nodejs-generate-posts-index)にまとめています。
 
 ## 動作確認
 
@@ -141,4 +141,4 @@ GitHub Pagesへの公開そのものは、静的サイトとしてはシンプ�
 
 今回もっとも効果があったのは、**API接続の有無をコードではなくビルド時の環境変数へ出したこと**です。この設計により、バックエンドが未公開の段階でフロントエンドだけ先に公開でき、後日EC2へAPIを公開したときも、変更したのはworkflowの環境変数2行だけで済みました。
 
-EC2上のSpring Boot APIについては、別記事「GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで」で扱っています。
+EC2上のSpring Boot APIについては、[GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで](ec2-spring-boot-https-frontend-connection)で扱っています。

@@ -9,13 +9,26 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 
 - Vue 3 / TypeScriptによるゲームUI、状態管理、レスポンシブ表示、Markdown技術ブログを実装しています。
 - Spring Boot / MySQLのAPIをAWS EC2へ公開し、Nginx、HTTPS、JWT Bearer認証を使ってGitHub Pagesから接続しています。
-- ロジックと主要コンポーネントを52ファイル・276テストで検証し、GitHub Actionsでformat・lint・typecheck・test・build・deployを自動化しています。
+- ロジックと主要コンポーネントを53ファイル・285テストで検証し、GitHub Actionsでformat・lint・typecheck・test・build・deployを自動化しています。
 
 ## Links
 
 - [Live Demo](https://juju351nicu.github.io/typingGame/)
 - [Frontend Repository](https://github.com/juju351nicu/typingGame)
 - [Backend Repository](https://github.com/juju351nicu/typing-game-backend)
+
+## Technical Blog
+
+アプリ内にMarkdownの技術ブログ機能を実装し、開発中の設計判断と切り分けを記事として公開しています。
+
+1. [GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで](https://juju351nicu.github.io/typingGame/guide/ec2-spring-boot-https-frontend-connection)
+   Ubuntu 24.04のEC2へSpring BootとMySQLを配置し、systemd、Nginx、Route 53、Let's Encryptでこのアプリの構成を組み立てるまで。`502 Bad Gateway` やSecurity Groupの設定漏れを、HTTPステータスからどう切り分けたのかも扱っています。
+2. [Spring Security Resource ServerでJWT Bearer認証を実装する](https://juju351nicu.github.io/typingGame/guide/spring-security-jwt-resource-server)
+   セッションCookieからJWT Bearer認証へ移行した理由と、OAuth2 Resource Serverを使った発行・検証の構成。トークンの保存先を `sessionStorage` にした判断とそのトレードオフまで書いています。
+3. [Node.js で Markdown ブログの posts-index.json を自動生成した話](https://juju351nicu.github.io/typingGame/guide/nodejs-generate-posts-index)
+   手動管理していた記事インデックスを、Markdownのfrontmatterを唯一の情報源として生成する形へ変えた設計。生成スクリプトをGitHub Actionsへ組み込み、更新漏れをCIで検知するまで扱っています。
+
+上記以外を含む全12記事は[技術ブログ一覧](https://juju351nicu.github.io/typingGame/blogPostList)から参照できます。
 
 ## Screenshots
 
@@ -81,6 +94,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - ブログ記事の日付・セクション・技術タグ表示
 - 最大幅800px、見出し余白、コードハイライト・横スクロールを整えた記事レイアウト
 - ブログ記事詳細の前後ナビゲーション
+- ブログ記事本文からの関連記事リンク（ページ再読み込みなしのSPA遷移）
 - スマホ表示対応
 - DOMPurifyによるMarkdown最終HTMLのサニタイズ
 - GitHub Actions による format / lint / typecheck / test / build / deploy 自動化
@@ -145,7 +159,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 - `prefers-reduced-motion`、アラート通知、ゲーム状態のARIA属性を追加
 - スコア初期化前に確認ダイアログを表示し、誤操作で履歴を消しにくいように改善
 - スマホ幅でもゲーム画面、リザルト画面、ランキング画面が見やすいようにレスポンシブ調整
-- Vitest で 52 ファイル / 276 テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元、Markdownサニタイズ、コンポーネント表示などを検証
+- Vitest で 53 ファイル / 285 テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元、Markdownサニタイズ、コンポーネント表示などを検証
 
 ## Component Design
 
@@ -153,6 +167,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 
 | ファイル | 役割 |
 | --- | --- |
+| `useBlogPostInternalLink.ts` | 記事本文内の関連記事リンクをSPA遷移へ振り替える判定 |
 | `useBlogPostNavigation.ts` | ブログ記事詳細の前後ナビゲーション判定 |
 | `useCompletedWordHandler.ts` | 単語一致時の破裂、スコア加算、削除後処理の制御 |
 | `useDisplayTheme.ts` | Piniaの表示設定とVuetifyテーマの同期 |

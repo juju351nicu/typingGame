@@ -102,7 +102,7 @@ Authorization: Bearer xxxxx.yyyyy.zzzzz
 
 スコア保存と認証token保存を同じ場所に寄せると、あとから責務が分かりにくくなります。
 
-そのため、JWTは `sessionStorage` に保存し、`localStorage` はランキング履歴の保存用途に限定しました。
+そのため、JWTは `sessionStorage` に保存し、`localStorage` はランキング履歴の保存用途に限定しました。localStorage側の永続化設計は[Vue + Piniaでゲーム結果をlocalStorageへ永続化し、API障害時も結果を残す](vue-pinia-localstorage-persistence)にまとめています。
 
 ### sessionStorageを選んだ理由とトレードオフ
 
@@ -111,10 +111,10 @@ Authorization: Bearer xxxxx.yyyyy.zzzzz
 ただし、これはトレードオフのある選択です。
 
 - `sessionStorage` はJavaScriptから読めるため、XSSが成立した場合はトークンを取得される
-- 本来もっとも安全なのは、JavaScriptから読めない `HttpOnly` Cookieへ入れる方式
-- 一方で `HttpOnly` Cookieを別ホスト構成で使うには、SameSite、Secure、Cookieドメイン、CSRF対策の設計が必要になる
+- XSSによるトークン読み取り自体を防ぐ選択肢としては、JavaScriptから読めない `HttpOnly` Cookieへ入れる方式がある
+- ただしCookie方式にはCSRF対策という別の設計課題があり、別ホスト構成ではSameSite、Secure、Cookieドメインの検討も必要になる
 
-今回はFE/BE別ホスト構成の疎通と認証の仕組みを理解することを優先し、`sessionStorage` を選びました。実サービスとして運用する場合は、`HttpOnly` Cookie方式との比較と、リフレッシュトークンの扱いを検討する必要があります。
+今回はFE/BE別ホスト構成の疎通と認証の仕組みを理解することを優先し、`sessionStorage` を選びました。どちらが安全かは一律に決まるものではなく、XSS対策とCSRF対策のどちらをどう作り込むかという設計の問題です。実サービスとして運用する場合は、`HttpOnly` Cookie方式との比較と、リフレッシュトークンの扱いを検討する必要があります。
 
 ## 401レスポンス
 
@@ -140,3 +140,5 @@ Spring Securityは、Cookie認証だけの仕組みではありません。認�
 今回はJWT発行と検証を独自フィルターで作らず、Spring Security標準のResource Serverへ寄せました。署名検証、有効期限、401応答といった実装を自前で書かずに済み、`JwtDecoder` のBean定義とセキュリティ設定だけで完結しています。
 
 この構成にしたことで、フロントエンドをGitHub Pages、バックエンドをEC2に置く別ホスト構成でも、`Authorization` ヘッダーだけで認証を通せるようになりました。
+
+`JWT_SECRET` を含む本番設定の分離は[Spring Bootの本番設定を環境変数へ分離する](spring-boot-prod-env-settings)、この構成を実際にEC2へ公開した手順は[GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで](ec2-spring-boot-https-frontend-connection)で扱っています。

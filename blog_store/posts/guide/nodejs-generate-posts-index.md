@@ -3,7 +3,7 @@ id: nodejs-generate-posts-index
 title: Node.js で Markdown ブログの posts-index.json を自動生成した話
 date: 2026-06-20
 section: guide
-description: Vue3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。
+description: Vue 3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。
 tags: Node.js, Markdown, TypeScript
 ---
 
@@ -11,7 +11,7 @@ tags: Node.js, Markdown, TypeScript
 
 ## はじめに
 
-このタイピングゲームには、Vue3 + Vite + TypeScript で作った技術ブログ機能があります。
+このタイピングゲームには、Vue 3 + Vite + TypeScript で作った技術ブログ機能があります。
 
 記事本文は Markdown ファイルとして管理し、記事一覧や記事詳細画面では `posts-index.json` を読み込んで、タイトル、説明文、日付、記事URLなどを表示しています。
 
@@ -68,7 +68,7 @@ id: nodejs-generate-posts-index
 title: Node.js で Markdown ブログの posts-index.json を自動生成した話
 date: 2026-06-20
 section: guide
-description: Vue3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。
+description: Vue 3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。
 ---
 
 # Node.js で Markdown ブログの posts-index.json を自動生成した話
@@ -536,3 +536,5 @@ npm run build
 さらに GitHub Actions に組み込んだことで、`posts-index.json` の更新漏れを CI/CD 側でも防げるようになりました。
 
 ローカル作業では記事を書くことに集中し、一覧生成とデプロイ前の整合性確認は自動化に任せられる形になりました。
+
+この生成処理を組み込んだデプロイworkflow全体は[Vue + ViteをGitHub ActionsからGitHub Pagesへ自動デプロイする](github-actions-pages-deploy)にまとめています。

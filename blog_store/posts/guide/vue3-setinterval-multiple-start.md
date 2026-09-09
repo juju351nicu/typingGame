@@ -126,3 +126,5 @@ onUnmounted(() => {
 `setInterval` は自動では止まりません。再実行するなら `clearInterval` が必要で、そのためにはタイマーIDを状態として保持しておく必要があります。
 
 Vue で扱う場合は、開始と停止を必ずセットで設計し、さらに `onUnmounted` で解放するところまでを1組として考えるのが安全でした。
+
+このタイマー処理を画面から切り出したcomposable設計は[Vue 3 / TypeScriptで画面・API通信・状態管理・Utilityの責務を分離する](vue-typescript-responsibility-separation)にまとめています。
