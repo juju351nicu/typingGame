@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import Loading from "@/components/Loading.vue";
 import AppStateMessage from "@/components/AppStateMessage.vue";
-import { computed, onBeforeMount, onUnmounted } from "vue";
+import {
+  computed,
+  onBeforeMount,
+  onMounted,
+  onUnmounted,
+  useTemplateRef,
+} from "vue";
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import { useBlogPostsStore } from "@/stores/blogPosts";
 import type { PostIndex } from "@/types/interfaces";
 import { getBlogPostNavigation } from "@/composables/useBlogPostNavigation";
 import { useBlogPostPageState } from "@/composables/useBlogPostPageState";
+import { createArticleLinkClickHandler } from "@/composables/useBlogPostInternalLink";
 
 /** ブログ詳細ページのルートパラメータ */
 interface Props {
@@ -76,6 +83,22 @@ const goPost = (post: PostIndex) => {
   router.push(createBlogPostRoute(post));
 };
 
+/** 記事本文を表示するテンプレート要素 */
+const markdownBody = useTemplateRef<HTMLElement>("markdown-body");
+
+/** 記事本文内の関連記事リンクをSPA遷移へ振り替えるハンドラー */
+const handleArticleLinkClick = createArticleLinkClickHandler(
+  (path: string) => {
+    router.push(path);
+  },
+  import.meta.env.BASE_URL
+);
+
+/** 記事本文内リンクのクリックを受け取れるようにする。 */
+onMounted(() => {
+  markdownBody.value?.addEventListener("click", handleArticleLinkClick);
+});
+
 /** 初期表示時に記事本文を読み込む。 */
 onBeforeMount(async () => {
   await loadPost(props.section, props.id);
@@ -87,6 +110,7 @@ onBeforeRouteUpdate(async (to) => {
 });
 
 onUnmounted(() => {
+  markdownBody.value?.removeEventListener("click", handleArticleLinkClick);
   blogPostsStore.$reset();
 });
 </script>
@@ -117,7 +141,7 @@ onUnmounted(() => {
         <p class="article-description">{{ currentPost.description }}</p>
       </header>
 
-      <div class="markdown-body" v-html="postHtml" />
+      <div ref="markdown-body" class="markdown-body" v-html="postHtml" />
 
       <nav class="post-navigation" aria-label="前後の記事">
         <v-btn
