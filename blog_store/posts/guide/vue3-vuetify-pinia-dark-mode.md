@@ -1,31 +1,19 @@
 ---
 id: vue3-vuetify-pinia-dark-mode
-title: Vue 3 + Vuetify + Pinia でダークモードを復活させた話
+title: Vue 3 + Vuetify + Piniaでダークモードを復活させた話
 date: 2026-07-04
 section: guide
-description: Vue 3 + Vite + Vuetify のタイピングゲームで、以前外していたダークモードを Pinia と Vuetify theme の同期で復活させたときの設計と実装をまとめました。
+description: Vue 3 + Vite + Vuetifyのタイピングゲームで、以前外していたダークモードを Piniaと Vuetify theme の同期で復活させたときの設計と実装をまとめました。
 tags: Vue 3, Vuetify, Pinia
 ---
 
-# Vue 3 + Vuetify + Pinia でダークモードを復活させた話
-
-## はじめに
+# Vue 3 + Vuetify + Piniaでダークモードを復活させた話
 
 このタイピングゲームには、以前ダークモードの設定がありました。
 
-ただ、当時はまだ画面全体の色設計が十分ではなく、localStorage に `isDarkMode: true` が残っていると、入力欄や一部の文字色が読みにくくなる問題がありました。
+ただ、当時はまだ画面全体の色設計が十分ではなく、localStorageに `isDarkMode: true` が残っていると、入力欄や一部の文字色が読みにくくなる問題がありました。
 
-そのため一度はライトテーマへ固定していましたが、設定画面やランキング画面の整理が進んだので、改めてダークモードを復活させました。
-
-今回やったことは大きく3つです。
-
-```text
-1. Pinia の表示設定と Vuetify theme を同期する
-2. 設定画面にライト / ダーク切替を戻す
-3. 手書きCSSの固定色をCSS変数へ寄せる
-```
-
----
+そのため一度はライトテーマへ固定していましたが、設定画面やランキング画面の整理が進んだので、改めて復活させました。作業はPiniaとVuetify themeの同期、設定画面の切替UI、手書きCSSの固定色をCSS変数へ寄せる3つに分かれます。
 
 ## 以前の問題
 
@@ -50,11 +38,9 @@ onMounted(() => {
 
 根本的には、ダークモードを無効化するのではなく、画面側の色指定をダークテーマでも成立する形に直す必要がありました。
 
----
+## Piniaと Vuetify themeを同期する
 
-## Pinia と Vuetify theme を同期する
-
-まず、Pinia の `isDarkMode` を Vuetify の theme 名へ変換する処理を用意しました。
+まず、Piniaの `isDarkMode` を Vuetifyの theme名へ変換する処理を用意しました。
 
 ```ts
 export const getDisplayThemeName = (isDarkMode: boolean): string => {
@@ -62,7 +48,7 @@ export const getDisplayThemeName = (isDarkMode: boolean): string => {
 };
 ```
 
-そして、`App.vue` 側では composable を呼び出すだけにしました。
+そして、`App.vue` 側では composableを呼び出すだけにしました。
 
 ```ts
 const configStore = useConfigStore();
@@ -71,7 +57,7 @@ const theme = useTheme();
 const { isDarkMode } = useDisplayTheme(configStore, theme);
 ```
 
-`useDisplayTheme` の中では、store の値を watch して Vuetify theme を同期します。
+`useDisplayTheme` の中では、storeの値を watch して Vuetify themeを同期します。
 
 ```ts
 watch(
@@ -85,11 +71,9 @@ watch(
 );
 ```
 
-`immediate: true` にしているので、ページを開いた直後にも localStorage から復元されたテーマが反映されます。
+`immediate: true` にしているので、ページを開いた直後にも localStorageから復元されたテーマが反映されます。
 
----
-
-## App.vue にCSS変数を置く
+## App.vueにCSS変数を置く
 
 次に、手書きCSSの色を直接 `#ffffff` や `#222222` に固定していた箇所を減らしました。
 
@@ -138,8 +122,6 @@ watch(
 
 これで、ライト/ダークの差分を画面ごとに分散させず、アプリ全体の共通トークンとして扱えるようになりました。
 
----
-
 ## 設定画面に切替UIを戻す
 
 設定画面には、表示テーマの `v-switch` を追加しました。
@@ -155,7 +137,7 @@ watch(
 />
 ```
 
-Vuetify の switch は `null` を渡す可能性があるため、保存時には boolean のときだけ反映しています。
+Vuetifyの switchは `null` を渡す可能性があるため、保存時には booleanのときだけ反映しています。
 
 ```ts
 const setDisplayMode = (isDark: boolean | null) => {
@@ -166,11 +148,9 @@ const setDisplayMode = (isDark: boolean | null) => {
 };
 ```
 
----
-
 ## テストで守るところ
 
-テーマ名の変換は純粋関数にして、Vitest で確認できるようにしました。
+テーマ名の変換は純粋関数にして、Vitestで確認できるようにしました。
 
 ```ts
 it("ダークモードのテーマ名を返す", () => {
@@ -178,7 +158,7 @@ it("ダークモードのテーマ名を返す", () => {
 });
 ```
 
-また、store 側でも `saveDisplayMode` が値を保存できることを確認しています。
+また、store側でも `saveDisplayMode` が値を保存できることを確認しています。
 
 ```ts
 configStore.saveDisplayMode(true);
@@ -195,16 +175,12 @@ expect(configStore.getDisplayMode).toBe(true);
 4. 再読み込み後もテーマが維持されることを確認する
 ```
 
----
+## 振り返り
 
-## まとめ
+ダークモードを一度外した判断そのものは、間違っていなかったと思います。文字が読めない画面を出すより、ライトへ固定した方がましです。
 
-今回の対応で、以前外していたダークモードをもう一度使える状態に戻しました。
+よくなかったのは、その外し方でした。`isDarkMode` はstoreに残したまま起動時に上書きしていたので、設定は保存されているのに尊重されない状態でした。ユーザーから見ると「切り替えても戻る」だけで、なぜ戻るのかは画面から分かりません。無効にするなら設定項目ごと消すか、色を直すかのどちらかで、状態だけ残すのが一番分かりにくい形になります。
 
-ポイントは、単に Vuetify の theme を切り替えるだけではなく、手書きCSS側の固定色も一緒に見直したことです。
-
-ダークモードは見た目の機能ですが、実装としては状態管理、永続化、UIコンポーネント、CSS設計がつながる部分でもあります。
-
-今回のように `Pinia -> composable -> Vuetify theme -> CSS変数` の流れに整理しておくと、今後画面が増えてもテーマ対応を広げやすくなります。
+結果として直したのはVuetifyのtheme切替ではなく、手書きCSSに残っていた固定色でした。ダークモードは見た目の機能ですが、詰まる場所は状態管理とCSS設計の側にあります。
 
 Piniaとcomposableの置き場所を決めた方針は[Vue 3 / TypeScriptで画面・API通信・状態管理・Utilityの責務を分離する](vue-typescript-responsibility-separation)にまとめています。

@@ -77,7 +77,7 @@ DNS                 Route 53
 
 外部へ公開する入口はNginxだけに絞り、Spring Bootはループバックでしか待ち受けません。8091番をSecurity Groupで閉じるだけでなく、そもそもEC2の外側からは到達できない状態にしています。境界を2枚重ねておくと、片方の設定を間違えても即座に露出しません。
 
-HTTPS化とRoute 53はセットです。GitHub PagesがHTTPSで配信されるため、APIがHTTPのままではブラウザが混在コンテンツとして止めます。証明書はIPアドレスに対しては発行できないので、先に名前を用意する必要がありました。
+HTTPS化とRoute 53はセットです。GitHub PagesがHTTPSで配信されるため、APIがHTTPのままではブラウザが混在コンテンツとして止めます。APIの公開先には `api.clipdev.jp` を使いたかったので、Route 53でドメイン名を用意し、その名前に対してLet's Encryptの証明書を設定しています。
 
 常駐化にsystemdを使ったのは、SSH切断とEC2再起動を同じ仕組みで扱えるからです。`nohup` で逃げると、再起動後の復旧を別に考えることになります。
 
@@ -196,7 +196,7 @@ GitHub PagesはHTTPSで配信されるため、APIがHTTPのままだとブラ�
 
 CertbotとLet's Encryptを使い、`api.clipdev.jp`へ証明書を設定しました。
 
-`https://api.clipdev.jp` へ接続できること、HTTPアクセスが301でHTTPSへ寄ることを確認したあと、`certbot renew --dry-run` まで実行しています。証明書は取得できた時点でいったん動いてしまうので、3か月後に更新が失敗する構成でも当日は気づけません。`--dry-run` は、そのズレを先に見つけるための確認です。
+`https://api.clipdev.jp` へ接続できること、HTTPアクセスが301でHTTPSへ寄ることを確認したあと、`certbot renew --dry-run` まで実行しています。証明書は取得できた時点でいったん動いてしまうので、後日の自動更新で失敗する構成でも、取得した当日には気づけません。`--dry-run` は、そのズレを先に見つけるための確認です。
 
 なお、この段階でHTTPS接続がタイムアウトしました。原因はSecurity Groupの443番で、後述します。
 

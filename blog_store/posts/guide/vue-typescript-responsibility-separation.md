@@ -13,8 +13,6 @@ Vue 3 + TypeScriptで開発しているタイピングゲームでは、コー�
 
 画面コンポーネントは、放っておくと肥大化します。`fetch` の呼び出し、定数、スコア計算、タイマー管理、表示整形が1つのファイルに集まると、変更するときに影響範囲が読めなくなります。
 
-この記事では、typingGameで採用した責務分離の方針と、それぞれをなぜその場所へ置いたのかをまとめます。
-
 ## 決めた責務分担
 
 置き場所は次のように決めました。
@@ -52,8 +50,6 @@ Ghost-PDFには `const.js`、`rest.js`、`util.js` がありました。typingGa
 
 typingGameでは、通信処理を `fetchClient.ts` へ寄せ、JWT Bearer tokenを付ける処理もそこから扱えるようにしました。
 
-この分け方の効果は、あとからJWT認証を追加したときにはっきり出ました。画面側は `Authorization` ヘッダーの組み立てを一切意識せず、共通処理の変更だけで全APIへ認証を通せます。
-
 ## 計算・整形をgameUtilsへ寄せる
 
 ランキング整形、スコア計算、表示用ラベル変換のような処理を画面へ直接書くと、テストするためにコンポーネントごとマウントする必要が出てきます。
@@ -78,10 +74,10 @@ typingGameでも、ゲーム開始、タイマー、単語生成、入力判定�
 
 そこで、処理単位ごとにcomposableへ分けました。1つのcomposableが1つの関心事だけを持つようにすると、タイマーの不具合を追うときに見る場所が1ファイルで済みます。
 
-## まとめ
+## 振り返り
 
-typingGameでは、定数、API通信、汎用ロジック、画面状態、アプリ全体の状態を、それぞれ別の場所へ置く方針で開発を始めました。
+分け方を決めた時点では、これが効いているのか分かりませんでした。ファイル数は増え、1つの画面を追うのに何か所も開くことになるので、書いている間はむしろ面倒です。
 
-分けたこと自体より、分けたおかげで後からの変更が局所で済んだことに効果がありました。特に `fetchClient.ts` へ通信を寄せていたため、JWT認証の追加が共通処理の変更だけで完了しています。そのJWT認証側の実装は[Spring Security Resource ServerでJWT Bearer認証を実装する](spring-security-jwt-resource-server)にまとめています。
+答え合わせになったのは、あとからJWT認証を足したときでした。`fetchClient.ts` に通信を寄せていたので、画面側は `Authorization` ヘッダーの存在を知らないまま全APIへ認証が通りました。設計の判断は決めた直後ではなく、変更が来たときに結果が出ます。JWT認証側の実装は[Spring Security Resource ServerでJWT Bearer認証を実装する](spring-security-jwt-resource-server)にまとめています。
 
-過去のGhost-PDFを整理する場合も、`constants`、`fetchClient`、`gameUtils`、`composables` というこの分け方を持ち込む予定です。
+Ghost-PDFを整理する場合も、`constants`、`fetchClient`、`gameUtils`、`composables` というこの分け方を持ち込む予定です。

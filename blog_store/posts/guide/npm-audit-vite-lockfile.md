@@ -23,14 +23,9 @@ tags: npm, Vite, GitHub Actions
 
 ## 対応方針
 
-今回は次の方針にしました。
+`--force` を避けたのは、当時GitHub Pagesの公開作業と並行していたからです。脆弱性対応とメジャーバージョン更新が同じ変更に混ざると、公開後に何か壊れたときにどちらが原因か分からなくなります。
 
-- 既存の公開作業とは別タスクとして扱う
-- Viteと `@vitejs/plugin-vue` を更新する
-- 既存テストをすべて通す
-- GitHub Pages用のAPI無効ビルドも確認する
-- `npm audit` が0件になることを確認する
-- GitHub Actionsの `npm ci` でも通ることを確認する
+そこで公開作業とは別タスクとして切り出し、Viteと `@vitejs/plugin-vue` を明示的に更新して、既存テスト、GitHub Pages用のAPI無効ビルド、`npm audit` の0件、GitHub Actionsの `npm ci` を順に確認する形にしました。
 
 ## 更新した依存関係
 
@@ -90,20 +85,12 @@ npx npm@10.9.4 ci --dry-run
 
 ## 最終確認
 
-最終的に次の状態まで確認しました。
+`npm audit` の0件、`npm run test` とGitHub Pages用ビルドの成功、Deploy workflowの成功、そして公開URLが `200 OK` を返すところまで確認しました。
 
-- `npm audit` が0件
-- `npm run test` が成功
-- GitHub Pages用ビルドが成功
-- GitHub ActionsのDeploy workflowが成功
-- 公開URLが `200 OK` で返る
+## 振り返り
 
-## まとめ
+`npm install` と `npm ci` は同じものを入れるコマンドだと思っていたのですが、この件でそうではないと分かりました。`npm install` はlockfileに足りない依存があれば埋めて進みますが、`npm ci` はlockfileを正解として扱うので、埋めるはずだったものが無いまま止まります。ローカルで通ったことは、CIで通る根拠になりません。
 
-`npm audit fix --force` は便利ですが、メジャーバージョン更新が入る場合は慎重に扱う必要があります。
-
-また、ローカルで `npm install` や `npm audit` が通っていても、CIでは `npm ci` がlockfileを厳密に見るため、CI環境に近いnpmバージョンで再現確認することが重要だと分かりました。
-
-依存関係の更新は地味ですが、公開済みアプリを安全に保つためには大事な作業だと感じました。
+そして、npmのバージョン差でlockfileの内容が変わる以上、再現確認もCI相当のバージョンで行う必要があります。`npx npm@10.9.4` で確認したのはそのためで、ローカルのnpmで何度試しても同じ失敗は出ませんでした。
 
 なお `--force` を使わないと決めた判断の経緯は[AIに調査・整理・実装補助を任せ、技術判断は自分で行う個人開発の進め方](ai-assisted-personal-development)にもまとめています。

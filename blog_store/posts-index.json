@@ -96,8 +96,8 @@
     "id": "vue3-vuetify-pinia-dark-mode",
     "section": "guide",
     "date": "2026-07-04",
-    "title": "Vue 3 + Vuetify + Pinia でダークモードを復活させた話",
-    "description": "Vue 3 + Vite + Vuetify のタイピングゲームで、以前外していたダークモードを Pinia と Vuetify theme の同期で復活させたときの設計と実装をまとめました。",
+    "title": "Vue 3 + Vuetify + Piniaでダークモードを復活させた話",
+    "description": "Vue 3 + Vite + Vuetifyのタイピングゲームで、以前外していたダークモードを Piniaと Vuetify theme の同期で復活させたときの設計と実装をまとめました。",
     "tags": [
       "Vue 3",
       "Vuetify",
@@ -148,8 +148,8 @@
     "id": "vue3-setinterval-multiple-start",
     "section": "guide",
     "date": "2026-05-10",
-    "title": "Vue 3 の setInterval 多重起動で単語が大量生成された話",
-    "description": "Vue 3 + TypeScript のタイピングゲームで、再スタートのたびに単語の出現速度が上がっていく不具合が発生しました。原因の setInterval 多重起動と、タイマーを状態として管理する修正方法をまとめました。",
+    "title": "Vue 3のsetInterval多重起動で単語が大量生成された話",
+    "description": "Vue 3 + TypeScriptのタイピングゲームで、再スタートのたびに単語の出現速度が上がっていく不具合が発生しました。原因のsetInterval多重起動と、タイマーを状態として管理する修正方法をまとめました。",
     "tags": [
       "Vue 3",
       "TypeScript",
