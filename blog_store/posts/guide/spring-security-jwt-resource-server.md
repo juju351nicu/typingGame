@@ -9,11 +9,9 @@ tags: Spring Boot, Spring Security, JWT
 
 # Spring Security Resource ServerでJWT Bearer認証を実装する
 
-typingGameのバックエンドでは、Spring Securityでログイン機能を実装しています。
+typingGameのバックエンドは、最初セッションCookie方式のログインで動いていました。フロントエンドをGitHub Pages、バックエンドを別ホストで公開する構成に決めた時点で、これをJWT Bearer認証へ移しています。
 
-当初はセッションCookie方式で動かしていましたが、フロントエンドをGitHub Pages、バックエンドを別ホストで公開する構成にすると、Cookieでは考えることが増えます。そこでJWT Bearer認証へ移行しました。
-
-この記事では、Spring Security標準のOAuth2 Resource Serverを使ってJWTの発行と検証を実装した構成と、トークンの保存先をどう選んだのかをまとめます。
+Cookie方式でも実装はできます。ただ別オリジン構成だと、SameSite、Secure、Cookieドメイン、CORS、さらにCSRF対策までを同時に考えることになります。この段階で確かめたかったのはFE/BE間の認証経路そのものだったので、`Authorization` ヘッダーで認証情報を運ぶBearer token方式を選びました。
 
 ## 認証の全体像
 
@@ -42,26 +40,13 @@ Controller
      認証済みユーザーとして処理
 ```
 
-## JWT化した理由
+## 独自フィルターではなくResource Serverへ寄せる
 
-フロントエンドをGitHub Pages、バックエンドを別ホストで動かす場合、Cookie認証では考えることが増えます。
+JWTの検証は、Spring SecurityのOAuth2 Resource Server / JOSE系に任せています。
 
-- SameSite
-- Secure
-- HTTPS
-- Cookieドメイン
-- CORS
-- ブラウザのCookie設定
+独自フィルターを一から書く方法もあります。ただそれだと署名検証、有効期限の判定、401応答を自分で組み立てることになり、Spring Securityが標準でどこまで面倒を見てくれるのかが分からないまま進みます。まずは標準の認証フローを把握したかったので、Bean定義とセキュリティ設定だけで完結する側を選びました。
 
-これらを学ぶことも大事ですが、まずは `Authorization` ヘッダーで認証情報を送るJWT方式に寄せることで、FE/BE別ホスト構成の疎通確認をしやすくしました。
-
-## 採用した構成
-
-JWTの検証は、Spring SecurityのOAuth2 Resource Server / JOSE系に寄せました。
-
-独自フィルターを一から作る方法もありますが、今回はSpring Security標準の流れを学びたかったためです。
-
-主な構成は次の通りです。
+構成は次の6つです。
 
 - `spring-boot-starter-oauth2-resource-server` を追加
 - `JwtConfig` で `JwtEncoder` と `JwtDecoder` をBean化
@@ -72,7 +57,7 @@ JWTの検証は、Spring SecurityのOAuth2 Resource Server / JOSE系に寄せま
 
 ## ログインレスポンス
 
-ログイン成功時には、従来のユーザー情報に加えてJWTを返すようにしました。
+ログイン成功時は、従来のユーザー情報に加えてJWTを返します。
 
 ```json
 {
@@ -86,59 +71,40 @@ JWTの検証は、Spring SecurityのOAuth2 Resource Server / JOSE系に寄せま
 }
 ```
 
-フロントエンド側では、このtokenを `sessionStorage` に保存し、API呼び出し時に `Authorization` ヘッダーへ付けます。
+フロントエンドはこのtokenを `sessionStorage` へ保存し、API呼び出し時に `Authorization` ヘッダーへ付けます。
 
 ```http
 Authorization: Bearer xxxxx.yyyyy.zzzzz
 ```
 
-## localStorageとsessionStorageを分ける
+## トークンとスコアで保存先を分ける
 
-この開発で混同しないようにしたのが、保存先の役割です。
+この開発で混同しないようにしたのが、ブラウザ側の保存先の役割です。未ログインユーザーのスコアは `localStorage`、JWT access tokenは `sessionStorage` に置いています。
 
-- localStorage: 未ログインユーザーのスコア保存
-- sessionStorage: JWT access token保存
-- Cookie: セッション方式の移行期間・ローカル学習用
-
-スコア保存と認証token保存を同じ場所に寄せると、あとから責務が分かりにくくなります。
-
-そのため、JWTは `sessionStorage` に保存し、`localStorage` はランキング履歴の保存用途に限定しました。localStorage側の永続化設計は[Vue + Piniaでゲーム結果をlocalStorageへ永続化し、API障害時も結果を残す](vue-pinia-localstorage-persistence)にまとめています。
+スコア保存と認証token保存を同じ場所へ寄せると、あとから「どちらの都合で消していいのか」が判断しづらくなります。実際、スコア履歴はユーザーが明示的に初期化するまで残したい一方、tokenはセッション終了とともに消えてほしいので、寿命の要件がそもそも違います。`localStorage` 側の永続化設計は[Vue + Piniaでゲーム結果をlocalStorageへ永続化し、API障害時も結果を残す](vue-pinia-localstorage-persistence)にまとめています。
 
 ### sessionStorageを選んだ理由とトレードオフ
 
-`localStorage` ではなく `sessionStorage` にしたのは、タブを閉じたらトークンが残らないためです。共用端末で開きっぱなしにした場合でも、セッション終了とともにトークンが消えます。
+`localStorage` ではなく `sessionStorage` にしたのは、タブを閉じたらトークンが残らないためです。共用端末で開きっぱなしにしても、セッション終了とともに消えます。
 
-ただし、これはトレードオフのある選択です。
+ただし、これはトレードオフのある選択です。`sessionStorage` はJavaScriptから読めるため、XSSが成立した場合はトークンを取得されます。読み取り自体を防ぐなら、JavaScriptから読めない `HttpOnly` Cookieへ入れる方式があります。とはいえCookie方式にはCSRF対策という別の設計課題があり、別ホスト構成ではSameSite、Secure、Cookieドメインの検討も戻ってきます。
 
-- `sessionStorage` はJavaScriptから読めるため、XSSが成立した場合はトークンを取得される
-- XSSによるトークン読み取り自体を防ぐ選択肢としては、JavaScriptから読めない `HttpOnly` Cookieへ入れる方式がある
-- ただしCookie方式にはCSRF対策という別の設計課題があり、別ホスト構成ではSameSite、Secure、Cookieドメインの検討も必要になる
-
-今回はFE/BE別ホスト構成の疎通と認証の仕組みを理解することを優先し、`sessionStorage` を選びました。どちらが安全かは一律に決まるものではなく、XSS対策とCSRF対策のどちらをどう作り込むかという設計の問題です。実サービスとして運用する場合は、`HttpOnly` Cookie方式との比較と、リフレッシュトークンの扱いを検討する必要があります。
+つまりCookieを避けた理由と、Cookieの方が安全になりうる理由は同じ場所にあります。どちらが安全かは一律に決まらず、XSS対策とCSRF対策のどちらをどう作り込むかという設計の問題です。ここではFE/BE別ホスト構成の疎通と認証の仕組みを理解する方を優先しました。実サービスとして運用するなら、`HttpOnly` Cookie方式との比較と、リフレッシュトークンの扱いを検討する必要があります。
 
 ## 401レスポンス
 
-認証失敗時のレスポンスも、フロントエンドで扱いやすいように既存の `fieldErrors` 形式へ揃えました。
+認証失敗時のレスポンスは、フロントエンドで扱いやすいように既存の `fieldErrors` 形式へ揃えています。tokenが無い場合、不正な場合、期限切れの場合で形が変わらないため、画面側のエラー表示を共通化できます。
 
-tokenが無い場合、不正な場合、期限切れの場合でも、画面側のエラー表示を共通化しやすくするためです。
+なお、tokenを付けずに認証必須APIを叩けば401が返りますが、これは実装ミスではなくSpring Securityまで到達している合図です。動作確認では、この401が返ることそのものを期待値として扱っています。
 
 ## 動作確認
 
-実装後、次の観点で確認しました。
+ログイン成功時にJWTが返り、そのBearer tokenで `/api/auth/me` と `/api/me/scores` を呼べること、不正tokenでは401になることを確認しました。Swagger UIのBearer認証からも同じ経路を試せます。ControllerテストではJWT認証付きのAPIを対象にしています。
 
-- ログイン成功時にJWTが返る
-- Bearer token付きで `/api/auth/me` を呼べる
-- Bearer token付きで `/api/me/scores` を呼べる
-- 不正tokenで401が返る
-- Swagger UIからBearer認証を試せる
-- ControllerテストでJWT認証APIを確認する
+## この構成にして効いたところ
 
-## まとめ
+署名検証、有効期限、401応答を自前で書かずに済み、`JwtDecoder` のBean定義とセキュリティ設定だけで認証が通っています。
 
-Spring Securityは、Cookie認証だけの仕組みではありません。認証方式をどう選び、どのAPIを保護し、フロントエンドがどこに認証情報を持つかまで含めて設計する必要があります。
-
-今回はJWT発行と検証を独自フィルターで作らず、Spring Security標準のResource Serverへ寄せました。署名検証、有効期限、401応答といった実装を自前で書かずに済み、`JwtDecoder` のBean定義とセキュリティ設定だけで完結しています。
-
-この構成にしたことで、フロントエンドをGitHub Pages、バックエンドをEC2に置く別ホスト構成でも、`Authorization` ヘッダーだけで認証を通せるようになりました。
+もう1つ効いたのは、認証情報が `Authorization` ヘッダー1本に収まったことです。あとからフロントエンドをGitHub Pages、バックエンドをEC2に置く構成へ進めたとき、CORSの許可オリジンを設定するだけで疎通できました。Cookieのままなら、ここでSameSiteとドメインの調整が追加で必要になっていたはずです。
 
 `JWT_SECRET` を含む本番設定の分離は[Spring Bootの本番設定を環境変数へ分離する](spring-boot-prod-env-settings)、この構成を実際にEC2へ公開した手順は[GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで](ec2-spring-boot-https-frontend-connection)で扱っています。

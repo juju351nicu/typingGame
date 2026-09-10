@@ -121,7 +121,7 @@ Actionsでもデプロイ前に次を実行します。
   run: npm run check:posts
 ```
 
-これにより、記事を追加したのに一覧JSONを更新し忘れる、というミスを防げます。生成スクリプト側の設計は[Node.js で Markdown ブログの posts-index.json を自動生成した話](nodejs-generate-posts-index)にまとめています。
+これにより、記事を追加したのに一覧JSONを更新し忘れる、というミスを防げます。生成スクリプト側の設計は[Node.jsでMarkdownブログのposts-index.jsonを自動生成する](nodejs-generate-posts-index)にまとめています。
 
 ## 動作確認
 

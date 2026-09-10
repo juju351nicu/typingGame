@@ -1,104 +1,59 @@
 ---
 id: nodejs-generate-posts-index
-title: Node.js で Markdown ブログの posts-index.json を自動生成した話
+title: Node.jsでMarkdownブログのposts-index.jsonを自動生成する
 date: 2026-06-20
 section: guide
-description: Vue 3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。
+description: Vue 3 + Vite + TypeScriptの技術ブログで、Markdownのfrontmatterからposts-index.jsonを自動生成するNode.jsスクリプトを追加したときの設計と実装をまとめました。
 tags: Node.js, Markdown, TypeScript
 ---
 
-# Node.js で Markdown ブログの posts-index.json を自動生成した話
+# Node.jsでMarkdownブログのposts-index.jsonを自動生成する
 
-## はじめに
+このタイピングゲームには、Vue 3 + Vite + TypeScriptで作った技術ブログ機能があります。記事本文はMarkdownファイルで管理し、一覧画面と記事詳細画面は `posts-index.json` を読み込んでタイトル、説明文、日付、記事URLを表示しています。
 
-このタイピングゲームには、Vue 3 + Vite + TypeScript で作った技術ブログ機能があります。
+最初は `posts-index.json` を手で編集していました。記事が3、4本のうちは何の問題もありませんが、増えてくると次のあたりが崩れます。Markdownを追加したのにJSONへの追記を忘れる、`id` や `section` の打ち間違いで記事詳細へ遷移できなくなる、Markdownの実ファイル位置と `url` がズレる、日付順の並びを毎回手で直す。
 
-記事本文は Markdown ファイルとして管理し、記事一覧や記事詳細画面では `posts-index.json` を読み込んで、タイトル、説明文、日付、記事URLなどを表示しています。
+どれも気をつければ防げる類のミスですが、気をつける対象が記事本数に比例して増えていきます。そこで `posts-index.json` を手動編集するファイルから、Markdownから生成するファイルへ変えました。
 
-もともとは `posts-index.json` を手動で編集していましたが、記事が増えるにつれて次のような問題が出やすくなります。
-
-- Markdown を追加したのに `posts-index.json` への追記を忘れる
-- `id` や `section` の入力ミスで記事詳細へ遷移できなくなる
-- Markdown の実ファイル位置と `url` がズレる
-- 日付順の並び替えを毎回手で直す必要がある
-
-そこで、`posts-index.json` を手動編集するファイルではなく、Markdown から生成するファイルとして扱うようにしました。
-
----
-
-## 目標
-
-今回やりたかったことは、次の2つです。
-
-1. 新しい記事を簡単に作成できるようにする
-2. Markdown の情報から `posts-index.json` を安全に再生成できるようにする
-
-そのために、Node.js のスクリプトを2つ用意しました。
+用意したスクリプトは2つです。
 
 ```text
 scripts/create-post.mjs
 scripts/generate-posts.mjs
 ```
 
-`create-post.mjs` は新規記事作成用です。
+`create-post.mjs` が新規記事の作成、`generate-posts.mjs` が既存Markdownの走査と `posts-index.json` の再生成を担当します。
 
 ```bash
 npm run create-post
-```
-
-`generate-posts.mjs` は既存の Markdown を走査して `posts-index.json` を再生成するためのスクリプトです。
-
-```bash
 npm run generate:posts
 ```
 
-役割を分けることで、記事を追加するときも、既存記事のタイトルや説明文を修正したときも、同じ生成処理を使えるようにしました。
+役割を分けたのは、記事を追加したときと、既存記事のタイトルや説明文だけを直したときで、同じ生成処理を使いたかったからです。`create-post.mjs` の最後は `generate-posts.mjs` の呼び出しになっています。
 
----
+## Markdownにfrontmatterを持たせる
 
-## Markdown に frontmatter を追加する
-
-`posts-index.json` を生成するには、各記事に必要なメタ情報が必要です。
-
-そこで、Markdown の先頭に frontmatter を追加しました。
+`posts-index.json` の情報源をMarkdown側へ移すので、各記事にメタ情報が必要です。frontmatterを記事の先頭に置きました。
 
 ```md
 ---
 id: nodejs-generate-posts-index
-title: Node.js で Markdown ブログの posts-index.json を自動生成した話
+title: Node.jsでMarkdownブログのposts-index.jsonを自動生成する
 date: 2026-06-20
 section: guide
-description: Vue 3 + Vite + TypeScript の技術ブログで、Markdown の frontmatter から posts-index.json を自動生成する Node.js スクリプトを追加したときの設計と実装をまとめました。
+description: Vue 3 + Vite + TypeScriptの技術ブログで、Markdownのfrontmatterからposts-index.jsonを自動生成するNode.jsスクリプトを追加したときの設計と実装をまとめました。
 ---
 
-# Node.js で Markdown ブログの posts-index.json を自動生成した話
+# Node.jsでMarkdownブログのposts-index.jsonを自動生成する
 ```
 
-今回必須にした項目は以下です。
+必須にしたのは `id`、`title`、`date`、`section`、`description` の5つです。この5つが揃っていれば、記事一覧に必要な情報はMarkdown側だけで作れます。
 
-```text
-id
-title
-date
-section
-description
-```
+## 不足は警告ではなくエラーで止める
 
-この5つが揃っていれば、記事一覧に必要な情報を Markdown 側から作れます。
+ここは最初どちらにするか迷いました。不足項目を警告で流して残りの記事だけ生成する方が、1本壊れていても他が公開できるので一見親切です。
 
-逆に、どれか1つでも欠けている場合は、`posts-index.json` を生成しないようにしました。
-
----
-
-## frontmatter 不足は警告ではなくエラーにする
-
-ブログ記事のメタ情報が不足している状態で `posts-index.json` を生成してしまうと、壊れた記事一覧が公開される可能性があります。
-
-たとえば `id` が無い記事が混ざると、記事詳細ページへの遷移ができません。
-
-`title` が無い記事が混ざると、一覧画面の表示が崩れます。
-
-そのため、不足項目がある場合は警告で流さず、エラーで停止するようにしました。
+ただ、この構成では壊れた `posts-index.json` がそのままGitHub Pagesへ出ていきます。`id` が無い記事が混ざれば記事詳細へ遷移できず、`title` が無ければ一覧の表示が崩れます。生成スクリプトは間違ったデータを自動で広げる側にも回れるので、警告ではなくエラーで止める方を選びました。
 
 ```js
 const REQUIRED_FRONTMATTER_KEYS = [
@@ -124,33 +79,25 @@ const assertRequiredFrontmatter = (frontmatter, filePath) => {
 };
 ```
 
-ポイントは、壊れた状態の `posts-index.json` を作らないことです。
+## urlはfrontmatterではなく実ファイルパスから作る
 
-生成スクリプトは便利ですが、間違ったデータを自動で広げてしまうと逆に危険です。
-
----
-
-## url は実ファイルパスから生成する
-
-特に気をつけたのが `url` の作り方です。
-
-最初に考えがちな実装は、frontmatter の `section` とファイル名をつなげる方法です。
+一番考えたのが `url` の作り方です。最初に書いたのは、frontmatterの `section` とファイル名をつなげる実装でした。
 
 ```js
-url: `blog_store/posts/${frontmatter.section}/${file}`
+url: `blog_store/posts/${frontmatter.section}/${file}`;
 ```
 
-しかし、この方法だと将来ディレクトリ階層を深くしたときにズレる可能性があります。
+これは今の構成では正しく動きます。記事は `blog_store/posts/{section}/{id}.md` に置いてあるので、`section` とファイル名から実ファイルの位置を復元できます。
 
-たとえば、将来このような構成にしたくなるかもしれません。
+問題は、その前提が将来も成り立つとは限らないことです。記事が増えて、たとえばこう分けたくなったとします。
 
 ```text
 blog_store/posts/guide/vue/vue3-setinterval-multiple-start.md
 ```
 
-このとき `section` だけを使ってURLを組み立てると、実ファイルの場所と一致しなくなる可能性があります。
+`section` は `guide` のままなので、frontmatterから組み立てたURLは `blog_store/posts/guide/vue3-setinterval-multiple-start.md` を指し続けます。ファイルは存在するのにURLだけが実体からズレる、原因の分かりにくい壊れ方です。
 
-そこで、`url` は実際に見つけた Markdown ファイルのフルパスから生成するようにしました。
+そこで `url` は、実際に見つけたMarkdownファイルのパスから作るようにしました。
 
 ```js
 const getRelativeUrl = (fullPath) => {
@@ -158,27 +105,11 @@ const getRelativeUrl = (fullPath) => {
 };
 ```
 
-`path.relative()` を使うことで、実ファイル位置を基準にした相対パスを作れます。
+`path.relative()` を使えば、frontmatterの申告ではなく実ファイルの位置が情報源になります。Windowsではパス区切りが `\` になるため、GitHub Pagesとブラウザで扱えるよう `/` へ統一しています。開発はWindows、デプロイ先はLinuxなので、ここを揃えておかないとローカルだけ通る状態になります。
 
-さらに、Windows ではパス区切りが `\` になるため、GitHub Pages やブラウザで扱いやすいように `/` へ統一しています。
+## Markdownファイルは再帰的に探す
 
-```js
-.replace(/\\/g, "/")
-```
-
-これで `posts-index.json` の `url` は、frontmatter から推測した値ではなく、実ファイル由来の値になります。
-
----
-
-## Markdown ファイルを再帰的に探す
-
-記事ファイルは現在、次のような構成です。
-
-```text
-blog_store/posts/{section}/{id}.md
-```
-
-ただし、将来さらに階層を増やしても対応できるように、Markdown ファイルは再帰的に探すようにしました。
+同じ理由で、ファイルの探索も階層を決め打ちにしていません。
 
 ```js
 const findMarkdownFiles = async (directory) => {
@@ -199,65 +130,45 @@ const findMarkdownFiles = async (directory) => {
 };
 ```
 
-この処理により、`blog_store/posts` 配下にある `.md` ファイルをまとめて取得できます。
+`blog_store/posts` 配下の `.md` をまとめて拾うので、階層を増やしても生成側は変更なしで追従します。
 
----
+## dateはISO形式に寄せる
 
-## date は ISO 形式に寄せる
-
-既存の記事では、日付が次のような形式でした。
+既存記事の日付は、こういう形式で書いていました。
 
 ```text
 May 10, 2026
 January 24, 2020
 ```
 
-表示するだけなら問題ありませんが、並び替えや機械的な処理を考えると ISO 形式の方が扱いやすいです。
-
-そこで、frontmatter 側の日付は `YYYY-MM-DD` に寄せました。
+表示するだけなら困りません。ただ並び替えを機械的にやるなら、パースの当たり外れがない形の方が安全です。frontmatter側は `YYYY-MM-DD` に統一しました。
 
 ```text
 2026-05-10
 2020-01-24
 ```
 
-生成時は `Date` に変換して、新しい日付順に並べます。
+生成時に `Date` へ変換し、新しい順に並べます。
 
 ```js
 posts.sort((a, b) => getPostTimestamp(b) - getPostTimestamp(a));
 ```
 
-これにより、記事一覧では新しい記事が上に表示されます。
+## create-postはid生成だけ手を貸す
 
----
+`create-post.mjs` では `title`、`section`、`description` を入力できます。`section` が未入力なら `guide` を使います。
 
-## create-post は記事作成、generate-posts は一覧生成
-
-新規記事を作る `create-post.mjs` では、以下を入力できるようにしました。
-
-```text
-title
-section
-description
-```
-
-`section` が未入力の場合は `guide` を使います。
-
-英数字タイトルの場合は、タイトルから `id` を自動生成します。
+英数字タイトルなら、タイトルから `id` を作ります。
 
 ```text
 Temporary Test Post
-```
-
-この場合、次のような `id` になります。
-
-```text
+  ↓
 temporary-test-post
 ```
 
-日本語タイトルのように、そのままでは slug を作れない場合は、`id` を手入力します。
+日本語タイトルはそのままではslugにできないので、`id` を手入力する形にしました。ここを機械的なローマ字変換で埋めることもできますが、`id` は記事URLの一部として公開後は変えにくい値です。自動生成に任せて後から後悔するより、書くときに決めた方が確実だと判断しました。
 
-作成される Markdown は frontmatter 付きです。
+作られるMarkdownはfrontmatter付きです。
 
 ```md
 ---
@@ -273,25 +184,11 @@ description: Temporary description
 Temporary description
 ```
 
-そして、Markdown 作成後に `generate-posts.mjs` を呼び出して、`posts-index.json` を再生成します。
-
-つまり、記事一覧の情報源は常に Markdown です。
-
----
-
 ## 画面側の変更は最小限にする
 
-今回の目的は、ブログ画面の大きなリファクタリングではありません。
+やりたかったのは `posts-index.json` の手動管理をなくすことだけなので、ブログ画面のリファクタリングはしていません。一覧・記事詳細はこれまで通り `posts-index.json` を読み込みます。
 
-あくまで `posts-index.json` の手動管理をなくすことが目的です。
-
-そのため、既存のブログ一覧・記事詳細画面は、これまで通り `posts-index.json` を読み込む構成のままにしました。
-
-変更したのは、記事詳細で Markdown を読み込むときの処理です。
-
-frontmatter は記事管理用の情報なので、本文には表示したくありません。
-
-そこで、Markdown を画面に渡す前に、先頭の frontmatter だけ取り除くようにしました。
+変えたのは記事詳細のMarkdown読み込みです。frontmatterは記事管理用の情報なので、本文には出したくありません。画面へ渡す前に先頭のfrontmatterだけ落とします。
 
 ```ts
 const removeFrontmatter = (markdown: string): string => {
@@ -299,35 +196,15 @@ const removeFrontmatter = (markdown: string): string => {
 };
 ```
 
-また、記事詳細の Markdown 取得時は、`section` と `id` からURLを組み立てるだけでなく、`posts-index.json` の `url` があればそれを優先するようにしました。
+もう1点、記事詳細のMarkdown取得では、`section` と `id` からURLを組み立てるのではなく、`posts-index.json` の `url` があればそちらを優先します。生成側で実ファイルパスからURLを作った意味が、これで画面側まで通ります。
 
-これにより、将来 Markdown の階層が深くなっても、`posts-index.json` の `url` を正しく生成できていれば画面側は追従できます。
+## GitHub Actionsでも生成する
 
----
+ここまでで、ローカルで `npm run generate:posts` を叩けば `posts-index.json` は最新になります。ただ運用としては、記事を書いたあとに毎回それを実行してコミットする必要が残ります。
 
-## GitHub Actions でも posts-index.json を自動生成する
+手動編集よりは楽ですが、忘れる余地は消えていません。Markdownだけコミットしてしまう、本文を少し直しただけのつもりで一覧用の `description` や `date` の変更を反映し忘れる、といったズレが起こります。生成できるものを人間が運ぶ限り、運び忘れは残ります。
 
-ここまでで、ローカルでは `npm run generate:posts` を実行すれば `posts-index.json` を再生成できるようになりました。
-
-ただし、運用を考えるともう1つ課題があります。
-
-Markdown 記事を追加・更新したあとに、毎回ローカルで `npm run generate:posts` を実行して `posts-index.json` をコミットする必要があります。
-
-これは手動編集よりはかなり楽ですが、それでも次のようなミスは残ります。
-
-- Markdown だけコミットして `posts-index.json` の更新を忘れる
-- 記事本文を少し直しただけだと思い、一覧用の description や date の変更を反映し忘れる
-- GitHub Pages へデプロイする前に、記事一覧と Markdown の状態がズレる
-
-そこで、GitHub Actions の deploy workflow にも `npm run generate:posts` を組み込みました。
-
----
-
-## 既存の deploy workflow に組み込む
-
-今回は、ブログインデックス生成専用の workflow を新しく作るのではなく、既存の GitHub Pages deploy workflow に組み込みました。
-
-理由は、既存の deploy workflow ではすでに次の処理を行っていたからです。
+そこでdeploy workflowにも `npm run generate:posts` を組み込みました。専用のworkflowを新しく作らなかったのは、既存のdeploy workflowが同じタイミングで動いていたからです。
 
 ```text
 npm ci
@@ -337,7 +214,7 @@ npm run build
 GitHub Pages へ deploy
 ```
 
-ここに `npm run generate:posts` を追加すれば、deploy 前に必ず記事一覧を最新化できます。
+この列に `generate:posts` を足せば、deploy前に必ず記事一覧が最新化されます。
 
 ```yaml
 - name: Checkout
@@ -349,11 +226,7 @@ GitHub Pages へ deploy
   run: npm run generate:posts
 ```
 
-その後、`blog_store/posts-index.json` に差分があるかを確認します。
-
-差分がなければ何もせず、そのまま `check:posts`、`test`、`build` へ進みます。
-
-差分があれば、`github-actions[bot]` として `posts-index.json` をコミットします。
+生成後、`blog_store/posts-index.json` に差分があるかを見ます。差分がなければ何もせず後続へ進み、あれば `github-actions[bot]` としてコミットします。
 
 ```yaml
 - name: Commit generated blog post index
@@ -370,23 +243,11 @@ GitHub Pages へ deploy
     git push origin HEAD:${{ github.ref_name }}
 ```
 
-これで、Markdown の frontmatter を直しただけでも、Actions 側で `posts-index.json` が最新化されます。
+`checkout` の `ref` とpush先の両方に `${{ github.ref_name }}` を書いています。Actions上ではHEADが分離した状態になることがあるので、どのブランチへ反映するのかを明示しておかないと、生成したファイルの行き先が読みにくくなります。
 
-`checkout` では `ref: ${{ github.ref_name }}` を指定し、push 先も `HEAD:${{ github.ref_name }}` と明示しています。
+## contents: writeが必要になる
 
-これにより、Actions上で現在のブランチが分かりにくい状態でも、意図したブランチへ `posts-index.json` の更新を反映しやすくなります。
-
----
-
-## contents: write が必要
-
-GitHub Actions からコミットして push するためには、workflow の `permissions` で `contents: write` が必要です。
-
-もともとの GitHub Pages deploy では、リポジトリ内容を読むだけなら `contents: read` で足ります。
-
-しかし今回は、Actions が `posts-index.json` をコミットします。
-
-そのため、次のように変更しました。
+Actionsからコミットしてpushするには、workflowの `permissions` に `contents: write` が必要です。GitHub Pagesへ配るだけならリポジトリを読めれば足りるので、もとは `contents: read` でした。
 
 ```yaml
 permissions:
@@ -395,28 +256,20 @@ permissions:
   id-token: write
 ```
 
-`pages: write` と `id-token: write` は GitHub Pages へのデプロイに必要です。
+`pages: write` と `id-token: write` はGitHub Pagesへのデプロイ用、`contents: write` は生成した `posts-index.json` をリポジトリへ戻すためのものです。書き込み権限を渡す変更なので、コミット対象も後述のとおり1ファイルに絞っています。
 
-`contents: write` は、生成された `posts-index.json` をリポジトリへ反映するために必要です。
+## check:postsは残す
 
----
+`generate:posts` をActionsで実行するなら、`check:posts` は要らないように見えます。実際いったん外そうとしました。
 
-## check:posts は残しておく
-
-`generate:posts` を Actions で実行するなら、`check:posts` は不要に見えるかもしれません。
-
-しかし、今回は `check:posts` も残しました。
+残したのは、`check:posts` が確認しているのが生成の有無ではなく、生成結果の安定性だからです。中身はもう一度 `posts-index.json` を生成して差分が出ないかを見るだけですが、これが通らないなら生成処理自体が実行ごとに違う結果を出していることになります。
 
 ```yaml
 - name: Check blog post index
   run: npm run check:posts
 ```
 
-理由は、`generate:posts` 後の状態が本当に安定しているかを確認するためです。
-
-`check:posts` は内部で再度 `posts-index.json` を生成し、差分が残っていないかを確認します。
-
-つまり、次のような二段構えにしています。
+結果として二段構えになっています。
 
 ```text
 1. generate:posts
@@ -429,90 +282,27 @@ permissions:
    再生成しても差分が出ないことを確認する
 ```
 
-自動生成だけで終わらせず、最後に検査を残しておくことで、壊れた状態のまま build / deploy に進みにくくしています。
+## 自動コミットの範囲を絞る
 
----
-
-## 自動コミットと deploy の流れ
-
-最終的な流れは次のようになります。
-
-```text
-Markdown 記事を追加・更新
-↓
-master に push
-↓
-GitHub Actions が npm run generate:posts を実行
-↓
-posts-index.json に差分があれば自動コミット
-↓
-npm run check:posts
-↓
-npm run test
-↓
-npm run build
-↓
-GitHub Pages へ deploy
-```
-
-ローカルで `npm run generate:posts` を実行してからコミットする運用もできます。
-
-一方で、もし忘れても GitHub Actions 側で補正できるようになりました。
-
----
-
-## 注意点
-
-自動コミットは便利ですが、何でも自動化すればよいわけではありません。
-
-今回は対象を `blog_store/posts-index.json` だけに限定しました。
+自動コミットは便利ですが、Actionsに書き込み権限を渡した状態でもあります。対象は `blog_store/posts-index.json` だけに限定しました。
 
 ```bash
 git add blog_store/posts-index.json
 ```
 
-こうしておくことで、意図しないファイルまで Actions がコミットしてしまうリスクを避けられます。
-
-また、記事本文の Markdown 自体は自動生成しません。
-
-記事本文は人が書き、記事一覧用のインデックスだけを自動生成する、という責務分担にしています。
-
----
+`git add -A` にしてしまうと、ビルド成果物や意図しない変更までActionsがコミットする余地が生まれます。記事本文のMarkdown自体も自動生成しません。本文は人が書き、一覧用のインデックスだけを生成する、という線をここで引いています。
 
 ## 確認したこと
 
-実装後、次の確認を行いました。
+`npm run generate:posts` でfrontmatterから `posts-index.json` が生成されること、`npm run create-post` の記事作成後にも再生成が走ることを確認しました。
 
-```bash
-npm run generate:posts
-```
-
-Markdown の frontmatter から `posts-index.json` が生成されることを確認しました。
-
-```bash
-npm run create-post
-```
-
-新規記事作成後に、`posts-index.json` が再生成されることを確認しました。
-
-frontmatter が不足した Markdown を一時的に追加し、エラーで停止することも確認しました。
+frontmatterを欠いたMarkdownを一時的に置いて、エラーで停止することも見ています。
 
 ```text
 frontmatter がありません: blog_store/posts/guide/frontmatter-error-check.md
 ```
 
-最後に、既存機能に影響がないことを確認しました。
-
-```bash
-npm run test
-npm run build
-```
-
-テストとビルドが通ることで、ブログ表示やゲーム側の処理に大きな影響が出ていないことを確認できました。
-
-GitHub Actions 側では、deploy workflow に `npm run generate:posts` と自動コミット処理を追加しました。
-
-ローカルでは次のコマンドで、生成処理と既存ビルドに問題がないことを確認しました。
+最後に既存機能への影響として、ローカルで生成からビルドまでを通しました。
 
 ```bash
 npm run generate:posts
@@ -521,20 +311,10 @@ npm run test
 npm run build
 ```
 
----
+## 振り返り
 
-## まとめ
+一番効いたのは、`url` を実ファイルパスから作る判断でした。`section` から組み立てる実装でもその時点では動いていたので、変えなくても困らなかったはずです。ただこの手のズレは、ディレクトリを分けた瞬間ではなく、その後で記事詳細を開いたときに気づきます。原因が生成スクリプトにあると分かるまでに時間を取られる壊れ方なので、動いているうちに直しておく価値がありました。
 
-今回の対応で、`posts-index.json` は手動編集するファイルではなく、Markdown から生成するファイルになりました。
-
-手動管理を減らすことで、記事追加時のミスを減らせます。
-
-また、`url` を実ファイルパスから生成するようにしたことで、将来ディレクトリ構成を変えた場合にも壊れにくくなりました。
-
-小さな Node.js スクリプトですが、ブログ機能の運用をかなり楽にしてくれる改善になりました。
-
-さらに GitHub Actions に組み込んだことで、`posts-index.json` の更新漏れを CI/CD 側でも防げるようになりました。
-
-ローカル作業では記事を書くことに集中し、一覧生成とデプロイ前の整合性確認は自動化に任せられる形になりました。
+`generate:posts` と `check:posts` の二段構えも同じ考え方です。生成を自動化した以上、生成処理そのものが疑わしくなる場面が必ず来るので、その検査を残しておきます。
 
 この生成処理を組み込んだデプロイworkflow全体は[Vue + ViteをGitHub ActionsからGitHub Pagesへ自動デプロイする](github-actions-pages-deploy)にまとめています。

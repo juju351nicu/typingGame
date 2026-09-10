@@ -25,7 +25,7 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
    Ubuntu 24.04のEC2へSpring BootとMySQLを配置し、systemd、Nginx、Route 53、Let's Encryptでこのアプリの構成を組み立てるまで。`502 Bad Gateway` やSecurity Groupの設定漏れを、HTTPステータスからどう切り分けたのかも扱っています。
 2. [Spring Security Resource ServerでJWT Bearer認証を実装する](https://juju351nicu.github.io/typingGame/guide/spring-security-jwt-resource-server)
    セッションCookieからJWT Bearer認証へ移行した理由と、OAuth2 Resource Serverを使った発行・検証の構成。トークンの保存先を `sessionStorage` にした判断とそのトレードオフまで書いています。
-3. [Node.js で Markdown ブログの posts-index.json を自動生成した話](https://juju351nicu.github.io/typingGame/guide/nodejs-generate-posts-index)
+3. [Node.jsでMarkdownブログのposts-index.jsonを自動生成する](https://juju351nicu.github.io/typingGame/guide/nodejs-generate-posts-index)
    手動管理していた記事インデックスを、Markdownのfrontmatterを唯一の情報源として生成する形へ変えた設計。生成スクリプトをGitHub Actionsへ組み込み、更新漏れをCIで検知するまで扱っています。
 
 上記以外を含む全12記事は[技術ブログ一覧](https://juju351nicu.github.io/typingGame/blogPostList)から参照できます。
