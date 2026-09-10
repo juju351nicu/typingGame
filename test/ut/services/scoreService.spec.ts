@@ -1,10 +1,8 @@
 import {
   deleteGameScores,
-  fetchGameScoresApi,
   fetchMyGameScoresApi,
   fetchRankingsApi,
   saveGameScore,
-  saveGameScoreApi,
   saveMyGameScoreApi,
   toGameScore,
   toSaveGameScoreRequest,
@@ -87,31 +85,6 @@ describe("scoreService", () => {
     expect(toGameScore(response)).toEqual(newScore);
   });
 
-  it("スコア保存APIへリクエストを送信する", async () => {
-    const responseBody: GameScoreResponse = {
-      id: 1,
-      ...newScore,
-    };
-    const fetchMock = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify(responseBody), {
-        status: 201,
-        statusText: "Created",
-      })
-    );
-    vi.stubGlobal("fetch", fetchMock);
-
-    const result = await saveGameScoreApi(newScore);
-
-    expect(result).toEqual(newScore);
-    expect(fetchMock).toHaveBeenCalledWith(
-      "http://localhost:8091/api/scores",
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify(toSaveGameScoreRequest(newScore)),
-      })
-    );
-  });
-
   it("ログインユーザー別スコア保存APIへリクエストを送信する", async () => {
     const responseBody: GameScoreResponse = {
       id: 1,
@@ -133,32 +106,6 @@ describe("scoreService", () => {
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify(toSaveGameScoreRequest(newScore)),
-      })
-    );
-  });
-
-  it("スコア取得APIのレスポンスをゲームスコア一覧へ変換する", async () => {
-    const responseBody: GameScoreResponse[] = [
-      {
-        id: 1,
-        ...newScore,
-      },
-    ];
-    const fetchMock = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify(responseBody), {
-        status: 200,
-        statusText: "OK",
-      })
-    );
-    vi.stubGlobal("fetch", fetchMock);
-
-    const result = await fetchGameScoresApi();
-
-    expect(result).toEqual([newScore]);
-    expect(fetchMock).toHaveBeenCalledWith(
-      "http://localhost:8091/api/scores",
-      expect.objectContaining({
-        method: "GET",
       })
     );
   });

@@ -9,7 +9,7 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 
 - Vue 3 / TypeScriptによるゲームUI、状態管理、レスポンシブ表示、Markdown技術ブログを実装しています。
 - Spring Boot / MySQLのAPIをAWS EC2へ公開し、Nginx、HTTPS、JWT Bearer認証を使ってGitHub Pagesから接続しています。
-- ロジックと主要コンポーネントを53ファイル・285テストで検証し、GitHub Actionsでformat・lint・typecheck・test・build・deployを自動化しています。
+- ロジックと主要コンポーネントを53ファイル・283テストで検証し、GitHub Actionsでformat・lint・typecheck・test・build・deployを自動化しています。
 
 ## リンク
 
@@ -142,7 +142,7 @@ API停止中もゲーム、localStorage保存、ローカルランキング、�
 - Markdown技術ブログを実装し、`posts-index.json` をfrontmatterから生成してGitHub Actionsで更新漏れを検知しています。
 - Markdownから生成した最終HTMLをDOMPurifyでサニタイズし、XSS入力とリンク・画像保持をjsdom上の回帰テストで検証しています。
 - ルート単位の遅延読み込みとMarkdown rendererの分割により、初期JSとblog chunkの肥大化を軽減しています。
-- Vitestで53ファイル / 285テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元、Markdownサニタイズ、コンポーネント表示を検証しています。
+- Vitestで53ファイル / 283テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元、Markdownサニタイズ、コンポーネント表示を検証しています。
 
 ## コンポーネント設計
 

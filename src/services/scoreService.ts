@@ -7,7 +7,6 @@ import type {
 import Const from "@/constants/const";
 import Fetcher from "@/utils/fetchClient";
 
-const SCORE_API_PATH = "/api/scores";
 const MY_SCORE_API_PATH = "/api/me/scores";
 const RANKINGS_API_PATH = "/api/rankings";
 
@@ -90,21 +89,6 @@ export const toGameScore = (response: GameScoreResponse): GameScore => {
 };
 
 /**
- * スコア保存APIへゲームスコアを保存する。
- * @param score 保存するゲームスコア
- * @returns API保存後のゲームスコア
- */
-export const saveGameScoreApi = async (
-  score: GameScore
-): Promise<GameScore> => {
-  const response = await Fetcher.postJson<GameScoreResponse>(
-    createApiUrl(SCORE_API_PATH),
-    toSaveGameScoreRequest(score)
-  );
-  return toGameScore(response);
-};
-
-/**
  * ログインユーザー別スコア保存APIへゲームスコアを保存する。
  * @param score 保存するゲームスコア
  * @returns API保存後のゲームスコア
@@ -117,17 +101,6 @@ export const saveMyGameScoreApi = async (
     toSaveGameScoreRequest(score)
   );
   return toGameScore(response);
-};
-
-/**
- * スコア取得APIから保存済みスコアを取得する。
- * @returns APIから取得したゲームスコア一覧
- */
-export const fetchGameScoresApi = async (): Promise<GameScore[]> => {
-  const response = await Fetcher.getJson<GameScoreResponse[]>(
-    createApiUrl(SCORE_API_PATH)
-  );
-  return response.map(toGameScore);
 };
 
 /**

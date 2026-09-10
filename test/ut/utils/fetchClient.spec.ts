@@ -33,11 +33,11 @@ describe("fetchClient", () => {
     const fetchMock = vi.fn().mockResolvedValue(response);
     vi.stubGlobal("fetch", fetchMock);
 
-    const result = await Fetcher.getRequest("/api/scores");
+    const result = await Fetcher.getRequest("/api/me/scores");
 
     expect(result).toBe(response);
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/scores",
+      "/api/me/scores",
       expect.objectContaining({
         method: "GET",
       })
@@ -55,7 +55,7 @@ describe("fetchClient", () => {
     const fetchMock = vi.fn().mockResolvedValue(response);
     vi.stubGlobal("fetch", fetchMock);
 
-    const result = await Fetcher.getJson<typeof responseBody>("/api/scores");
+    const result = await Fetcher.getJson<typeof responseBody>("/api/me/scores");
 
     expect(result).toEqual(responseBody);
   });
@@ -68,10 +68,10 @@ describe("fetchClient", () => {
     const fetchMock = vi.fn().mockResolvedValue(response);
     vi.stubGlobal("fetch", fetchMock);
 
-    await Fetcher.postRequest("/api/scores", { score: 10 });
+    await Fetcher.postRequest("/api/me/scores", { score: 10 });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/scores",
+      "/api/me/scores",
       expect.objectContaining({
         body: JSON.stringify({ score: 10 }),
         method: "POST",
@@ -90,9 +90,12 @@ describe("fetchClient", () => {
     const fetchMock = vi.fn().mockResolvedValue(response);
     vi.stubGlobal("fetch", fetchMock);
 
-    const result = await Fetcher.postJson<typeof responseBody>("/api/scores", {
-      score: 10,
-    });
+    const result = await Fetcher.postJson<typeof responseBody>(
+      "/api/me/scores",
+      {
+        score: 10,
+      }
+    );
 
     expect(result).toEqual(responseBody);
   });
@@ -161,7 +164,9 @@ describe("fetchClient", () => {
     const fetchMock = vi.fn().mockResolvedValue(response);
     vi.stubGlobal("fetch", fetchMock);
 
-    await Fetcher.getRequest("http://localhost:8091.evil.example/api/scores");
+    await Fetcher.getRequest(
+      "http://localhost:8091.evil.example/api/me/scores"
+    );
 
     const options = fetchMock.mock.calls[0][1] as RequestInit;
     const headers = options.headers as Headers;
@@ -175,7 +180,7 @@ describe("fetchClient", () => {
     const fetchMock = vi.fn().mockResolvedValue(response);
     vi.stubGlobal("fetch", fetchMock);
 
-    await Fetcher.getRequest("/api/scores");
+    await Fetcher.getRequest("/api/me/scores");
 
     const options = fetchMock.mock.calls[0][1] as RequestInit;
     expect(options.signal).toBeInstanceOf(AbortSignal);
