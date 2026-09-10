@@ -1,9 +1,9 @@
 # Balloon Typing Game
 
-Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲームです。
+Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲームです。
 
 画面下から浮かび上がる風船型の単語を入力し、正しく打てると風船が破裂してスコアが加算されます。
-プレイ後は WPM・正確率・ミス数・ランクを確認でき、同じ条件で遊んだ前回のスコアとも比較できます。
+プレイ後はWPM・正確率・ミス数・ランクを確認でき、同じ条件で遊んだ前回のスコアとも比較できます。
 
 ## ポートフォリオ概要
 
@@ -97,7 +97,7 @@ Vue 3 + TypeScript で作成した、風船を割っていくタイピングゲ�
 3. 画面に表示される風船の単語を入力します。
 4. 正しく入力すると風船が破裂し、スコアが加算されます。
 5. 通常モードでは、風船が画面上部まで到達するとゲーム終了です。
-6. タイムアタックでは、設定した制限時間が 0 秒になるまでスコアを競います。
+6. タイムアタックでは、設定した制限時間が0秒になるまでスコアを競います。
 7. リザルト画面の `もう一度プレイ` ボタンから再挑戦できます。
 8. 仮想キーボードは設定画面から任意で表示できます。
 
@@ -137,18 +137,16 @@ API停止中もゲーム、localStorage保存、ローカルランキング、�
 - `setInterval` のタイマーIDを管理し、`stopTimers` で画面遷移・ゲーム終了時に確実に停止させて多重起動を防いでいます。
 - Spring Security Resource ServerによるJWT Bearer認証を実装し、有効期限を保存時刻から計算して期限切れトークンをAPI送信前に破棄しています。
 - APIの送信先をURLのoriginで検証し、外部originへ `Authorization` ヘッダーを送らないよう制限しています。
-- スコア保存をservice層へ分離し、ログイン時は `POST /api/me/scores`、未ログイン時はlocalStorageへ保存する構成に整理しています。
+- スコア保存をservice層へ分離し、常にlocalStorageへ保存したうえで、バックエンドAPI有効かつログイン時だけ `POST /api/me/scores` にも保存しています。
 - `fetchClient` でHTTPエラーを共通例外として扱い、API保存・取得の失敗時もlocalStorageのプレイ結果と表示を維持しています。
 - Markdown技術ブログを実装し、`posts-index.json` をfrontmatterから生成してGitHub Actionsで更新漏れを検知しています。
 - Markdownから生成した最終HTMLをDOMPurifyでサニタイズし、XSS入力とリンク・画像保持をjsdom上の回帰テストで検証しています。
 - ルート単位の遅延読み込みとMarkdown rendererの分割により、初期JSとblog chunkの肥大化を軽減しています。
-- レスポンシブ表示、ライト / ダークテーマ、ARIA属性、`prefers-reduced-motion` に対応しています。
 - Vitestで53ファイル / 285テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元、Markdownサニタイズ、コンポーネント表示を検証しています。
-- ESLint / Prettier / vue-tscをCIへ組み込み、Pull Requestとデプロイの両方で品質チェックを実行しています。
 
 ## コンポーネント設計
 
-`TypingPanel.vue` に集まっていたゲーム処理を、Composition API の composable として責務ごとに分離しています。
+`TypingPanel.vue` に集まっていたゲーム処理を、Composition APIのcomposableとして責務ごとに分離しています。
 
 | ファイル | 役割 |
 | --- | --- |
@@ -198,21 +196,13 @@ npm run build
 
 ## 技術ブログ記事の追加
 
-新しい記事を作成する場合:
-
 ```bash
 npm run create-post
-```
-
-`title`、`section`、`description`、任意の `tags`（カンマ区切り）を入力すると、frontmatter 付きの `blog_store/posts/{section}/{id}.md` が作成され、`blog_store/posts-index.json` が再生成されます。`section` を未入力にした場合は `guide` が使われます。
-
-記事インデックスを再生成する場合:
-
-```bash
 npm run generate:posts
 ```
 
-`blog_store/posts-index.json` は手動編集せず、Markdown 側の `id`、`title`、`date`、`section`、`description` を変更してから再生成します。
+`create-post` は `title`、`section`、`description`、任意の `tags` を入力するとfrontmatter付きの記事ファイルを作成します。
+`blog_store/posts-index.json` はMarkdownのfrontmatterから自動生成するため、手動編集しません。
 
 ## デプロイ
 
