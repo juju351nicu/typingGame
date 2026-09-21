@@ -1,9 +1,13 @@
 # Balloon Typing Game
 
+[![Frontend CI](https://github.com/juju351nicu/typingGame/actions/workflows/ci.yml/badge.svg)](https://github.com/juju351nicu/typingGame/actions/workflows/ci.yml)
+
 Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲームです。
 
 画面下から浮かび上がる風船型の単語を入力し、正しく打てると風船が破裂してスコアが加算されます。
 プレイ後はWPM・正確率・ミス数・ランクを確認でき、同じ条件で遊んだ前回のスコアとも比較できます。
+
+個人開発として、フロントエンド、バックエンドAPI、AWS上の公開・運用まで一通り実装しています。
 
 ## ポートフォリオ概要
 

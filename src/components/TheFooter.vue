@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CopyRightType } from "@/types/interfaces";
 const copyRight: CopyRightType = {
-  company: "CLIP Corporation.",
+  company: "CLIP",
   copyRight: "All Rights Reserved.",
   dateStr: new Date().toDateString().slice(-4),
 };
