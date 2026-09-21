@@ -111,8 +111,6 @@ export const useConfigStore = defineStore("config", {
           this.animation = Const.INTERVAL_ANIMATION.HARD;
           break;
         default:
-          // assertNever(status);
-          // break;
           throw new Error(`不明なステータスです: ${selectedGameMode}`);
       }
     },
@@ -152,7 +150,7 @@ export const useConfigStore = defineStore("config", {
       this.animation = 0;
     },
   },
-  // LocalStorageに保存する場合
+  // 選択したゲーム設定をページ再読み込み後も復元する。
   persist: {
     storage: localStorage,
   },

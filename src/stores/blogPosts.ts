@@ -55,7 +55,7 @@ export const useBlogPostsStore = defineStore("Posts", {
     },
     /**
      * 記事情報リスト件数
-     * @returns 難易度の数値
+     * @returns 記事件数
      */
     postCount(): number {
       return this.pageStatus.length;

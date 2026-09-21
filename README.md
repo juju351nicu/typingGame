@@ -7,7 +7,7 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 画面下から浮かび上がる風船型の単語を入力し、正しく打てると風船が破裂してスコアが加算されます。
 プレイ後はWPM・正確率・ミス数・ランクを確認でき、同じ条件で遊んだ前回のスコアとも比較できます。
 
-個人開発として、フロントエンド、バックエンドAPI、AWS上の公開・運用まで一通り実装しています。
+個人開発として、設計、フロントエンド・バックエンド実装、テスト、CI/CD、AWS環境構築まで一通り担当しています。
 
 ## ポートフォリオ概要
 
@@ -25,12 +25,9 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 
 アプリ内にMarkdownの技術ブログ機能を実装し、開発中の設計判断と切り分けを記事として公開しています。
 
-1. [GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで](https://juju351nicu.github.io/typingGame/guide/ec2-spring-boot-https-frontend-connection)
-   Ubuntu 24.04のEC2へSpring BootとMySQLを配置し、systemd、Nginx、Route 53、Let's Encryptでこのアプリの構成を組み立てるまで。`502 Bad Gateway` やSecurity Groupの設定漏れを、HTTPステータスからどう切り分けたのかも扱っています。
-2. [Spring Security Resource ServerでJWT Bearer認証を実装する](https://juju351nicu.github.io/typingGame/guide/spring-security-jwt-resource-server)
-   セッションCookieからJWT Bearer認証へ移行した理由と、OAuth2 Resource Serverを使った発行・検証の構成。トークンの保存先を `sessionStorage` にした判断とそのトレードオフまで書いています。
-3. [Node.jsでMarkdownブログのposts-index.jsonを自動生成する](https://juju351nicu.github.io/typingGame/guide/nodejs-generate-posts-index)
-   手動管理していた記事インデックスを、Markdownのfrontmatterを唯一の情報源として生成する形へ変えた設計。生成スクリプトをGitHub Actionsへ組み込み、更新漏れをCIで検知するまで扱っています。
+- [GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで](https://juju351nicu.github.io/typingGame/guide/ec2-spring-boot-https-frontend-connection) — EC2への配置からHTTPS化、`502 Bad Gateway`などの切り分けを記録しています。
+- [Spring Security Resource ServerでJWT Bearer認証を実装する](https://juju351nicu.github.io/typingGame/guide/spring-security-jwt-resource-server) — CookieからJWTへの移行理由と、`sessionStorage`を選んだトレードオフを整理しています。
+- [Node.jsでMarkdownブログのposts-index.jsonを自動生成する](https://juju351nicu.github.io/typingGame/guide/nodejs-generate-posts-index) — frontmatterから記事索引を生成し、CIで更新漏れを検知する構成を説明しています。
 
 上記以外を含む全12記事は[技術ブログ一覧](https://juju351nicu.github.io/typingGame/blogPostList)から参照できます。
 
@@ -96,14 +93,10 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 
 ## 遊び方
 
-1. デモURL、またはローカル環境でゲームを開きます。
-2. `ゲームをはじめる` ボタンを押してゲームを開始します。
-3. 画面に表示される風船の単語を入力します。
-4. 正しく入力すると風船が破裂し、スコアが加算されます。
-5. 通常モードでは、風船が画面上部まで到達するとゲーム終了です。
-6. タイムアタックでは、設定した制限時間が0秒になるまでスコアを競います。
-7. リザルト画面の `もう一度プレイ` ボタンから再挑戦できます。
-8. 仮想キーボードは設定画面から任意で表示できます。
+1. デモURLまたはローカル環境でゲームを開き、必要に応じて難易度、ゲームモード、仮想キーボードを設定します。
+2. `ゲームをはじめる` を押し、風船に表示された単語を入力します。正しく入力すると風船が破裂してスコアが加算されます。
+3. 通常モードは風船が画面上部へ到達すると終了し、タイムアタックは制限時間内のスコアを競います。
+4. 終了後は成績と前回との差分を確認し、そのまま再挑戦またはランキング表示へ進めます。
 
 ## 技術スタック
 
@@ -150,21 +143,13 @@ API停止中もゲーム、localStorage保存、ローカルランキング、�
 
 ## コンポーネント設計
 
-`TypingPanel.vue` に集まっていたゲーム処理を、Composition APIのcomposableとして責務ごとに分離しています。
+`TypingPanel.vue` に集まっていた処理を、状態と副作用の境界に合わせてComposition APIのcomposableへ分離しています。
 
-| ファイル | 役割 |
-| --- | --- |
-| `useTypingGameWords.ts` | 表示中単語、出題インデックス、単語追加・削除・完了判定の管理 |
-| `useTypingInput.ts` | 入力文字数、ミス数、ミス状態の算出 |
-| `useTypingWords.ts` | 単語生成、文字ごとの正誤表示、入力状態クラスの生成 |
-| `useTypingTimers.ts` | 単語追加・単語移動・破裂アニメーション用タイマーの管理 |
-| `useTypingWordPositions.ts` | 風船の移動、画面上部到達判定 |
-| `useTypingScore.ts` | 正解時のスコアと正タイプ数の加算値算出 |
-| `useTimeAttackTimer.ts` | タイムアタックモードの残り時間と時間切れ処理の管理 |
-| `useRankingPageState.ts` | ランキング画面のフィルター、集計、推移表示状態の管理 |
-| `useMarkdownRenderer.ts` | Markdown本文のHTML変換、コードハイライト、DOMPurifyによる最終HTMLのサニタイズ |
+- 出題状態と入力判定: `useTypingGameWords.ts`、`useTypingInput.ts`、`useTypingWords.ts`
+- 時間と画面上の移動: `useTypingTimers.ts`、`useTimeAttackTimer.ts`、`useTypingWordPositions.ts`
+- ページ状態とMarkdown表示: `useRankingPageState.ts`、`useMarkdownRenderer.ts`
 
-上記は代表例です。ブログ、設定、テーマ同期などを含む全composableは `src/composables` を参照してください。
+分離の考え方は[Vue 3 / TypeScriptで画面・API通信・状態管理・Utilityの責務を分離する](https://juju351nicu.github.io/typingGame/guide/vue-typescript-responsibility-separation)で説明しています。全体は `src/composables` を参照してください。
 
 ## 開発環境
 
