@@ -758,7 +758,7 @@ onUnmounted(() => {
   }
 }
 
-:global(.app-shell--dark) .game-intro {
+.app-shell--dark .game-intro {
   background:
     radial-gradient(
       circle at 18% 20%,
@@ -773,31 +773,31 @@ onUnmounted(() => {
     linear-gradient(145deg, #1d222b 0%, #182832 52%, #241d31 100%);
 }
 
-:global(.app-shell--dark) .intro-content h1 {
+.app-shell--dark .intro-content h1 {
   color: #f7f8fb;
 }
 
-:global(.app-shell--dark) .intro-eyebrow,
-:global(.app-shell--dark) .intro-content h1 span {
+.app-shell--dark .intro-eyebrow,
+.app-shell--dark .intro-content h1 span {
   color: #b9a2ff;
 }
 
-:global(.app-shell--dark) .intro-lead,
-:global(.app-shell--dark) .intro-guide,
-:global(.app-shell--dark) .intro-current-setting {
+.app-shell--dark .intro-lead,
+.app-shell--dark .intro-guide,
+.app-shell--dark .intro-current-setting {
   color: #c9ced8;
 }
 
-:global(.app-shell--dark) .intro-metrics div {
+.app-shell--dark .intro-metrics div {
   background: rgba(30, 31, 36, 0.82);
   border-color: rgba(185, 162, 255, 0.22);
 }
 
-:global(.app-shell--dark) .intro-metrics strong {
+.app-shell--dark .intro-metrics strong {
   color: #ded5ff;
 }
 
-:global(.app-shell--dark) .intro-metrics span {
+.app-shell--dark .intro-metrics span {
   color: #aeb6c4;
 }
 </style>

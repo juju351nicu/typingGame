@@ -479,13 +479,13 @@ onUnmounted(() => {
   max-width: 100%;
 }
 
-:global(.app-shell--dark) .article-tag {
+.app-shell--dark .article-tag {
   background: rgba(185, 162, 255, 0.15);
   color: #cbbcff;
 }
 
-:global(.app-shell--dark) .article-eyebrow,
-:global(.app-shell--dark) .markdown-body :deep(a) {
+.app-shell--dark .article-eyebrow,
+.app-shell--dark .markdown-body :deep(a) {
   color: #b9a2ff;
 }
 

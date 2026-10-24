@@ -333,12 +333,12 @@ const toNumberPage = (pageNumber: number) => {
   opacity: 0.7;
 }
 
-:global(.app-shell--dark) .blog-list__eyebrow,
-:global(.app-shell--dark) .blog-card__tags span {
+.app-shell--dark .blog-list__eyebrow,
+.app-shell--dark .blog-card__tags span {
   color: #b9a2ff;
 }
 
-:global(.app-shell--dark) .blog-card__tags span {
+.app-shell--dark .blog-card__tags span {
   background: rgba(185, 162, 255, 0.15);
 }
 
