@@ -48,6 +48,8 @@ defineExpose({ startTimer, stopTimer, resetTimer });
   display: block;
   font-size: 1.65rem;
   font-weight: bold;
+  /* 数字の幅をそろえ、時間が進むたびに列幅が揺れないようにする。 */
+  font-variant-numeric: tabular-nums;
   line-height: 1.2;
   white-space: nowrap;
 }

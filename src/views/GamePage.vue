@@ -346,7 +346,8 @@ onUnmounted(() => {
   border-top: 1px solid var(--app-border);
   display: grid;
   gap: 16px;
-  grid-template-columns: minmax(260px, 1fr) minmax(360px, 380px);
+  /* 状態表示は中身の幅まで広げ、経過時間などの数字が見切れないようにする。 */
+  grid-template-columns: minmax(260px, 1fr) minmax(360px, max-content);
   padding: 18px;
 }
 
@@ -405,11 +406,12 @@ onUnmounted(() => {
 .status-panel {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* 1列目は経過時間・残り時間。桁数が多いため中身の幅に合わせる。 */
+  grid-template-columns: max-content repeat(2, minmax(max-content, 1fr));
 }
 
 .status-panel--time-attack {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: max-content minmax(max-content, 1fr);
 }
 
 .keyboard-panel {
@@ -437,6 +439,8 @@ onUnmounted(() => {
   display: block;
   font-size: 1.65rem;
   font-weight: bold;
+  /* 数字の幅をそろえ、時間が進むたびに列幅が揺れないようにする。 */
+  font-variant-numeric: tabular-nums;
   line-height: 1.2;
   overflow-wrap: anywhere;
   white-space: nowrap;
@@ -698,7 +702,7 @@ onUnmounted(() => {
   }
 
   .status-panel {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: max-content minmax(max-content, 1fr);
   }
 
   .game-status-label {
