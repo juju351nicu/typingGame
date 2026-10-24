@@ -65,6 +65,19 @@ const getAlertColor = (type: Alert["type"]): NonNullable<Alert["type"]> => {
   z-index: 9999;
 }
 
+/*
+ * 左端を画面中央に置くと、幅500pxのアラートは画面幅1000px未満で右にはみ出す。
+ * その幅では画面の中央にそろえる。
+ */
+@media (max-width: 999px) {
+  .alert {
+    left: 0;
+    margin-left: auto;
+    margin-right: auto;
+    right: 0;
+  }
+}
+
 /* 共通アラートのエラーは、テーマのerror色より明るい赤で表示する。 */
 .alert--error {
   background-color: #f44336;
