@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppButtonToggle from "@/components/AppButtonToggle.vue";
 import AppStateMessage from "@/components/AppStateMessage.vue";
 import type {
   PerformanceTrendItem,
@@ -37,22 +38,13 @@ const selectedTrendMetric = computed({
       <h2>{{ trendTitle }}</h2>
       <p>現在のフィルターに一致する新しい5件を、プレイ順に表示します。</p>
     </div>
-    <v-btn-toggle
+    <AppButtonToggle
       v-model="selectedTrendMetric"
-      class="trend-metric-toggle"
-      color="primary"
-      density="comfortable"
-      mandatory
+      :items="trendMetricOptions"
       variant="outlined"
-    >
-      <v-btn
-        v-for="option in trendMetricOptions"
-        :key="option.value"
-        :value="option.value"
-      >
-        {{ option.title }}
-      </v-btn>
-    </v-btn-toggle>
+      aria-label="表示する指標"
+      class="trend-metric-toggle"
+    />
     <div v-if="performanceTrendItems.length > 0" class="trend-bars">
       <div
         v-for="item in performanceTrendItems"
@@ -100,7 +92,7 @@ const selectedTrendMetric = computed({
   margin-bottom: 18px;
 }
 
-.trend-metric-toggle :deep(.v-btn) {
+.trend-metric-toggle :deep(.app-btn-toggle__button) {
   min-width: 92px;
   text-transform: none;
 }

@@ -147,7 +147,7 @@ export const useSettingsPageState = (
   /**
    * 仮想キーボードの表示有無を保存する。
    *
-   * Vuetifyのswitchはnullを渡す可能性があるため、booleanの時だけ保存する。
+   * スイッチ部品からnullが渡る可能性があるため、booleanの時だけ保存する。
    *
    * @param isVisible 表示する場合 true
    */
@@ -161,7 +161,7 @@ export const useSettingsPageState = (
   /**
    * 表示テーマを保存する。
    *
-   * Vuetifyのswitchはnullを渡す可能性があるため、booleanの時だけ保存する。
+   * スイッチ部品からnullが渡る可能性があるため、booleanの時だけ保存する。
    *
    * @param isDark ダークモードにする場合 true
    */

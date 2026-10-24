@@ -3,14 +3,11 @@ import App from "@/App.vue";
 import { createPinia } from "pinia";
 import { createPersistedState } from "pinia-plugin-persistedstate";
 import router from "@/router";
+import ui from "@nuxt/ui/vue-plugin";
 import "@fontsource/roboto/latin-400.css";
 import "@fontsource/roboto/latin-500.css";
 import "@fontsource/roboto/latin-700.css";
-import "@mdi/font/css/materialdesignicons.css";
-// Vuetify
-import "vuetify/styles";
-import { createVuetify } from "vuetify";
+import "@/assets/styles/main.css";
 const pinia = createPinia();
 pinia.use(createPersistedState());
-const vuetify = createVuetify({});
-createApp(App).use(router).use(pinia).use(vuetify).mount("#app");
+createApp(App).use(router).use(pinia).use(ui).mount("#app");

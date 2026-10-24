@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import vuetify from "vite-plugin-vuetify";
+import ui from "@nuxt/ui/vite";
+import { uiTheme } from "./ui.theme.mjs";
 import { cp } from "node:fs/promises";
 import { fileURLToPath, URL } from "node:url";
 
@@ -34,18 +35,27 @@ export default defineConfig(({ command }) => ({
     host: true,
     port: 8081,
   },
-  plugins: [vue(), vuetify(), copyBlogStorePlugin()],
+  plugins: [
+    vue(),
+    ui({
+      // 表示テーマは設定画面のストアで管理するため、Nuxt UIのcolor-mode連携は使わない。
+      colorMode: false,
+      // コンポーネントは各ファイルで明示的にimportし、自動import用の型ファイルを生成しない。
+      components: false,
+      autoImport: false,
+      // GitHub Pagesの静的配信でもアイコンを表示できるよう、使用アイコンをビルドへ同梱する。
+      icon: {
+        clientBundle: {
+          scan: true,
+        },
+      },
+      ui: uiTheme,
+    }),
+    copyBlogStorePlugin(),
+  ],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
-  },
-  test: {
-    // jsdomのコンポーネントテストでもVuetifyのCSS importをViteに処理させる。
-    server: {
-      deps: {
-        inline: [/vuetify/],
-      },
     },
   },
 }));

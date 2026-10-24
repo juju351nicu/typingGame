@@ -7,20 +7,23 @@ const copyRight: CopyRightType = {
 };
 </script>
 <template>
-  <v-footer
-    class="d-flex align-center justify-center footer"
-    color="deep-purple"
-    dark
-  >
+  <footer class="footer">
     <span class="m-0 p-0 mr-2"> {{ copyRight.dateStr }} &copy; </span>
     <span class="m-0 p-0">{{ copyRight.company }}</span
     >&nbsp;&nbsp;
     <span class="m-0 p-0">{{ copyRight.copyRight }}</span>
-  </v-footer>
+  </footer>
 </template>
 <style scoped>
 .footer {
+  align-items: center;
+  background: #673ab7;
+  color: #ffffff;
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: center;
   max-height: 60px;
+  padding: 8px 16px;
 }
 
 a {

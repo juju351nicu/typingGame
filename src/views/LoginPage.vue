@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import AppTabs from "@/components/AppTabs.vue";
+import AppTextField from "@/components/AppTextField.vue";
+import UAlert from "@nuxt/ui/components/Alert.vue";
+import UButton from "@nuxt/ui/components/Button.vue";
+import Const from "@/constants/const";
 import { useAuthStore } from "@/stores/auth";
 import type { CustomFieldError } from "@/types/interfaces";
 import { toDisplayFieldErrors } from "@/utils/apiErrorUtils";
@@ -9,6 +14,11 @@ import { useRouter } from "vue-router";
 const authStore = useAuthStore();
 /** ルーター */
 const router = useRouter();
+/** フォーム切り替えタブ */
+const formTabs = [
+  { label: "ログイン", value: "login" },
+  { label: "登録", value: "register" },
+] as const;
 /** 表示中のフォーム種別 */
 const formMode = ref<"login" | "register">("login");
 /** メールアドレス */
@@ -87,74 +97,75 @@ const submit = async (): Promise<void> => {
 </script>
 
 <template>
-  <v-container class="login-page" fluid>
+  <div class="app-container app-container--fluid login-page">
     <section class="login-panel" aria-labelledby="login-title">
       <div class="login-copy">
         <p class="login-kicker">Account</p>
         <h1 id="login-title">{{ formTitle }}</h1>
       </div>
 
-      <v-card class="login-card" elevation="2">
-        <v-tabs
+      <div class="login-card">
+        <AppTabs
           :model-value="formMode"
-          color="deep-purple"
+          :items="formTabs"
+          color="#673ab7"
           grow
           @update:model-value="updateFormMode"
-        >
-          <v-tab value="login">ログイン</v-tab>
-          <v-tab value="register">登録</v-tab>
-        </v-tabs>
+        />
 
-        <v-card-text>
-          <v-alert
+        <div class="app-card__text">
+          <UAlert
             v-for="message in errorMessages"
             :key="message"
-            class="mb-3"
-            density="comfortable"
-            type="error"
-            variant="tonal"
+            class="login-error"
+            color="error"
+            :icon="Const.ALERT_ICON.error"
+            variant="soft"
           >
-            {{ message }}
-          </v-alert>
+            <template #description>
+              {{ message }}
+            </template>
+          </UAlert>
 
-          <v-form @submit.prevent="submit">
-            <v-text-field
+          <form @submit.prevent="submit">
+            <AppTextField
               v-model="loginEmail"
               autocomplete="email"
               label="メールアドレス"
               name="loginEmail"
-              prepend-inner-icon="mdi-email"
+              prepend-icon="i-lucide-mail"
               type="email"
-              variant="outlined"
             />
-            <v-text-field
+            <AppTextField
               v-model="password"
-              :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-icon="showPassword ? 'i-lucide-eye' : 'i-lucide-eye-off'"
+              :append-label="
+                showPassword ? 'パスワードを隠す' : 'パスワードを表示する'
+              "
               :type="showPassword ? 'text' : 'password'"
               :autocomplete="
                 formMode === 'login' ? 'current-password' : 'new-password'
               "
               label="パスワード"
               name="password"
-              prepend-inner-icon="mdi-lock"
-              variant="outlined"
-              @click:append-inner="showPassword = !showPassword"
+              prepend-icon="i-lucide-lock"
+              @click:append="showPassword = !showPassword"
             />
 
-            <v-btn
+            <UButton
               block
-              color="deep-purple"
+              color="secondary"
               :loading="authStore.isLoading"
-              size="large"
+              size="lg"
               type="submit"
             >
               {{ submitLabel }}
-            </v-btn>
-          </v-form>
-        </v-card-text>
-      </v-card>
+            </UButton>
+          </form>
+        </div>
+      </div>
     </section>
-  </v-container>
+  </div>
 </template>
 
 <style scoped>
@@ -191,7 +202,20 @@ const submit = async (): Promise<void> => {
 }
 
 .login-card {
+  background: var(--app-card-bg);
   border-radius: 8px;
+  box-shadow:
+    0 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  color: var(--app-card-text);
+  overflow: hidden;
+}
+
+.login-error {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  padding-top: 12px;
 }
 
 @media (max-width: 760px) {

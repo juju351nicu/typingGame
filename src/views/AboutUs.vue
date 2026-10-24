@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Breadcrumbs from "@/components/Breadcrumbs.vue";
+import UButton from "@nuxt/ui/components/Button.vue";
 import { onMounted } from "vue";
 
 /** 公開しているソースコードのリポジトリ */
@@ -32,7 +33,7 @@ onMounted(() => {
 </script>
 <template>
   <Breadcrumbs :items="items" />
-  <v-container class="about">
+  <div class="app-container about">
     <div class="about__inner">
       <section class="about__hero">
         <p class="about__eyebrow">About</p>
@@ -49,17 +50,18 @@ onMounted(() => {
         <h2>ソースコード</h2>
         <p>フロントエンドとバックエンドを、それぞれGitHubで公開しています。</p>
         <div class="repository-links">
-          <v-btn
+          <UButton
             v-for="repository in repositories"
             :key="repository.href"
             :href="repository.href"
-            prepend-icon="mdi-github"
+            icon="i-lucide-github"
             rel="noopener noreferrer"
             target="_blank"
-            variant="outlined"
+            color="neutral"
+            variant="outline"
           >
             {{ repository.label }}
-          </v-btn>
+          </UButton>
         </div>
       </section>
 
@@ -86,7 +88,7 @@ onMounted(() => {
           <li>Vue 3</li>
           <li>TypeScript</li>
           <li>Vite</li>
-          <li>Vuetify</li>
+          <li>Nuxt UI / Tailwind CSS</li>
           <li>Pinia</li>
           <li>Vitest</li>
           <li>Vue Test Utils / jsdom</li>
@@ -128,7 +130,7 @@ onMounted(() => {
         </ul>
       </section>
     </div>
-  </v-container>
+  </div>
 </template>
 <style scoped>
 .about {

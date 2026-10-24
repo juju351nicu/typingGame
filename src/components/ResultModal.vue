@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import UButton from "@nuxt/ui/components/Button.vue";
+import UModal from "@nuxt/ui/components/Modal.vue";
 import { useResultModalDialog } from "@/composables/useResultModalDialog";
 import { useResultModalState } from "@/composables/useResultModalState";
 import type { GameScore } from "@/types/interfaces";
@@ -74,96 +76,120 @@ const {
 </script>
 <template>
   <div class="text-center">
-    <v-dialog v-model="dialog" width="680" persistent class="result-dialog">
-      <v-card class="result-card">
-        <v-card-title class="result-header">
-          <span>Result</span>
-          <span class="rank-badge" :style="{ backgroundColor: rankColor }">
-            {{ resultRank }}
-          </span>
-        </v-card-title>
-
-        <v-card-text class="result-body">
-          <div class="score-summary">
-            <div>
-              <span class="score-label">SCORE</span>
-              <span class="score-value">{{ lastScore.score }}</span>
-            </div>
-            <span
-              v-if="scoreDifference !== null"
-              class="score-difference"
-              :class="{
-                'score-difference--up': scoreDifference > 0,
-                'score-difference--down': scoreDifference < 0,
-              }"
-            >
-              前回比 {{ scoreDifferenceLabel }}
+    <UModal
+      v-model:open="dialog"
+      :dismissible="false"
+      title="Result"
+      :description="`スコア ${lastScore.score}`"
+      :ui="{ content: 'app-dialog result-dialog' }"
+    >
+      <template #content>
+        <div class="result-card">
+          <div class="app-card__title result-header">
+            <span>Result</span>
+            <span class="rank-badge" :style="{ backgroundColor: rankColor }">
+              {{ resultRank }}
             </span>
           </div>
 
-          <div class="result-grid result-grid--performance">
-            <div class="result-item result-item--performance">
-              <span class="item-label">WPM</span>
-              <span class="item-value">{{ wpmLabel }}</span>
+          <div class="app-card__text result-body">
+            <div class="score-summary">
+              <div>
+                <span class="score-label">SCORE</span>
+                <span class="score-value">{{ lastScore.score }}</span>
+              </div>
+              <span
+                v-if="scoreDifference !== null"
+                class="score-difference"
+                :class="{
+                  'score-difference--up': scoreDifference > 0,
+                  'score-difference--down': scoreDifference < 0,
+                }"
+              >
+                前回比 {{ scoreDifferenceLabel }}
+              </span>
             </div>
-            <div class="result-item result-item--performance">
-              <span class="item-label">正確率</span>
-              <span class="item-value">{{ accuracyLabel }}%</span>
+
+            <div class="result-grid result-grid--performance">
+              <div class="result-item result-item--performance">
+                <span class="item-label">WPM</span>
+                <span class="item-value">{{ wpmLabel }}</span>
+              </div>
+              <div class="result-item result-item--performance">
+                <span class="item-label">正確率</span>
+                <span class="item-value">{{ accuracyLabel }}%</span>
+              </div>
+              <div class="result-item result-item--performance">
+                <span class="item-label">ミス数</span>
+                <span class="item-value">{{ missCountLabel }}</span>
+              </div>
             </div>
-            <div class="result-item result-item--performance">
-              <span class="item-label">ミス数</span>
-              <span class="item-value">{{ missCountLabel }}</span>
+
+            <div class="result-grid result-grid--details">
+              <div class="result-item">
+                <span class="item-label">プレイ時間</span>
+                <span class="item-value">{{ lastScore.time }}</span>
+              </div>
+              <div class="result-item">
+                <span class="item-label">難易度</span>
+                <span class="item-value">{{ gameModeLabel }}</span>
+              </div>
+              <div class="result-item">
+                <span class="item-label">ゲームルール</span>
+                <span class="item-value">{{ gameRuleLabel }}</span>
+              </div>
+              <div v-if="isTimeAttackResult" class="result-item">
+                <span class="item-label">制限時間</span>
+                <span class="item-value">{{ timeLimitLabel }}</span>
+              </div>
+              <div class="result-item">
+                <span class="item-label">正タイプ数</span>
+                <span class="item-value">{{ correctCharacterCountLabel }}</span>
+              </div>
+              <div class="result-item">
+                <span class="item-label">プレイ日時</span>
+                <span class="item-value">{{ lastScore.date }}</span>
+              </div>
             </div>
           </div>
 
-          <div class="result-grid result-grid--details">
-            <div class="result-item">
-              <span class="item-label">プレイ時間</span>
-              <span class="item-value">{{ lastScore.time }}</span>
-            </div>
-            <div class="result-item">
-              <span class="item-label">難易度</span>
-              <span class="item-value">{{ gameModeLabel }}</span>
-            </div>
-            <div class="result-item">
-              <span class="item-label">ゲームルール</span>
-              <span class="item-value">{{ gameRuleLabel }}</span>
-            </div>
-            <div v-if="isTimeAttackResult" class="result-item">
-              <span class="item-label">制限時間</span>
-              <span class="item-value">{{ timeLimitLabel }}</span>
-            </div>
-            <div class="result-item">
-              <span class="item-label">正タイプ数</span>
-              <span class="item-value">{{ correctCharacterCountLabel }}</span>
-            </div>
-            <div class="result-item">
-              <span class="item-label">プレイ日時</span>
-              <span class="item-value">{{ lastScore.date }}</span>
-            </div>
+          <div class="app-card__actions result-actions">
+            <UButton
+              color="success"
+              variant="ghost"
+              size="lg"
+              @click="restartGame"
+            >
+              もう一度プレイ
+            </UButton>
+            <UButton
+              :to="{ name: 'RankingPage' }"
+              color="secondary"
+              size="lg"
+              variant="outline"
+            >
+              ランキングを見る
+            </UButton>
           </div>
-        </v-card-text>
-
-        <v-card-actions class="result-actions">
-          <v-btn color="success" size="large" @click="restartGame">
-            もう一度プレイ
-          </v-btn>
-          <v-btn
-            :to="{ name: 'RankingPage' }"
-            color="deep-purple"
-            size="large"
-            variant="outlined"
-          >
-            ランキングを見る
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
 <style scoped>
+/*
+ * body直下へ描画されるダイアログの幅。
+ * 従来のダイアログは画面共通のCSS変数の外側に描画され、文字色は継承色、
+ * 背景は透明で表示されていた。見た目を変えないよう、ここでは同じ状態に戻す。
+ */
+:global(.result-dialog) {
+  --app-dialog-width: 680px;
+  --app-surface-muted: initial;
+  --app-text: initial;
+  --app-text-muted: initial;
+}
+
 .result-card {
-  border-radius: 8px;
   max-height: calc(100dvh - 48px);
   overflow-y: auto;
 }
@@ -176,6 +202,7 @@ const {
   font-size: 2.4rem;
   font-weight: bold;
   justify-content: space-between;
+  line-height: 1.6;
   padding: 20px 24px;
 }
 
@@ -188,10 +215,6 @@ const {
   height: 56px;
   justify-content: center;
   width: 56px;
-}
-
-.result-body {
-  padding: 20px 24px;
 }
 
 .score-summary {
@@ -292,12 +315,6 @@ const {
 }
 
 @media (max-width: 600px) {
-  .result-dialog :deep(.v-overlay__content) {
-    margin: 12px;
-    max-height: calc(100dvh - 24px);
-    width: calc(100vw - 24px) !important;
-  }
-
   .result-card {
     max-height: calc(100dvh - 24px);
   }
@@ -314,10 +331,6 @@ const {
     font-size: 1.7rem;
     height: 40px;
     width: 40px;
-  }
-
-  .result-body {
-    padding: 14px 16px;
   }
 
   .score-summary {

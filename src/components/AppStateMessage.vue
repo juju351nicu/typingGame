@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import UAlert from "@nuxt/ui/components/Alert.vue";
+import AppProgressCircular from "@/components/AppProgressCircular.vue";
+import Const from "@/constants/const";
+
 type StateType = "empty" | "error" | "info" | "loading";
 
 interface Props {
@@ -24,29 +28,31 @@ const getAlertType = (type: StateType): "error" | "info" | "warning" => {
 </script>
 
 <template>
-  <v-container class="app-state-message">
-    <v-alert
-      :type="getAlertType(props.type)"
-      variant="tonal"
+  <div class="app-container app-state-message">
+    <UAlert
+      :color="getAlertType(props.type)"
+      :icon="Const.ALERT_ICON[getAlertType(props.type)]"
+      variant="soft"
       class="app-state-message__alert"
     >
-      <div class="app-state-message__content">
-        <v-progress-circular
-          v-if="props.type === 'loading'"
-          color="primary"
-          indeterminate
-          size="28"
-          width="3"
-        />
-        <div>
-          <p class="app-state-message__title">{{ props.title }}</p>
-          <p v-if="props.message" class="app-state-message__body">
-            {{ props.message }}
-          </p>
+      <template #description>
+        <div class="app-state-message__content">
+          <AppProgressCircular
+            v-if="props.type === 'loading'"
+            color="var(--ui-primary)"
+            :size="28"
+            :width="3"
+          />
+          <div>
+            <p class="app-state-message__title">{{ props.title }}</p>
+            <p v-if="props.message" class="app-state-message__body">
+              {{ props.message }}
+            </p>
+          </div>
         </div>
-      </div>
-    </v-alert>
-  </v-container>
+      </template>
+    </UAlert>
+  </div>
 </template>
 
 <style scoped>

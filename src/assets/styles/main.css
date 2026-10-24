@@ -1,0 +1,155 @@
+/*
+ * アプリ全体のスタイル入口。
+ *
+ * Tailwind CSSのpreflightは見出しやリストの既定スタイルを消してしまい、
+ * 既存画面の見た目が変わるため読み込まない。代わりに従来と同じ
+ * ress.cssベースのリセットを `reset.css` で適用する。
+ */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "@nuxt/ui";
+@import "./reset.css" layer(base);
+/* ui.theme.mjs で上書きしたNuxt UIのクラスもTailwindに生成させる。 */
+@source "../../../ui.theme.mjs";
+
+/*
+ * Nuxt UIのカラートークンを、従来のMaterial Design配色と同じ色へそろえる。
+ * --ui-primary 等はNuxt UIコンポーネントの色指定（color="primary" 等）に使われる。
+ */
+:root {
+  --ui-primary: #1867c0;
+  --ui-secondary: #673ab7;
+  --ui-success: #4caf50;
+  --ui-info: #2196f3;
+  --ui-warning: #fb8c00;
+  --ui-error: #b00020;
+  --ui-text-inverted: #ffffff;
+  --ui-radius: 0.25rem;
+}
+
+:root.dark {
+  --ui-primary: #2196f3;
+  --ui-error: #cf6679;
+  --ui-text-inverted: #ffffff;
+}
+
+/*
+ * Nuxt UIのbody既定色を、従来と同じ背景色・文字色へ戻す。
+ * 画面本体の背景は App.vue の --app-bg で塗るため、ここはページ外側の色だけを決める。
+ */
+@layer base {
+  body {
+    background-color: #ffffff;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  :root.dark body {
+    background-color: #121212;
+    color: #ffffff;
+  }
+}
+
+/*
+ * ページ本文の共通コンテナ。
+ * 従来のコンテナと同じ余白と最大幅で、既存画面のレイアウトを保つ。
+ */
+.app-container {
+  margin-left: auto;
+  margin-right: auto;
+  padding: 16px;
+  width: 100%;
+}
+
+@media (min-width: 960px) {
+  .app-container {
+    max-width: 900px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .app-container {
+    max-width: 1200px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .app-container {
+    max-width: 1800px;
+  }
+}
+
+@media (min-width: 2560px) {
+  .app-container {
+    max-width: 2400px;
+  }
+}
+
+.app-container--fluid {
+  max-width: 100%;
+}
+
+/*
+ * カード内の見出し・本文・操作ボタン行。
+ * Material Designのカード見出し・本文・操作行と同じ余白と文字設定にする。
+ */
+.app-card__title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  hyphens: auto;
+  letter-spacing: 0.0125em;
+  line-height: 2rem;
+  overflow: hidden;
+  padding: 0.5rem 1rem;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+  word-break: normal;
+}
+
+.app-card__text {
+  flex: 1 1 auto;
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.0178571429em;
+  line-height: 1.425;
+  padding: 1rem;
+  text-transform: none;
+}
+
+.app-card__title + .app-card__text {
+  padding-top: 0;
+}
+
+.app-card__actions {
+  align-items: center;
+  display: flex;
+  flex: none;
+  gap: 0.5rem;
+  min-height: 52px;
+  padding: 0.5rem;
+}
+
+/*
+ * ダイアログ（UModalのcontent）。
+ * Material Designのダイアログと同じく、画面端から24pxの余白を取り、カード内の本文と操作行の余白を広げる。
+ */
+.app-dialog.app-dialog {
+  max-height: calc(100% - 48px);
+  max-width: min(var(--app-dialog-width, 560px), calc(100% - 48px));
+  width: calc(100% - 48px);
+}
+
+.app-dialog .app-card__text,
+.app-dialog .app-card__title + .app-card__text {
+  font-size: inherit;
+  letter-spacing: 0.03125em;
+  line-height: inherit;
+  padding: 16px 24px 24px;
+}
+
+/* カード操作行のボタンは左右の余白を詰める（Material Designのカード操作行と同じ）。 */
+.app-card__actions > button,
+.app-card__actions > a {
+  padding: 0 8px;
+}

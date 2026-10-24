@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Loading from "@/components/Loading.vue";
 import AppStateMessage from "@/components/AppStateMessage.vue";
+import UButton from "@nuxt/ui/components/Button.vue";
+import UIcon from "@nuxt/ui/components/Icon.vue";
 import {
   computed,
   onBeforeMount,
@@ -121,16 +123,18 @@ onUnmounted(() => {
     title="記事を表示できません"
     :message="errorMessage"
   />
-  <v-container v-else class="blog-post">
+  <div v-else class="app-container blog-post">
     <article class="article-shell">
       <header v-if="currentPost" class="article-header">
         <p class="article-eyebrow">DEVELOPMENT NOTE</p>
         <h1>{{ currentPost.title }}</h1>
         <div class="article-meta">
           <time :datetime="currentPost.date">
-            <v-icon size="small" aria-hidden="true"
-              >mdi-calendar-blank-outline</v-icon
-            >
+            <UIcon
+              name="i-lucide-calendar"
+              class="article-meta__icon"
+              aria-hidden="true"
+            />
             {{ currentPost.date }}
           </time>
           <span class="article-section">{{ currentPost.section }}</span>
@@ -144,40 +148,43 @@ onUnmounted(() => {
       <div ref="markdown-body" class="markdown-body" v-html="postHtml" />
 
       <nav class="post-navigation" aria-label="前後の記事">
-        <v-btn
+        <UButton
           v-if="prevPost"
           class="post-navigation__button"
-          variant="outlined"
+          color="neutral"
+          variant="outline"
           @click="goPost(prevPost)"
         >
           <span class="post-navigation__content">
             <span class="post-navigation__label">← 前の記事</span>
             <span class="post-navigation__title">{{ prevPost.title }}</span>
           </span>
-        </v-btn>
-        <v-btn
+        </UButton>
+        <UButton
           v-if="nextPost"
           class="post-navigation__button post-navigation__button--next"
-          variant="outlined"
+          color="neutral"
+          variant="outline"
           @click="goPost(nextPost)"
         >
           <span class="post-navigation__content post-navigation__content--next">
             <span class="post-navigation__label">次の記事 →</span>
             <span class="post-navigation__title">{{ nextPost.title }}</span>
           </span>
-        </v-btn>
+        </UButton>
       </nav>
       <div class="post-actions">
-        <v-btn
-          variant="text"
-          prepend-icon="mdi-format-list-bulleted"
+        <UButton
+          color="neutral"
+          variant="ghost"
+          icon="i-lucide-list"
           @click="goBlogList()"
         >
           記事一覧に戻る
-        </v-btn>
+        </UButton>
       </div>
     </article>
-  </v-container>
+  </div>
   <Loading :is-loading="isLoading" />
 </template>
 <style scoped>
@@ -233,6 +240,11 @@ onUnmounted(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.article-meta__icon {
+  height: 1.25em;
+  width: 1.25em;
 }
 
 .article-meta time {
@@ -295,7 +307,7 @@ onUnmounted(() => {
   white-space: normal;
 }
 
-.post-navigation__button :deep(.v-btn__content) {
+.post-navigation__button :deep(.post-navigation__content) {
   width: 100%;
   min-width: 0;
 }
@@ -336,7 +348,7 @@ onUnmounted(() => {
   text-align: center;
 }
 
-/* NOTE: VuetifyのCSS Resetで崩れる記事要素を読み物向けに調整する。 */
+/* NOTE: ress.cssベースのリセットで崩れる記事要素を読み物向けに調整する。 */
 .markdown-body :deep(hr) {
   border: 0;
   border-top: 1px solid var(--app-border);

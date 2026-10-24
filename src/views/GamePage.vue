@@ -4,6 +4,9 @@ import AppAlerts from "@/components/AppAlerts.vue";
 import ResultModal from "@/components/ResultModal.vue";
 import GameTimer from "@/components/GameTimer.vue";
 import VirtualKeyboard from "@/components/VirtualKeyboard.vue";
+import AppTextField from "@/components/AppTextField.vue";
+import UButton from "@nuxt/ui/components/Button.vue";
+import UIcon from "@nuxt/ui/components/Icon.vue";
 import { useTypingKeyboardFeedback } from "@/composables/useTypingKeyboardFeedback";
 import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
 import { useGameScoresStore } from "@/stores/gameScores";
@@ -157,7 +160,7 @@ onUnmounted(() => {
 });
 </script>
 <template>
-  <v-container class="game-page">
+  <div class="app-container game-page">
     <AppAlerts :alerts="alerts" />
     <div class="game-board">
       <TypingPanel
@@ -189,18 +192,19 @@ onUnmounted(() => {
         <div class="game-control-panel">
           <div class="input-panel">
             <div class="input-label">
-              <v-icon size="small" aria-hidden="true"
-                >mdi-keyboard-outline</v-icon
-              >
+              <UIcon
+                name="i-lucide-keyboard"
+                class="input-label__icon"
+                aria-hidden="true"
+              />
               好きな風船の単語を入力
             </div>
-            <v-text-field
+            <AppTextField
               id="typing-input"
               ref="typingInput"
               v-model="inputValue"
               class="game-text-field"
               :class="{ 'game-text-field-error': isInputMiss }"
-              variant="outlined"
               density="comfortable"
               hide-details
               :error="isInputMiss"
@@ -283,23 +287,25 @@ onUnmounted(() => {
             </div>
 
             <div class="intro-actions">
-              <v-btn
-                color="deep-purple"
-                size="x-large"
-                min-width="230"
-                prepend-icon="mdi-play"
+              <UButton
+                class="intro-action intro-action--start"
+                color="secondary"
+                size="xl"
+                icon="i-lucide-play"
                 @click="startGameAndFocusInput"
               >
                 ゲームをはじめる
-              </v-btn>
-              <v-btn
+              </UButton>
+              <UButton
+                class="intro-action"
                 :to="{ name: 'SettingsPage' }"
-                variant="outlined"
-                size="large"
-                prepend-icon="mdi-tune-variant"
+                color="neutral"
+                variant="outline"
+                size="lg"
+                icon="i-lucide-sliders-horizontal"
               >
                 設定を変更
-              </v-btn>
+              </UButton>
             </div>
             <p class="intro-current-setting">
               現在の設定：難易度 {{ gameModeLabel }} ／ {{ gameRuleLabel }}
@@ -308,7 +314,7 @@ onUnmounted(() => {
         </section>
       </template>
     </div>
-  </v-container>
+  </div>
   <ResultModal
     :last-score="lastScore"
     :previous-score="previousComparableScore"
@@ -369,8 +375,13 @@ onUnmounted(() => {
   animation: inputMissShake 160ms ease;
 }
 
-.game-text-field-error :deep(.v-field) {
+.game-text-field-error :deep(.app-field) {
   background: var(--app-input-error-bg);
+}
+
+.input-label__icon {
+  height: 1.25em;
+  width: 1.25em;
 }
 
 @keyframes inputMissShake {
@@ -576,6 +587,15 @@ onUnmounted(() => {
   justify-content: center;
 }
 
+.intro-action--start {
+  min-width: 230px;
+}
+
+/* 従来と同じく、再生アイコンを塗りつぶしで表示する。 */
+.intro-action--start :deep(svg path) {
+  fill: currentColor;
+}
+
 .intro-current-setting {
   color: #697386;
   font-size: 0.82rem;
@@ -729,7 +749,7 @@ onUnmounted(() => {
     flex-direction: column;
   }
 
-  .intro-actions :deep(.v-btn) {
+  .intro-actions .intro-action {
     width: 100%;
   }
 

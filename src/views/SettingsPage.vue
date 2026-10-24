@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import AppAlerts from "@/components/AppAlerts.vue";
+import AppSelectField from "@/components/AppSelectField.vue";
+import AppSwitch from "@/components/AppSwitch.vue";
+import UButton from "@nuxt/ui/components/Button.vue";
+import UModal from "@nuxt/ui/components/Modal.vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
 import { useSettingsPageState } from "@/composables/useSettingsPageState";
@@ -33,7 +37,7 @@ const {
 } = useSettingsPageState(configStore, gameScoresStore);
 </script>
 <template>
-  <v-container class="settings-page">
+  <div class="app-container settings-page">
     <AppAlerts :alerts="alerts" />
     <section class="settings-header">
       <h1>Settings</h1>
@@ -48,15 +52,10 @@ const {
             風船の追加速度と移動速度を変更します。
           </p>
         </div>
-        <v-select
+        <AppSelectField
           v-model="selectedOption"
           :items="options"
-          item-title="title"
-          item-value="value"
           label="難易度"
-          variant="outlined"
-          density="comfortable"
-          hide-details
           class="setting-control"
           @update:model-value="setGameMode"
         />
@@ -69,15 +68,10 @@ const {
             通常モードか、制限時間内のスコアを競うモードを選びます。
           </p>
         </div>
-        <v-select
+        <AppSelectField
           v-model="selectedGameRule"
           :items="gameRuleOptions"
-          item-title="title"
-          item-value="value"
           label="ゲームルール"
-          variant="outlined"
-          density="comfortable"
-          hide-details
           class="setting-control"
           @update:model-value="setGameRule"
         />
@@ -90,15 +84,10 @@ const {
             タイムアタックモードのプレイ時間を選びます。
           </p>
         </div>
-        <v-select
+        <AppSelectField
           v-model="selectedTimeLimitSeconds"
           :items="timeLimitOptions"
-          item-title="title"
-          item-value="value"
           label="制限時間"
-          variant="outlined"
-          density="comfortable"
-          hide-details
           class="setting-control"
           @update:model-value="setTimeLimitSeconds"
         />
@@ -111,11 +100,8 @@ const {
             次に打つキー、押したキー、ミスしたキーをゲーム中に表示します。
           </p>
         </div>
-        <v-switch
+        <AppSwitch
           v-model="isVirtualKeyboardVisible"
-          color="primary"
-          hide-details
-          inset
           :label="isVirtualKeyboardVisible ? '表示' : '非表示'"
           class="setting-control"
           @update:model-value="setVirtualKeyboardVisible"
@@ -129,11 +115,8 @@ const {
             画面全体の明るさをライト / ダークで切り替えます。
           </p>
         </div>
-        <v-switch
+        <AppSwitch
           v-model="isDarkMode"
-          color="primary"
-          hide-details
-          inset
           :label="isDarkMode ? 'ダーク' : 'ライト'"
           class="setting-control"
           @update:model-value="setDisplayMode"
@@ -147,28 +130,37 @@ const {
             localStorage に保存されたランキング履歴を削除します。
           </p>
         </div>
-        <v-btn color="error" variant="flat" @click="openResetDialog">
+        <UButton color="error" class="shadow-none" @click="openResetDialog">
           スコアを初期化する
-        </v-btn>
+        </UButton>
       </section>
     </div>
 
-    <v-dialog v-model="isResetDialogOpen" width="420">
-      <v-card class="confirm-card">
-        <v-card-title>スコアを削除しますか？</v-card-title>
-        <v-card-text>
-          保存されているランキング履歴が削除されます。この操作は元に戻せません。
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn variant="text" @click="closeResetDialog"> キャンセル </v-btn>
-          <v-btn color="error" variant="flat" @click="resetModalData">
-            削除する
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-container>
+    <UModal
+      v-model:open="isResetDialogOpen"
+      title="スコアを削除しますか？"
+      description="保存されているランキング履歴が削除されます。この操作は元に戻せません。"
+      :ui="{ content: 'app-dialog confirm-dialog' }"
+    >
+      <template #content>
+        <div class="confirm-card">
+          <h2 class="app-card__title">スコアを削除しますか？</h2>
+          <div class="app-card__text">
+            保存されているランキング履歴が削除されます。この操作は元に戻せません。
+          </div>
+          <div class="app-card__actions">
+            <span class="flex-1" />
+            <UButton color="neutral" variant="ghost" @click="closeResetDialog">
+              キャンセル
+            </UButton>
+            <UButton color="error" class="shadow-none" @click="resetModalData">
+              削除する
+            </UButton>
+          </div>
+        </div>
+      </template>
+    </UModal>
+  </div>
 </template>
 <style scoped>
 .settings-page {
@@ -233,13 +225,14 @@ const {
   margin: 0;
 }
 
+/* body直下へ描画されるダイアログの幅 */
+:global(.confirm-dialog) {
+  --app-dialog-width: 420px;
+}
+
 .setting-control {
   max-width: 260px;
   min-width: 220px;
-}
-
-.confirm-card {
-  border-radius: 8px;
 }
 
 @media (max-width: 760px) {

@@ -1,5 +1,9 @@
-import type { DataTableHeader } from "vuetify";
-import type { GameMode, GameRule, TimeLimitSeconds } from "@/types/interfaces";
+import type {
+  DataTableHeader,
+  GameMode,
+  GameRule,
+  TimeLimitSeconds,
+} from "@/types/interfaces";
 
 /**
  * マークダウンブログ取得用のURL
@@ -26,6 +30,16 @@ const ALERT_TYPE = {
   WARNING: "warning",
   ERROR: "error",
 } as const;
+/** アラートの種類ごとに表示するアイコン（Iconifyのlucideアイコン名） */
+const ALERT_ICON = {
+  success: "i-lucide-circle-check",
+  info: "i-lucide-info",
+  warning: "i-lucide-circle-alert",
+  error: "i-lucide-circle-x",
+} as const satisfies Record<
+  (typeof ALERT_TYPE)[keyof typeof ALERT_TYPE],
+  string
+>;
 /** 単語挿入の速度 */
 const INTERVAL_INSERTION = {
   EASY: 4000,
@@ -78,7 +92,7 @@ const DATA_TABLE_PAGES = [
   { value: 5, title: "5" },
   { value: 10, title: "10" },
   { value: 20, title: "20" },
-  { value: -1, title: "$vuetify.dataFooter.itemsPerPageAll" },
+  { value: -1, title: "All" },
 ];
 
 const OPTIONS_OF_HEADERS: DataTableHeader[] = [
@@ -108,6 +122,7 @@ export default {
   NUMBER_OF_BLOGS,
   DISPLAY_THEME,
   ALERT_TYPE,
+  ALERT_ICON,
   INTERVAL_ANIMATION,
   INTERVAL_INSERTION,
   GAME_MODE,

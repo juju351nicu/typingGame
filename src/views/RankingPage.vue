@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import AppButtonToggle from "@/components/AppButtonToggle.vue";
+import AppSelectField from "@/components/AppSelectField.vue";
+import AppTabs from "@/components/AppTabs.vue";
 import RankingSummaryPanel from "@/components/RankingSummaryPanel.vue";
 import RankingTablePanel from "@/components/RankingTablePanel.vue";
 import RankingTrendPanel from "@/components/RankingTrendPanel.vue";
@@ -117,85 +120,64 @@ watch(
   { immediate: true }
 );
 
+/** ランキング画面のタブ */
+const rankingTabs = [
+  { label: "サマリー", value: "summary" },
+  { label: "分析", value: "trend" },
+  { label: "ランキング表", value: "table" },
+];
+
 /** ランク表示用CSSクラス */
 const getRankClass = (rank: number): string => {
   return getRankingRankClass(rank);
 };
 </script>
 <template>
-  <v-container class="score-board">
+  <div class="app-container score-board">
     <div class="score-header">
       <div>
         <p class="score-title">Ranking</p>
         <p class="score-subtitle">{{ rankingSubtitle }}</p>
       </div>
-      <v-btn-toggle
+      <AppButtonToggle
         v-if="isBackendApiEnabled"
         v-model="selectedScoreSource"
-        mandatory
-        density="comfortable"
-        color="primary"
+        :items="scoreSourceOptions"
+        aria-label="スコアの取得元"
         class="score-source-toggle"
-      >
-        <v-btn
-          v-for="option in scoreSourceOptions"
-          :key="option.value"
-          :value="option.value"
-        >
-          {{ option.title }}
-        </v-btn>
-      </v-btn-toggle>
-      <v-select
+      />
+      <AppSelectField
         v-model="selectedMode"
         :items="modeOptions"
-        item-title="title"
-        item-value="value"
         label="難易度"
-        variant="outlined"
-        density="comfortable"
-        hide-details
         class="ranking-filter"
       />
-      <v-select
+      <AppSelectField
         v-model="selectedGameRule"
         :items="gameRuleOptions"
-        item-title="title"
-        item-value="value"
         label="ルール"
-        variant="outlined"
-        density="comfortable"
-        hide-details
         class="ranking-filter"
       />
-      <v-select
+      <AppSelectField
         v-if="isTimeAttackSelected"
         v-model="selectedTimeLimitSeconds"
         :items="timeLimitOptions"
-        item-title="title"
-        item-value="value"
         label="制限時間"
-        variant="outlined"
-        density="comfortable"
-        hide-details
         class="ranking-filter"
       />
     </div>
 
     <section class="ranking-tabs-panel">
-      <v-tabs
+      <AppTabs
         v-model="selectedRankingTab"
-        align-tabs="start"
-        class="ranking-tabs"
-        color="primary"
+        :items="rankingTabs"
         density="comfortable"
-      >
-        <v-tab value="summary">サマリー</v-tab>
-        <v-tab value="trend">分析</v-tab>
-        <v-tab value="table">ランキング表</v-tab>
-      </v-tabs>
+        :slider="false"
+        class="ranking-tabs"
+      />
 
-      <v-window v-model="selectedRankingTab" class="ranking-window">
-        <v-window-item value="summary">
+      <div class="ranking-window">
+        <div v-if="selectedRankingTab === 'summary'">
           <RankingSummaryPanel
             :best-score="bestScore"
             :best-score-summary="bestScoreSummary"
@@ -206,9 +188,9 @@ const getRankClass = (rank: number): string => {
             :game-scores-count="gameScores.length"
             :ranking-items-count="rankingItems.length"
           />
-        </v-window-item>
+        </div>
 
-        <v-window-item value="trend">
+        <div v-else-if="selectedRankingTab === 'trend'">
           <RankingTrendPanel
             v-model="selectedTrendMetric"
             :performance-trend-items="performanceTrendItems"
@@ -216,9 +198,9 @@ const getRankClass = (rank: number): string => {
             :trend-title="trendTitle"
             :get-trend-value-label="getTrendValueLabel"
           />
-        </v-window-item>
+        </div>
 
-        <v-window-item value="table">
+        <div v-else>
           <RankingTablePanel
             v-model="itemsPerPage"
             :headers="headers"
@@ -235,10 +217,10 @@ const getRankClass = (rank: number): string => {
             :get-score-game-rule-label="getScoreGameRuleLabel"
             :get-time-limit-label="getTimeLimitLabel"
           />
-        </v-window-item>
-      </v-window>
+        </div>
+      </div>
     </section>
-  </v-container>
+  </div>
 </template>
 <style scoped>
 .score-board {
@@ -274,7 +256,7 @@ const getRankClass = (rank: number): string => {
   flex: 0 1 auto;
 }
 
-.score-source-toggle :deep(.v-btn) {
+.score-source-toggle :deep(.app-btn-toggle__button) {
   min-width: 132px;
   text-transform: none;
 }
@@ -293,14 +275,15 @@ const getRankClass = (rank: number): string => {
   border: 1px solid var(--app-border);
   border-radius: 8px;
   box-shadow: var(--app-shadow);
+  height: 44px;
   margin-bottom: 14px;
+  overflow: hidden;
   padding: 0 12px;
 }
 
-.ranking-tabs :deep(.v-tab) {
+.ranking-tabs :deep(.app-tabs__tab) {
   font-size: 1.3rem;
   font-weight: bold;
-  min-width: 112px;
   text-transform: none;
 }
 
@@ -345,7 +328,7 @@ const getRankClass = (rank: number): string => {
     width: 100%;
   }
 
-  .score-source-toggle :deep(.v-btn) {
+  .score-source-toggle :deep(.app-btn-toggle__button) {
     flex: 1 1 0;
     min-width: 0;
   }
@@ -357,10 +340,6 @@ const getRankClass = (rank: number): string => {
   .ranking-tabs {
     overflow-x: auto;
     padding: 0 8px;
-  }
-
-  .ranking-tabs :deep(.v-tab) {
-    min-width: 104px;
   }
 }
 </style>

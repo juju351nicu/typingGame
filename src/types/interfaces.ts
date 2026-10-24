@@ -15,6 +15,15 @@ export interface Alert {
   message: string;
   type?: "success" | "info" | "warning" | "error" | undefined;
 }
+/** 表の列定義 */
+export interface DataTableHeader {
+  /** 見出しに表示する文字列 */
+  title: string;
+  /** 行データから値を取り出すキー */
+  key: string;
+  /** セル内の配置 */
+  align?: "start" | "center" | "end";
+}
 /** ゲームルールの種類 */
 export type GameRule = "normal" | "timeAttack";
 

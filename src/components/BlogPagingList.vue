@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import UButton from "@nuxt/ui/components/Button.vue";
+import UIcon from "@nuxt/ui/components/Icon.vue";
+import UPagination from "@nuxt/ui/components/Pagination.vue";
 import { useBlogPagingState } from "@/composables/useBlogPagingState";
 import type { PostIndex } from "@/types/interfaces";
 
@@ -49,7 +52,7 @@ const toNumberPage = (pageNumber: number) => {
 };
 </script>
 <template>
-  <v-container fluid class="blog-list">
+  <div class="app-container app-container--fluid blog-list">
     <header class="blog-list__hero">
       <p class="blog-list__eyebrow">DEVELOPMENT BLOG</p>
       <h1>開発ノート</h1>
@@ -58,49 +61,83 @@ const toNumberPage = (pageNumber: number) => {
       </p>
     </header>
     <p class="blog-list__header">{{ listHeader }}</p>
-    <v-row dense class="blog-list__items">
-      <v-col v-for="entry in pageStatus" :key="entry.id" cols="12">
-        <v-card
-          class="blog-card mx-auto"
-          max-width="800"
-          hover
+    <div class="blog-list__items">
+      <div v-for="entry in pageStatus" :key="entry.id" class="blog-list__col">
+        <div
+          class="blog-card"
           role="link"
           tabindex="0"
           @click="doPostDetail(entry)"
           @keydown.enter.prevent="doPostDetail(entry)"
         >
-          <v-card-item>
-            <v-card-title class="blog-card__title">
+          <div class="blog-card__item">
+            <div class="blog-card__title">
               {{ entry.title }}
-            </v-card-title>
-            <v-card-subtitle class="blog-card__date">
-              <v-icon size="x-small" aria-hidden="true">
-                mdi-calendar-blank-outline
-              </v-icon>
+            </div>
+            <div class="blog-card__date">
+              <UIcon
+                name="i-lucide-calendar"
+                class="blog-card__date-icon"
+                aria-hidden="true"
+              />
               {{ entry.date }}
-            </v-card-subtitle>
-          </v-card-item>
+            </div>
+          </div>
           <!-- 記事（POST)イントロダクション -->
-          <v-card-text class="blog-card__description">
+          <div class="blog-card__description">
             {{ entry.description }}
             <div v-if="entry.tags?.length" class="blog-card__tags">
               <span v-for="tag in entry.tags" :key="tag">{{ tag }}</span>
             </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div v-if="totalCount > 0">
     <div v-if="showPaging && totalCount > 0">
-      <div class="text-center">
-        <v-pagination
-          :model-value="currentPage"
-          :length="totalPages"
-          color="indigo-darken-3"
-          @update:model-value="toNumberPage"
-        ></v-pagination>
-      </div>
+      <nav class="blog-pagination" aria-label="ページ送り">
+        <UPagination
+          :page="currentPage"
+          :total="totalPages"
+          :items-per-page="1"
+          :sibling-count="1"
+          :show-controls="false"
+          :ui="{ list: 'blog-pagination__list' }"
+          @update:page="toNumberPage"
+        >
+          <template #prev>
+            <UButton
+              class="blog-pagination__button"
+              color="neutral"
+              variant="ghost"
+              icon="i-lucide-chevron-left"
+            />
+          </template>
+          <template #item="{ item, page }">
+            <!-- #itemスロットはページ番号の項目だけで呼ばれる -->
+            <UButton
+              class="blog-pagination__button"
+              :class="{
+                'blog-pagination__button--active':
+                  item.type === 'page' && item.value === page,
+              }"
+              color="neutral"
+              variant="ghost"
+            >
+              {{ item.type === "page" ? item.value : "" }}
+            </UButton>
+          </template>
+          <template #next>
+            <UButton
+              class="blog-pagination__button"
+              color="neutral"
+              variant="ghost"
+              icon="i-lucide-chevron-right"
+            />
+          </template>
+        </UPagination>
+      </nav>
     </div>
   </div>
 </template>
@@ -145,11 +182,32 @@ const toNumberPage = (pageNumber: number) => {
   font-size: 0.95rem;
 }
 
+/* 従来の一覧と同じ余白で並べる。 */
 .blog-list__items {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  margin: -4px;
   row-gap: 8px;
 }
 
+.blog-list__col {
+  flex: 0 0 100%;
+  max-width: 100%;
+  padding: 4px;
+  width: 100%;
+}
+
 .blog-card {
+  background: var(--app-card-bg);
+  color: var(--app-card-text);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
+  overflow: hidden;
+  outline: none;
+  position: relative;
   border: 1px solid var(--app-border);
   border-radius: 12px;
   box-shadow: var(--app-shadow);
@@ -165,14 +223,30 @@ const toNumberPage = (pageNumber: number) => {
   transform: translateY(-2px);
 }
 
+.blog-card__item {
+  padding: 0.625rem 1rem;
+}
+
 .blog-card__title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  hyphens: auto;
+  letter-spacing: 0.0125em;
+  overflow-wrap: normal;
+  word-break: normal;
   color: var(--app-text);
-  line-height: 1.4;
+  line-height: 2rem;
   white-space: normal;
 }
 
 .blog-card__date {
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.0178571429em;
+  line-height: 1.425;
+  opacity: 0.6;
   margin-top: 4px;
+  padding-bottom: 4px;
   align-items: center;
   color: var(--app-text-muted);
   display: flex;
@@ -181,9 +255,21 @@ const toNumberPage = (pageNumber: number) => {
   text-align: right;
 }
 
+.blog-card__date-icon {
+  height: 14px;
+  width: 14px;
+}
+
 .blog-card__description {
+  flex: 1 1 auto;
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.0178571429em;
+  padding: 1rem;
+  padding-top: 0;
+  text-transform: none;
   color: var(--app-text-muted);
-  line-height: 1.65;
+  line-height: 1.425;
 }
 
 .blog-card__tags {
@@ -200,6 +286,51 @@ const toNumberPage = (pageNumber: number) => {
   font-size: 0.75rem;
   font-weight: 700;
   padding: 5px 9px;
+}
+
+.blog-pagination {
+  text-align: center;
+}
+
+.blog-pagination :deep(.blog-pagination__list) {
+  align-items: center;
+  display: inline-flex;
+  gap: 0;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+}
+
+.blog-pagination__button {
+  border-radius: 4px;
+  color: #283593;
+  font-size: 1rem;
+  height: 48px;
+  justify-content: center;
+  letter-spacing: normal;
+  margin: 0.3rem;
+  min-width: 48px;
+  padding: 0;
+  text-indent: 0;
+  width: 48px;
+}
+
+.blog-pagination__button :deep(svg) {
+  height: 24px;
+  margin: 0;
+  width: 24px;
+}
+
+.blog-pagination__button:disabled {
+  opacity: 0.38;
+}
+
+.blog-pagination__button--active {
+  background: rgba(40, 53, 147, 0.12);
+}
+
+:root.dark .blog-card__date {
+  opacity: 0.7;
 }
 
 :global(.app-shell--dark) .blog-list__eyebrow,

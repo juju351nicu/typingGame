@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import UAlert from "@nuxt/ui/components/Alert.vue";
+import Const from "@/constants/const";
 import type { Alert } from "@/types/interfaces";
 import { useAppAlertVisibility } from "@/composables/useAppAlertVisibility";
 
@@ -16,26 +18,40 @@ const alerts = computed((): Alert[] => {
 });
 
 const { visibleAlerts, hideAlert, getTopStyle } = useAppAlertVisibility(alerts);
+
+/**
+ * アラート種別に応じたNuxt UIの色名を取得する。
+ *
+ * @param type アラート種別
+ * @returns Nuxt UIの色名。未指定の場合はinfo
+ */
+const getAlertColor = (type: Alert["type"]): NonNullable<Alert["type"]> => {
+  return type ?? Const.ALERT_TYPE.INFO;
+};
 </script>
 <template>
   <div
     v-for="(alert, index) in alerts"
     :key="alert.id ?? `${alert.type}-${index}`"
   >
-    <div class="d-flex justify-end">
-      <v-alert
+    <div class="flex justify-end">
+      <UAlert
         v-if="visibleAlerts[index]"
         :style="getTopStyle(index)"
-        :type="alert.type"
-        dense
+        :color="getAlertColor(alert.type)"
+        :icon="Const.ALERT_ICON[getAlertColor(alert.type)]"
+        variant="solid"
         class="alert"
-        closable
+        :class="{ 'alert--error': alert.type === Const.ALERT_TYPE.ERROR }"
+        close
         role="alert"
         aria-live="assertive"
-        @click:close="hideAlert(index)"
+        @update:open="hideAlert(index)"
       >
-        {{ alert.message }}
-      </v-alert>
+        <template #description>
+          {{ alert.message }}
+        </template>
+      </UAlert>
     </div>
   </div>
 </template>
@@ -49,7 +65,8 @@ const { visibleAlerts, hideAlert, getTopStyle } = useAppAlertVisibility(alerts);
   z-index: 9999;
 }
 
-.bg-error {
-  background-color: #f44336 !important;
+/* 共通アラートのエラーは、テーマのerror色より明るい赤で表示する。 */
+.alert--error {
+  background-color: #f44336;
 }
 </style>

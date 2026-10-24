@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import UButton from "@nuxt/ui/components/Button.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 /**
@@ -9,11 +10,11 @@ const goGamePage = (): void => {
 };
 </script>
 <template>
-  <v-container>
+  <div class="app-container">
     <h1>404: Not Found</h1>
     <p>ページが見つかりません。</p>
-    <v-btn class="mt-2" color="success" size="large" @click="goGamePage">
+    <UButton class="mt-2" color="success" size="lg" @click="goGamePage">
       トップページに戻る
-    </v-btn>
-  </v-container>
+    </UButton>
+  </div>
 </template>
