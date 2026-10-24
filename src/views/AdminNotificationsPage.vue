@@ -2,7 +2,7 @@
 import { onMounted } from "vue";
 import dayjs from "dayjs";
 import URadioGroup from "@nuxt/ui/components/RadioGroup.vue";
-import UButton from "@nuxt/ui/components/Button.vue";
+import AppLoadingButton from "@/components/AppLoadingButton.vue";
 import AppAlerts from "@/components/AppAlerts.vue";
 import AppProgressCircular from "@/components/AppProgressCircular.vue";
 import AppStateMessage from "@/components/AppStateMessage.vue";
@@ -102,7 +102,7 @@ onMounted(() => {
         />
 
         <div class="admin-form__actions">
-          <UButton
+          <AppLoadingButton
             type="submit"
             color="secondary"
             size="lg"
@@ -110,7 +110,7 @@ onMounted(() => {
             :loading="isSending"
           >
             送信する
-          </UButton>
+          </AppLoadingButton>
         </div>
       </form>
     </section>

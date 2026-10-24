@@ -2,7 +2,7 @@
 import AppTabs from "@/components/AppTabs.vue";
 import AppTextField from "@/components/AppTextField.vue";
 import UAlert from "@nuxt/ui/components/Alert.vue";
-import UButton from "@nuxt/ui/components/Button.vue";
+import AppLoadingButton from "@/components/AppLoadingButton.vue";
 import Const from "@/constants/const";
 import { useAuthStore } from "@/stores/auth";
 import type { CustomFieldError } from "@/types/interfaces";
@@ -152,7 +152,7 @@ const submit = async (): Promise<void> => {
               @click:append="showPassword = !showPassword"
             />
 
-            <UButton
+            <AppLoadingButton
               block
               color="secondary"
               :loading="authStore.isLoading"
@@ -160,7 +160,7 @@ const submit = async (): Promise<void> => {
               type="submit"
             >
               {{ submitLabel }}
-            </UButton>
+            </AppLoadingButton>
           </form>
         </div>
       </div>
