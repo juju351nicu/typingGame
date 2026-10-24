@@ -58,4 +58,9 @@ export default defineConfig(({ command }) => ({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  test: {
+    // storeのテストはvi.resetModules()後に動的importするため、初回変換が重い環境では
+    // 既定の5秒を超えることがある。処理の遅延ではなく変換待ちで落ちないよう余裕を持たせる。
+    testTimeout: 15_000,
+  },
 }));
