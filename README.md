@@ -13,7 +13,7 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 
 - Vue 3 / TypeScriptによるゲームUI、状態管理、レスポンシブ表示、Markdown技術ブログを実装しています。
 - Spring Boot / MySQLのAPIをAWS EC2へ公開し、Nginx、HTTPS、JWT Bearer認証を使ってGitHub Pagesから接続しています。
-- ロジックと主要コンポーネントを53ファイル・283テストで検証し、GitHub Actionsでformat・lint・typecheck・test・build・deployを自動化しています。
+- ロジックと主要コンポーネントを59ファイル・342テストで検証し、GitHub Actionsでformat・lint・typecheck・test・build・deployを自動化しています。
 
 ## リンク
 
@@ -79,6 +79,13 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 - API障害時もプレイ結果を失わないlocalStorage fallback
 - バックエンドAPI無効時のフロントエンド単体動作
 
+### お知らせ・管理画面
+
+- ログイン中はヘッダーのベルに未読件数をバッジ表示（100件以上は「99+」）
+- ベルから最新のお知らせ一覧を開くと既読になり、リンク付きのお知らせからアプリ内の画面へ移動
+- 未読件数は画面を表示している間だけ60秒ごとに再取得し、タブへ戻ったときにも更新
+- 管理者だけが使えるお知らせ管理画面（`/admin/notifications`）で、全ユーザーまたは特定ユーザーへ送信し、送信履歴を確認
+
 ### UI
 
 - スマホ幅まで対応したレスポンシブ表示
@@ -102,7 +109,7 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 
 | 分類 | 技術 |
 | --- | --- |
-| Frontend | Vue 3, TypeScript, Vite, Vue Router, Pinia, Vuetify |
+| Frontend | Vue 3, TypeScript, Vite, Vue Router, Pinia, Nuxt UI（Vueプラグイン）, Tailwind CSS v4, Iconify (Lucide) |
 | Backend | Java 25, Spring Boot, Spring Security, JWT, JPA, Flyway |
 | Database | MySQL 8.4, Docker Compose |
 | Infrastructure | AWS EC2, Route 53, Nginx, Let's Encrypt, systemd |
@@ -139,7 +146,11 @@ API停止中もゲーム、localStorage保存、ローカルランキング、�
 - Markdown技術ブログを実装し、`posts-index.json` をfrontmatterから生成してGitHub Actionsで更新漏れを検知しています。
 - Markdownから生成した最終HTMLをDOMPurifyでサニタイズし、XSS入力とリンク・画像保持をjsdom上の回帰テストで検証しています。
 - ルート単位の遅延読み込みとMarkdown rendererの分割により、初期JSとblog chunkの肥大化を軽減しています。
-- Vitestで53ファイル / 283テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元、Markdownサニタイズ、コンポーネント表示を検証しています。
+- UIはNuxt UIをNuxtなしのVueプラグインとして使い、静的SPAのままGitHub Pagesへ配信しています。アイコンはビルドへ同梱し、外部のアイコンAPIへ通信しません。
+- Nuxt UIのテーマ（`ui.theme.mjs`）とCSS変数でMaterial Design基調の配色・寸法をそろえ、ライト / ダークは `<html class="dark">` で切り替えています。
+- お知らせの未読件数取得は `useNotifications.ts` に分離し、画面非表示中はAPIを呼ばない、二重起動しない、401で停止する、といった振る舞いをfake timersのテストで検証しています。
+- 管理画面はrouterでログイン状態を復元してから管理者権限を判定し、権限のないユーザーをゲーム画面へ戻しています。
+- Vitestで59ファイル / 342テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元、Markdownサニタイズ、コンポーネント表示を検証しています。
 
 ## コンポーネント設計
 
@@ -148,6 +159,8 @@ API停止中もゲーム、localStorage保存、ローカルランキング、�
 - 出題状態と入力判定: `useTypingGameWords.ts`、`useTypingInput.ts`、`useTypingWords.ts`
 - 時間と画面上の移動: `useTypingTimers.ts`、`useTimeAttackTimer.ts`、`useTypingWordPositions.ts`
 - ページ状態とMarkdown表示: `useRankingPageState.ts`、`useMarkdownRenderer.ts`
+- お知らせと管理画面: `useNotifications.ts`、`useAdminNotificationForm.ts`、`useAdminNotificationsPageState.ts`
+- 共通UI部品: `AppTextField.vue`、`AppSelectField.vue`、`AppTabs.vue` などをNuxt UIの部品の上に用意し、画面ごとの見た目をそろえています
 
 分離の考え方は[Vue 3 / TypeScriptで画面・API通信・状態管理・Utilityの責務を分離する](https://juju351nicu.github.io/typingGame/guide/vue-typescript-responsibility-separation)で説明しています。全体は `src/composables` を参照してください。
 
