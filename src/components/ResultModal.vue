@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import UButton from "@nuxt/ui/components/Button.vue";
 import UModal from "@nuxt/ui/components/Modal.vue";
+import { useOverlayScrollBlock } from "@/composables/useOverlayScrollBlock";
 import { useResultModalDialog } from "@/composables/useResultModalDialog";
 import { useResultModalState } from "@/composables/useResultModalState";
 import type { GameScore } from "@/types/interfaces";
@@ -54,6 +55,7 @@ const scoreDifferenceLabel = computed((): string => {
 });
 
 const { closeDialog, dialog } = useResultModalDialog(isGameOverFlag);
+useOverlayScrollBlock(dialog);
 
 /** ゲームを再スタートする */
 const restartGame = () => {

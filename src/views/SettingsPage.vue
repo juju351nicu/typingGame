@@ -6,6 +6,7 @@ import UButton from "@nuxt/ui/components/Button.vue";
 import UModal from "@nuxt/ui/components/Modal.vue";
 import { useGameScoresStore } from "@/stores/gameScores";
 import { useConfigStore } from "@/stores/config";
+import { useOverlayScrollBlock } from "@/composables/useOverlayScrollBlock";
 import { useSettingsPageState } from "@/composables/useSettingsPageState";
 
 /** 保存済みスコアを管理するストア */
@@ -35,6 +36,7 @@ const {
   setVirtualKeyboardVisible,
   timeLimitOptions,
 } = useSettingsPageState(configStore, gameScoresStore);
+useOverlayScrollBlock(isResetDialogOpen);
 </script>
 <template>
   <div class="app-container settings-page">

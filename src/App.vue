@@ -27,6 +27,7 @@ const authAlerts = computed((): Alert[] => {
 <template>
   <!--
     モーダル表示中もスクロールバー分の余白を足さない（従来どおりレイアウトを動かさない）。
+    裏のページのスクロールは useOverlayScrollBlock で止める。
   -->
   <UApp :locale="ja" :scroll-body="false">
     <div class="app-shell" :class="{ 'app-shell--dark': isDarkMode }">

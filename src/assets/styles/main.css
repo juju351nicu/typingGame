@@ -51,6 +51,19 @@
 }
 
 /*
+ * モーダル表示中は html をスクロール位置のまま固定し、裏のページを動かさない。
+ * html の overflow-y: scroll は残すため、スクロールバーが消えず幅も変わらない。
+ * クラスと位置の変数は useOverlayScrollBlock が付け外しする。
+ */
+html.app-overlay-scroll-blocked {
+  height: 100%;
+  left: var(--app-body-scroll-x, 0);
+  position: fixed;
+  top: var(--app-body-scroll-y, 0);
+  width: 100%;
+}
+
+/*
  * ページ本文の共通コンテナ。
  * 従来のコンテナと同じ余白と最大幅で、既存画面のレイアウトを保つ。
  */
