@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppNotificationMenu from "@/components/AppNotificationMenu.vue";
 import AppSideMenu from "@/components/AppSideMenu.vue";
 import Const from "@/constants/const";
 import { useAuthStore } from "@/stores/auth";
@@ -66,8 +67,12 @@ const logout = async (): Promise<void> => {
         >
           ログイン
         </UButton>
+        <AppNotificationMenu
+          v-if="isBackendApiEnabled && authStore.isLoggedIn"
+          class="header-notification"
+        />
         <UButton
-          v-else-if="isBackendApiEnabled"
+          v-if="isBackendApiEnabled && authStore.isLoggedIn"
           class="mr-10 header_list"
           color="neutral"
           variant="ghost"
@@ -137,8 +142,14 @@ const logout = async (): Promise<void> => {
 }
 
 .app-bar__actions {
+  align-items: center;
   display: flex;
   justify-content: flex-end;
+  margin-left: auto;
+}
+
+.header-notification {
+  margin-right: 16px;
 }
 
 .header_list {
@@ -170,6 +181,10 @@ const logout = async (): Promise<void> => {
 
   .mr-10 {
     margin-right: 4px !important;
+  }
+
+  .header-notification {
+    margin-right: 0;
   }
 }
 
