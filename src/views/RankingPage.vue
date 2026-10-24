@@ -321,6 +321,8 @@ const getRankClass = (rank: number): string => {
   }
 
   .ranking-filter {
+    /* 縦並びでは flex-basis が高さとして効くため、内容の高さに戻します。 */
+    flex: 0 0 auto;
     max-width: none;
   }
 
