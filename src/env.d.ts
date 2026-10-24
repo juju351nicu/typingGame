@@ -16,5 +16,6 @@ declare global {
 declare module "vue-router" {
   interface RouteMeta {
     requiresBackendApi?: boolean;
+    requiresAdmin?: boolean;
   }
 }

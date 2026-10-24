@@ -12,6 +12,8 @@ interface Props {
   density?: "default" | "comfortable" | "compact";
   /** 先頭アイコンを置くか。ラベルの初期位置をアイコン分ずらす */
   hasPrepend?: boolean;
+  /** 複数行入力か。浮かせる前のラベルを1行目の位置に置く */
+  multiline?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -20,6 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
   error: false,
   density: "default",
   hasPrepend: false,
+  multiline: false,
 });
 
 /** 入力欄内の要素にフォーカスがあるか */
@@ -40,6 +43,8 @@ const isLabelFloating = computed((): boolean => {
         'app-field--error': props.error,
         'app-field--floating': isLabelFloating,
         'app-field--prepend': props.hasPrepend,
+        'app-field--labeled': !!props.label,
+        'app-field--multiline': props.multiline,
       },
     ]"
     @focusin="isFocused = true"
@@ -169,6 +174,10 @@ const isLabelFloating = computed((): boolean => {
 
 .app-field--prepend .app-field__label {
   left: 42px;
+}
+
+.app-field--multiline:not(.app-field--floating) .app-field__label {
+  top: 28px;
 }
 
 .app-field--floating .app-field__label {

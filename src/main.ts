@@ -10,4 +10,5 @@ import "@fontsource/roboto/latin-700.css";
 import "@/assets/styles/main.css";
 const pinia = createPinia();
 pinia.use(createPersistedState());
-createApp(App).use(router).use(pinia).use(ui).mount("#app");
+// routerの画面遷移ガードで認証ストアを使うため、先にPiniaを登録する。
+createApp(App).use(pinia).use(router).use(ui).mount("#app");

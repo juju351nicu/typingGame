@@ -29,6 +29,16 @@ export const routeSetting: RouteRecordRaw[] = [
     component: () => import("@/views/LoginPage.vue"),
   },
   {
+    /** お知らせ管理（管理者のみ） */
+    path: "/admin/notifications",
+    name: "AdminNotificationsPage",
+    meta: {
+      requiresBackendApi: true,
+      requiresAdmin: true,
+    },
+    component: () => import("@/views/AdminNotificationsPage.vue"),
+  },
+  {
     /** ブログ記事一覧 */
     path: "/blogPostList",
     name: "BlogPostList",

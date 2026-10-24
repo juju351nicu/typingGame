@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref, useAttrs } from "vue";
+import { computed, ref, useAttrs, useId } from "vue";
 import UInput from "@nuxt/ui/components/Input.vue";
+import UTextarea from "@nuxt/ui/components/Textarea.vue";
 import UIcon from "@nuxt/ui/components/Icon.vue";
 import AppOutlinedField from "@/components/AppOutlinedField.vue";
 
@@ -31,6 +32,16 @@ interface Props {
   density?: "default" | "comfortable" | "compact";
   /** 入力欄の下に補足表示用の余白を確保しないか */
   hideDetails?: boolean;
+  /** 入力欄の下に表示するエラーメッセージ。指定するとエラー表示になる */
+  errorMessage?: string;
+  /** 入力欄の下に表示する補足説明 */
+  hint?: string;
+  /** 文字数カウンターの上限。指定すると「入力文字数/上限」を表示する */
+  counter?: number;
+  /** 複数行入力にするか */
+  multiline?: boolean;
+  /** 複数行入力の初期行数 */
+  rows?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -45,6 +56,11 @@ const props = withDefaults(defineProps<Props>(), {
   error: false,
   density: "default",
   hideDetails: false,
+  errorMessage: "",
+  hint: "",
+  counter: undefined,
+  multiline: false,
+  rows: 4,
 });
 
 const emit = defineEmits<{
@@ -59,6 +75,19 @@ const attrs = useAttrs();
 const inputAttrs = computed(() => {
   const { class: _class, style: _style, ...rest } = attrs;
   return rest;
+});
+
+/** 補足表示（エラー・説明）の要素ID。入力欄のaria-describedbyに使う */
+const detailsId = useId();
+
+/** エラー表示にするか */
+const hasError = computed((): boolean => {
+  return props.error || props.errorMessage.length > 0;
+});
+
+/** 入力欄の下に表示する文言 */
+const detailsMessage = computed((): string => {
+  return props.errorMessage || props.hint;
 });
 
 /** UInputと同期する入力値 */
@@ -86,9 +115,10 @@ defineExpose({ focus });
     <AppOutlinedField
       :label="props.label"
       :has-value="props.modelValue.length > 0"
-      :error="props.error"
+      :error="hasError"
       :density="props.density"
       :has-prepend="!!props.prependIcon"
+      :multiline="props.multiline"
     >
       <span
         v-if="props.prependIcon"
@@ -97,10 +127,27 @@ defineExpose({ focus });
       >
         <UIcon :name="props.prependIcon" class="app-text-field__icon" />
       </span>
+      <UTextarea
+        v-if="props.multiline"
+        v-model="inputValue"
+        v-bind="inputAttrs"
+        :name="props.name"
+        :placeholder="props.placeholder"
+        :rows="props.rows"
+        :aria-label="props.label || undefined"
+        :aria-invalid="hasError || undefined"
+        :aria-describedby="detailsMessage ? detailsId : undefined"
+        variant="none"
+        class="app-text-field__control app-text-field__control--multiline"
+        :ui="{ base: 'app-text-field__input app-text-field__textarea' }"
+      />
       <UInput
+        v-else
         ref="inputRef"
         v-model="inputValue"
         v-bind="inputAttrs"
+        :aria-invalid="hasError || undefined"
+        :aria-describedby="detailsMessage ? detailsId : undefined"
         :type="props.type"
         :name="props.name"
         :autocomplete="props.autocomplete"
@@ -127,7 +174,27 @@ defineExpose({ focus });
         <UIcon :name="props.appendIcon" class="app-text-field__icon" />
       </span>
     </AppOutlinedField>
-    <div v-if="!props.hideDetails" class="app-text-field__details" />
+    <div v-if="!props.hideDetails" class="app-text-field__details">
+      <span
+        v-if="detailsMessage"
+        :id="detailsId"
+        class="app-text-field__message"
+        :class="{ 'app-text-field__message--error': props.errorMessage }"
+      >
+        {{ detailsMessage }}
+      </span>
+      <span
+        v-if="props.counter"
+        class="app-text-field__counter"
+        :class="{
+          'app-text-field__message--error':
+            props.modelValue.length > props.counter,
+        }"
+        aria-hidden="true"
+      >
+        {{ props.modelValue.length }}/{{ props.counter }}
+      </span>
+    </div>
   </div>
 </template>
 <style>
@@ -156,6 +223,12 @@ defineExpose({ focus });
 .app-text-field__input::placeholder {
   color: currentColor;
   opacity: 0.38;
+}
+
+/* ラベルがある入力欄では、ラベルと重ならないようフォーカス中だけプレースホルダーを表示する。 */
+.app-field--labeled:not(.app-field--focused)
+  .app-text-field__input::placeholder {
+  opacity: 0;
 }
 
 .app-text-field__prepend + .app-text-field__control .app-text-field__input {
@@ -196,7 +269,41 @@ button.app-text-field__append {
   width: 24px;
 }
 
+/* 入力欄の下の補足表示。Material Designのhelper textと同じ寸法にする。 */
 .app-text-field__details {
+  display: flex;
+  font-size: 0.75rem;
+  gap: 8px;
+  justify-content: space-between;
+  letter-spacing: 0.0333333333em;
+  line-height: 1rem;
   min-height: 22px;
+  padding: 6px 16px 0;
+}
+
+.app-text-field__message {
+  opacity: 0.6;
+}
+
+.app-text-field__counter {
+  margin-left: auto;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+.app-text-field__message--error.app-text-field__message--error {
+  color: var(--ui-error);
+  opacity: 1;
+}
+
+.app-text-field__control--multiline.app-text-field__control--multiline {
+  align-items: stretch;
+}
+
+.app-text-field__textarea.app-text-field__textarea {
+  line-height: 1.5;
+  padding-bottom: 12px;
+  padding-top: 16px;
+  resize: vertical;
 }
 </style>

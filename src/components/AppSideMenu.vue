@@ -2,6 +2,8 @@
 import USlideover from "@nuxt/ui/components/Slideover.vue";
 import UIcon from "@nuxt/ui/components/Icon.vue";
 import { computed, ref } from "vue";
+import Const from "@/constants/const";
+import { useAuthStore } from "@/stores/auth";
 
 interface SideMenuProps {
   /** サイドメニューを開いているか */
@@ -17,6 +19,9 @@ interface MenuLink {
 }
 
 const props = defineProps<SideMenuProps>();
+
+/** 管理者メニューの表示判定に使う認証ストア */
+const authStore = useAuthStore();
 
 const emit = defineEmits<{
   "update:drawer": [value: boolean];
@@ -70,6 +75,23 @@ const links = ref<MenuLink[]>([
     icon: "i-lucide-info",
   },
 ]);
+
+/** 管理者だけに表示するページリンク */
+const adminLinks: MenuLink[] = [
+  {
+    to: { name: "AdminNotificationsPage" },
+    title: "お知らせ管理",
+    icon: "i-lucide-megaphone",
+  },
+];
+
+/** 表示中ユーザーの権限に応じたページリンク */
+const visibleLinks = computed((): MenuLink[] => {
+  if (Const.BACKEND_API.ENABLED && authStore.isAdmin) {
+    return [...links.value, ...adminLinks];
+  }
+  return links.value;
+});
 </script>
 <template>
   <!--
@@ -93,7 +115,11 @@ const links = ref<MenuLink[]>([
   >
     <template #content>
       <nav class="side-menu__nav" aria-label="サイトメニュー">
-        <ul v-for="link in links" :key="link.title" class="side-menu__list">
+        <ul
+          v-for="link in visibleLinks"
+          :key="link.title"
+          class="side-menu__list"
+        >
           <li>
             <router-link
               :to="link.to"
