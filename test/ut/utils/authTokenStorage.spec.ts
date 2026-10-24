@@ -40,6 +40,7 @@ describe("authTokenStorage", () => {
       user: {
         id: 1,
         loginEmail: "user@example.com",
+        role: "user",
       },
       accessToken: "access-token",
       tokenType: "Bearer",

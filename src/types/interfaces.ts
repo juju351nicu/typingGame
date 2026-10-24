@@ -67,10 +67,15 @@ export interface RankingQuery {
 export interface GameScore extends GameScoreBase {
   date: string;
 }
+/** ユーザー権限。BEのUserRoleと同じ外向き値です。 */
+export type UserRole = "user" | "admin";
+
 /** ログインユーザー情報 */
 export interface LoginUser {
   id: number;
   loginEmail: string;
+  /** ユーザー権限。管理者だけがお知らせ管理画面を使える */
+  role: UserRole;
 }
 /** ユーザー登録APIのリクエスト */
 export interface RegisterUserRequest {
@@ -98,6 +103,56 @@ export interface CustomFieldError {
 /** APIエラー時の共通レスポンス */
 export interface ErrorResponse {
   fieldErrors?: CustomFieldError[];
+}
+/** お知らせの種類。現時点では運営からのお知らせだけを扱う */
+export type NotificationCategory = "announce";
+
+/** ログインユーザー向けお知らせ取得APIのレスポンス */
+export interface NotificationResponse {
+  id: number;
+  category: NotificationCategory;
+  title: string;
+  body: string;
+  /** お知らせから遷移するアプリ内パス。遷移先がない場合はnull */
+  linkPath: string | null;
+  /** 作成日時（yyyy-MM-dd HH:mm:ss） */
+  createdAt: string;
+  /** 未読の場合true */
+  unread: boolean;
+}
+
+/** 未読お知らせ件数取得APIのレスポンス */
+export type NotificationUnreadCountResponse = Record<
+  NotificationCategory,
+  number
+>;
+
+/** お知らせ既読化APIのリクエスト */
+export interface NotificationMarkReadRequest {
+  category: NotificationCategory;
+}
+
+/** 管理者向けお知らせ送信APIのリクエスト */
+export interface AdminNotificationRequest {
+  title: string;
+  body: string;
+  /** "/" から始まるアプリ内パス。遷移先がない場合はnull */
+  linkPath?: string | null;
+  /** 送信先ユーザーID。nullの場合は全ユーザー */
+  userId?: number | null;
+}
+
+/** 管理者向けお知らせ送信・一覧APIのレスポンス */
+export interface AdminNotificationResponse {
+  id: number;
+  category: NotificationCategory;
+  /** 送信先ユーザーID。全ユーザー宛ての場合はnull */
+  userId: number | null;
+  title: string;
+  body: string;
+  linkPath: string | null;
+  /** 作成日時（yyyy-MM-dd HH:mm:ss） */
+  createdAt: string;
 }
 /** ランキング表示用スコアのインターフェース */
 export interface RankingScore extends GameScore {

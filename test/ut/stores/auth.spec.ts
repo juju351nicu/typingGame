@@ -40,6 +40,7 @@ describe("auth store", () => {
             user: {
               id: 1,
               loginEmail: "user@example.com",
+              role: "user",
             },
             accessToken: "access-token",
             tokenType: "Bearer",
@@ -64,6 +65,7 @@ describe("auth store", () => {
     expect(authStore.currentUser).toEqual({
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     });
     expect(authStore.accessToken).toBe("access-token");
     expect(authStore.tokenType).toBe("Bearer");
@@ -78,6 +80,7 @@ describe("auth store", () => {
           JSON.stringify({
             id: 1,
             loginEmail: "user@example.com",
+            role: "user",
           }),
           {
             status: 201,
@@ -91,6 +94,7 @@ describe("auth store", () => {
             user: {
               id: 1,
               loginEmail: "user@example.com",
+              role: "user",
             },
             accessToken: "registered-access-token",
             tokenType: "Bearer",
@@ -132,6 +136,7 @@ describe("auth store", () => {
         JSON.stringify({
           id: 1,
           loginEmail: "user@example.com",
+          role: "user",
         }),
         {
           status: 200,
@@ -148,6 +153,7 @@ describe("auth store", () => {
     expect(authStore.currentUser).toEqual({
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     });
     const options = fetchMock.mock.calls[0][1] as RequestInit;
     const headers = options.headers as Headers;
@@ -198,6 +204,7 @@ describe("auth store", () => {
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     };
     authStore.accessToken = "access-token";
     authStore.tokenType = "Bearer";
@@ -227,6 +234,7 @@ describe("auth store", () => {
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     };
     authStore.accessToken = "access-token";
     authStore.tokenType = "Bearer";
@@ -254,6 +262,7 @@ describe("auth store", () => {
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     };
     authStore.accessToken = "access-token";
     authStore.tokenType = "Bearer";
@@ -285,6 +294,7 @@ describe("auth store", () => {
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     };
     authStore.accessToken = "access-token";
 
@@ -312,5 +322,48 @@ describe("auth store", () => {
 
     expect(fetchMock).not.toHaveBeenCalled();
     expect(authStore.isLoggedIn).toBe(false);
+  });
+
+  it("ログインユーザーの権限から管理者か判定する", async () => {
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+
+    expect(authStore.isAdmin).toBe(false);
+
+    authStore.currentUser = {
+      id: 1,
+      loginEmail: "user@example.com",
+      role: "user",
+    };
+    expect(authStore.isAdmin).toBe(false);
+
+    authStore.currentUser = {
+      id: 2,
+      loginEmail: "admin@example.com",
+      role: "admin",
+    };
+    expect(authStore.isAdmin).toBe(true);
+  });
+
+  it("同時にセッション復元を呼んでもログイン中ユーザー取得APIは1回だけ呼ぶ", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: 2,
+          loginEmail: "admin@example.com",
+          role: "admin",
+        }),
+        { status: 200, statusText: "OK" }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const { useAuthStore } = await import("@/stores/auth");
+    const authStore = useAuthStore();
+    authStore.accessToken = "access-token";
+
+    await Promise.all([authStore.restoreSession(), authStore.restoreSession()]);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(authStore.isAdmin).toBe(true);
   });
 });

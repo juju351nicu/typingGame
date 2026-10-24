@@ -34,6 +34,16 @@ export const isUnauthorizedApiError = (error: unknown): boolean => {
 };
 
 /**
+ * 権限不足によるAPIエラーか判定します。
+ *
+ * @param error 判定対象の例外
+ * @returns 403のHTTPエラーの場合はtrue
+ */
+export const isForbiddenApiError = (error: unknown): boolean => {
+  return error instanceof HttpError && error.status === 403;
+};
+
+/**
  * 例外を画面表示用のフィールドエラー一覧へ変換します。
  *
  * バックエンドが `fieldErrors` を返した場合はその内容を優先し、

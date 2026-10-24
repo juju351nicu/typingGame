@@ -26,6 +26,14 @@ const SESSION_EXPIRED_MESSAGE =
   "ログインの有効期限が切れました。もう一度ログインしてください。";
 
 /**
+ * 実行中のセッション復元処理。
+ *
+ * App.vueの起動処理とrouterの権限確認が同時に復元を呼んでも、
+ * ログイン中ユーザー取得APIを1回だけ呼ぶために共有する。
+ */
+let pendingRestoreSession: Promise<void> | null = null;
+
+/**
  * 認証ストアで使用する型定義
  */
 interface AuthState {
@@ -71,6 +79,13 @@ export const useAuthStore = defineStore("auth", {
     isLoggedIn(): boolean {
       return this.currentUser !== null;
     },
+    /**
+     * 管理者としてログインしているか判定する。
+     * @returns 管理者の場合はtrue
+     */
+    isAdmin(): boolean {
+      return this.currentUser?.role === Const.USER_ROLE.ADMIN;
+    },
   },
   actions: {
     /**
@@ -83,7 +98,12 @@ export const useAuthStore = defineStore("auth", {
         return;
       }
 
-      await this.fetchCurrentUser();
+      if (!pendingRestoreSession) {
+        pendingRestoreSession = this.fetchCurrentUser().finally(() => {
+          pendingRestoreSession = null;
+        });
+      }
+      await pendingRestoreSession;
     },
     /**
      * ユーザーを登録する。

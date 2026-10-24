@@ -2,7 +2,9 @@ import type {
   DataTableHeader,
   GameMode,
   GameRule,
+  NotificationCategory,
   TimeLimitSeconds,
+  UserRole,
 } from "@/types/interfaces";
 
 /**
@@ -107,6 +109,31 @@ const DATE_FORMAT = {
   STANDARD_DATE_TIME: "YYYY-MM-DD HH:mm:ss",
 };
 
+/** ユーザー権限の種類 */
+const USER_ROLE = {
+  USER: "user",
+  ADMIN: "admin",
+} as const satisfies Record<string, UserRole>;
+
+/** お知らせの種類 */
+const NOTIFICATION_CATEGORY = {
+  ANNOUNCE: "announce",
+} as const satisfies Record<string, NotificationCategory>;
+
+/** お知らせ表示に関する設定 */
+const NOTIFICATION = {
+  /** 未読件数を再取得する間隔（ミリ秒） */
+  POLLING_INTERVAL_MS: 60_000,
+  /** 未読バッジに数字で表示する上限。超えた場合は「99+」と表示する */
+  BADGE_MAX_COUNT: 99,
+  /** お知らせタイトルの最大文字数 */
+  TITLE_MAX_LENGTH: 100,
+  /** お知らせ本文の最大文字数 */
+  BODY_MAX_LENGTH: 500,
+  /** お知らせのリンク先パスの最大文字数 */
+  LINK_PATH_MAX_LENGTH: 200,
+} as const;
+
 /** バックエンドAPI接続に関する設定 */
 const BACKEND_API = {
   /** バックエンドAPIを有効にするか */
@@ -134,5 +161,8 @@ export default {
   DATA_TABLE_PAGES,
   OPTIONS_OF_HEADERS,
   DATE_FORMAT,
+  USER_ROLE,
+  NOTIFICATION_CATEGORY,
+  NOTIFICATION,
   BACKEND_API,
 };

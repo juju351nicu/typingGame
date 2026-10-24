@@ -60,6 +60,7 @@ describe("gameScores store", () => {
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     };
     const gameScoresStore = useGameScoresStore();
     const score: GameScore = {
@@ -110,6 +111,7 @@ describe("gameScores store", () => {
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     };
     const gameScoresStore = useGameScoresStore();
     const score: GameScore = {
@@ -140,6 +142,7 @@ describe("gameScores store", () => {
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     };
     authStore.accessToken = "access-token";
     authStore.tokenType = "Bearer";
@@ -175,6 +178,7 @@ describe("gameScores store", () => {
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     };
     const gameScoresStore = useGameScoresStore();
     const score: GameScore = {
@@ -222,6 +226,7 @@ describe("gameScores store", () => {
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     };
     const gameScoresStore = useGameScoresStore();
 
@@ -244,6 +249,7 @@ describe("gameScores store", () => {
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     };
     const gameScoresStore = useGameScoresStore();
     const localScore: GameScore = {
@@ -275,6 +281,7 @@ describe("gameScores store", () => {
     authStore.currentUser = {
       id: 1,
       loginEmail: "user@example.com",
+      role: "user",
     };
     authStore.accessToken = "access-token";
     authStore.tokenType = "Bearer";
