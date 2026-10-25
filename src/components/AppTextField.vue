@@ -77,6 +77,16 @@ const inputAttrs = computed(() => {
   return rest;
 });
 
+/**
+ * 入力欄の読み上げ名。
+ *
+ * labelを表示しない入力欄でも、呼び出し側で指定したaria-labelを入力欄へ渡す。
+ * （v-bindの後に :aria-label を書くと、未指定のlabelでaria-labelが上書きされるため）
+ */
+const inputAriaLabel = computed((): string | undefined => {
+  return props.label || (attrs["aria-label"] as string | undefined);
+});
+
 /** 補足表示（エラー・説明）の要素ID。入力欄のaria-describedbyに使う */
 const detailsId = useId();
 
@@ -134,7 +144,7 @@ defineExpose({ focus });
         :name="props.name"
         :placeholder="props.placeholder"
         :rows="props.rows"
-        :aria-label="props.label || undefined"
+        :aria-label="inputAriaLabel"
         :aria-invalid="hasError || undefined"
         :aria-describedby="detailsMessage ? detailsId : undefined"
         variant="none"
@@ -152,7 +162,7 @@ defineExpose({ focus });
         :name="props.name"
         :autocomplete="props.autocomplete"
         :placeholder="props.placeholder"
-        :aria-label="props.label || undefined"
+        :aria-label="inputAriaLabel"
         variant="none"
         class="app-text-field__control"
         :ui="{ base: 'app-text-field__input' }"
