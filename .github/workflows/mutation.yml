@@ -1,0 +1,48 @@
+name: Mutation Test
+
+# ミューテーションテストは通常のテストより時間がかかるため、PRごとの必須チェックにはせず、
+# 対象の計算ロジックとそのテストを変更したときと、手動実行のときだけ動かす。
+on:
+  pull_request:
+    paths:
+      - "src/utils/gameUtils.ts"
+      - "src/utils/chartUtils.ts"
+      - "src/composables/useDataTableView.ts"
+      - "src/composables/useRankingServerPaging.ts"
+      - "test/ut/utils/**"
+      - "test/ut/composables/useDataTableView.spec.ts"
+      - "test/ut/composables/useRankingServerPaging.spec.ts"
+      - "stryker.config.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mutation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # StrykerJS 10はNode.js 22以上が必要なため、このジョブだけNode.js 22で動かす。
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Mutation test
+        run: npm run test:mutation
+
+      - name: Upload mutation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          retention-days: 14
