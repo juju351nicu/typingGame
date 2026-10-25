@@ -5,3 +5,12 @@ dist-ssr
 *.local
 docs/work-log.md
 /docs/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+
+# StrykerJS
+/reports/
+/.stryker-tmp/
