@@ -9,9 +9,20 @@ import { computed, toRef } from "vue";
 import UButton from "@nuxt/ui/components/Button.vue";
 import UIcon from "@nuxt/ui/components/Icon.vue";
 import AppSelectField from "@/components/AppSelectField.vue";
-import { useDataTableView } from "@/composables/useDataTableView";
+import {
+  createPageText,
+  useDataTableView,
+} from "@/composables/useDataTableView";
 
 type ItemsPerPageOption = number | { title: string; value: number };
+
+/** サーバーサイドページング時のページ情報 */
+interface ServerPaging {
+  page: number;
+  size: number;
+  totalCount: number;
+  totalPages: number;
+}
 
 interface RankingTablePanelProps {
   modelValue: number;
@@ -28,12 +39,20 @@ interface RankingTablePanelProps {
   getScoreGameRule: (score: RankingScore) => GameRule;
   getScoreGameRuleLabel: (score: RankingScore) => string;
   getTimeLimitLabel: (score: RankingScore) => string;
+  /**
+   * サーバーサイドページング時のページ情報。
+   * 指定した場合、rankingItemsは表示中のページの行として扱い、画面内では並び替え・ページ分割しない。
+   */
+  serverPaging?: ServerPaging | null;
 }
 
-const props = defineProps<RankingTablePanelProps>();
+const props = withDefaults(defineProps<RankingTablePanelProps>(), {
+  serverPaging: null,
+});
 
 const emit = defineEmits<{
   "update:modelValue": [value: number];
+  "update:page": [value: number];
 }>();
 
 const itemsPerPage = computed({
@@ -52,6 +71,52 @@ const itemsPerPageOptions = computed(() => {
 
 const { page, sortBy, visibleItems, pageCount, pageText, toggleSort } =
   useDataTableView(toRef(props, "rankingItems"), itemsPerPage);
+
+/** サーバー側でページ分割しているか */
+const isServerPaging = computed((): boolean => props.serverPaging != null);
+
+/** 表に表示する行 */
+const displayItems = computed((): RankingScore[] => {
+  return props.serverPaging ? props.rankingItems : visibleItems.value;
+});
+
+/** 現在のページ番号 */
+const currentPage = computed((): number => {
+  return props.serverPaging?.page ?? page.value;
+});
+
+/** 最後のページ番号 */
+const lastPage = computed((): number => {
+  return props.serverPaging?.totalPages ?? pageCount.value;
+});
+
+/** 「1-5 of 12」形式の表示範囲 */
+const displayPageText = computed((): string => {
+  const serverPaging = props.serverPaging;
+  if (!serverPaging) {
+    return pageText.value;
+  }
+  return createPageText(
+    serverPaging.page,
+    serverPaging.size,
+    serverPaging.totalCount
+  );
+});
+
+/**
+ * 指定ページへ移動する。
+ *
+ * サーバーサイドページング時は親へページ番号を渡し、APIで取得し直してもらう。
+ *
+ * @param nextPage 移動先のページ番号
+ */
+const goToPage = (nextPage: number): void => {
+  if (isServerPaging.value) {
+    emit("update:page", nextPage);
+    return;
+  }
+  page.value = nextPage;
+};
 
 /** 数値として表示する指標の列 */
 const NUMERIC_METRIC_KEYS = ["wpm", "correctCharacterCount", "missCount"];
@@ -107,7 +172,9 @@ const getGameRuleChipColor = (item: RankingScore): string => {
               :class="`ranking-table__cell--${header.align ?? 'start'}`"
               :aria-sort="getAriaSort(header.key)"
             >
+              <span v-if="isServerPaging">{{ header.title }}</span>
               <button
+                v-else
                 type="button"
                 class="ranking-table__sort"
                 :class="{
@@ -130,13 +197,13 @@ const getGameRuleChipColor = (item: RankingScore): string => {
           </tr>
         </thead>
         <tbody>
-          <tr v-if="visibleItems.length === 0">
+          <tr v-if="displayItems.length === 0">
             <td :colspan="headers.length" class="ranking-table__no-data">
               まだスコアがありません。ゲームをプレイするとここに表示されます。
             </td>
           </tr>
           <tr
-            v-for="(item, index) in visibleItems"
+            v-for="(item, index) in displayItems"
             :key="`${item.date}-${item.score}-${index}`"
           >
             <td
@@ -209,7 +276,7 @@ const getGameRuleChipColor = (item: RankingScore): string => {
           class="ranking-table__items-select"
         />
       </div>
-      <div class="ranking-table__info">{{ pageText }}</div>
+      <div class="ranking-table__info">{{ displayPageText }}</div>
       <nav
         class="ranking-table__pagination"
         aria-label="ランキング表のページ送り"
@@ -220,8 +287,8 @@ const getGameRuleChipColor = (item: RankingScore): string => {
           variant="ghost"
           icon="i-lucide-chevron-first"
           aria-label="最初のページ"
-          :disabled="page <= 1"
-          @click="page = 1"
+          :disabled="currentPage <= 1"
+          @click="goToPage(1)"
         />
         <UButton
           class="ranking-table__page-button"
@@ -229,8 +296,8 @@ const getGameRuleChipColor = (item: RankingScore): string => {
           variant="ghost"
           icon="i-lucide-chevron-left"
           aria-label="前のページ"
-          :disabled="page <= 1"
-          @click="page -= 1"
+          :disabled="currentPage <= 1"
+          @click="goToPage(currentPage - 1)"
         />
         <UButton
           class="ranking-table__page-button"
@@ -238,8 +305,8 @@ const getGameRuleChipColor = (item: RankingScore): string => {
           variant="ghost"
           icon="i-lucide-chevron-right"
           aria-label="次のページ"
-          :disabled="page >= pageCount"
-          @click="page += 1"
+          :disabled="currentPage >= lastPage"
+          @click="goToPage(currentPage + 1)"
         />
         <UButton
           class="ranking-table__page-button"
@@ -247,8 +314,8 @@ const getGameRuleChipColor = (item: RankingScore): string => {
           variant="ghost"
           icon="i-lucide-chevron-last"
           aria-label="最後のページ"
-          :disabled="page >= pageCount"
-          @click="page = pageCount"
+          :disabled="currentPage >= lastPage"
+          @click="goToPage(lastPage)"
         />
       </nav>
     </div>

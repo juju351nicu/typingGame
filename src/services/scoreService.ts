@@ -1,6 +1,9 @@
 import type {
   GameScore,
   GameScoreResponse,
+  RankingPage,
+  RankingPageQuery,
+  RankingPageResponse,
   RankingQuery,
   SaveGameScoreRequest,
 } from "@/types/interfaces";
@@ -9,6 +12,7 @@ import Fetcher from "@/utils/fetchClient";
 
 const MY_SCORE_API_PATH = "/api/me/scores";
 const RANKINGS_API_PATH = "/api/rankings";
+const RANKINGS_PAGE_API_PATH = "/api/rankings/page";
 
 /**
  * APIのURLを作成する。
@@ -20,13 +24,14 @@ const createApiUrl = (path: string): string => {
 };
 
 /**
- * ランキング取得APIのURLを作成する。
+ * ランキング絞り込み条件をクエリ文字列へ設定する。
+ * @param searchParams 設定先のクエリ文字列
  * @param query ランキング検索条件
- * @returns クエリ文字列付きAPI URL
  */
-const createRankingsApiUrl = (query: RankingQuery = {}): string => {
-  const searchParams = new URLSearchParams();
-
+const setRankingFilterParams = (
+  searchParams: URLSearchParams,
+  query: Omit<RankingQuery, "limit">
+): void => {
   if (query.mode != null) {
     searchParams.set("mode", String(query.mode));
   }
@@ -36,6 +41,16 @@ const createRankingsApiUrl = (query: RankingQuery = {}): string => {
   if (query.timeLimitSeconds != null) {
     searchParams.set("timeLimitSeconds", String(query.timeLimitSeconds));
   }
+};
+
+/**
+ * ランキング取得APIのURLを作成する。
+ * @param query ランキング検索条件
+ * @returns クエリ文字列付きAPI URL
+ */
+const createRankingsApiUrl = (query: RankingQuery = {}): string => {
+  const searchParams = new URLSearchParams();
+  setRankingFilterParams(searchParams, query);
   if (query.limit != null) {
     searchParams.set("limit", String(query.limit));
   }
@@ -43,6 +58,19 @@ const createRankingsApiUrl = (query: RankingQuery = {}): string => {
   const queryString = searchParams.toString();
   const apiUrl = createApiUrl(RANKINGS_API_PATH);
   return queryString ? `${apiUrl}?${queryString}` : apiUrl;
+};
+
+/**
+ * ページ単位のランキング取得APIのURLを作成する。
+ * @param query ランキング検索条件とページ番号・件数
+ * @returns クエリ文字列付きAPI URL
+ */
+export const createRankingsPageApiUrl = (query: RankingPageQuery): string => {
+  const searchParams = new URLSearchParams();
+  setRankingFilterParams(searchParams, query);
+  searchParams.set("page", String(query.page));
+  searchParams.set("size", String(query.size));
+  return `${createApiUrl(RANKINGS_PAGE_API_PATH)}?${searchParams.toString()}`;
 };
 
 /**
@@ -126,4 +154,21 @@ export const fetchRankingsApi = async (
     createRankingsApiUrl(query)
   );
   return response.map(toGameScore);
+};
+
+/**
+ * ページ単位のランキング取得APIから、指定ページのスコア一覧と総件数を取得する。
+ * @param query ランキング検索条件とページ番号・件数
+ * @returns 指定ページのスコア一覧と総件数
+ */
+export const fetchRankingsPageApi = async (
+  query: RankingPageQuery
+): Promise<RankingPage> => {
+  const response = await Fetcher.getJson<RankingPageResponse>(
+    createRankingsPageApiUrl(query)
+  );
+  return {
+    ...response,
+    items: response.items.map(toGameScore),
+  };
 };

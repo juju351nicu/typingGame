@@ -429,3 +429,31 @@ describe("createPerformanceTrendItems", () => {
     expect(result.map((item) => item.metricValue)).toEqual([90, 95, 100]);
   });
 });
+
+describe("createPagedRankingScores", () => {
+  const pageScores: GameScore[] = [
+    { score: 21, mode: 2, time: "00:00:30.00", date: "2026-05-24 12:00:00" },
+    { score: 6, mode: 1, time: "00:00:40.00", date: "2026-05-24 12:10:00" },
+  ];
+
+  it("ページ先頭までの件数を足して全体での順位を付ける", () => {
+    const result = Util.createPagedRankingScores(pageScores, 20);
+
+    expect(result.map((item) => item.rank)).toEqual([21, 22]);
+  });
+
+  it("1ページ目は1位から順位を付け、サーバーの並び順を変えない", () => {
+    const result = Util.createPagedRankingScores(pageScores, 0);
+
+    expect(result.map((item) => [item.rank, item.score])).toEqual([
+      [1, 21],
+      [2, 6],
+    ]);
+  });
+
+  it("スコアからリザルトランクを付ける", () => {
+    const result = Util.createPagedRankingScores(pageScores, 0);
+
+    expect(result.map((item) => item.resultRank)).toEqual(["S", "B"]);
+  });
+});

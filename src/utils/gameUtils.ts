@@ -245,6 +245,27 @@ const createRankingScores = (
 };
 
 /**
+ * サーバーで並び替え・ページ分割済みのスコアへ順位を付ける。
+ *
+ * サーバーから受け取るのは指定ページの行だけのため、順位は
+ * ページ先頭までの件数（offset）を足して全体での順位にする。
+ *
+ * @param scores 指定ページのスコア一覧（ランキング順）
+ * @param offset ページ先頭までに読み飛ばした件数
+ * @returns ランキング表示用スコア一覧
+ */
+const createPagedRankingScores = (
+  scores: GameScore[],
+  offset: number
+): RankingScore[] => {
+  return scores.map((item, index) => ({
+    ...item,
+    rank: offset + index + 1,
+    resultRank: getResultRank(item.score),
+  }));
+};
+
+/**
  * スコアに保存されたゲームルールを取得する。
  *
  * 既存の保存済みスコアには gameRule が無いため、通常モードとして扱う。
@@ -423,6 +444,7 @@ export default {
   getResultRank,
   getResultRankColor,
   createRankingScores,
+  createPagedRankingScores,
   getGameRule,
   getGameRuleLabel,
   getScoreGameRuleLabel,

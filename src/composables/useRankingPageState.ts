@@ -50,6 +50,9 @@ export const trendMetricOptions: {
   { title: "正確率", value: "accuracy", unit: "%" },
 ];
 
+/** パフォーマンス推移グラフに表示するプレイ件数 */
+export const TREND_ITEM_LIMIT = 10;
+
 /**
  * ランク表示用CSSクラスを取得する。
  *
@@ -264,7 +267,8 @@ export const useRankingPageState = (
   const performanceTrendItems = computed((): PerformanceTrendItem[] => {
     return Util.createPerformanceTrendItems(
       rankingItems.value,
-      selectedTrendMetric.value
+      selectedTrendMetric.value,
+      TREND_ITEM_LIMIT
     );
   });
 

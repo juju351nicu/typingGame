@@ -68,6 +68,30 @@ export const getNextSort = (
 };
 
 /**
+ * 「1-5 of 12」形式の表示範囲を作成する。
+ *
+ * @param page 現在のページ番号（1始まり）
+ * @param itemsPerPage 1ページあたりの行数。0以下の場合は全件表示
+ * @param total 総件数
+ * @returns 表示範囲の文言
+ */
+export const createPageText = (
+  page: number,
+  itemsPerPage: number,
+  total: number
+): string => {
+  if (total === 0) {
+    return "0-0 of 0";
+  }
+  if (itemsPerPage <= 0) {
+    return `1-${total} of ${total}`;
+  }
+  const start = (page - 1) * itemsPerPage + 1;
+  const end = Math.min(page * itemsPerPage, total);
+  return `${start}-${end} of ${total}`;
+};
+
+/**
  * 表の並び替えとページ分割を管理する。
  *
  * データテーブルの並び替え・ページ送りの挙動を、
@@ -119,16 +143,7 @@ export const useDataTableView = <T extends object>(
   });
 
   const pageText = computed((): string => {
-    const total = items.value.length;
-    if (total === 0) {
-      return "0-0 of 0";
-    }
-    if (itemsPerPage.value <= 0) {
-      return `1-${total} of ${total}`;
-    }
-    const start = (page.value - 1) * itemsPerPage.value + 1;
-    const end = Math.min(page.value * itemsPerPage.value, total);
-    return `${start}-${end} of ${total}`;
+    return createPageText(page.value, itemsPerPage.value, items.value.length);
   });
 
   const toggleSort = (key: string): void => {
