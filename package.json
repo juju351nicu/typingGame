@@ -26,9 +26,9 @@
     "@nuxt/ui": "^4.12.0",
     "chart.js": "^4.6.1",
     "dayjs": "^1.11.19",
-    "dompurify": "^3.4.14",
+    "dompurify": "^3.4.17",
     "highlight.js": "^11.11.1",
-    "markdown-it": "^14.1.0",
+    "markdown-it": "^14.3.3",
     "pinia": "^3.0.2",
     "pinia-plugin-persistedstate": "^4.2.0",
     "simple-keyboard": "^3.8.93",
@@ -55,8 +55,12 @@
     "prettier": "^3.9.6",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.68.0",
-    "vite": "^8.1.5",
-    "vitest": "^4.0.18",
+    "vite": "^8.3.5",
+    "vitest": "^4.1.12",
     "vue-tsc": "^3.3.11"
+  },
+  "overrides": {
+    "esbuild": "^0.28.2",
+    "qs": "^6.16.1"
   }
 }
