@@ -11,6 +11,10 @@ import {
   getRankingRankClass,
   useRankingPageState,
 } from "@/composables/useRankingPageState";
+import {
+  useRankingServerPaging,
+  type RankingFilter,
+} from "@/composables/useRankingServerPaging";
 import Const from "@/constants/const";
 import { fetchRankingsApi } from "@/services/scoreService";
 import type { GameScore, RankingQuery } from "@/types/interfaces";
@@ -69,6 +73,57 @@ const {
   trendTitle,
 } = useRankingPageState(gameScoresStore, { allRankingScores });
 
+/** ランキング表の絞り込み条件 */
+const rankingFilter = computed((): RankingFilter => ({
+  mode: selectedMode.value,
+  gameRule: selectedGameRule.value,
+  timeLimitSeconds: activeTimeLimitSeconds.value,
+}));
+
+/**
+ * 全体ランキングの表はページ番号をサーバーへ渡して、表示するページだけ取得する。
+ * 自分の記録は件数が限られ、localStorageにも保持しているため画面内でページ分割する。
+ */
+const isServerPagingEnabled = computed((): boolean => {
+  return (
+    isBackendApiEnabled &&
+    isAllRankingSelected.value &&
+    selectedRankingTab.value === "table"
+  );
+});
+
+const {
+  rankingPage: serverRankingPage,
+  rankingItems: serverRankingItems,
+  changePage: changeServerRankingPage,
+} = useRankingServerPaging({
+  isEnabled: isServerPagingEnabled,
+  filter: rankingFilter,
+  itemsPerPage,
+});
+
+/** ランキング表へ渡すサーバーサイドページング情報 */
+const tableServerPaging = computed(() => {
+  if (!isServerPagingEnabled.value) {
+    return null;
+  }
+  return (
+    serverRankingPage.value ?? {
+      page: 1,
+      size: 0,
+      totalCount: 0,
+      totalPages: 1,
+    }
+  );
+});
+
+/** ランキング表に表示する行 */
+const tableRankingItems = computed(() => {
+  return isServerPagingEnabled.value
+    ? serverRankingItems.value
+    : rankingItems.value;
+});
+
 /** ランキング画面の補足文 */
 const rankingSubtitle = computed((): string => {
   if (isAllRankingSelected.value && isAllRankingLoading.value) {
@@ -83,9 +138,7 @@ const rankingSubtitle = computed((): string => {
 /** 全体ランキングAPIの検索条件を作成する。 */
 const createRankingQuery = (): RankingQuery => {
   return {
-    mode: selectedMode.value,
-    gameRule: selectedGameRule.value,
-    timeLimitSeconds: activeTimeLimitSeconds.value,
+    ...rankingFilter.value,
     limit: 50,
   };
 };
@@ -194,6 +247,7 @@ const getRankClass = (rank: number): string => {
           <RankingTrendPanel
             v-model="selectedTrendMetric"
             :performance-trend-items="performanceTrendItems"
+            :ranking-items="rankingItems"
             :trend-metric-options="trendMetricOptions"
             :trend-title="trendTitle"
             :get-trend-value-label="getTrendValueLabel"
@@ -204,7 +258,8 @@ const getRankClass = (rank: number): string => {
           <RankingTablePanel
             v-model="itemsPerPage"
             :headers="headers"
-            :ranking-items="rankingItems"
+            :ranking-items="tableRankingItems"
+            :server-paging="tableServerPaging"
             :pages="pages"
             :time-attack-game-rule="timeAttackGameRule"
             :format-accuracy-metric="formatAccuracyMetric"
@@ -216,6 +271,7 @@ const getRankClass = (rank: number): string => {
             :get-score-game-rule="getScoreGameRule"
             :get-score-game-rule-label="getScoreGameRuleLabel"
             :get-time-limit-label="getTimeLimitLabel"
+            @update:page="changeServerRankingPage"
           />
         </div>
       </div>

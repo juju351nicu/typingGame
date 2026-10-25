@@ -6,3 +6,7 @@ node_modules/
 package-lock.json
 public/
 README.md
+playwright-report/
+test-results/
+reports/
+.stryker-tmp/

@@ -1,5 +1,22 @@
 [
   {
+    "id": "playwright-chartjs-stryker-ranking-paging",
+    "section": "guide",
+    "date": "2026-10-25",
+    "title": "ランキング画面にPlaywright E2E・Chart.js・StrykerJS・LIMIT/OFFSETページングを入れた話",
+    "description": "タイピングゲームのランキング画面を題材に、Chart.jsでの折れ線・棒グラフ、Spring Boot + DomaのLIMIT/OFFSETによるサーバーサイドページング、PlaywrightのE2Eテスト、StrykerJSのミューテーションテストを導入しました。ライブラリの選定理由と、E2Eで見つかった不具合、ミューテーションスコアが87%から96%に上がるまでをまとめます。",
+    "tags": [
+      "Playwright",
+      "Chart.js",
+      "StrykerJS",
+      "Spring Boot",
+      "Doma",
+      "Vue 3",
+      "テスト"
+    ],
+    "url": "blog_store/posts/guide/playwright-chartjs-stryker-ranking-paging.md"
+  },
+  {
     "id": "ec2-spring-boot-https-frontend-connection",
     "section": "guide",
     "date": "2026-08-29",

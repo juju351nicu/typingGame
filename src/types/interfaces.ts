@@ -63,6 +63,32 @@ export interface RankingQuery {
   limit?: number | null;
 }
 
+/** ページ単位のランキング取得APIの検索条件 */
+export interface RankingPageQuery extends Omit<RankingQuery, "limit"> {
+  /** ページ番号（1始まり） */
+  page: number;
+  /** 1ページあたりの件数 */
+  size: number;
+}
+
+/** ページ単位のランキング取得APIのレスポンス */
+export interface RankingPageResponse {
+  items: GameScoreResponse[];
+  page: number;
+  size: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+/** 画面で扱うページ単位のランキング */
+export interface RankingPage {
+  items: GameScore[];
+  page: number;
+  size: number;
+  totalCount: number;
+  totalPages: number;
+}
+
 /** ゲームスコアのインターフェ-ス */
 export interface GameScore extends GameScoreBase {
   date: string;

@@ -29,8 +29,9 @@ const copyBlogStorePlugin = () => ({
 });
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command }) => ({
-  base: command === "build" ? "/typingGame/" : "/",
+export default defineConfig(({ command, isPreview }) => ({
+  // vite previewはcommandが"serve"になるため、ビルド結果と同じベースパスで配信するよう明示する。
+  base: command === "build" || isPreview ? "/typingGame/" : "/",
   server: {
     host: true,
     port: 8081,

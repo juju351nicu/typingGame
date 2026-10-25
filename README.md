@@ -13,7 +13,7 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 
 - Vue 3 / TypeScriptによるゲームUI、状態管理、レスポンシブ表示、Markdown技術ブログを実装しています。
 - Spring Boot / MySQLのAPIをAWS EC2へ公開し、Nginx、HTTPS、JWT Bearer認証を使ってGitHub Pagesから接続しています。
-- ロジックと主要コンポーネントを59ファイル・342テストで検証し、GitHub Actionsでformat・lint・typecheck・test・build・deployを自動化しています。
+- ロジックと主要コンポーネントを63ファイル・395テストで検証し、PlaywrightのE2E（21ケース）とStrykerJSのミューテーションテストも加えて、GitHub Actionsでformat・lint・typecheck・test・E2E・build・deployを自動化しています。
 
 ## リンク
 
@@ -28,8 +28,9 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 - [GitHub PagesのVueからAWS EC2上のSpring Boot APIへHTTPS接続するまで](https://juju351nicu.github.io/typingGame/guide/ec2-spring-boot-https-frontend-connection) — EC2への配置からHTTPS化、`502 Bad Gateway`などの切り分けを記録しています。
 - [Spring Security Resource ServerでJWT Bearer認証を実装する](https://juju351nicu.github.io/typingGame/guide/spring-security-jwt-resource-server) — CookieからJWTへの移行理由と、`sessionStorage`を選んだトレードオフを整理しています。
 - [Node.jsでMarkdownブログのposts-index.jsonを自動生成する](https://juju351nicu.github.io/typingGame/guide/nodejs-generate-posts-index) — frontmatterから記事索引を生成し、CIで更新漏れを検知する構成を説明しています。
+- [ランキング画面にPlaywright E2E・Chart.js・StrykerJS・LIMIT/OFFSETページングを入れた話](https://juju351nicu.github.io/typingGame/guide/playwright-chartjs-stryker-ranking-paging) — ライブラリの選定理由、E2Eで見つかった不具合、ミューテーションスコアを87%から96%に上げた過程をまとめています。
 
-上記以外を含む全12記事は[技術ブログ一覧](https://juju351nicu.github.io/typingGame/blogPostList)から参照できます。
+上記以外を含む全13記事は[技術ブログ一覧](https://juju351nicu.github.io/typingGame/blogPostList)から参照できます。
 
 ## スクリーンショット
 
@@ -71,7 +72,8 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 - 同条件で遊んだ前回スコアとの差分表示
 - localStorageによるスコア履歴とローカルランキング
 - ログインユーザーのスコアDB保存と、ユーザー別 / 全体ランキングの切り替え
-- 直近5件のスコア / WPM / 正確率の推移表示
+- Chart.jsによる直近10件のスコア / WPM / 正確率の推移（折れ線）と、リザルトランク分布（棒）の表示
+- 全体ランキング表は、ページ番号をAPIへ渡してLIMIT / OFFSETで表示するページだけを取得
 
 ### アカウント・API
 
@@ -113,7 +115,8 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 | Backend | Java 25, Spring Boot, Spring Security, JWT, JPA, Flyway |
 | Database | MySQL 8.4, Docker Compose |
 | Infrastructure | AWS EC2, Route 53, Nginx, Let's Encrypt, systemd |
-| Test / CI/CD | Vitest, Vue Test Utils, ESLint, Prettier, vue-tsc, GitHub Actions, GitHub Pages |
+| Chart | Chart.js, vue-chartjs |
+| Test / CI/CD | Vitest, Vue Test Utils, Playwright, StrykerJS, ESLint, Prettier, vue-tsc, GitHub Actions, GitHub Pages |
 
 ## アーキテクチャ
 
@@ -150,7 +153,7 @@ API停止中もゲーム、localStorage保存、ローカルランキング、�
 - Nuxt UIのテーマ（`ui.theme.mjs`）とCSS変数でMaterial Design基調の配色・寸法をそろえ、ライト / ダークは `<html class="dark">` で切り替えています。
 - お知らせの未読件数取得は `useNotifications.ts` に分離し、画面非表示中はAPIを呼ばない、二重起動しない、401で停止する、といった振る舞いをfake timersのテストで検証しています。
 - 管理画面はrouterでログイン状態を復元してから管理者権限を判定し、権限のないユーザーをゲーム画面へ戻しています。
-- Vitestで59ファイル / 342テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元、Markdownサニタイズ、コンポーネント表示を検証しています。
+- Vitestで63ファイル / 395テストを実装し、タイピング処理、タイマー、認証、API通信、スコア保存、ランキング、ブログ、ルーティング、設定復元、Markdownサニタイズ、コンポーネント表示を検証しています。
 
 ## コンポーネント設計
 
@@ -190,6 +193,25 @@ npm run check
 
 `format:check`、`lint`、`typecheck`、`test`、`build` をまとめて実行します。
 
+### E2Eテスト（Playwright）
+
+```bash
+npm run test:e2e:install   # 初回のみ。Chromiumをインストールします
+npm run test:e2e
+```
+
+GitHub Pagesへ公開するものと同じビルド結果を `vite preview` で配信し、ゲームプレイ、ランキング（グラフ・ページング）、ブログ、設定画面をブラウザで操作して確認します。
+APIはテスト内の `page.route` でモックするため、バックエンドを起動する必要はありません。テストは `test/e2e` にあります。
+
+### ミューテーションテスト（StrykerJS）
+
+```bash
+npm run test:mutation
+```
+
+スコア・ランキング・ページング・グラフ用データの計算ロジックを対象に、コードをわざと書き換えてもテストが失敗するかを確認します。
+レポートは `reports/mutation/index.html` に出力されます。StrykerJS 10はNode.js 22以上が必要です。
+
 ## ビルド
 
 ```bash
@@ -208,7 +230,8 @@ npm run generate:posts
 
 ## デプロイ
 
-Pull Requestでは、GitHub Actionsでブログインデックス、format、lint、typecheck、test、buildを確認します。
+Pull Requestでは、GitHub Actionsでブログインデックス、format、lint、typecheck、test、build、E2Eを確認します。
+ミューテーションテストは対象の計算ロジックを変更したPRと手動実行のときだけ動かします。
 `master` ブランチへpushすると、同じ品質チェックの通過後にGitHub Pagesへ自動デプロイされます。
 
 ```text

@@ -1,13 +1,19 @@
 import {
+  createRankingsPageApiUrl,
   deleteGameScores,
   fetchMyGameScoresApi,
   fetchRankingsApi,
+  fetchRankingsPageApi,
   saveGameScore,
   saveMyGameScoreApi,
   toGameScore,
   toSaveGameScoreRequest,
 } from "@/services/scoreService";
-import type { GameScore, GameScoreResponse } from "@/types/interfaces";
+import type {
+  GameScore,
+  GameScoreResponse,
+  RankingPageResponse,
+} from "@/types/interfaces";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 describe("scoreService", () => {
@@ -181,6 +187,53 @@ describe("scoreService", () => {
     expect(result).toEqual([]);
     expect(fetchMock).toHaveBeenCalledWith(
       "http://localhost:8091/api/rankings",
+      expect.objectContaining({
+        method: "GET",
+      })
+    );
+  });
+
+  it("ページ単位のランキング取得APIのURLには絞り込み条件とページ番号・件数を付ける", () => {
+    expect(
+      createRankingsPageApiUrl({
+        mode: 0,
+        gameRule: "normal",
+        timeLimitSeconds: null,
+        page: 3,
+        size: 20,
+      })
+    ).toBe(
+      "http://localhost:8091/api/rankings/page?mode=0&gameRule=normal&page=3&size=20"
+    );
+  });
+
+  it("ページ単位のランキング取得APIは、行を画面用スコアへ変換しページ情報を返す", async () => {
+    const responseBody: RankingPageResponse = {
+      items: [{ id: 1, ...newScore }],
+      page: 2,
+      size: 10,
+      totalCount: 11,
+      totalPages: 2,
+    };
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify(responseBody), {
+        status: 200,
+        statusText: "OK",
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await fetchRankingsPageApi({ page: 2, size: 10 });
+
+    expect(result).toEqual({
+      items: [newScore],
+      page: 2,
+      size: 10,
+      totalCount: 11,
+      totalPages: 2,
+    });
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://localhost:8091/api/rankings/page?page=2&size=10",
       expect.objectContaining({
         method: "GET",
       })
