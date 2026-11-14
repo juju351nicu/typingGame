@@ -13,7 +13,7 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 
 - Vue 3 / TypeScriptによるゲームUI、状態管理、レスポンシブ表示、Markdown技術ブログを実装しています。
 - Spring Boot / MySQLのAPIをAWS EC2へ公開し、Nginx、HTTPS、JWT Bearer認証を使ってGitHub Pagesから接続しています。
-- ロジックと主要コンポーネントを63ファイル・402テストで検証し、PlaywrightのE2E（22ケース）とStrykerJSのミューテーションテストも加えて、GitHub Actionsでformat・lint・typecheck・test・E2E・build・deployを自動化しています。
+- ロジックと主要コンポーネントを64ファイル・407テストで検証し、PlaywrightのE2E（22ケース）とStrykerJSのミューテーションテストも加えて、GitHub Actionsでformat・lint・typecheck・test・E2E・build・deployを自動化しています。
 
 ## リンク
 
@@ -101,6 +101,7 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 - 記事詳細の前後ナビゲーションと、本文からの関連記事リンク（SPA遷移）
 - highlight.jsのcore buildと記事で使う言語だけを登録したコードハイライト
 - Playwrightの主要画面回帰動画を同一originのWebMとして掲載
+- build時に各記事の静的entryを生成し、GitHub Pagesの深いURLをHTTP 200で配信
 - DOMPurifyによるMarkdown最終HTMLのサニタイズ
 
 ## 遊び方

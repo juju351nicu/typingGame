@@ -99,9 +99,29 @@ Playwright project側では1280×720のWebMを常に記録します。
 実際の回帰実行で生成した動画です。
 
 <video controls preload="metadata" aria-label="Nuxt UI移行後のPlaywright主要画面回帰動画">
-  <source src="../videos/nuxt-ui-playwright-showcase.webm" type="video/webm">
+  <source src="videos/nuxt-ui-playwright-showcase.webm" type="video/webm">
   お使いのブラウザはWebM動画を再生できません。
 </video>
+
+## GitHub Pagesの深いURLをHTTP 200にする
+
+GitHub PagesにはSPAのserver rewriteを設定できません。`404.html`をentryにすると画面は復元できますが、記事URLのdocument responseは404のままです。
+
+そこでproduction build後に記事索引を読み、`dist/<section>/<id>/index.html`を生成します。既存のURLへ直接アクセスすると末尾slash付きURLへredirectされた後、静的entryが200で返り、Vue Routerが同じ記事を描画します。
+
+```js:generate-static-routes.mjs
+const routeDirectory = path.join(distDir, section, id);
+await mkdir(routeDirectory, { recursive: true });
+await writeFile(path.join(routeDirectory, "index.html"), entryHtml, "utf8");
+```
+
+同じentryから`404.html`もbuild時に作り、存在しないURLのSPA fallbackは維持します。route segmentは英数字、hyphen、underscoreだけを許可し、`../`や追加のslashで`dist`外へ書き出せないようにしています。
+
+各静的entryから画像や動画の相対URLが変わらないよう、Viteが環境ごとに置換する`%BASE_URL%`を`base`要素へ設定しました。
+
+```html:index.html
+<base href="%BASE_URL%" />
+```
 
 ## コード表示は既存highlight.jsを拡張する
 

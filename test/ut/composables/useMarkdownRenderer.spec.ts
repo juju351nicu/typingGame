@@ -72,13 +72,13 @@ describe("useMarkdownRenderer", () => {
     it("同一originのPlaywright動画を表示するvideo要素を維持する", () => {
       const html = renderMarkdown(`
 <video controls preload="metadata" aria-label="回帰テスト動画">
-  <source src="../videos/showcase.webm" type="video/webm">
+  <source src="videos/showcase.webm" type="video/webm">
 </video>
       `);
 
       expect(html).toContain("<video");
       expect(html).toContain("controls");
-      expect(html).toContain('src="../videos/showcase.webm"');
+      expect(html).toContain('src="videos/showcase.webm"');
       expect(html).toContain('type="video/webm"');
     });
 

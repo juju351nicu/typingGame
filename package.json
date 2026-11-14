@@ -6,7 +6,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/generate-static-routes.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:video": "playwright test --project=showcase-video",

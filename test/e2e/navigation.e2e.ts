@@ -20,6 +20,12 @@ test.describe("画面遷移", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: title })
     ).toBeVisible();
+
+    const directResponse = await page.goto(page.url());
+    expect(directResponse?.status()).toBe(200);
+    await expect(
+      page.getByRole("heading", { level: 1, name: title })
+    ).toBeVisible();
   });
 
   test("存在しないURLでは404画面を表示し、トップページへ戻れる", async ({

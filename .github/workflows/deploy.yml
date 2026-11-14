@@ -71,9 +71,6 @@ jobs:
           VITE_API_BASE_URL: "https://api.clipdev.jp"
         run: npm run build
 
-      - name: Add SPA fallback
-        run: cp dist/index.html dist/404.html
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
