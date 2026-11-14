@@ -20,6 +20,7 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 - [Live Demo](https://juju351nicu.github.io/typingGame/)
 - [Frontend Repository](https://github.com/juju351nicu/typingGame)
 - [Backend Repository](https://github.com/juju351nicu/typing-game-backend)
+- [依存関係のセキュリティ方針](./SECURITY.md)
 
 ## 技術ブログ
 
