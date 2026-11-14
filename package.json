@@ -2,7 +2,7 @@
   "name": "typinggame",
   "version": "0.0.0",
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=24.11.0"
   },
   "scripts": {
     "dev": "vite",

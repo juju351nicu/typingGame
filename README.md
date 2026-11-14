@@ -174,7 +174,7 @@ API停止中もゲーム、localStorage保存、ローカルランキング、�
 
 ## 開発環境
 
-Node.js 20.19.0以上を使用します。
+Node.js 24.11.0以上を使用します。
 
 ```bash
 npm install
