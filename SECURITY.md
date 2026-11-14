@@ -24,4 +24,10 @@ npm 10は`eslint-plugin-vue`のラッパーも1件として数えるため合計
 
 `overrides`で互換範囲外のmajorへ強制置換すると、lint、component test、mutation test自体の信頼性を損なう可能性があります。そのため本番依存の監査を必須にし、開発依存は上流の対応版が公開された時点で通常の更新として取り込みます。
 
+## GitHub Dependabotの未照合項目
+
+2026-11-14時点で、push時のGitHub表示にはdefault branchの29件（high 13件、moderate 13件、low 3件）が残っています。現在のlockfileに対する`npm audit`ではhighとlowを再現できず、Dependabot alert詳細を読む権限もこの監査環境にはありませんでした。
+
+そのため、この29件を解消済みとは扱いません。repository ownerがDependabot画面でpackage、manifest、依存経路、fixed versionを現在のlockfileと照合し、npm監査に出ないalertは別途対応します。CIの`audit:production`は公開依存のnpm advisoryを守るgateであり、GitHub側の非公開alert確認を代替するものではありません。
+
 `npm audit fix --force`は、監査表示だけを0件にする目的では実行しません。更新時はlockfileの差分を確認し、format、lint、typecheck、unit test、build、Playwright E2E、mutation testを通します。
