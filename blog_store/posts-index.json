@@ -1,5 +1,19 @@
 [
   {
+    "id": "nuxt-ui-playwright-video-regression",
+    "section": "guide",
+    "date": "2026-11-14",
+    "title": "見た目を維持したNuxt UI移行とPlaywright動画回帰",
+    "description": "VuetifyからNuxt UIへ段階移行した画面を監査し、Material Design基調の見た目を保ったまま主要journeyをPlaywright動画で確認できるようにした記録です。",
+    "tags": [
+      "Vue 3",
+      "Nuxt UI",
+      "Playwright",
+      "highlight.js"
+    ],
+    "url": "blog_store/posts/guide/nuxt-ui-playwright-video-regression.md"
+  },
+  {
     "id": "playwright-chartjs-stryker-ranking-paging",
     "section": "guide",
     "date": "2026-10-25",

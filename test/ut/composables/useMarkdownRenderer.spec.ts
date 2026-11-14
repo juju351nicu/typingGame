@@ -26,6 +26,20 @@ describe("useMarkdownRenderer", () => {
     expect(html).toContain("value");
   });
 
+  it.each([
+    ["css", ".sample { color: red; }"],
+    ["vue", '<template><p class="sample">text</p></template>'],
+    ["json", '{"enabled":true}'],
+    ["http", "GET /api/scores HTTP/1.1"],
+    ["sql", "SELECT score FROM game_score;"],
+    ["java", "public class Sample {}"],
+  ])("記事で使う%sコードブロックをハイライトする", (language, code) => {
+    const html = renderMarkdown(`\`\`\`${language}\n${code}\n\`\`\``);
+
+    expect(html).toContain('class="hljs');
+    expect(html).toContain("<span");
+  });
+
   it("未対応言語のコードブロックもHTMLへ変換する", () => {
     const html = renderMarkdown("```unknown\nsample\n```");
 
@@ -53,6 +67,19 @@ describe("useMarkdownRenderer", () => {
       );
 
       expect(html).not.toContain("iframe");
+    });
+
+    it("同一originのPlaywright動画を表示するvideo要素を維持する", () => {
+      const html = renderMarkdown(`
+<video controls preload="metadata" aria-label="回帰テスト動画">
+  <source src="../videos/showcase.webm" type="video/webm">
+</video>
+      `);
+
+      expect(html).toContain("<video");
+      expect(html).toContain("controls");
+      expect(html).toContain('src="../videos/showcase.webm"');
+      expect(html).toContain('type="video/webm"');
     });
 
     it("インラインHTMLと同じ段落にあるリンクと画像を維持する", () => {

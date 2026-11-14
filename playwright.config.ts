@@ -22,12 +22,23 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      testIgnore: "**/showcase-video.e2e.ts",
     },
     {
       // スマホ幅でもランキング表・グラフが崩れず操作できることを確認する。
       name: "mobile-chrome",
       use: { ...devices["Pixel 7"] },
       testMatch: "**/ranking*.e2e.ts",
+    },
+    {
+      // 技術ブログへ掲載する主要journeyは、閲覧しやすい固定サイズのWebMとして毎回記録する。
+      name: "showcase-video",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1280, height: 720 },
+        video: { mode: "on", size: { width: 1280, height: 720 } },
+      },
+      testMatch: "**/showcase-video.e2e.ts",
     },
   ],
   // 開発サーバーは初回アクセス時の依存関係の最適化で画面が再読み込みされることがあり、

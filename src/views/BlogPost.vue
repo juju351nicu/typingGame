@@ -479,6 +479,18 @@ onUnmounted(() => {
   max-width: 100%;
 }
 
+.markdown-body :deep(video) {
+  background: #0d1117;
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  box-shadow: var(--app-shadow);
+  display: block;
+  height: auto;
+  margin: 28px auto;
+  max-width: 100%;
+  width: min(100%, 960px);
+}
+
 .app-shell--dark .article-tag {
   background: rgba(185, 162, 255, 0.15);
   color: #cbbcff;

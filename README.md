@@ -13,7 +13,7 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 
 - Vue 3 / TypeScriptによるゲームUI、状態管理、レスポンシブ表示、Markdown技術ブログを実装しています。
 - Spring Boot / MySQLのAPIをAWS EC2へ公開し、Nginx、HTTPS、JWT Bearer認証を使ってGitHub Pagesから接続しています。
-- ロジックと主要コンポーネントを63ファイル・395テストで検証し、PlaywrightのE2E（21ケース）とStrykerJSのミューテーションテストも加えて、GitHub Actionsでformat・lint・typecheck・test・E2E・build・deployを自動化しています。
+- ロジックと主要コンポーネントを63ファイル・402テストで検証し、PlaywrightのE2E（22ケース）とStrykerJSのミューテーションテストも加えて、GitHub Actionsでformat・lint・typecheck・test・E2E・build・deployを自動化しています。
 
 ## リンク
 
@@ -29,8 +29,9 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 - [Spring Security Resource ServerでJWT Bearer認証を実装する](https://juju351nicu.github.io/typingGame/guide/spring-security-jwt-resource-server) — CookieからJWTへの移行理由と、`sessionStorage`を選んだトレードオフを整理しています。
 - [Node.jsでMarkdownブログのposts-index.jsonを自動生成する](https://juju351nicu.github.io/typingGame/guide/nodejs-generate-posts-index) — frontmatterから記事索引を生成し、CIで更新漏れを検知する構成を説明しています。
 - [ランキング画面にPlaywright E2E・Chart.js・StrykerJS・LIMIT/OFFSETページングを入れた話](https://juju351nicu.github.io/typingGame/guide/playwright-chartjs-stryker-ranking-paging) — ライブラリの選定理由、E2Eで見つかった不具合、ミューテーションスコアを87%から96%に上げた過程をまとめています。
+- [見た目を維持したNuxt UI移行とPlaywright動画回帰](https://juju351nicu.github.io/typingGame/guide/nuxt-ui-playwright-video-regression) — VuetifyからNuxt UIへの移行境界、コードハイライト、主要画面を通したWebM回帰動画をまとめています。
 
-上記以外を含む全13記事は[技術ブログ一覧](https://juju351nicu.github.io/typingGame/blogPostList)から参照できます。
+上記以外を含む全14記事は[技術ブログ一覧](https://juju351nicu.github.io/typingGame/blogPostList)から参照できます。
 
 ## スクリーンショット
 
@@ -98,6 +99,8 @@ Vue 3 + TypeScriptで作成した、風船を割っていくタイピングゲ�
 
 - Markdown記事の一覧・詳細表示（日付、セクション、技術タグ）
 - 記事詳細の前後ナビゲーションと、本文からの関連記事リンク（SPA遷移）
+- highlight.jsのcore buildと記事で使う言語だけを登録したコードハイライト
+- Playwrightの主要画面回帰動画を同一originのWebMとして掲載
 - DOMPurifyによるMarkdown最終HTMLのサニタイズ
 
 ## 遊び方
@@ -198,10 +201,12 @@ npm run check
 ```bash
 npm run test:e2e:install   # 初回のみ。Chromiumをインストールします
 npm run test:e2e
+npm run test:e2e:video     # 技術ブログ掲載用の主要journey動画を生成します
 ```
 
 GitHub Pagesへ公開するものと同じビルド結果を `vite preview` で配信し、ゲームプレイ、ランキング（グラフ・ページング）、ブログ、設定画面をブラウザで操作して確認します。
 APIはテスト内の `page.route` でモックするため、バックエンドを起動する必要はありません。テストは `test/e2e` にあります。
+動画projectは1280×720のWebMを `test-results` 配下へ生成し、公開用に確認した動画だけを `public/videos` へ配置します。
 
 ### ミューテーションテスト（StrykerJS）
 
